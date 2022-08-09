@@ -13,7 +13,7 @@ import "../index.css";
 
 const { Header, Content, Sider } = Layout;
 
-function getItem(label, key, icon, children) {
+function getItem(label: string, key: string, icon: JSX.Element, children?: { key: any; icon: any; children: any; label: any; }[]) {
   return {
     key,
     icon,
@@ -23,15 +23,6 @@ function getItem(label, key, icon, children) {
 }
 
 const items = [
-  // getItem('Option 1', '1', <PieChartOutlined />),
-  // getItem('Option 2', '2', <DesktopOutlined />),
-  // getItem('User', 'sub1', <UserOutlined />, [
-  //   getItem('Tom', '3'),
-  //   getItem('Bill', '4'),
-  //   getItem('Alex', '5'),
-  // ]),
-  // getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  // getItem('Files', '9', <FileOutlined />),
   getItem("Contract", "1", <CheckCircleOutlined />, [
     getItem("Instantsiate", "3", <PlayCircleOutlined />),
     getItem("Execute", "4", <DatabaseOutlined />),
@@ -41,8 +32,10 @@ const items = [
 ];
 
 const DebuggerLayout = () => {
+
   const [collapsed, setCollapsed] = useState(false);
   const [isFileUploaded, setIsFileUploaded] = React.useState(false);
+  const [wasmBuffer, setWasmBuffer] = React.useState<string | ArrayBuffer | null>(null);
   return (
     <Layout
       style={{
@@ -78,14 +71,6 @@ const DebuggerLayout = () => {
             height:'16vh'
           }}
         >
-          {/* <Breadcrumb
-            style={{
-              margin: "16px 0",
-            }}
-          >
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb> */}
           <div
             className="site-layout-background"
             style={{
@@ -93,10 +78,10 @@ const DebuggerLayout = () => {
               height:'100%'
             }}
           >
-            <FileUpload
-              isFileUploaded={isFileUploaded}
+            {!isFileUploaded && <FileUpload
               setIsFileUploaded={setIsFileUploaded}
-            />
+              setWasmBuffer={setWasmBuffer}
+            />}
           </div>
         </Content>
          <Content

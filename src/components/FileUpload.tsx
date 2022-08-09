@@ -1,32 +1,42 @@
+import React from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
-import React from "react";
+import type { UploadProps } from "antd";
+import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
 const { Dragger } = Upload;
 
-const FileUpload = ({setIsFileUploaded, isFileUploaded}) => {
-  
-  const storeFile = (fileProps) => {
-    const{onSuccess, onError, file} = fileProps;
+interface IProps {
+  setIsFileUploaded: (uploadStatus: boolean) => void;
+  setWasmBuffer: (fileBuffer: string | ArrayBuffer | null) => void;
+}
+const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
+  // Custom function to store file
+  const storeFile = (fileProps:RcCustomRequestOptions) => {
+    const { onSuccess, onError, file } = fileProps;
+    console.log(fileProps);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (event) => {
-        localStorage.setItem("fileData", event.target.result);
-        setIsFileUploaded(true);
-        onSuccess('done');
-        resolve(event.target.result);
+      reader.onload = (event: ProgressEvent<FileReader>) => {
+        if (event.target) {
+          setWasmBuffer(event.target.result);
+          //TODO: Move the buffer either to redux or IndexedDB
+          setIsFileUploaded(true);
+          onSuccess!("done");
+          resolve(event.target.result);
+        }
       };
       reader.onerror = (err) => {
-        onError('error');
+        onError!(err, 'error');
         reject(err);
       };
-      reader.readAsArrayBuffer(file);
+      reader.readAsArrayBuffer(file as Blob);
     });
   };
-  const props = {
+  const props: UploadProps = {
     name: "file",
-    accept: ".wasm, .jpeg",
+    accept: ".wasm,",
     maxCount: 1,
-    customRequest:storeFile,
+    customRequest: storeFile,
     onChange(info) {
       const { status } = info.file;
       if (status !== "uploading") {
@@ -41,10 +51,9 @@ const FileUpload = ({setIsFileUploaded, isFileUploaded}) => {
     onDrop(e) {
       console.log("Dropped files", e.dataTransfer.files);
     },
-    
   };
   return (
-   !isFileUploaded && <Dragger {...props}>
+    <Dragger {...props}>
       <p className="ant-upload-drag-icon">
         <InboxOutlined />
       </p>
