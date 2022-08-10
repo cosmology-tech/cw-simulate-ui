@@ -11,6 +11,26 @@ root.render(
   </React.StrictMode>
 );
 
+
+// main.js
+if (navigator.serviceWorker) {
+
+  navigator.serviceWorker.register('service-worker.js');
+
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    // event is a MessageEvent object
+    console.log(`The service worker sent me a message: ${event.data}`);
+  });
+
+  navigator.serviceWorker.ready.then((registration) => {
+    //@ts-ignore
+    window.registration = registration;
+    registration.active?.postMessage("Hi service worker");
+  });
+
+}
+
+
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
