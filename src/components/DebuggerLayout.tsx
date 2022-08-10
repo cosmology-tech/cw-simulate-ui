@@ -10,9 +10,22 @@ import React, { useState } from "react";
 import FileUpload from "./FileUpload";
 import "antd/dist/antd.min.css";
 import "../index.css";
-
+import { VMInstance } from 'cosmwasm-vm';
+import {Config} from '../config';
+import { BasicBackendApi, BasicKVStorage, BasicQuerier, IBackend } from "cosmwasm-vm/dist/backend";
 const { Header, Content, Sider } = Layout;
+declare global {
+    interface Window { CosmWasmVM: any; }
+}
 
+
+enum MENU_KEYS {
+  INSTANTIATE="instantiate",
+  CONTRACT = "contract",
+  EXECUTE ="execute",
+  QUERY="query",
+  RESET="reset"
+}
 function getItem(label: string, key: string, icon: JSX.Element, children?: { key: any; icon: any; children: any; label: any; }[]) {
   return {
     key,
@@ -23,19 +36,54 @@ function getItem(label: string, key: string, icon: JSX.Element, children?: { key
 }
 
 const items = [
-  getItem("Contract", "1", <CheckCircleOutlined />, [
-    getItem("Instantsiate", "3", <PlayCircleOutlined />),
-    getItem("Execute", "4", <DatabaseOutlined />),
-    getItem("Query", "5", <SwapOutlined />),
+  getItem("Contract", MENU_KEYS.CONTRACT, <CheckCircleOutlined />, [
+    getItem("Instantiate", MENU_KEYS.INSTANTIATE, <PlayCircleOutlined />),
+    getItem("Execute", MENU_KEYS.EXECUTE, <DatabaseOutlined />),
+    getItem("Query", MENU_KEYS.QUERY, <SwapOutlined />),
   ]),
-  getItem("Reset", "2", <ReloadOutlined />),
+  getItem("Reset", MENU_KEYS.RESET, <ReloadOutlined />),
 ];
 
 const DebuggerLayout = () => {
-
+   const backend: IBackend = {
+    backend_api: new BasicBackendApi('terra'),
+    storage: new BasicKVStorage(),
+    querier: new BasicQuerier(),
+  };
   const [collapsed, setCollapsed] = useState(false);
   const [isFileUploaded, setIsFileUploaded] = React.useState(false);
-  const [wasmBuffer, setWasmBuffer] = React.useState<string | ArrayBuffer | null>(null);
+  const [wasmBuffer, setWasmBuffer] = React.useState<ArrayBuffer | null>(null);
+  const onItemSelectHandler = (menuKey:string) =>{
+    if(menuKey===MENU_KEYS.INSTANTIATE) {
+       const {MOCK_ENV, MOCK_INFO} = Config;
+       let res = window.CosmWasmVM.instantiate(MOCK_ENV,MOCK_INFO,{ count: 20 } );
+       console.log(res);
+    }
+    else if(menuKey===MENU_KEYS.QUERY) {
+
+    }
+    else if(menuKey===MENU_KEYS.EXECUTE) {
+
+    }
+    else if(menuKey ===MENU_KEYS.RESET) {
+
+    }
+  }
+
+  React.useEffect(()=>{
+    if(wasmBuffer && wasmBuffer.byteLength>1) {
+      //@ts-ignore
+      VMInstance.CreateInstance(wasmBuffer).then((res)=>{
+        //@ts-ignore
+        window.CosmWasmVM = new VMInstance(wasmBuffer,backend,res);
+      });
+       
+      //@ts-ignore
+      // window.VMInstance = VMInstance;
+      // //@ts-ignore
+      // window.registration.active.postMessage({name:"COMPILE", data:{wasmBuffer, backend}});
+    }
+  },[wasmBuffer])
   return (
     <Layout
       style={{
@@ -53,6 +101,7 @@ const DebuggerLayout = () => {
           defaultSelectedKeys={["1"]}
           mode="inline"
           items={items}
+          onSelect={(menuItem)=>onItemSelectHandler(menuItem.key)}
         />
       </Sider>
       <Layout className="site-layout">

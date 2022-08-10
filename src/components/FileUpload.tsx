@@ -7,7 +7,7 @@ const { Dragger } = Upload;
 
 interface IProps {
   setIsFileUploaded: (uploadStatus: boolean) => void;
-  setWasmBuffer: (fileBuffer: string | ArrayBuffer | null) => void;
+  setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
 const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
   // Custom function to store file
@@ -18,13 +18,7 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
         if (event.target) {
-          setWasmBuffer(event.target.result);
-
-          //@ts-ignore
-          navigator.wasmbuffer = event.target.result;
-          //@ts-ignore
-          window.registration.active.postMessage({name:"COMPILE", data:event.target.result});
-          
+          setWasmBuffer(event.target.result as ArrayBuffer);
           //TODO: Move the buffer either to redux or IndexedDB
           setIsFileUploaded(true);
           onSuccess!("done");
