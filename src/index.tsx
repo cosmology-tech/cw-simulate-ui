@@ -14,18 +14,26 @@ root.render(
 
 // main.js
 if (navigator.serviceWorker) {
+  navigator.serviceWorker.getRegistrations().then(x=>{
+    for(var y of x){
+      console.log(y)
+       y.unregister().then(_=>console.log('done'));
+    }
+  }).then(()=>
+  {
 
-  navigator.serviceWorker.register('service-worker.js');
+    navigator.serviceWorker.register('service-worker.js?'+Math.random());
 
-  navigator.serviceWorker.addEventListener('message', (event) => {
-    // event is a MessageEvent object
-    console.log(`The service worker sent me a message: ${event.data}`);
-  });
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      // event is a MessageEvent object
+      console.log(`The service worker sent me a message: ${event.data}`);
+    });
 
-  navigator.serviceWorker.ready.then((registration) => {
-    //@ts-ignore
-    window.registration = registration;
-    registration.active?.postMessage("Hi service worker");
+    navigator.serviceWorker.ready.then((registration) => {
+      //@ts-ignore
+      window.registration = registration;
+      registration.active?.postMessage("Hi service worker");
+    });
   });
 
 }

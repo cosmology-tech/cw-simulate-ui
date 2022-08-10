@@ -23,7 +23,7 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
           //@ts-ignore
           navigator.wasmbuffer = event.target.result;
           //@ts-ignore
-          window.registration.active.postMessage({name:"COMPILE", data:"hello"});
+          window.registration.active.postMessage({name:"COMPILE", data:event.target.result});
           
           //TODO: Move the buffer either to redux or IndexedDB
           setIsFileUploaded(true);
