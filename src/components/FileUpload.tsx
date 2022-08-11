@@ -3,7 +3,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
 import type { UploadProps } from "antd";
 import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
-import { CosmWasmVM } from 'cosmwasm-vm-js';
+import { CosmWasmVM } from 'cs.ts';
 const { Dragger } = Upload;
 
 interface IProps {

@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import FileUpload from "./FileUpload";
 import "antd/dist/antd.min.css";
 import "../index.css";
+import ReactObjectTableViewer from "react-object-table-viewer";
 
 const { Header, Content, Sider } = Layout;
 
@@ -92,7 +93,8 @@ const DebuggerLayout = () => {
             minHeight: '18vh'
           }}
         >
-          Blockchain state and other outputs will appear here
+          {/* @ts-ignore */}
+          <ReactObjectTableViewer data={window.vm?.store}></ReactObjectTableViewer>
         </Content>
         <Content
           className="site-layout-background"
