@@ -3,6 +3,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
 import type { UploadProps } from "antd";
 import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
+import { CosmWasmVM } from 'cosmwasm-vm-js';
 const { Dragger } = Upload;
 
 interface IProps {
@@ -21,14 +22,15 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
           setWasmBuffer(event.target.result);
 
           //@ts-ignore
-          navigator.wasmbuffer = event.target.result;
+          window.vm = new CosmWasmVM();
           //@ts-ignore
-          window.registration.active.postMessage({name:"COMPILE", data:event.target.result});
-          
-          //TODO: Move the buffer either to redux or IndexedDB
-          setIsFileUploaded(true);
-          onSuccess!("done");
-          resolve(event.target.result);
+          window.vm.build(event.target.result).then(() => {
+            
+            //TODO: Move the buffer either to redux or IndexedDB
+            setIsFileUploaded(true);
+            onSuccess!("done");
+            resolve(event.target!.result);
+          });
         }
       };
       reader.onerror = (err) => {
