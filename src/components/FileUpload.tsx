@@ -1,12 +1,13 @@
 import React from "react";
-import {InboxOutlined} from "@ant-design/icons";
-import {message, Upload} from "antd";
-import type {UploadProps} from "antd";
-import {UploadRequestOption as RcCustomRequestOptions} from "rc-upload/lib/interface";
+import { InboxOutlined } from "@ant-design/icons";
+import { message, Upload } from "antd";
+import type { UploadProps } from "antd";
+import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
 import {IBackend, VMInstance, BasicBackendApi, BasicKVStorage, BasicQuerier} from "@terran-one/cosmwasm-vm-js";
 
-const {Dragger} = Upload;
-declare global {
+
+const { Dragger } = Upload;
+declare global { 
   interface Window {
     VM: any;
   }
