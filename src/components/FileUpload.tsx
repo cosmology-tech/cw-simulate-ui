@@ -2,30 +2,31 @@ import React from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
 import type { UploadProps } from "antd";
-import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
-import { CosmWasmVM } from 'cs.ts';
+import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
+import { CosmWasmVM } from "cosmwasm";
 const { Dragger } = Upload;
+declare global {
+  interface Window {
+    VM: any;
+  }
+}
 
 interface IProps {
   setIsFileUploaded: (uploadStatus: boolean) => void;
-  setWasmBuffer: (fileBuffer: string | ArrayBuffer | null) => void;
+  setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
 const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
   // Custom function to store file
-  const storeFile = (fileProps:RcCustomRequestOptions) => {
+  const storeFile = (fileProps: RcCustomRequestOptions) => {
     const { onSuccess, onError, file } = fileProps;
     console.log(fileProps);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
         if (event.target) {
-          setWasmBuffer(event.target.result);
-
-          //@ts-ignore
-          window.vm = new CosmWasmVM();
-          //@ts-ignore
-          window.vm.build(event.target.result).then(() => {
-            
+          setWasmBuffer(event.target.result as ArrayBuffer);
+          window.VM = new CosmWasmVM();
+          window.VM.build(event.target.result).then(() => {
             //TODO: Move the buffer either to redux or IndexedDB
             setIsFileUploaded(true);
             onSuccess!("done");
@@ -34,7 +35,7 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
         }
       };
       reader.onerror = (err) => {
-        onError!(err, 'error');
+        onError!(err, "error");
         reject(err);
       };
       reader.readAsArrayBuffer(file as Blob);
@@ -69,8 +70,7 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
         Click or drag file to this area to upload
       </p>
       <p className="ant-upload-hint">
-        Support for a single or bulk upload. Strictly prohibit from uploading
-        company data or other band files
+        Once you upload the file Menu Options on right will start appearing.
       </p>
     </Dragger>
   );
