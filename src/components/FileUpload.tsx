@@ -9,7 +9,7 @@ import {
   BasicKVStorage,
   BasicQuerier,
   IBackend,
-} from '@terran-one/cosmwasm-vm-js/src/backend';
+} from '@terran-one/cosmwasm-vm-js/backend';
 
 const { Dragger } = Upload;
 declare global { 
