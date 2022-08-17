@@ -3,9 +3,16 @@ import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
 import type { UploadProps } from "antd";
 import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
-import { CosmWasmVM } from "cosmwasm";
+import { VMInstance } from "@terran-one/cosmwasm-vm-js";
+import {
+  BasicBackendApi,
+  BasicKVStorage,
+  BasicQuerier,
+  IBackend,
+} from '@terran-one/cosmwasm-vm-js/src/backend';
+
 const { Dragger } = Upload;
-declare global {
+declare global { 
   interface Window {
     VM: any;
   }
@@ -16,6 +23,13 @@ interface IProps {
   setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
 const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
+
+   const backend: IBackend = {
+    backend_api: new BasicBackendApi(),
+    storage: new BasicKVStorage(),
+    querier: new BasicQuerier(),
+  };
+
   // Custom function to store file
   const storeFile = (fileProps: RcCustomRequestOptions) => {
     const { onSuccess, onError, file } = fileProps;
@@ -25,7 +39,7 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
       reader.onload = (event: ProgressEvent<FileReader>) => {
         if (event.target) {
           setWasmBuffer(event.target.result as ArrayBuffer);
-          window.VM = new CosmWasmVM();
+          window.VM = new VMInstance(backend);
           window.VM.build(event.target.result).then(() => {
             //TODO: Move the buffer either to redux or IndexedDB
             setIsFileUploaded(true);

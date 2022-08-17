@@ -11,8 +11,8 @@
     "@types/node": "^18.6.5",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
+    "@terran-one/cosmwasm-vm-js": "0.1.0",
     "antd": "^4.22.3",
-    "cosmwasm":"^0.1.0",
     "buffer": "^6.0.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -35,16 +35,9 @@
       "react-app/jest"
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }
