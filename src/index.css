@@ -19,3 +19,7 @@ code {
 [data-theme="dark"] .site-layout .site-layout-background {
   background: #141414;
 }
+
+textarea.ant-input {
+ max-height: 280px !important;
+}
