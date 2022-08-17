@@ -3,13 +3,13 @@ import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
 import type { UploadProps } from "antd";
 import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
-import { VMInstance } from "@terran-one/cosmwasm-vm-js";
+import { VMInstance } from "@terran-one/cosmwasm-vm-js/dist";
 import {
   BasicBackendApi,
   BasicKVStorage,
   BasicQuerier,
   IBackend,
-} from '@terran-one/cosmwasm-vm-js/backend';
+} from '@terran-one/cosmwasm-vm-js/dist/backend';
 
 const { Dragger } = Upload;
 declare global { 
