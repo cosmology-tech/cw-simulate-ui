@@ -5,13 +5,7 @@ import type { UploadProps } from "antd";
 import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
 import {IBackend, VMInstance, BasicBackendApi, BasicKVStorage, BasicQuerier} from "@terran-one/cosmwasm-vm-js";
 
-
 const { Dragger } = Upload;
-declare global { 
-  interface Window {
-    VM: any;
-  }
-}
 
 interface IProps {
   setIsFileUploaded: (uploadStatus: boolean) => void;
@@ -28,7 +22,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
   // Custom function to store file
   const storeFile = (fileProps: RcCustomRequestOptions) => {
     const {onSuccess, onError, file} = fileProps;
-    console.log(fileProps);
+    window.Console.log(fileProps);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -58,7 +52,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
     onChange(info) {
       const {status} = info.file;
       if (status !== "uploading") {
-        console.log(info.file, info.fileList);
+        window.Console.log(info.file, info.fileList);
       }
       if (status === "done") {
         message.success(`${info.file.name} file uploaded successfully.`);
@@ -67,7 +61,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
       }
     },
     onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
+      window.Console.log("Dropped files", e.dataTransfer.files);
     },
   };
   return (
