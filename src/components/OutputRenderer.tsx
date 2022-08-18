@@ -44,9 +44,10 @@ export const OutputRenderer = ({
     },
   };
   const [currentTab, setCurrentTab] = React.useState("state");
+  const currentState = window.VM?.backend?.storage.dict['c3RhdGU='];
   const currentJSON =
     currentTab === "state"
-      ? JSON.parse(window.atob(window.VM.backend.storage.dict['c3RhdGU=']))
+      ? currentState===undefined?"Nothing to show":JSON.parse(window.atob(currentState))
       : currentTab === "query"
       ? queryResponse
       : executeResponse;
