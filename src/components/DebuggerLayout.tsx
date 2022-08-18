@@ -14,8 +14,8 @@ import { Config } from "../config";
 import { message } from "antd";
 import TextBox from "./TextBox";
 import { getItem } from "utils";
-import ReactObjectTableViewer from "react-object-table-viewer";
 import { OutputRenderer } from "./OutputRenderer";
+import {ConsoleRenderer} from "./ConsoleRenderer";
 
 const { Header, Content, Sider } = Layout;
 enum MENU_KEYS {
@@ -32,7 +32,7 @@ const data = {
   array: ["1", "2", "3"],
 };
 const DebuggerLayout = () => {
-  window.Buffer = window.Buffer || require("buffer").Buffer;
+  global.window.Buffer = global.window.Buffer || require("buffer").Buffer;
   const [collapsed, setCollapsed] = useState(false);
   const [isFileUploaded, setIsFileUploaded] = React.useState(false);
   const [wasmBuffer, setWasmBuffer] = React.useState<ArrayBuffer | null>(null);
@@ -41,7 +41,8 @@ const DebuggerLayout = () => {
   const [executeResponse, setExecuteResponse] = React.useState<
     JSON | undefined
   >();
-  const [consoleOutput, setConsoleOutput] = React.useState([]);
+  
+
   const { MOCK_ENV, MOCK_INFO } = Config;
   const items = [
     getItem(
@@ -62,18 +63,18 @@ const DebuggerLayout = () => {
       try {
         const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
         message.success("CosmWasm VM successfully instantiated!");
-        console.log("*********", res);
+        window.Console.log("*********", res);
       } catch (err) {
         message.error(
           "CosmWasm VM was not able to instantiate. Please check console for errors."
         );
-        console.log(err);
+        window.Console.log(err);
       }
     } else if (menuKey === MENU_KEYS.EXECUTE) {
       try {
        const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
        setExecuteResponse(res.read_json());
-       console.log("Execute", res.read_json());
+       window.Console.log("Execute", res.read_json());
        message.success('Execution was successfull! Check Execute Output for Output.');
       }
       catch(err) {
@@ -84,7 +85,7 @@ const DebuggerLayout = () => {
       try {
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setQueryResponse(JSON.parse(window.atob(res.read_json().ok)));
-      console.log("Query ", res.read_json());
+      window.Console.log("Query ", res.read_json());
       message.success('Query was successfull! Check Query Output for Output.');
       }
       catch(err) {
@@ -176,7 +177,7 @@ const DebuggerLayout = () => {
             color: "white",
           }}
         >
-          Console will be here.
+          <ConsoleRenderer logs={window.Console.logs}></ConsoleRenderer>
         </Content>
       </Layout>
     </Layout>
