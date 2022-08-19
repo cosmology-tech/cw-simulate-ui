@@ -5,44 +5,32 @@ import {
   DatabaseOutlined,
   SwapOutlined,
 } from "@ant-design/icons";
-import { Breadcrumb, Layout, Menu } from "antd";
+import {Layout, Menu } from "antd";
 import React, { useState } from "react";
 import FileUpload from "./FileUpload";
 import "antd/dist/antd.min.css";
 import "../index.css";
 import { Config } from "../config";
 import { message } from "antd";
-import TextBox from "./TextBox";
 import { getItem } from "utils";
-import { OutputRenderer } from "./OutputRenderer";
+import { StateRenderer } from "./StateRenderer";
+import { ExecuteQuery } from "./ExecuteQuery";
 import {ConsoleRenderer} from "./ConsoleRenderer";
 
 const { Header, Content, Sider } = Layout;
 enum MENU_KEYS {
   INSTANTIATE = "instantiate",
   CONTRACT = "contract",
-  EXECUTE = "execute",
-  QUERY = "query",
   RESET = "reset",
 }
 
-const data = {
-  hello: "world",
-  abc: 123,
-  array: ["1", "2", "3"],
-};
 const DebuggerLayout = () => {
   global.window.Buffer = global.window.Buffer || require("buffer").Buffer;
   const [collapsed, setCollapsed] = useState(false);
   const [isFileUploaded, setIsFileUploaded] = React.useState(false);
   const [wasmBuffer, setWasmBuffer] = React.useState<ArrayBuffer | null>(null);
   const [payload, setPayload] = React.useState("");
-  const [queryResponse, setQueryResponse] = React.useState<JSON | undefined>();
-  const [executeResponse, setExecuteResponse] = React.useState<
-    JSON | undefined
-  >();
-  
-
+  const [response, setResponse] = React.useState<JSON | undefined>();
   const { MOCK_ENV, MOCK_INFO } = Config;
   const items = [
     getItem(
@@ -51,8 +39,6 @@ const DebuggerLayout = () => {
       <CheckCircleOutlined />,
       [
         getItem("Instantiate", MENU_KEYS.INSTANTIATE, <PlayCircleOutlined />),
-        getItem("Execute", MENU_KEYS.EXECUTE, <DatabaseOutlined />),
-        getItem("Query", MENU_KEYS.QUERY, <SwapOutlined />),
       ],
       !isFileUploaded
     ),
@@ -70,28 +56,8 @@ const DebuggerLayout = () => {
         );
         window.Console.log(err);
       }
-    } else if (menuKey === MENU_KEYS.EXECUTE) {
-      try {
-       const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
-       setExecuteResponse(res.read_json());
-       window.Console.log("Execute", res.read_json());
-       message.success('Execution was successfull! Check Execute Output for Output.');
-      }
-      catch(err) {
-        message.error('Something went wrong while executing.')
-      }
-     
-    } else if (menuKey === MENU_KEYS.QUERY) {
-      try {
-      const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
-      setQueryResponse(JSON.parse(window.atob(res.read_json().ok)));
-      window.Console.log("Query ", res.read_json());
-      message.success('Query was successfull! Check Query Output for Output.');
-      }
-      catch(err) {
-         message.error('Something went wrong while querying.')
-      }
-    } else if (menuKey === MENU_KEYS.RESET) {
+    } 
+    else if (menuKey === MENU_KEYS.RESET) {
       setIsFileUploaded(false);
       setWasmBuffer(null);
       setPayload("");
@@ -133,13 +99,13 @@ const DebuggerLayout = () => {
         <Content
           style={{
             margin: "0 16px",
-            height: "16vh",
+            height: "auto",
           }}
         >
           <div
             className="site-layout-background"
             style={{
-              padding: 34,
+              padding: 10,
               height: "100%",
             }}
           >
@@ -149,7 +115,7 @@ const DebuggerLayout = () => {
                 setWasmBuffer={setWasmBuffer}
               />
             ) : (
-              <TextBox payload={payload} setPayload={setPayload} />
+               <ExecuteQuery payload={payload} setPayload={setPayload} response={response} setResponse={setResponse}/>
             )}
           </div>
         </Content>
@@ -158,14 +124,10 @@ const DebuggerLayout = () => {
           style={{
             margin: "12px 16px",
             padding: 24,
-            minHeight: "18vh",
+            minHeight: "30vh",
           }}
         >
-          {/* @ts-ignore */}
-          {/* <ReactObjectTableViewer
-            data={window.VM?.store}
-          ></ReactObjectTableViewer> */}
-          <OutputRenderer queryResponse={queryResponse} executeResponse={executeResponse} isFileUploaded={isFileUploaded} />
+          <StateRenderer isFileUploaded={isFileUploaded} />
         </Content>
         <Content
           className="site-layout-background"
@@ -173,12 +135,15 @@ const DebuggerLayout = () => {
             margin: "12px 16px",
             padding: 24,
             minHeight: "18vh",
+            maxHeight:'24vh',
             background: "rgb(16 15 15)",
             color: "white",
+            overflow:"scroll"
           }}
         >
           <ConsoleRenderer logs={window.Console.logs}></ConsoleRenderer>
         </Content>
+       
       </Layout>
     </Layout>
   );
