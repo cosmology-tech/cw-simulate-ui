@@ -12,11 +12,10 @@ import "antd/dist/antd.min.css";
 import "../index.css";
 import { Config } from "../config";
 import { message } from "antd";
-import TextBox from "./TextBox";
 import { getItem } from "utils";
-import ReactObjectTableViewer from "react-object-table-viewer";
 import { StateRenderer } from "./StateRenderer";
 import { ExecuteQuery } from "./ExecuteQuery";
+import {ConsoleRenderer} from "./ConsoleRenderer";
 
 const { Header, Content, Sider } = Layout;
 enum MENU_KEYS {
@@ -27,18 +26,12 @@ enum MENU_KEYS {
   RESET = "reset",
 }
 
-const data = {
-  hello: "world",
-  abc: 123,
-  array: ["1", "2", "3"],
-};
 const DebuggerLayout = () => {
-  window.Buffer = window.Buffer || require("buffer").Buffer;
+  global.window.Buffer = global.window.Buffer || require("buffer").Buffer;
   const [collapsed, setCollapsed] = useState(false);
   const [isFileUploaded, setIsFileUploaded] = React.useState(false);
   const [wasmBuffer, setWasmBuffer] = React.useState<ArrayBuffer | null>(null);
   const [payload, setPayload] = React.useState("");
-  const [consoleOutput, setConsoleOutput] = React.useState([]);
   const { MOCK_ENV, MOCK_INFO } = Config;
   const items = [
     getItem(
@@ -47,8 +40,6 @@ const DebuggerLayout = () => {
       <CheckCircleOutlined />,
       [
         getItem("Instantiate", MENU_KEYS.INSTANTIATE, <PlayCircleOutlined />),
-        getItem("Execute", MENU_KEYS.EXECUTE, <DatabaseOutlined />),
-        getItem("Query", MENU_KEYS.QUERY, <SwapOutlined />),
       ],
       !isFileUploaded
     ),
@@ -59,12 +50,12 @@ const DebuggerLayout = () => {
       try {
         const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
         message.success("CosmWasm VM successfully instantiated!");
-        console.log("*********", res);
+        window.Console.log("*********", res);
       } catch (err) {
         message.error(
           "CosmWasm VM was not able to instantiate. Please check console for errors."
         );
-        console.log(err);
+        window.Console.log(err);
       }
     } 
     else if (menuKey === MENU_KEYS.RESET) {
@@ -109,7 +100,7 @@ const DebuggerLayout = () => {
         <Content
           style={{
             margin: "0 16px",
-            height: "20vh",
+            height: "auto",
           }}
         >
           <div
@@ -134,7 +125,7 @@ const DebuggerLayout = () => {
           style={{
             margin: "12px 16px",
             padding: 24,
-            minHeight: "18vh",
+            minHeight: "30vh",
           }}
         >
           <StateRenderer isFileUploaded={isFileUploaded} />
@@ -145,11 +136,13 @@ const DebuggerLayout = () => {
             margin: "12px 16px",
             padding: 24,
             minHeight: "18vh",
+            maxHeight:'24vh',
             background: "rgb(16 15 15)",
             color: "white",
+            overflow:"scroll"
           }}
         >
-          Console will be here.
+          <ConsoleRenderer logs={window.Console.logs}></ConsoleRenderer>
         </Content>
        
       </Layout>
