@@ -8,10 +8,12 @@ import ExecuteQueryTab from "./ExecuteQueryTab";
 interface IProps {
   payload: string;
   setPayload: (val: string) => void;
+  response:JSON|undefined;
+  setResponse:(val:JSON|undefined)=>void;
 }
 
-export const ExecuteQuery = ({ payload, setPayload }: IProps) => {
-  const [response, setResponse] = React.useState<JSON | undefined>();
+export const ExecuteQuery = ({ payload, setPayload, setResponse, response}: IProps) => {
+
   const [currentTab, setCurrentTab] = React.useState<string>("execute");
   const { MOCK_ENV, MOCK_INFO } = Config;
   const execute = () => {
@@ -20,7 +22,7 @@ export const ExecuteQuery = ({ payload, setPayload }: IProps) => {
       setResponse(res.read_json());
       console.log("Execute", res.read_json());
       message.success(
-        "Execution was successfull! Check Execute Output for Output."
+        "Execution was successfull!"
       );
     } catch (err) {
       message.error("Something went wrong while executing.");
@@ -69,7 +71,8 @@ export const ExecuteQuery = ({ payload, setPayload }: IProps) => {
         <OutputRenderer response={response} />
       </div>
       <div style={{ display: "flex", flexDirection: "row" }}>
-        <Button style={{ margin: 10 }} onClick={onDryRunHandler} disabled>Dry-Run</Button>
+        {/* TODO: Enable Dry Run */}
+        {/* <Button style={{ margin: 10 }} onClick={onDryRunHandler} disabled>Dry-Run</Button> */}
         <Button style={{ margin: 10 }} onClick={onRunHandler} disabled={!payload.length}>Run</Button>
       </div>
     </div>

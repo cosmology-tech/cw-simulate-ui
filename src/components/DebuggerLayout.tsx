@@ -21,8 +21,6 @@ const { Header, Content, Sider } = Layout;
 enum MENU_KEYS {
   INSTANTIATE = "instantiate",
   CONTRACT = "contract",
-  EXECUTE = "execute",
-  QUERY = "query",
   RESET = "reset",
 }
 
@@ -32,6 +30,7 @@ const DebuggerLayout = () => {
   const [isFileUploaded, setIsFileUploaded] = React.useState(false);
   const [wasmBuffer, setWasmBuffer] = React.useState<ArrayBuffer | null>(null);
   const [payload, setPayload] = React.useState("");
+  const [response, setResponse] = React.useState<JSON | undefined>();
   const { MOCK_ENV, MOCK_INFO } = Config;
   const items = [
     getItem(
@@ -116,7 +115,7 @@ const DebuggerLayout = () => {
                 setWasmBuffer={setWasmBuffer}
               />
             ) : (
-               <ExecuteQuery payload={payload} setPayload={setPayload}/>
+               <ExecuteQuery payload={payload} setPayload={setPayload} response={response} setResponse={setResponse}/>
             )}
           </div>
         </Content>
