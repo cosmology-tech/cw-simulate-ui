@@ -12,7 +12,7 @@ const ExecuteQueryTab = ({ currentTab, setCurrentTab }: IProps) => {
   };
   return (
     <div style={{ display: "flex", marginLeft: 10 }}>
-      <Tabs defaultActiveKey={currentTab} onChange={onChange}>
+      <Tabs defaultActiveKey="execute" activeKey={currentTab} onChange={onChange}>
         <TabPane tab="Execute" key="execute" />
         <TabPane tab="Query" key="query" />
       </Tabs>

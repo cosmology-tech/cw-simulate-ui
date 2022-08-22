@@ -1,4 +1,5 @@
 import React from "react";
+import { IState } from "./ExecuteQuery";
 import { OutputCard } from "./OutputCard";
 
 const theme = {
@@ -22,29 +23,13 @@ const theme = {
   base0F: "#cc6633",
 };
 
-const json = {
-  array: [1, 2, 3],
-  bool: true,
-  object: {
-    foo: 'bar',
-  },
-   object2: {
-    foo: 'bar',
-  },
-   object3: {
-    foo: 'bar',
-  },
-   object4: {
-    foo: 'bar',
-  },
-   object5: {
-    foo: 'bar',
-  },
-   object6: {
-    foo: 'bar',
-  },
-};
-export const BeforeAfterState = () => {
+interface IProps {
+  allStates:IState[];
+  currentState:number;
+}
+export const BeforeAfterState = ({allStates, currentState}:IProps) => {
+  const beforeStateJSON = JSON.parse(window.atob(allStates[currentState].chainStateBefore));
+  const afterStateJSON = JSON.parse(window.atob(allStates[currentState].chainStateAfter));
   return (
     <div
       style={{
@@ -53,9 +38,9 @@ export const BeforeAfterState = () => {
         justifyContent: "space-between",
       }}
     >
-      <OutputCard response={json} placeholder="Your state will appear here" />
+      <OutputCard response={beforeStateJSON} placeholder="Your state will appear here" />
       <OutputCard
-        response={json}
+        response={afterStateJSON}
         placeholder="Your state traversal will appear here."
       />
     </div>

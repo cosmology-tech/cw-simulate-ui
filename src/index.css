@@ -31,3 +31,7 @@ textarea.ant-input {
 .ant-card-body > ul {
   background-color: white;
 }
+
+.ant-steps {
+  width: auto !important;
+}

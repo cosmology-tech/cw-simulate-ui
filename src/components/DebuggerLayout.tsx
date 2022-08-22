@@ -14,8 +14,9 @@ import { Config } from "../config";
 import { message } from "antd";
 import { getItem } from "utils";
 import { StateRenderer } from "./StateRenderer";
-import { ExecuteQuery } from "./ExecuteQuery";
+import { ExecuteQuery, IState } from "./ExecuteQuery";
 import {ConsoleRenderer} from "./ConsoleRenderer";
+import StateStepper from "./StateStepper";
 
 const { Header, Content, Sider } = Layout;
 enum MENU_KEYS {
@@ -31,6 +32,9 @@ const DebuggerLayout = () => {
   const [wasmBuffer, setWasmBuffer] = React.useState<ArrayBuffer | null>(null);
   const [payload, setPayload] = React.useState("");
   const [response, setResponse] = React.useState<JSON | undefined>();
+  const [allStates, setAllStates] = React.useState<IState[]>([]);
+  const [currentState, setCurrentState] = useState(0);
+  const [currentTab, setCurrentTab] = React.useState<string>("execute");
   const { MOCK_ENV, MOCK_INFO } = Config;
   const items = [
     getItem(
@@ -50,6 +54,7 @@ const DebuggerLayout = () => {
         const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
         message.success("CosmWasm VM successfully instantiated!");
         window.Console.log("*********", res);
+
       } catch (err) {
         message.error(
           "CosmWasm VM was not able to instantiate. Please check console for errors."
@@ -92,10 +97,15 @@ const DebuggerLayout = () => {
           className="site-layout-background"
           style={{
             padding: 0,
-            height: "6vh",
+            height: "8vh",
             marginBottom: "10px",
           }}
-        />
+        >
+          <div style={{display:'flex',overflowX:'scroll' }}>
+            <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/>
+          </div>
+          
+          </Header>
         <Content
           style={{
             margin: "0 16px",
@@ -115,7 +125,7 @@ const DebuggerLayout = () => {
                 setWasmBuffer={setWasmBuffer}
               />
             ) : (
-               <ExecuteQuery payload={payload} setPayload={setPayload} response={response} setResponse={setResponse}/>
+               <ExecuteQuery payload={payload} setPayload={setPayload} response={response} setResponse={setResponse} setAllStates={setAllStates} allStates={allStates} setCurrentState={setCurrentState} currentState={currentState} currentTab={currentTab} setCurrentTab={setCurrentTab}/>
             )}
           </div>
         </Content>
@@ -127,7 +137,7 @@ const DebuggerLayout = () => {
             minHeight: "30vh",
           }}
         >
-          <StateRenderer isFileUploaded={isFileUploaded} />
+          <StateRenderer isFileUploaded={isFileUploaded} allStates={allStates} currentState={currentState}/>
         </Content>
         <Content
           className="site-layout-background"
