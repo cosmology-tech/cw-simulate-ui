@@ -39,13 +39,13 @@ export const ExecuteQuery = ({
 }: IProps) => {
   console.log("All states", allStates);
   const { MOCK_ENV, MOCK_INFO } = Config;
-  const addState = (stateBefore: any, res: any, operation: string) => {
+  const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
       payload: payload,
       currentTab: currentTab,
       chainStateAfter: window.VM?.backend?.storage.dict["c3RhdGU="],
-      res: operation === "execute" ? res.read_json() : res,
+      res: res.read_json(),
     };
     setAllStates([...allStates, stateObj]);
     setCurrentState(allStates.length);
@@ -58,7 +58,7 @@ export const ExecuteQuery = ({
       setResponse(res.read_json());
       console.log("Execute", res.read_json());
       message.success("Execution was successfull!");
-      addState(stateBefore, res, "execute");
+      addState(stateBefore, res);
     } catch (err) {
       message.error("Something went wrong while executing.");
     }
@@ -70,7 +70,6 @@ export const ExecuteQuery = ({
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
       console.log("Query ", res.read_json());
       message.success("Query was successfull!");
-      addState(stateBefore, JSON.parse(window.atob(res.read_json().ok)), "query");
     } catch (err) {
       message.error("Something went wrong while querying.");
     }
