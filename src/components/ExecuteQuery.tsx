@@ -20,22 +20,24 @@ export const ExecuteQuery = ({ payload, setPayload, setResponse, response}: IPro
     try {
       const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
       setResponse(res.read_json());
-      console.log("Execute", res.read_json());
+      window.Console.log("Execute success", res.read_json());
       message.success(
-        "Execution was successfull!"
+        "Execution was successful!"
       );
     } catch (err) {
       message.error("Something went wrong while executing.");
+      window.Console.log("Execute error", err);
     }
   };
   const query = () => {
     try {
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
-      console.log("Query ", res.read_json());
-      message.success("Query was successfull!");
+      window.Console.log("Query success", res.read_json());
+      message.success("Query was successful!");
     } catch (err) {
       message.error("Something went wrong while querying.");
+      window.Console.log("Query error", err);
     }
   };
   const onRunHandler = () => {
@@ -47,7 +49,7 @@ export const ExecuteQuery = ({ payload, setPayload, setResponse, response}: IPro
     }
   }
   const onDryRunHandler = () =>{
-    console.log('Have to add something here');
+    console.warn('Have to add something here');
   }
   React.useEffect(()=>{
     setPayload("");
@@ -66,7 +68,7 @@ export const ExecuteQuery = ({ payload, setPayload, setResponse, response}: IPro
         <TextBox
           payload={payload}
           setPayload={setPayload}
-          placeholder="Type your message here"
+          placeholder='{ "<name>": {} }'
         />
         <OutputRenderer response={response} />
       </div>
