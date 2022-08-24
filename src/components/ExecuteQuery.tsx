@@ -37,7 +37,6 @@ export const ExecuteQuery = ({
   currentTab,
   setCurrentTab,
 }: IProps) => {
-  console.log("All states", allStates);
   const { MOCK_ENV, MOCK_INFO } = Config;
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {

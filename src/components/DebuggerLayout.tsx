@@ -17,6 +17,8 @@ import { StateRenderer } from "./StateRenderer";
 import { ExecuteQuery, IState } from "./ExecuteQuery";
 import {ConsoleRenderer} from "./ConsoleRenderer";
 import StateStepper from "./StateStepper";
+import { CustomStepper } from "./CustomStepper";
+import { StateTraversal } from "./StateTraversal";
 
 const { Header, Content, Sider } = Layout;
 enum MENU_KEYS {
@@ -36,6 +38,19 @@ const DebuggerLayout = () => {
   const [currentState, setCurrentState] = useState(0);
   const [currentTab, setCurrentTab] = React.useState<string>("execute");
   const { MOCK_ENV, MOCK_INFO } = Config;
+
+   const addState = (stateBefore: any, res: any) => {
+    const stateObj: IState = {
+      chainStateBefore: stateBefore,
+      payload: payload,
+      currentTab: currentTab,
+      chainStateAfter: window.VM?.backend?.storage.dict["c3RhdGU="],
+      res: res,
+    };
+    setAllStates([...allStates, stateObj]);
+    setCurrentState(allStates.length);
+  };
+
   const items = [
     getItem(
       "Contract",
@@ -52,7 +67,9 @@ const DebuggerLayout = () => {
     if (menuKey === MENU_KEYS.INSTANTIATE) {
       try {
         const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
+        addState('','');
         message.success("CosmWasm VM successfully instantiated!");
+
         window.Console.log("*********", res);
 
       } catch (err) {
@@ -99,10 +116,13 @@ const DebuggerLayout = () => {
             padding: 0,
             height: "8vh",
             marginBottom: "10px",
+            lineHeight:'0px'
           }}
         >
-          <div style={{display:'flex',overflowX:'scroll' }}>
-            <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/>
+          <div style={{display:'flex',overflowX:'scroll', height:'100%', margin:'20px'}}>
+            <StateTraversal allStates={allStates} currentState = {currentState} setCurrentState={setCurrentState} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/>
+            {/* TODO: Remove the StateStepper completely. */}
+            {/* <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/> */}
           </div>
           
           </Header>

@@ -1,5 +1,4 @@
 import { Steps } from "antd";
-import { setPriority } from "os";
 import React, { useState } from "react";
 import { IState } from "./ExecuteQuery";
 const { Step } = Steps;
