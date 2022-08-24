@@ -20,7 +20,7 @@ const onClickHandler = (e:any) => {
     setCurrentState(index);
     setResponse(res);
     setPayload(payload);
-}
+}  
   return (
     <div
       style={{
@@ -56,7 +56,7 @@ const onClickHandler = (e:any) => {
           className="execute"
           onClick={onClickHandler}
         >
-          {state.chainStateBefore.length===0?"Instantiate":"Execute"}
+          {state.chainStateBefore.length===0?"Instantiate":Object.keys(JSON.parse(state.payload))[0]}
         </p>
       </div>
       <div
