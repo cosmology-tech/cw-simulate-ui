@@ -28,7 +28,7 @@ interface IProps {
   currentState:number;
 }
 export const BeforeAfterState = ({allStates, currentState}:IProps) => {
-  const beforeStateJSON = JSON.parse(window.atob(allStates[currentState].chainStateBefore));
+  const beforeStateJSON = allStates[currentState].chainStateBefore.length>0?JSON.parse(window.atob(allStates[currentState].chainStateBefore)):'';
   const afterStateJSON = JSON.parse(window.atob(allStates[currentState].chainStateAfter));
   return (
     <div

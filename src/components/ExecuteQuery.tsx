@@ -55,11 +55,13 @@ export const ExecuteQuery = ({
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
       setResponse(res.read_json());
-      addState(stateBefore, res);
-      window.Console.log("Execute success", res.read_json());
-      message.success(
-        "Execution was successful!"
-      );
+      if (!(res.read_json().error.length > 0)) {
+        addState(stateBefore, res);
+        window.Console.log("Execute success", res.read_json());
+        message.success("Execution was successful!");
+      } else {
+        throw res.read_json().error;
+      }
     } catch (err) {
       message.error("Something went wrong while executing.");
       window.Console.log("Execute error", err);
@@ -88,9 +90,9 @@ export const ExecuteQuery = ({
     console.log("Have to add something here");
   };
   React.useEffect(() => {
-    if (currentState === allStates.length-1) {
+    if (currentState === allStates.length - 1) {
       setPayload("");
-    } 
+    }
   }, [currentTab]);
 
   return (
