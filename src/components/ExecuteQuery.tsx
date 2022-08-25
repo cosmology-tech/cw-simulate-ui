@@ -55,11 +55,14 @@ export const ExecuteQuery = ({
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
       setResponse(res.read_json());
-      console.log("Execute", res.read_json());
-      message.success("Execution was successfull!");
       addState(stateBefore, res);
+      window.Console.log("Execute success", res.read_json());
+      message.success(
+        "Execution was successful!"
+      );
     } catch (err) {
       message.error("Something went wrong while executing.");
+      window.Console.log("Execute error", err);
     }
   };
   const query = () => {
@@ -67,10 +70,11 @@ export const ExecuteQuery = ({
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
-      console.log("Query ", res.read_json());
-      message.success("Query was successfull!");
+      window.Console.log("Query success", res.read_json());
+      message.success("Query was successful!");
     } catch (err) {
       message.error("Something went wrong while querying.");
+      window.Console.log("Query error", err);
     }
   };
   const onRunHandler = () => {
@@ -102,7 +106,7 @@ export const ExecuteQuery = ({
         <TextBox
           payload={payload}
           setPayload={setPayload}
-          placeholder="Type your message here"
+          placeholder='{ "<name>": {} }'
         />
         <OutputRenderer response={response} />
       </div>
