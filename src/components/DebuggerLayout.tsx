@@ -14,8 +14,11 @@ import { Config } from "../config";
 import { message } from "antd";
 import { getItem } from "utils";
 import { StateRenderer } from "./StateRenderer";
-import { ExecuteQuery } from "./ExecuteQuery";
+import { ExecuteQuery, IState } from "./ExecuteQuery";
 import {ConsoleRenderer} from "./ConsoleRenderer";
+import StateStepper from "./StateStepper";
+import { CustomStepper } from "./CustomStepper";
+import { StateTraversal } from "./StateTraversal";
 
 const { Header, Content, Sider } = Layout;
 enum MENU_KEYS {
@@ -31,7 +34,23 @@ const DebuggerLayout = () => {
   const [wasmBuffer, setWasmBuffer] = React.useState<ArrayBuffer | null>(null);
   const [payload, setPayload] = React.useState("");
   const [response, setResponse] = React.useState<JSON | undefined>();
+  const [allStates, setAllStates] = React.useState<IState[]>([]);
+  const [currentState, setCurrentState] = useState(0);
+  const [currentTab, setCurrentTab] = React.useState<string>("execute");
   const { MOCK_ENV, MOCK_INFO } = Config;
+
+   const addState = (stateBefore: any, res: any) => {
+    const stateObj: IState = {
+      chainStateBefore: stateBefore,
+      payload: payload,
+      currentTab: currentTab,
+      chainStateAfter: window.VM?.backend?.storage.dict["c3RhdGU="],
+      res: res,
+    };
+    setAllStates([...allStates, stateObj]);
+    setCurrentState(allStates.length);
+  };
+
   const items = [
     getItem(
       "Contract",
@@ -48,8 +67,11 @@ const DebuggerLayout = () => {
     if (menuKey === MENU_KEYS.INSTANTIATE) {
       try {
         const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
+        addState('','');
         message.success("CosmWasm VM successfully instantiated!");
+
         window.Console.log("*********", res);
+
       } catch (err) {
         message.error(
           "CosmWasm VM was not able to instantiate. Please check console for errors."
@@ -92,10 +114,18 @@ const DebuggerLayout = () => {
           className="site-layout-background"
           style={{
             padding: 0,
-            height: "6vh",
+            height: "8vh",
             marginBottom: "10px",
+            lineHeight:'0px'
           }}
-        />
+        >
+          <div style={{display:'flex',overflowX:'scroll', height:'100%', margin:'20px'}}>
+            <StateTraversal allStates={allStates} currentState = {currentState} setCurrentState={setCurrentState} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/>
+            {/* TODO: Remove the StateStepper completely. */}
+            {/* <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/> */}
+          </div>
+          
+          </Header>
         <Content
           style={{
             margin: "0 16px",
@@ -115,7 +145,7 @@ const DebuggerLayout = () => {
                 setWasmBuffer={setWasmBuffer}
               />
             ) : (
-               <ExecuteQuery payload={payload} setPayload={setPayload} response={response} setResponse={setResponse}/>
+               <ExecuteQuery payload={payload} setPayload={setPayload} response={response} setResponse={setResponse} setAllStates={setAllStates} allStates={allStates} setCurrentState={setCurrentState} currentState={currentState} currentTab={currentTab} setCurrentTab={setCurrentTab}/>
             )}
           </div>
         </Content>
@@ -127,7 +157,7 @@ const DebuggerLayout = () => {
             minHeight: "30vh",
           }}
         >
-          <StateRenderer isFileUploaded={isFileUploaded} />
+          <StateRenderer isFileUploaded={isFileUploaded} allStates={allStates} currentState={currentState}/>
         </Content>
         <Content
           className="site-layout-background"

@@ -8,22 +8,60 @@ import ExecuteQueryTab from "./ExecuteQueryTab";
 interface IProps {
   payload: string;
   setPayload: (val: string) => void;
-  response:JSON|undefined;
-  setResponse:(val:JSON|undefined)=>void;
+  response: JSON | undefined;
+  setResponse: (val: JSON | undefined) => void;
+  allStates: IState[];
+  setAllStates: (val: IState[]) => void;
+  currentState: number;
+  setCurrentState: (val: number) => void;
+  currentTab: string;
+  setCurrentTab: (val: string) => void;
 }
 
-export const ExecuteQuery = ({ payload, setPayload, setResponse, response}: IProps) => {
-
-  const [currentTab, setCurrentTab] = React.useState<string>("execute");
+export interface IState {
+  chainStateBefore: string;
+  payload: string;
+  currentTab: string;
+  chainStateAfter: string;
+  res: JSON | undefined;
+}
+export const ExecuteQuery = ({
+  payload,
+  setPayload,
+  setResponse,
+  response,
+  setAllStates,
+  allStates,
+  setCurrentState,
+  currentState,
+  currentTab,
+  setCurrentTab,
+}: IProps) => {
   const { MOCK_ENV, MOCK_INFO } = Config;
+  const addState = (stateBefore: any, res: any) => {
+    const stateObj: IState = {
+      chainStateBefore: stateBefore,
+      payload: payload,
+      currentTab: currentTab,
+      chainStateAfter: window.VM?.backend?.storage.dict["c3RhdGU="],
+      res: res.read_json(),
+    };
+    setAllStates([...allStates, stateObj]);
+    setCurrentState(allStates.length);
+  };
+
   const execute = () => {
     try {
+      const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
       setResponse(res.read_json());
-      window.Console.log("Execute success", res.read_json());
-      message.success(
-        "Execution was successful!"
-      );
+      if (!(res.read_json().error.length > 0)) {
+        addState(stateBefore, res);
+        window.Console.log("Execute success", res.read_json());
+        message.success("Execution was successful!");
+      } else {
+        throw res.read_json().error;
+      }
     } catch (err) {
       message.error("Something went wrong while executing.");
       window.Console.log("Execute error", err);
@@ -31,6 +69,7 @@ export const ExecuteQuery = ({ payload, setPayload, setResponse, response}: IPro
   };
   const query = () => {
     try {
+      const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
       window.Console.log("Query success", res.read_json());
@@ -41,23 +80,24 @@ export const ExecuteQuery = ({ payload, setPayload, setResponse, response}: IPro
     }
   };
   const onRunHandler = () => {
-    if(currentTab==='execute') {
-        execute();
+    if (currentTab === "execute") {
+      execute();
+    } else {
+      query();
     }
-    else {
-        query();
+  };
+  const onDryRunHandler = () => {
+    console.log("Have to add something here");
+  };
+  React.useEffect(() => {
+    if (currentState === allStates.length - 1) {
+      setPayload("");
     }
-  }
-  const onDryRunHandler = () =>{
-    console.warn('Have to add something here');
-  }
-  React.useEffect(()=>{
-    setPayload("");
-  },[currentTab])
+  }, [currentTab]);
 
   return (
     <div style={{ display: "flex", flexDirection: "column" }}>
-    <ExecuteQueryTab currentTab={currentTab} setCurrentTab={setCurrentTab}  />
+      <ExecuteQueryTab currentTab={currentTab} setCurrentTab={setCurrentTab} />
       <div
         style={{
           display: "flex",
@@ -75,7 +115,13 @@ export const ExecuteQuery = ({ payload, setPayload, setResponse, response}: IPro
       <div style={{ display: "flex", flexDirection: "row" }}>
         {/* TODO: Enable Dry Run */}
         {/* <Button style={{ margin: 10 }} onClick={onDryRunHandler} disabled>Dry-Run</Button> */}
-        <Button style={{ margin: 10 }} onClick={onRunHandler} disabled={!payload.length}>Run</Button>
+        <Button
+          style={{ margin: 10 }}
+          onClick={onRunHandler}
+          disabled={!payload.length}
+        >
+          Run
+        </Button>
       </div>
     </div>
   );
