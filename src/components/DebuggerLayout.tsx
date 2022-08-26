@@ -165,7 +165,7 @@ const DebuggerLayout = () => {
             minHeight: "30vh",
           }}
         >
-            <StateRenderer isFileUploaded={isFileUploaded} allStates={allStates} currentState={currentState} />
+            <StateRenderer isFileUploaded={isFileUploaded} allStates={allStates} currentStateNumber={currentState} />
         </Content>
         <Content
           className="site-layout-background"
