@@ -5,15 +5,15 @@ import {
   DatabaseOutlined,
   SwapOutlined,
 } from "@ant-design/icons";
-import {Layout, Menu } from "antd";
-import React, { useState } from "react";
+import {Layout, Menu} from "antd";
+import React, {useState} from "react";
 import FileUpload from "./FileUpload";
 import "antd/dist/antd.min.css";
 import "../index.css";
-import { Config } from "../config";
-import { message } from "antd";
-import { getItem } from "utils";
-import { StateRenderer } from "./StateRenderer";
+import {Config} from "../config";
+import {message} from "antd";
+import {getItem} from "utils";
+import {StateRenderer} from "./StateRenderer";
 import {ExecuteQuery, IState} from "./ExecuteQuery";
 import {ConsoleRenderer} from "./ConsoleRenderer";
 import StateStepper from "./StateStepper";
@@ -37,7 +37,7 @@ const DebuggerLayout = () => {
   const [allStates, setAllStates] = React.useState<IState[]>([]);
   const [currentState, setCurrentState] = useState(0);
   const [currentTab, setCurrentTab] = React.useState<string>("execute");
-  const { MOCK_ENV, MOCK_INFO } = Config;
+  const {MOCK_ENV, MOCK_INFO} = Config;
 
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
@@ -66,7 +66,7 @@ const DebuggerLayout = () => {
   const onItemSelectHandler = (menuKey: string) => {
     if (menuKey === MENU_KEYS.INSTANTIATE) {
       try {
-        const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
+        const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, {count: 20});
         addState('', '');
         message.success("CosmWasm VM successfully instantiated!");
 
@@ -78,7 +78,7 @@ const DebuggerLayout = () => {
         );
         window.Console.log(err);
       }
-    } 
+    }
     else if (menuKey === MENU_KEYS.RESET) {
       setIsFileUploaded(false);
       setWasmBuffer(null);
@@ -88,7 +88,7 @@ const DebuggerLayout = () => {
   return (
     <Layout className="layout"
       style={{
-        minHeight: "calc(100vh)",
+        height: "calc(100vh)",
       }}
     >
       <Header style={{backgroundColor: '#FC3E02'}}>
@@ -107,86 +107,89 @@ const DebuggerLayout = () => {
         />
       </Header>
       <Layout>
-      <Sider
-        collapsed={collapsed}
-        onCollapse={(value) => setCollapsed(value)}
+        <Sider
+          collapsed={collapsed}
+          onCollapse={(value) => setCollapsed(value)}
           style={{
-            color: "white"
-          }}
-      >
-        {isFileUploaded ? (
-          <Menu
-            theme="dark"
-            defaultSelectedKeys={["1"]}
-            mode="inline"
-            items={items}
-            onSelect={(menuItem) => onItemSelectHandler(menuItem.key)}
-          />
-        ) : (
-          "Menu will appear here"
-        )}
-      </Sider>
-      <Layout className="site-layout">
-            <Content style={{display: 'flex', overflowX: 'scroll', height: '100px', margin: '20px', padding: '0', marginBottom: "10px", lineHeight:'0px'}}>
-              <StateTraversal allStates={allStates} currentState={currentState} setCurrentState={setCurrentState} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab} />
-              {/* TODO: Remove the StateStepper completely. */}
-              {/* <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/> */}
-            </Content>
-
-        <Content
-            className="site-layout-content"
-          style={{
-              margin: "16px",
-            height: "auto",
+            color: "white",
+            backgroundColor: "#383838"
           }}
         >
-          <div
-            className="site-layout-background"
+          {isFileUploaded ? (
+            <Menu
+              theme="dark"
+              defaultSelectedKeys={["1"]}
+              mode="inline"
+              items={items}
+              onSelect={(menuItem) => onItemSelectHandler(menuItem.key)}
+            />
+          ) : (
+            "Menu will appear here"
+          )}
+        </Sider>
+        <Layout className="site-layout">
+          <Content style={{display: 'flex', overflowX: 'scroll', height: '100px', margin: '20px', padding: '0', marginBottom: "10px", lineHeight: '0px'}}>
+            <StateTraversal allStates={allStates} currentState={currentState} setCurrentState={setCurrentState} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab} />
+            {/* TODO: Remove the StateStepper completely. */}
+            {/* <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/> */}
+          </Content>
+
+          <Content
+            className="site-layout-content"
             style={{
-              padding: 10,
-              height: "100%",
+              margin: "16px",
+              height: "auto",
             }}
           >
-            {!isFileUploaded ? (
-              <FileUpload
-                setIsFileUploaded={setIsFileUploaded}
-                setWasmBuffer={setWasmBuffer}
-              />
-            ) : (
+            <div
+              className="site-layout-background"
+              style={{
+                padding: 10,
+                height: "100%",
+              }}
+            >
+              {!isFileUploaded ? (
+                <FileUpload
+                  setIsFileUploaded={setIsFileUploaded}
+                  setWasmBuffer={setWasmBuffer}
+                />
+              ) : (
                 <ExecuteQuery payload={payload} setPayload={setPayload} response={response} setResponse={setResponse} setAllStates={setAllStates} allStates={allStates} setCurrentState={setCurrentState} currentState={currentState} currentTab={currentTab} setCurrentTab={setCurrentTab} />
-            )}
-          </div>
-        </Content>
-        <Content
-          className="site-layout-background"
-          style={{
-            margin: "12px 16px",
-            padding: 24,
-            minHeight: "30vh",
-          }}
-        >
+              )}
+            </div>
+          </Content>
+          <Content
+            className="site-layout-background"
+            style={{
+              margin: "12px 16px",
+              padding: 24,
+              minHeight: "30vh",
+            }}
+          >
             <StateRenderer isFileUploaded={isFileUploaded} allStates={allStates} currentStateNumber={currentState} />
-        </Content>
-        <Content
-          className="site-layout-background"
-          style={{
-            margin: "12px 16px",
-            padding: 24,
-            minHeight: "18vh",
-            maxHeight:'24vh',
-            background: "rgb(16 15 15)",
-            color: "white",
-            overflow:"scroll"
-          }}
-        >
-          <ConsoleRenderer logs={window.Console.logs}></ConsoleRenderer>
-        </Content>
+          </Content>
+          <Content
+            className="site-layout-background"
+            style={{
+              margin: "12px 16px",
+              padding: 24,
+              minHeight: "18vh",
+              maxHeight: '24vh',
+              background: "rgb(16 15 15)",
+              color: "white",
+              overflow: "scroll"
+            }}
+          >
+            <ConsoleRenderer logs={window.Console.logs}></ConsoleRenderer>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
       <Footer style={{backgroundColor: '#1E1E1E'}} className='footer'>
-        <h4>©Terran One All Rights Reserved.</h4>
-        <div>447 Broadway 2nd Floor Suite #229<br />
-          10013 - New York (NY) US</div>
+        <div style={{display: 'flex', justifyContent: "space-between"}}>
+          <div>©Terran One All Rights Reserved.</div>
+          <div>447 Broadway 2nd Floor Suite #229<br />
+            10013 - New York (NY) US</div>
+        </div>
       </Footer>
     </Layout>
   );
