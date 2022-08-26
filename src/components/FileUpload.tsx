@@ -3,7 +3,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import { message, Upload } from "antd";
 import type { UploadProps } from "antd";
 import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
-import {IBackend, VMInstance, BasicBackendApi, BasicKVStorage, BasicQuerier} from "@terran-one/cosmwasm-vm-js";
+import {IBackend, VMInstance, BasicBackendApi, BasicKVIterStorage, BasicQuerier} from "@terran-one/cosmwasm-vm-js";
 
 const { Dragger } = Upload;
 
@@ -15,7 +15,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
 
   const backend: IBackend = {
     backend_api: new BasicBackendApi(),
-    storage: new BasicKVStorage(),
+    storage: new BasicKVIterStorage(),
     querier: new BasicQuerier(),
   };
 
