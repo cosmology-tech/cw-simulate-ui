@@ -4,6 +4,7 @@ declare global {
   interface Window {
       VM: any;
       Console: any;
+      enableMemory: boolean;
   }
 }
 window.Console ||= {};
