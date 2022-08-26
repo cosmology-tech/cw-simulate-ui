@@ -14,7 +14,7 @@ const StateMemoryTab = ({ currentTab, setCurrentTab }: IProps) => {
     <div style={{ display: "flex", marginLeft: 10 }}>
       <Tabs defaultActiveKey={currentTab} onChange={onChange}>
         <TabPane tab="State" key="state" />
-        {/* <TabPane tab="Memory" key="memory" /> */}
+        <TabPane tab="Memory" key="memory" />
       </Tabs>
     </div>
   );
