@@ -1,5 +1,4 @@
 import DebuggerLayout from './components/DebuggerLayout';
-import './App.css';
 declare global {
   interface Window {
       VM: any;
@@ -13,7 +12,9 @@ window.Console.logs = [];
 
 function App() {
   return (
-    <DebuggerLayout/>
+    <div className="App">
+      <DebuggerLayout/>
+    </div>
   );
 }
 
