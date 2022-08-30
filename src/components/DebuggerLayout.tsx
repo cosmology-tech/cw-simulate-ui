@@ -88,7 +88,7 @@ const DebuggerLayout = () => {
   return (
     <Layout className="layout"
       style={{
-        height: "calc(100vh)",
+        minHeight: "calc(100vh)",
       }}
     >
       <Header style={{backgroundColor: '#FC3E02'}}>
@@ -111,8 +111,7 @@ const DebuggerLayout = () => {
           collapsed={collapsed}
           onCollapse={(value) => setCollapsed(value)}
           style={{
-            color: "white",
-            backgroundColor: "#383838"
+            color: "white"
           }}
         >
           {isFileUploaded ? (
@@ -128,11 +127,11 @@ const DebuggerLayout = () => {
           )}
         </Sider>
         <Layout className="site-layout">
-          <Content style={{display: 'flex', overflowX: 'scroll', height: '100px', margin: '20px', padding: '0', marginBottom: "10px", lineHeight: '0px'}}>
-            <StateTraversal allStates={allStates} currentState={currentState} setCurrentState={setCurrentState} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab} />
-            {/* TODO: Remove the StateStepper completely. */}
-            {/* <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/> */}
-          </Content>
+            <Content style={{display: 'flex', overflowX: 'scroll', height: '100px', margin: '20px', padding: '0', marginBottom: "10px", lineHeight:'0px'}}>
+              <StateTraversal allStates={allStates} currentState={currentState} setCurrentState={setCurrentState} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab} />
+              {/* TODO: Remove the StateStepper completely. */}
+              {/* <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/> */}
+            </Content>
 
           <Content
             className="site-layout-content"
@@ -166,7 +165,7 @@ const DebuggerLayout = () => {
               minHeight: "30vh",
             }}
           >
-            <StateRenderer isFileUploaded={isFileUploaded} allStates={allStates} currentStateNumber={currentState} />
+            <StateRenderer isFileUploaded={isFileUploaded} allStates={allStates} currentState={currentState} />
           </Content>
           <Content
             className="site-layout-background"
@@ -185,11 +184,9 @@ const DebuggerLayout = () => {
         </Layout>
       </Layout>
       <Footer style={{backgroundColor: '#1E1E1E'}} className='footer'>
-        <div style={{display: 'flex', justifyContent: "space-between"}}>
-          <div>©Terran One All Rights Reserved.</div>
-          <div>447 Broadway 2nd Floor Suite #229<br />
-            10013 - New York (NY) US</div>
-        </div>
+        <h4>©Terran One All Rights Reserved.</h4>
+        <div>447 Broadway 2nd Floor Suite #229<br />
+          10013 - New York (NY) US</div>
       </Footer>
     </Layout>
   );
