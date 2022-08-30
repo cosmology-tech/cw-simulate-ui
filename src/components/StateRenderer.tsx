@@ -16,7 +16,9 @@ export const StateRenderer = ({
 }: IProps) => {
   const [currentTab, setCurrentTab] = React.useState("state");
   let currentObject = undefined;
+  window.Console.log(currentTab)
   if (currentTab === "state") {
+    window.Console.log("in state")
     const currentState = window.VM?.backend?.storage.dict['c3RhdGU='];
     currentObject = currentState === undefined ? undefined : JSON.parse(window.atob(currentState))
     return (
@@ -30,6 +32,7 @@ export const StateRenderer = ({
       </div>
     );
   } else if (window.enableMemory && currentTab === "memory") {
+    window.Console.log("in memory")
     const currentMemory = window.VM?.exports?.memory;//.dict['c3RhdGU='];
     currentObject = currentMemory;
     return (
