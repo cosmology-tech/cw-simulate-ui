@@ -55,7 +55,7 @@ export const ExecuteQuery = ({
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
       setResponse(res.read_json());
-      if (!(res.read_json().error.length > 0)) {
+      if (!(res.read_json().error && res.read_json().error.length > 0)) {
         addState(stateBefore, res);
         window.Console.log("Execute success", res.read_json());
         message.success("Execution was successful!");
