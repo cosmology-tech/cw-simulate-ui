@@ -1,6 +1,7 @@
 import React from "react";
 import { IState } from "./ExecuteQuery";
 import { OutputCard } from "./OutputCard";
+// import { StateDiff } from "./StateDiff";
 
 const theme = {
   scheme: "monokai",
@@ -24,12 +25,18 @@ const theme = {
 };
 
 interface IProps {
-  allStates:IState[];
-  currentState:number;
+  allStates: IState[];
+  currentState: number;
 }
-export const BeforeAfterState = ({allStates, currentState}:IProps) => {
-  const beforeStateJSON = allStates[currentState].chainStateBefore.length>0?JSON.parse(window.atob(allStates[currentState].chainStateBefore)):'';
-  const afterStateJSON = JSON.parse(window.atob(allStates[currentState].chainStateAfter));
+export const BeforeAfterState = ({ allStates, currentState }: IProps) => {
+  const [checked, setChecked] = React.useState(false);
+  const beforeStateJSON =
+    allStates[currentState].chainStateBefore.length > 0
+      ? JSON.parse(window.atob(allStates[currentState].chainStateBefore))
+      : "";
+  const afterStateJSON = JSON.parse(
+    window.atob(allStates[currentState].chainStateAfter)
+  );
   return (
     <div
       style={{
@@ -38,7 +45,10 @@ export const BeforeAfterState = ({allStates, currentState}:IProps) => {
         justifyContent: "space-between",
       }}
     >
-      <OutputCard response={beforeStateJSON} placeholder="Your state will appear here" />
+      <OutputCard
+        response={beforeStateJSON}
+        placeholder="Your state will appear here"
+      />
       <OutputCard
         response={afterStateJSON}
         placeholder="Your state traversal will appear here."

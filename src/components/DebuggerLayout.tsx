@@ -83,6 +83,7 @@ const DebuggerLayout = () => {
       setIsFileUploaded(false);
       setWasmBuffer(null);
       setPayload("");
+      setAllStates([]);
     }
   };
   return (
