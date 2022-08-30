@@ -23,8 +23,8 @@ export const StateRenderer = ({
       <div style={{display: "flex", flexDirection: "column"}}>
         <StateMemoryTab currentTab={currentTab} setCurrentTab={setCurrentTab} />
         {
-          isFileUploaded && allStates && allStates.length - 1 > 0 && allStates.length - 1 !== currentStateNumber ?
-            <BeforeAfterState allStates={allStates} currentState={currentStateNumber} /> :
+          isFileUploaded && allStates && allStates.length - 1 > 0 && allStates.length - 1 !== currentState ?
+            <BeforeAfterState allStates={allStates} currentState={currentState} /> :
             <OutputCard response={currentObject} placeholder="Your state will appear here." />
         }
       </div>
