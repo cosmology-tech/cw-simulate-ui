@@ -120,7 +120,7 @@ const DebuggerLayout = () => {
             lineHeight:'0px'
           }}
         >
-          <div style={{display:'flex',overflowX:'scroll', height:'100%', margin:'20px'}}>
+          <div style={{display:'flex',overflowX:'scroll', height:'100%', marginLeft:'10px',alignItems:'center', padding:'10px'}}>
             <StateTraversal allStates={allStates} currentState = {currentState} setCurrentState={setCurrentState} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/>
             {/* TODO: Remove the StateStepper completely. */}
             {/* <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/> */}

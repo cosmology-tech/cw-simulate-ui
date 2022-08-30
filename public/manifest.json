@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "CW Debug",
+  "name": "CW Debugger",
   "icons": [
     {
       "src": "favicon.ico",
