@@ -26,7 +26,7 @@ const onClickHandler = (e:any) => {
       style={{
         display: "flex",
         alignItems: "center",
-        height: "40%",
+        height: "80%",
         width: "140px",
       }}
     >
