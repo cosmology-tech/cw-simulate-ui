@@ -1,4 +1,5 @@
 import DebuggerLayout from './components/DebuggerLayout';
+
 declare global {
   interface Window {
       VM: any;
@@ -9,7 +10,6 @@ window.Console ||= {};
 window.Console.log = function() { for(let message of arguments) { window.Console.logs.push(message); } };
 window.Console.logs = [];
 
-
 function App() {
   return (
     <div className="App">
@@ -17,6 +17,5 @@ function App() {
     </div>
   );
 }
-
 
 export default App;
