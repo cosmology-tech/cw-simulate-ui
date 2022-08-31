@@ -1,9 +1,9 @@
 import React from "react";
-import TextBox from "./TextBox";
 import { Button, message } from "antd";
 import { OutputRenderer } from "./OutputRenderer";
 import { Config } from "../config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
+import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
 
 interface IProps {
   payload: string;
@@ -105,11 +105,7 @@ export const ExecuteQuery = ({
           justifyContent: "space-between",
         }}
       >
-        <TextBox
-          payload={payload}
-          setPayload={setPayload}
-          placeholder='{ "<name>": {} }'
-        />
+        <JsonCodeMirrorEditor payload={payload} setPayload={setPayload} />
         <OutputRenderer response={response} />
       </div>
       <div style={{ display: "flex", flexDirection: "row" }}>
