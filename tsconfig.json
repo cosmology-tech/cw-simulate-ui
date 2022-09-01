@@ -23,7 +23,6 @@
     "jsx": "preserve"
   },
   "include": [
-    "src",
-    "public/service-worker.js"
+    "src"
   ]
 }

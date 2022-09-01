@@ -1,7 +1,5 @@
 import React from 'react';
 import { Card } from 'antd';
-import { JSONTree } from 'react-json-tree';
-import { Typography } from "antd";
 import ReactJsonViewCompare from 'react-json-view-compare';
 
 const theme = {
@@ -36,5 +34,3 @@ export const StateDiff = ({beforeStateJSON,afterStateJSON }:IProps) => {
     </Card>
     )
 }
-
-{/* <ReactJsonViewCompare oldData={oldData} newData={newData} /> */}
