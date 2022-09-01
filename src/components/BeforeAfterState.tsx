@@ -1,7 +1,7 @@
 import React from "react";
 import { IState } from "./ExecuteQuery";
 import { OutputCard } from "./OutputCard";
-// import { StateDiff } from "./StateDiff";
+import { StateDiff } from "./StateDiff";
 
 const theme = {
   scheme: "monokai",
@@ -27,8 +27,9 @@ const theme = {
 interface IProps {
   allStates: IState[];
   currentState: number;
+  isChecked: boolean;
 }
-export const BeforeAfterState = ({ allStates, currentState }: IProps) => {
+export const BeforeAfterState = ({ allStates, currentState, isChecked }: IProps) => {
   const [checked, setChecked] = React.useState(false);
   const beforeStateJSON =
     allStates[currentState].chainStateBefore.length > 0
@@ -47,12 +48,13 @@ export const BeforeAfterState = ({ allStates, currentState }: IProps) => {
     >
       <OutputCard
         response={beforeStateJSON}
-        placeholder="Your state will appear here"
+        placeholder="Your before state will appear here."
       />
-      <OutputCard
+      {!isChecked?<OutputCard
         response={afterStateJSON}
-        placeholder="Your state traversal will appear here."
-      />
+        placeholder="Your after state will appear here."
+      />:<StateDiff beforeStateJSON={beforeStateJSON} afterStateJSON={afterStateJSON} />
+      }
     </div>
   );
 };

@@ -12,7 +12,7 @@ import "antd/dist/antd.min.css";
 import "../index.css";
 import { Config } from "../config";
 import { message } from "antd";
-import { getItem } from "utils";
+import { getItem } from "../utils";
 import { StateRenderer } from "./StateRenderer";
 import { ExecuteQuery, IState } from "./ExecuteQuery";
 import {ConsoleRenderer} from "./ConsoleRenderer";
@@ -69,7 +69,6 @@ const DebuggerLayout = () => {
         const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
         addState('','');
         message.success("CosmWasm VM successfully instantiated!");
-
         window.Console.log("*********", res);
 
       } catch (err) {
@@ -78,7 +77,7 @@ const DebuggerLayout = () => {
         );
         window.Console.log(err);
       }
-    } 
+    }
     else if (menuKey === MENU_KEYS.RESET) {
       setIsFileUploaded(false);
       setWasmBuffer(null);
