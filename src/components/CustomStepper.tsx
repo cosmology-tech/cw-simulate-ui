@@ -22,10 +22,8 @@ export const CustomStepper = ({
 }: IProps) => {
   const onClickHandler = (e: any) => {
     const { currentTab, res, payload } = state;
-    console.log('*******', index);
-    console.log(currentTab, res, payload);
     setCurrentTab(currentTab);
-    setCurrentState(index);
+    setCurrentState(index-1);
     setResponse(res);
     setPayload(payload);
   };

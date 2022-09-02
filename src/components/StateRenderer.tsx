@@ -17,13 +17,12 @@ export const StateRenderer = ({
   const [isChecked, setIsChecked] = React.useState(false);
   const blockState = window.VM?.backend?.storage.dict['c3RhdGU='];
   const currentJSON  = blockState===undefined?undefined:JSON.parse(window.atob(blockState));
-  const isStateTraversed = isFileUploaded && allStates && allStates.length-1>0 ;
-  //&& allStates.length-1!==currentState
+  const isStateTraversed = isFileUploaded && allStates && allStates.length-1>0 && allStates.length-1!==currentState ;
   return (
       <div style={{ display: "flex", flexDirection: "column" }}>
         <StateMemoryTab currentTab={currentTab} setCurrentTab={setCurrentTab} isChecked={isChecked} setIsChecked={setIsChecked} isStateTraversed={isStateTraversed}/>
        {
-      isStateTraversed ?<BeforeAfterState allStates={allStates} currentState={currentState} isChecked={isChecked}/>:
+      isStateTraversed ?<BeforeAfterState allStates={allStates} currentState={currentState+1} isChecked={isChecked}/>:
         <OutputCard response={currentJSON} placeholder="Your state will appear here."/>
        }
       </div>
