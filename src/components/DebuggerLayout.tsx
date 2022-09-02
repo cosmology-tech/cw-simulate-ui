@@ -5,7 +5,7 @@ import {
   DatabaseOutlined,
   SwapOutlined,
 } from "@ant-design/icons";
-import {Layout, Menu } from "antd";
+import { Layout, Menu, Typography } from "antd";
 import React, { useState } from "react";
 import FileUpload from "./FileUpload";
 import "antd/dist/antd.min.css";
@@ -15,10 +15,9 @@ import { message } from "antd";
 import { getItem } from "../utils";
 import { StateRenderer } from "./StateRenderer";
 import { ExecuteQuery, IState } from "./ExecuteQuery";
-import {ConsoleRenderer} from "./ConsoleRenderer";
-import StateStepper from "./StateStepper";
-import { CustomStepper } from "./CustomStepper";
+import { ConsoleRenderer } from "./ConsoleRenderer";
 import { StateTraversal } from "./StateTraversal";
+import { Instantiate } from "./Instantiate";
 
 const { Header, Content, Sider } = Layout;
 enum MENU_KEYS {
@@ -37,9 +36,10 @@ const DebuggerLayout = () => {
   const [allStates, setAllStates] = React.useState<IState[]>([]);
   const [currentState, setCurrentState] = useState(0);
   const [currentTab, setCurrentTab] = React.useState<string>("execute");
+  const [isInstantiated, setIsInstantiated] = React.useState<boolean>(false);
   const { MOCK_ENV, MOCK_INFO } = Config;
 
-   const addState = (stateBefore: any, res: any) => {
+  const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
       payload: payload,
@@ -52,37 +52,31 @@ const DebuggerLayout = () => {
   };
 
   const items = [
-    getItem(
-      "Contract",
-      MENU_KEYS.CONTRACT,
-      <CheckCircleOutlined />,
-      [
-        getItem("Instantiate", MENU_KEYS.INSTANTIATE, <PlayCircleOutlined />),
-      ],
-      !isFileUploaded
-    ),
+    getItem("Contract", MENU_KEYS.CONTRACT, <CheckCircleOutlined />),
     getItem("Reset", MENU_KEYS.RESET, <ReloadOutlined />),
   ];
-  const onItemSelectHandler = (menuKey: string) => {
-    if (menuKey === MENU_KEYS.INSTANTIATE) {
-      try {
-        const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
-        addState('','');
-        message.success("CosmWasm VM successfully instantiated!");
-        window.Console.log("*********", res);
 
-      } catch (err) {
-        message.error(
-          "CosmWasm VM was not able to instantiate. Please check console for errors."
-        );
-        window.Console.log(err);
-      }
+  const onInstantiateClickHandler = () => {
+    try {
+      const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
+      addState("", "");
+      setIsInstantiated(true);
+      message.success("CosmWasm VM successfully instantiated!");
+      window.Console.log("*********", res);
+    } catch (err) {
+      message.error(
+        "CosmWasm VM was not able to instantiate. Please check console for errors."
+      );
+      window.Console.log(err);
     }
-    else if (menuKey === MENU_KEYS.RESET) {
+  };
+  const onItemSelectHandler = (menuKey: string) => {
+    if (menuKey === MENU_KEYS.RESET) {
       setIsFileUploaded(false);
       setWasmBuffer(null);
       setPayload("");
       setAllStates([]);
+      setIsInstantiated(false);
     }
   };
   return (
@@ -116,16 +110,29 @@ const DebuggerLayout = () => {
             padding: 0,
             height: "8vh",
             marginBottom: "10px",
-            lineHeight:'0px'
+            lineHeight: "0px",
           }}
         >
-          <div style={{display:'flex',overflowX:'scroll', height:'100%', marginLeft:'10px',alignItems:'center', padding:'10px'}}>
-            <StateTraversal allStates={allStates} currentState = {currentState} setCurrentState={setCurrentState} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/>
-            {/* TODO: Remove the StateStepper completely. */}
-            {/* <StateStepper currentState = {currentState} setCurrentState={setCurrentState} allStates={allStates} setPayload={setPayload} setResponse={setResponse} setCurrentTab={setCurrentTab}/> */}
+          <div
+            style={{
+              display: "flex",
+              overflowX: "scroll",
+              height: "100%",
+              marginLeft: "10px",
+              alignItems: "center",
+              padding: "10px",
+            }}
+          >
+            <StateTraversal
+              allStates={allStates}
+              currentState={currentState}
+              setCurrentState={setCurrentState}
+              setPayload={setPayload}
+              setResponse={setResponse}
+              setCurrentTab={setCurrentTab}
+            />
           </div>
-          
-          </Header>
+        </Header>
         <Content
           style={{
             margin: "0 16px",
@@ -144,8 +151,23 @@ const DebuggerLayout = () => {
                 setIsFileUploaded={setIsFileUploaded}
                 setWasmBuffer={setWasmBuffer}
               />
+            ) : isInstantiated ? (
+              <ExecuteQuery
+                payload={payload}
+                setPayload={setPayload}
+                response={response}
+                setResponse={setResponse}
+                setAllStates={setAllStates}
+                allStates={allStates}
+                setCurrentState={setCurrentState}
+                currentState={currentState}
+                currentTab={currentTab}
+                setCurrentTab={setCurrentTab}
+              />
             ) : (
-               <ExecuteQuery payload={payload} setPayload={setPayload} response={response} setResponse={setResponse} setAllStates={setAllStates} allStates={allStates} setCurrentState={setCurrentState} currentState={currentState} currentTab={currentTab} setCurrentTab={setCurrentTab}/>
+              <Instantiate
+                onInstantiateClickHandler={onInstantiateClickHandler}
+              />
             )}
           </div>
         </Content>
@@ -157,7 +179,11 @@ const DebuggerLayout = () => {
             minHeight: "30vh",
           }}
         >
-          <StateRenderer isFileUploaded={isFileUploaded} allStates={allStates} currentState={currentState}/>
+          <StateRenderer
+            isFileUploaded={isFileUploaded}
+            allStates={allStates}
+            currentState={currentState}
+          />
         </Content>
         <Content
           className="site-layout-background"
@@ -165,15 +191,14 @@ const DebuggerLayout = () => {
             margin: "12px 16px",
             padding: 24,
             minHeight: "18vh",
-            maxHeight:'24vh',
+            maxHeight: "24vh",
             background: "rgb(16 15 15)",
             color: "white",
-            overflow:"scroll"
+            overflow: "scroll",
           }}
         >
           <ConsoleRenderer logs={window.Console.logs}></ConsoleRenderer>
         </Content>
-       
       </Layout>
     </Layout>
   );

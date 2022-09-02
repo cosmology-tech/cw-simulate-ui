@@ -8,7 +8,7 @@ import {
   BasicKVIterStorage,
   BasicQuerier,
   IBackend,
-  VMInstance
+  VMInstance,
 } from "@terran-one/cosmwasm-vm-js";
 
 const { Dragger } = Upload;
@@ -17,8 +17,7 @@ interface IProps {
   setIsFileUploaded: (uploadStatus: boolean) => void;
   setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
-const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
-
+const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
   const backend: IBackend = {
     backend_api: new BasicBackendApi(),
     storage: new BasicKVIterStorage(),
@@ -27,7 +26,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
 
   // Custom function to store file
   const storeFile = (fileProps: RcCustomRequestOptions) => {
-    const {onSuccess, onError, file} = fileProps;
+    const { onSuccess, onError, file } = fileProps;
     window.Console.log(fileProps);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -56,7 +55,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
     maxCount: 1,
     customRequest: storeFile,
     onChange(info) {
-      const {status} = info.file;
+      const { status } = info.file;
       if (status !== "uploading") {
         window.Console.log(info.file, info.fileList);
       }

@@ -21,17 +21,19 @@ export const StateTraversal = ({
   return (
     <>
       {allStates.map((state: IState, index) => {
-        return <CustomStepper
-          state={state}
-          key={index}
-          index ={index}
-          currentState={currentState}
-          setCurrentState={setCurrentState}
-          setPayload={setPayload}
-          setResponse={setResponse}
-          setCurrentTab={setCurrentTab}
-        />
-})}
+        return (
+          <CustomStepper
+            state={state}
+            key={index}
+            index={index}
+            currentState={currentState}
+            setCurrentState={setCurrentState}
+            setPayload={setPayload}
+            setResponse={setResponse}
+            setCurrentTab={setCurrentTab}
+          />
+        );
+      })}
     </>
   );
 };
