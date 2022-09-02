@@ -1,27 +1,38 @@
-import {Typography} from "antd";
-import {json} from "stream/consumers";
-import {isNumberObject} from "util/types";
+import { Typography } from "antd";
+import { json } from "stream/consumers";
+import { isNumberObject } from "util/types";
 
 interface IProps {
-    logs: string[];
+  logs: string[];
 }
-export const ConsoleRenderer = ({logs}: IProps) => {
+export const ConsoleRenderer = ({ logs }: IProps) => {
+  const renderedLogs = [];
 
-    const renderedLogs = [];
-
-    for (let i = 0; i < logs.length; i++){
-        let log = logs[i];
-        if (typeof(log) != "object") {
-            renderedLogs.push(<li style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}} key={i}>{log}</li>);
-        } else {
-            renderedLogs.push(<li style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}} key={i}>{JSON.stringify(log)}</li>);
-        }
+  for (let i = 0; i < logs.length; i++) {
+    let log = logs[i];
+    if (typeof log != "object") {
+      renderedLogs.push(
+        <li
+          style={{ fontFamily: "Monaco, Consolas, 'Courier New', monospace" }}
+          key={i}
+        >
+          {log}
+        </li>
+      );
+    } else {
+      renderedLogs.push(
+        <li
+          style={{ fontFamily: "Monaco, Consolas, 'Courier New', monospace" }}
+          key={i}
+        >
+          {JSON.stringify(log)}
+        </li>
+      );
     }
-    return (
-        <>
-            <ul>
-                {renderedLogs}
-            </ul>
-        </>
-    );
+  }
+  return (
+    <>
+      <ul>{renderedLogs}</ul>
+    </>
+  );
 };

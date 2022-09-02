@@ -1,17 +1,17 @@
 import { Button, Tooltip, Typography } from "antd";
 import React from "react";
-import { PlayCircleOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined } from "@ant-design/icons";
 
 interface IProps {
-    onInstantiateClickHandler:()=>void;
+  onInstantiateClickHandler: () => void;
 }
 
-export const Instantiate = ({onInstantiateClickHandler}:IProps) => {
+export const Instantiate = ({ onInstantiateClickHandler }: IProps) => {
   return (
     <div
       style={{
         display: "flex",
-        flexDirection:'column',
+        flexDirection: "column",
         height: "100%",
         justifyContent: "center",
         alignItems: "center",
@@ -26,7 +26,13 @@ export const Instantiate = ({onInstantiateClickHandler}:IProps) => {
       <div>
         {" "}
         <Tooltip title="Instantiate your contract">
-          <Button type="default" shape="circle" size="large" icon={<PlayCircleOutlined />} onClick={onInstantiateClickHandler}/>
+          <Button
+            type="default"
+            shape="circle"
+            size="large"
+            icon={<PlayCircleOutlined />}
+            onClick={onInstantiateClickHandler}
+          />
         </Tooltip>
       </div>
     </div>

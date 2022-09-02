@@ -12,10 +12,11 @@ const DiffSwitch = ({ isChecked, setIsChecked }: IProps) => {
     setIsChecked(checked);
   };
 
-  return <Tooltip placement="top" title="Compare states">
-        <Switch checked={isChecked} onChange={onChange} />
-      </Tooltip>
-     ;
+  return (
+    <Tooltip placement="top" title="Compare states">
+      <Switch checked={isChecked} onChange={onChange} />
+    </Tooltip>
+  );
 };
 
 export default DiffSwitch;

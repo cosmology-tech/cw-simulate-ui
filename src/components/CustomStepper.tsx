@@ -1,7 +1,7 @@
 import React from "react";
 import { Divider, Typography } from "antd";
 import { IState } from "./ExecuteQuery";
-import { PlayCircleOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined } from "@ant-design/icons";
 interface IProps {
   state: IState;
   index: number;
@@ -23,10 +23,11 @@ export const CustomStepper = ({
   const onClickHandler = (e: any) => {
     const { currentTab, res, payload } = state;
     setCurrentTab(currentTab);
-    setCurrentState(index-1);
+    setCurrentState(index - 1);
     setResponse(res);
     setPayload(payload);
   };
+  const highlight = index === currentState || currentState + 1 === index;
   return (
     <div
       style={{
@@ -41,7 +42,9 @@ export const CustomStepper = ({
           className="ant-steps-item-icon"
           style={{ marginRight: "0px", borderRadius: "100%" }}
         >
-          <span className="ant-steps-icon"><PlayCircleOutlined/></span>
+          <span className="ant-steps-icon">
+            <PlayCircleOutlined />
+          </span>
         </div>
       )}
       <div
@@ -60,8 +63,8 @@ export const CustomStepper = ({
         <p
           style={{ marginTop: "10px", fontSize: "0.8rem" }}
           id="1"
-          className={index>0?"execute":""}
-          onClick={index>0?onClickHandler:undefined}
+          className={index > 0 ? "execute" : ""}
+          onClick={index > 0 ? onClickHandler : undefined}
         >
           {state.chainStateBefore.length === 0
             ? "Instantiate"
@@ -70,9 +73,15 @@ export const CustomStepper = ({
       </div>
       <div
         className="ant-steps-item-icon"
-        style={{ marginRight: "0px", borderRadius: "100%" }}
+        style={{
+          marginRight: "0px",
+          borderRadius: "100%",
+          background: highlight ? "#ffb8c9" : undefined,
+        }}
       >
-        <span className="ant-steps-icon">{index}</span>
+        <span className="ant-steps-icon" style={{ color: "black" }}>
+          {index}
+        </span>
       </div>
     </div>
   );
