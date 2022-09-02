@@ -18,6 +18,7 @@ export const StateTraversal = ({
   setPayload,
   setCurrentTab,
 }: IProps) => {
+  console.log(allStates);
   return (
     <>
       {allStates.map((state: IState, index) => {

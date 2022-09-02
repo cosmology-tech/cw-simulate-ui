@@ -1,4 +1,3 @@
-import { Typography } from "antd";
 import React from "react";
 import {BeforeAfterState} from './BeforeAfterState';
 import StateMemoryTab from './StateMemoryTab';
@@ -18,7 +17,8 @@ export const StateRenderer = ({
   const [isChecked, setIsChecked] = React.useState(false);
   const blockState = window.VM?.backend?.storage.dict['c3RhdGU='];
   const currentJSON  = blockState===undefined?undefined:JSON.parse(window.atob(blockState));
-  const isStateTraversed = isFileUploaded && allStates && allStates.length-1>0 && allStates.length-1!==currentState;
+  const isStateTraversed = isFileUploaded && allStates && allStates.length-1>0 ;
+  //&& allStates.length-1!==currentState
   return (
       <div style={{ display: "flex", flexDirection: "column" }}>
         <StateMemoryTab currentTab={currentTab} setCurrentTab={setCurrentTab} isChecked={isChecked} setIsChecked={setIsChecked} isStateTraversed={isStateTraversed}/>

@@ -1,4 +1,4 @@
-import { Row, Tabs } from "antd";
+import {Tabs } from "antd";
 import React from "react";
 import DiffSwitch from "./DiffSwitch";
 const { TabPane } = Tabs;
@@ -10,7 +10,7 @@ interface IProps {
   isChecked:boolean;
   isStateTraversed:boolean;
 }
-const StateMemoryTab = ({ currentTab, setCurrentTab, isChecked,setIsChecked, isStateTraversed }: IProps) => {
+const  StateMemoryTab = ({ currentTab, setCurrentTab, isChecked,setIsChecked, isStateTraversed }: IProps) => {
   const onChange = (key: string) => {
     setCurrentTab(key);
   };
