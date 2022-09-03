@@ -1,7 +1,7 @@
 import React from "react";
 import { InboxOutlined } from "@ant-design/icons";
 import type { UploadProps } from "antd";
-import { message, Upload } from "antd";
+import { Upload } from "antd";
 import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
 import {
   BasicBackendApi,
@@ -10,14 +10,18 @@ import {
   IBackend,
   VMInstance,
 } from "@terran-one/cosmwasm-vm-js";
+import { useRecoilState } from "recoil";
+import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 
-const { Dragger } = Upload;
+const {Dragger} = Upload;
 
 interface IProps {
   setIsFileUploaded: (uploadStatus: boolean) => void;
   setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
-const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
+
+const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationAtom);
   const backend: IBackend = {
     backend_api: new BasicBackendApi(),
     storage: new BasicKVIterStorage(),
@@ -26,7 +30,7 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
 
   // Custom function to store file
   const storeFile = (fileProps: RcCustomRequestOptions) => {
-    const { onSuccess, onError, file } = fileProps;
+    const {onSuccess, onError, file} = fileProps;
     window.Console.log(fileProps);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -55,14 +59,24 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
     maxCount: 1,
     customRequest: storeFile,
     onChange(info) {
-      const { status } = info.file;
+      const {status} = info.file;
       if (status !== "uploading") {
         window.Console.log(info.file, info.fileList);
       }
       if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
+        setSnackbarNotification({
+          ...snackbarNotification,
+          severity: 'success',
+          open: true,
+          message: `${info.file.name} file uploaded successfully.`
+        });
       } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
+        setSnackbarNotification({
+          ...snackbarNotification,
+          severity: 'error',
+          open: true,
+          message: `${info.file.name} file upload failed.`
+        });
       }
     },
     onDrop(e) {
@@ -70,17 +84,17 @@ const FileUpload = ({ setIsFileUploaded, setWasmBuffer }: IProps) => {
     },
   };
   return (
-    <Dragger {...props}>
-      <p className="ant-upload-drag-icon">
-        <InboxOutlined />
-      </p>
-      <p className="ant-upload-text">
-        Click or drag file to this area to upload
-      </p>
-      <p className="ant-upload-hint">
-        Once you upload the file Menu Options on right will start appearing.
-      </p>
-    </Dragger>
+      <Dragger {...props}>
+        <p className="ant-upload-drag-icon">
+          <InboxOutlined/>
+        </p>
+        <p className="ant-upload-text">
+          Click or drag file to this area to upload
+        </p>
+        <p className="ant-upload-hint">
+          Once you upload the file Menu Options on right will start appearing.
+        </p>
+      </Dragger>
   );
 };
 

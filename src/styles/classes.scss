@@ -1,0 +1,144 @@
+@import url('https://fonts.cdnfonts.com/css/gotham');
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap');
+@import "./vars";
+
+@font-face {
+  font-family: "Gotham";
+  src: url('../fonts/Gotham-Book.woff') format('woff'),
+  url('../fonts/Gotham-Book.woff2') format('woff2'),
+  url('../fonts/Gotham-Book.ttf') format('truetype');
+  font-weight: normal;
+}
+//TEXT UNITS
+.hero_1,
+.hero_1_2,
+.hero_1_3,
+.title_1,
+.title_1_2,
+.title_2,
+.title_3,
+.title_4,
+.title_5,
+.caption_1,
+.body_1,
+.body_2,
+.body_3,
+.cta_1,
+.cta_2,
+.cta_3 {
+  font-family: "Gotham",
+  sans-serif;
+  font-style: normal;
+}
+
+.hero_1,
+.hero_1_2,
+.hero_1_3,
+.title_1,
+.title_1_2,
+.title_2,
+.title_3,
+.title_4,
+.title_5,
+.caption_1,
+.cta_1,
+.cta_2,
+.cta_3 {
+  font-weight: bold;
+}
+
+.cta_1,
+.cta_2,
+.cta_3 {
+  text-transform: uppercase;
+}
+
+.body_1,
+.body_2,
+.body_3 {
+  font-weight: 400;
+}
+
+.hero_1 {
+  font-size: 90px;
+  line-height: 96px;
+}
+
+.hero_1_2 {
+  font-size: 74px;
+  line-height: 80px;
+}
+
+.hero_1_3 {
+  font-size: 50px;
+  line-height: 56px;
+}
+
+.title_1 {
+  font-size: 38px;
+  line-height: 44px;
+}
+
+.title_1_2 {
+  font-size: 34px;
+  line-height: 40px;
+}
+
+.title_2 {
+  font-size: 24px;
+  line-height: 30px;
+}
+.title_3 {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.title_4 {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.title_5 {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.body_1 {
+  font-size: 18px;
+  line-height: 22px;
+}
+.body_2 {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.body_3 {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+.cta_1 {
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0.2px;
+}
+
+.cta_2 {
+  font-size: 12px;
+  line-height: 12px;
+  letter-spacing: 0.2px;
+}
+
+.cta_3 {
+  font-size: 10px;
+  line-height: 10px;
+  letter-spacing: 0.2px;
+}
+
+.special_1 {
+  font-family: "Source Code Pro", sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 14px;
+  letter-spacing: 0.2px;
+}

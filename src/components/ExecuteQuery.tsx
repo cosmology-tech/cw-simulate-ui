@@ -4,6 +4,9 @@ import { OutputRenderer } from "./OutputRenderer";
 import { Config } from "../config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
+import { useRecoilState } from "recoil";
+import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
+import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
 
 interface IProps {
   payload: string;
@@ -14,8 +17,6 @@ interface IProps {
   setAllStates: (val: IState[]) => void;
   currentState: number;
   setCurrentState: (val: number) => void;
-  currentTab: string;
-  setCurrentTab: (val: string) => void;
 }
 
 export interface IState {
@@ -25,24 +26,25 @@ export interface IState {
   chainStateAfter: string;
   res: JSON | undefined;
 }
+
 export const ExecuteQuery = ({
-  payload,
-  setPayload,
-  setResponse,
-  response,
-  setAllStates,
-  allStates,
-  setCurrentState,
-  currentState,
-  currentTab,
-  setCurrentTab,
-}: IProps) => {
-  const { MOCK_ENV, MOCK_INFO } = Config;
+                               payload,
+                               setPayload,
+                               setResponse,
+                               response,
+                               setAllStates,
+                               allStates,
+                               setCurrentState,
+                               currentState,
+                             }: IProps) => {
+  const {MOCK_ENV, MOCK_INFO} = Config;
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationAtom);
+  const [executeQueryTab, setExecuteQueryTab] = useRecoilState(executeQueryTabAtom);
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
       payload: payload,
-      currentTab: currentTab,
+      currentTab: executeQueryTab,
       chainStateAfter: window.VM?.backend?.storage.dict["c3RhdGU="],
       res: res.read_json(),
     };
@@ -58,12 +60,22 @@ export const ExecuteQuery = ({
       if (!(res.read_json().error && res.read_json().error.length > 0)) {
         addState(stateBefore, res);
         window.Console.log("Execute success", res.read_json());
-        message.success("Execution was successful!");
+        setSnackbarNotification({
+          ...snackbarNotification,
+          severity: 'success',
+          open: true,
+          message: "Execution was successful!"
+        });
       } else {
         throw res.read_json().error;
       }
     } catch (err) {
-      message.error("Something went wrong while executing.");
+      setSnackbarNotification({
+        ...snackbarNotification,
+        severity: 'error',
+        open: true,
+        message: "Something went wrong while executing."
+      });
       window.Console.log("Execute error", err);
     }
   };
@@ -73,14 +85,23 @@ export const ExecuteQuery = ({
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
       window.Console.log("Query success", res.read_json());
-      message.success("Query was successful!");
+      setSnackbarNotification({
+        ...snackbarNotification,
+        open: true,
+        message: "Query was successful!"
+      });
     } catch (err) {
-      message.error("Something went wrong while querying.");
+      setSnackbarNotification({
+        ...snackbarNotification,
+        severity: 'error',
+        open: true,
+        message: "Something went wrong while querying."
+      });
       window.Console.log("Query error", err);
     }
   };
   const onRunHandler = () => {
-    if (currentTab === "execute") {
+    if (executeQueryTab === "execute") {
       execute();
     } else {
       query();
@@ -93,32 +114,32 @@ export const ExecuteQuery = ({
     if (currentState === allStates.length - 1) {
       setPayload("");
     }
-  }, [currentTab]);
+  }, [executeQueryTab]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <ExecuteQueryTab currentTab={currentTab} setCurrentTab={setCurrentTab} />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <JsonCodeMirrorEditor payload={payload} setPayload={setPayload} />
-        <OutputRenderer response={response} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        {/* TODO: Enable Dry Run */}
-        {/* <Button style={{ margin: 10 }} onClick={onDryRunHandler} disabled>Dry-Run</Button> */}
-        <Button
-          style={{ margin: 10 }}
-          onClick={onRunHandler}
-          disabled={!payload.length}
+      <div style={{display: "flex", flexDirection: "column"}}>
+        <ExecuteQueryTab/>
+        <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+            }}
         >
-          Run
-        </Button>
+          <JsonCodeMirrorEditor payload={payload} setPayload={setPayload}/>
+          <OutputRenderer response={response}/>
+        </div>
+        <div style={{display: "flex", flexDirection: "row"}}>
+          {/* TODO: Enable Dry Run */}
+          {/* <Button style={{ margin: 10 }} onClick={onDryRunHandler} disabled>Dry-Run</Button> */}
+          <Button
+              style={{margin: 10}}
+              onClick={onRunHandler}
+              disabled={!payload.length}
+          >
+            Run
+          </Button>
+        </div>
       </div>
-    </div>
   );
 };
