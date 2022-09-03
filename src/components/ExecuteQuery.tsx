@@ -1,5 +1,4 @@
 import React from "react";
-import { Button } from "antd";
 import { OutputRenderer } from "./OutputRenderer";
 import { Config } from "../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
@@ -8,6 +7,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
 import consoleLogsAtom from "../atoms/consoleLogsAtom";
+import { Button } from "@mui/material";
 
 interface IProps {
   payload: string;
@@ -133,12 +133,8 @@ export const ExecuteQuery = ({
         </div>
         <div style={{display: "flex", flexDirection: "row"}}>
           {/* TODO: Enable Dry Run */}
-          {/* <Button style={{ margin: 10 }} onClick={onDryRunHandler} disabled>Dry-Run</Button> */}
-          <Button
-              style={{margin: 10}}
-              onClick={onRunHandler}
-              disabled={!payload.length}
-          >
+          <Button sx={{margin: 2}} variant={'contained'} onClick={onRunHandler}
+                  disabled={!payload.length}>
             Run
           </Button>
         </div>

@@ -68,7 +68,7 @@ const DebuggerLayout = () => {
         open: true,
         message: "CosmWasm VM successfully instantiated!"
       });
-      setConsoleLogs([...consoleLogs, "*********", res]);
+      setConsoleLogs([...consoleLogs, res]);
     } catch (err) {
       setSnackbarNotification({
         ...snackbarNotification,
