@@ -1,10 +1,10 @@
 import React from "react";
-import { Button, message } from "antd";
+import { Button } from "antd";
 import { OutputRenderer } from "./OutputRenderer";
-import { Config } from "../config";
+import { Config } from "../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
 
@@ -39,7 +39,7 @@ export const ExecuteQuery = ({
                              }: IProps) => {
   const {MOCK_ENV, MOCK_INFO} = Config;
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationAtom);
-  const [executeQueryTab, setExecuteQueryTab] = useRecoilState(executeQueryTabAtom);
+  const executeQueryTab = useRecoilValue(executeQueryTabAtom);
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,

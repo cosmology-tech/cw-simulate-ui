@@ -9,19 +9,13 @@ export const ConsoleRenderer = ({logs}: IProps) => {
     let log = logs[i];
     if (typeof log != "object") {
       renderedLogs.push(
-          <li
-              style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}}
-              key={i}
-          >
+          <li style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}} key={i}>
             {log}
           </li>
       );
     } else {
       renderedLogs.push(
-          <li
-              style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}}
-              key={i}
-          >
+          <li style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}} key={i}>
             {JSON.stringify(log)}
           </li>
       );

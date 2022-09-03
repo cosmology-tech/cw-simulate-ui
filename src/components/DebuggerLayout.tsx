@@ -1,17 +1,10 @@
-import {
-  ReloadOutlined,
-  CheckCircleOutlined,
-  PlayCircleOutlined,
-  DatabaseOutlined,
-  SwapOutlined,
-} from "@ant-design/icons";
-import { Layout, Menu, Typography } from "antd";
+import { CheckCircleOutlined, ReloadOutlined, } from "@ant-design/icons";
+import { Layout, Menu } from "antd";
 import React, { useState } from "react";
 import FileUpload from "./FileUpload";
 import "antd/dist/antd.min.css";
 import "../index.css";
-import { Config } from "../config";
-import { message } from "antd";
+import { Config } from "../configs/config";
 import { getItem } from "../utils";
 import { StateRenderer } from "./StateRenderer";
 import { ExecuteQuery, IState } from "./ExecuteQuery";

@@ -1,7 +1,8 @@
-import { Card } from "antd";
 import React from "react";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
+import { Box } from "@mui/material";
+import { GREY_6 } from "../configs/variables";
 
 interface IProps {
   payload: string;
@@ -16,10 +17,8 @@ export const JsonCodeMirrorEditor: React.FC<IProps> = ({
     json: "Enter your JSON here",
   };
   return (
-    <Card
-      style={{ width: "100%", margin: 10, overflow: "scroll" }}
-      bordered
-      bodyStyle={{ padding: "10" }}
+    <Box
+      sx={{ width: "100%", margin: 2, overflow: "scroll", padding: 2, border: `1px solid ${GREY_6}` }}
     >
       <ReactCodeMirror
         value={payload}
@@ -27,6 +26,6 @@ export const JsonCodeMirrorEditor: React.FC<IProps> = ({
         onChange={(val: string) => setPayload(val)}
         placeholder={JSON.stringify(placeholder)}
       />
-    </Card>
+    </Box>
   );
 };

@@ -1,7 +1,8 @@
 import React from "react";
-import { Divider, Typography } from "antd";
+import { Divider } from "antd";
 import { IState } from "./ExecuteQuery";
 import { PlayCircleOutlined } from "@ant-design/icons";
+
 interface IProps {
   state: IState;
   index: number;
