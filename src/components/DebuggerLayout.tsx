@@ -15,6 +15,7 @@ import SnackbarNotification from "./SnackbarNotification";
 import { useRecoilState } from "recoil";
 import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
+import consoleLogsAtom from "../atoms/consoleLogsAtom";
 
 const {Header, Content, Sider} = Layout;
 
@@ -36,6 +37,7 @@ const DebuggerLayout = () => {
   const [executeQueryTab, setExecuteQueryTab] = useRecoilState(executeQueryTabAtom);
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationAtom);
   const [isInstantiated, setIsInstantiated] = React.useState<boolean>(false);
+  const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
   const {MOCK_ENV, MOCK_INFO} = Config;
 
   const addState = (stateBefore: any, res: any) => {
@@ -66,7 +68,7 @@ const DebuggerLayout = () => {
         open: true,
         message: "CosmWasm VM successfully instantiated!"
       });
-      window.Console.log("*********", res);
+      setConsoleLogs([...consoleLogs, "*********", res]);
     } catch (err) {
       setSnackbarNotification({
         ...snackbarNotification,
@@ -74,7 +76,7 @@ const DebuggerLayout = () => {
         open: true,
         message: "CosmWasm VM was not able to instantiate. Please check console for errors."
       });
-      window.Console.log(err);
+      setConsoleLogs([...consoleLogs, err]);
     }
   };
   const onItemSelectHandler = (menuKey: string) => {
@@ -203,7 +205,7 @@ const DebuggerLayout = () => {
                 overflow: "scroll",
               }}
           >
-            <ConsoleRenderer logs={window.Console.logs}></ConsoleRenderer>
+            <ConsoleRenderer logs={consoleLogs}></ConsoleRenderer>
           </Content>
         </Layout>
       </Layout>

@@ -10,6 +10,7 @@ const ExecuteQueryTab = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);
   };
+
   return (
       <div style={{display: "flex", marginLeft: 10}}>
         <TabContext value={tabValue}>

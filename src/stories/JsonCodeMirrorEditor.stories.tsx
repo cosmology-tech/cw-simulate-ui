@@ -1,4 +1,5 @@
 import { JsonCodeMirrorEditor } from "../components/JsonCodeMirrorEditor";
+import { Box } from "@mui/material";
 
 export default {
   title: "JsonCodeMirrorEditor",
@@ -12,4 +13,10 @@ export default {
   }
 }
 
-export const Default = (args: any) => <JsonCodeMirrorEditor {...args} />
+export const Default = (args: any) => {
+  return (
+      <Box sx={{maxWidth: "80%"}}>
+        <JsonCodeMirrorEditor {...args} />
+      </Box>
+  );
+}

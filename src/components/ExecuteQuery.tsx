@@ -7,6 +7,7 @@ import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
+import consoleLogsAtom from "../atoms/consoleLogsAtom";
 
 interface IProps {
   payload: string;
@@ -40,6 +41,7 @@ export const ExecuteQuery = ({
   const {MOCK_ENV, MOCK_INFO} = Config;
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationAtom);
   const executeQueryTab = useRecoilValue(executeQueryTabAtom);
+  const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
@@ -59,7 +61,7 @@ export const ExecuteQuery = ({
       setResponse(res.read_json());
       if (!(res.read_json().error && res.read_json().error.length > 0)) {
         addState(stateBefore, res);
-        window.Console.log("Execute success", res.read_json());
+        setConsoleLogs([...consoleLogs, "Execute success", res.read_json()]);
         setSnackbarNotification({
           ...snackbarNotification,
           severity: 'success',
@@ -76,7 +78,7 @@ export const ExecuteQuery = ({
         open: true,
         message: "Something went wrong while executing."
       });
-      window.Console.log("Execute error", err);
+      setConsoleLogs([...consoleLogs, "Execute error", err]);
     }
   };
   const query = () => {
@@ -84,7 +86,7 @@ export const ExecuteQuery = ({
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
-      window.Console.log("Query success", res.read_json());
+      setConsoleLogs([...consoleLogs, "Query success", res.read_json()]);
       setSnackbarNotification({
         ...snackbarNotification,
         open: true,
@@ -97,7 +99,7 @@ export const ExecuteQuery = ({
         open: true,
         message: "Something went wrong while querying."
       });
-      window.Console.log("Query error", err);
+      setConsoleLogs([...consoleLogs, "Query error", err]);
     }
   };
   const onRunHandler = () => {
