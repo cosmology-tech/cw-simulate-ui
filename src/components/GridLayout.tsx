@@ -17,6 +17,7 @@ import consoleLogsAtom from "../atoms/consoleLogsAtom";
 import { Config } from "../configs/config";
 import { StateRenderer } from "./StateRenderer";
 import { ConsoleRenderer } from "./ConsoleRenderer";
+import "../index.css";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",

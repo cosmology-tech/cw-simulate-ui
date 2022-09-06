@@ -35,7 +35,7 @@ export const CustomStepper = ({
         display: "flex",
         alignItems: "center",
         height: "80%",
-        width: "140px",
+        width: `${index === 0 ? "158px" : "140px"}`,
       }}
     >
       {index === 0 && (
@@ -61,12 +61,12 @@ export const CustomStepper = ({
           width: `${index > 0 ? "110px" : "96px"}`,
           justifyContent: "center",
           alignItems: "center",
-          paddingBottom: "10px",
+          // paddingBottom: "10px",
         }}
       >
         <Divider sx={{ background: "black", height: "1px", width: "100%" }}>
           <p
-            style={{ marginTop: "4px", fontSize: "0.8rem" }}
+            style={{ margin: "4px", fontSize: "0.8rem", padding: "2px" }}
             id="1"
             className={index > 0 ? "execute" : ""}
             onClick={index > 0 ? onClickHandler : undefined}
@@ -84,7 +84,7 @@ export const CustomStepper = ({
           background: highlight ? "#ffb8c9" : undefined,
           fontSize: "1.2rem",
           border: "1px solid",
-          width: "48px",
+          width: "44px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
