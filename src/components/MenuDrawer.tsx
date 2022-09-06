@@ -28,6 +28,7 @@ import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { IState } from "./ExecuteQuery";
 import GridLayout from "./GridLayout";
 import SnackbarNotification from "./SnackbarNotification";
+import { ORANGE_3 } from "../configs/variables";
 
 const drawerWidth = 240;
 
@@ -139,7 +140,7 @@ export default function MenuDrawer() {
   return (
     <Box sx={{display: "flex"}}>
       <CssBaseline/>
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" open={open} sx={{backgroundColor: ORANGE_3}}>
         <Toolbar>
           <IconButton
             color="inherit"

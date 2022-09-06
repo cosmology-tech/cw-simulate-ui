@@ -2,6 +2,7 @@ import React from "react";
 import { IState } from "./ExecuteQuery";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import { Divider, Typography } from "@mui/material";
+import { ORANGE_3 } from "../configs/variables";
 
 interface IProps {
   state: IState;
@@ -81,7 +82,7 @@ export const CustomStepper = ({
         style={{
           marginRight: "0px",
           borderRadius: "100%",
-          background: highlight ? "#ffb8c9" : undefined,
+          background: highlight ? ORANGE_3 : undefined,
           fontSize: "1.2rem",
           border: "1px solid",
           width: "44px",

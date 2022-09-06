@@ -8,9 +8,9 @@ declare global {
 
 function App() {
   return (
-      <div className="App">
-        <MenuDrawer/>
-      </div>
+    <div className="App">
+      <MenuDrawer/>
+    </div>
   );
 }
 

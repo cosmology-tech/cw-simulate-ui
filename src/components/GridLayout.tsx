@@ -97,27 +97,27 @@ export default function GridLayout({
       <Grid container spacing={2}>
         <Grid item xs={12}>
           {allStates.length > 0 && <Item
-          sx={{overflowX: "scroll", display: "flex", height: "10vh"}}>
-          <div
-            style={{
-              display: "flex",
-              height: "100%",
-              marginLeft: "10px",
-              alignItems: "center",
-              padding: "10px",
-              overflowX: "scroll",
-            }}
-          >
-            <StateTraversal
-              allStates={allStates}
-              currentState={currentState}
-              setCurrentState={setCurrentState}
-              setPayload={setPayload}
-              setResponse={setResponse}
-              setCurrentTab={setExecuteQueryTab}
-            />
-          </div>
-        </Item>}
+            sx={{overflowX: "scroll", display: "flex", height: "10vh"}}>
+            <div
+              style={{
+                display: "flex",
+                height: "100%",
+                marginLeft: "10px",
+                alignItems: "center",
+                padding: "10px",
+                overflowX: "scroll",
+              }}
+            >
+              <StateTraversal
+                allStates={allStates}
+                currentState={currentState}
+                setCurrentState={setCurrentState}
+                setPayload={setPayload}
+                setResponse={setResponse}
+                setCurrentTab={setExecuteQueryTab}
+              />
+            </div>
+          </Item>}
         </Grid>
         <Grid item xs={12}>
           <Item sx={{height: "40vh"}}>
