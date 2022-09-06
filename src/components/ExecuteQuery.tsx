@@ -61,7 +61,7 @@ export const ExecuteQuery = ({
       setResponse(res.read_json());
       if (!(res.read_json().error && res.read_json().error.length > 0)) {
         addState(stateBefore, res);
-        setConsoleLogs([...consoleLogs, "Execute success", res.read_json()]);
+        setConsoleLogs([...consoleLogs, res.read_json()]);
         setSnackbarNotification({
           ...snackbarNotification,
           severity: "success",
@@ -78,7 +78,7 @@ export const ExecuteQuery = ({
         open: true,
         message: "Something went wrong while executing.",
       });
-      setConsoleLogs([...consoleLogs, "Execute error", err]);
+      setConsoleLogs([...consoleLogs, err]);
     }
   };
   const query = () => {
@@ -86,7 +86,7 @@ export const ExecuteQuery = ({
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
-      setConsoleLogs([...consoleLogs, "Query success", res.read_json()]);
+      setConsoleLogs([...consoleLogs, res.read_json()]);
       setSnackbarNotification({
         ...snackbarNotification,
         open: true,
@@ -99,7 +99,7 @@ export const ExecuteQuery = ({
         open: true,
         message: "Something went wrong while querying.",
       });
-      setConsoleLogs([...consoleLogs, "Query error", err]);
+      setConsoleLogs([...consoleLogs, err]);
     }
   };
   const onRunHandler = () => {
