@@ -78,9 +78,5 @@
     "postcss-import": "^15.0.0",
     "prop-types": "^15.8.1",
     "webpack": "^5.74.0"
-  },
-  "engines": {
-    "npm": ">=7.0.0",
-    "node": ">=16.0.0"
   }
 }
