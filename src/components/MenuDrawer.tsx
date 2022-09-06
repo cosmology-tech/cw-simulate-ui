@@ -29,6 +29,7 @@ import { IState } from "./ExecuteQuery";
 import GridLayout from "./GridLayout";
 import SnackbarNotification from "./SnackbarNotification";
 import { ORANGE_3 } from "../configs/variables";
+import { Tooltip } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -174,25 +175,27 @@ export default function MenuDrawer() {
           <List>
             {["Contracts", "Reset"].map((text, index) => (
               <ListItem key={text} disablePadding sx={{display: "block"}}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                  onClick={index === 1 ? onResetClickHandler : undefined}
-                >
-                  <ListItemIcon
+                <Tooltip title={text} placement="right">
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
                     }}
+                    onClick={index === 1 ? onResetClickHandler : undefined}
                   >
-                    {index === 0 ? <TextSnippetIcon/> : <RestartAltIcon/>}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{opacity: open ? 1 : 0}}/>
-                </ListItemButton>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {index === 0 ? <TextSnippetIcon/> : <RestartAltIcon/>}
+                    </ListItemIcon>
+                    <ListItemText primary={text} sx={{opacity: open ? 1 : 0}}/>
+                  </ListItemButton>
+                </Tooltip>
               </ListItem>
             ))}
           </List>
