@@ -13,16 +13,19 @@ import {
 import { useRecoilState } from "recoil";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import consoleLogsAtom from "../atoms/consoleLogsAtom";
+import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 
 const {Dragger} = Upload;
 
 interface IProps {
-  setIsFileUploaded: (uploadStatus: boolean) => void;
   setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
 
-const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationAtom);
+const FileUpload = ({setWasmBuffer}: IProps) => {
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
+    snackbarNotificationAtom
+  );
+  const [_, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
   const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
   const backend: IBackend = {
     backend_api: new BasicBackendApi(),
@@ -68,16 +71,16 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
       if (status === "done") {
         setSnackbarNotification({
           ...snackbarNotification,
-          severity: 'success',
+          severity: "success",
           open: true,
-          message: `${info.file.name} file uploaded successfully.`
+          message: `${info.file.name} file uploaded successfully.`,
         });
       } else if (status === "error") {
         setSnackbarNotification({
           ...snackbarNotification,
-          severity: 'error',
+          severity: "error",
           open: true,
-          message: `${info.file.name} file upload failed.`
+          message: `${info.file.name} file upload failed.`,
         });
       }
     },
@@ -86,6 +89,14 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
     },
   };
   return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+      }}
+    >
       <Dragger {...props}>
         <p className="ant-upload-drag-icon">
           <InboxOutlined/>
@@ -97,6 +108,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
           Once you upload the file Menu Options on right will start appearing.
         </p>
       </Dragger>
+    </div>
   );
 };
 

@@ -3,11 +3,13 @@ import { BeforeAfterState } from "./BeforeAfterState";
 import StateMemoryTab from "./StateMemoryTab";
 import { OutputCard } from "./OutputCard";
 import { IState } from "./ExecuteQuery";
+
 interface IProps {
   isFileUploaded: boolean;
   allStates: IState[];
   currentState: number;
 }
+
 export const StateRenderer = ({
   isFileUploaded,
   allStates,
@@ -24,7 +26,7 @@ export const StateRenderer = ({
     allStates.length - 1 > 0 &&
     allStates.length - 1 !== currentState;
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div style={{display: "flex", flexDirection: "column"}}>
       <StateMemoryTab
         currentTab={currentTab}
         setCurrentTab={setCurrentTab}

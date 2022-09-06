@@ -8,10 +8,9 @@ import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
 import consoleLogsAtom from "../atoms/consoleLogsAtom";
 import { Button } from "@mui/material";
+import { payloadAtom } from "../atoms/payloadAtom";
 
 interface IProps {
-  payload: string;
-  setPayload: (val: string) => void;
   response: JSON | undefined;
   setResponse: (val: JSON | undefined) => void;
   allStates: IState[];
@@ -29,17 +28,18 @@ export interface IState {
 }
 
 export const ExecuteQuery = ({
-                               payload,
-                               setPayload,
-                               setResponse,
-                               response,
-                               setAllStates,
-                               allStates,
-                               setCurrentState,
-                               currentState,
-                             }: IProps) => {
+  setResponse,
+  response,
+  setAllStates,
+  allStates,
+  setCurrentState,
+  currentState,
+}: IProps) => {
   const {MOCK_ENV, MOCK_INFO} = Config;
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationAtom);
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
+    snackbarNotificationAtom
+  );
+  const [payload, setPayload] = useRecoilState(payloadAtom);
   const executeQueryTab = useRecoilValue(executeQueryTabAtom);
   const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
   const addState = (stateBefore: any, res: any) => {
@@ -64,9 +64,9 @@ export const ExecuteQuery = ({
         setConsoleLogs([...consoleLogs, "Execute success", res.read_json()]);
         setSnackbarNotification({
           ...snackbarNotification,
-          severity: 'success',
+          severity: "success",
           open: true,
-          message: "Execution was successful!"
+          message: "Execution was successful!",
         });
       } else {
         throw res.read_json().error;
@@ -74,9 +74,9 @@ export const ExecuteQuery = ({
     } catch (err) {
       setSnackbarNotification({
         ...snackbarNotification,
-        severity: 'error',
+        severity: "error",
         open: true,
-        message: "Something went wrong while executing."
+        message: "Something went wrong while executing.",
       });
       setConsoleLogs([...consoleLogs, "Execute error", err]);
     }
@@ -90,14 +90,14 @@ export const ExecuteQuery = ({
       setSnackbarNotification({
         ...snackbarNotification,
         open: true,
-        message: "Query was successful!"
+        message: "Query was successful!",
       });
     } catch (err) {
       setSnackbarNotification({
         ...snackbarNotification,
-        severity: 'error',
+        severity: "error",
         open: true,
-        message: "Something went wrong while querying."
+        message: "Something went wrong while querying.",
       });
       setConsoleLogs([...consoleLogs, "Query error", err]);
     }
@@ -119,25 +119,30 @@ export const ExecuteQuery = ({
   }, [executeQueryTab]);
 
   return (
-      <div style={{display: "flex", flexDirection: "column"}}>
-        <ExecuteQueryTab/>
-        <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-        >
-          <JsonCodeMirrorEditor payload={payload} setPayload={setPayload}/>
-          <OutputRenderer response={response}/>
-        </div>
-        <div style={{display: "flex", flexDirection: "row"}}>
-          {/* TODO: Enable Dry Run */}
-          <Button sx={{margin: 2}} variant={'contained'} onClick={onRunHandler}
-                  disabled={!payload.length}>
-            Run
-          </Button>
-        </div>
+    <div style={{display: "flex", flexDirection: "column"}}>
+      <ExecuteQueryTab/>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          textAlign: "left",
+        }}
+      >
+        <JsonCodeMirrorEditor/>
+        <OutputRenderer response={response}/>
       </div>
+      <div style={{display: "flex", flexDirection: "row"}}>
+        {/* TODO: Enable Dry Run */}
+        <Button
+          sx={{margin: 2}}
+          variant={"contained"}
+          onClick={onRunHandler}
+          disabled={!payload.length}
+        >
+          Run
+        </Button>
+      </div>
+    </div>
   );
 };
