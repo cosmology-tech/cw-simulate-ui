@@ -8,19 +8,22 @@ interface IProps {
   afterStateJSON: JSON | undefined | any;
 }
 
-export const StateDiff = ({beforeStateJSON, afterStateJSON}: IProps) => {
+export const StateDiff = ({ beforeStateJSON, afterStateJSON }: IProps) => {
   return (
-      <Box sx={{
+    <Box
+      sx={{
         width: "100%",
         margin: 2,
         overflow: "scroll",
         padding: 2,
-        border: `1px solid ${GREY_6}`
-      }}>
-        <ReactJsonViewCompare
-            oldData={beforeStateJSON}
-            newData={afterStateJSON}
-        />
-      </Box>
+        border: `1px solid ${GREY_6}`,
+        maxHeight: "200px",
+      }}
+    >
+      <ReactJsonViewCompare
+        oldData={beforeStateJSON}
+        newData={afterStateJSON}
+      />
+    </Box>
   );
 };

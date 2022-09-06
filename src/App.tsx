@@ -1,4 +1,5 @@
-import DebuggerLayout from './components/DebuggerLayout';
+import DebuggerLayout from "./components/DebuggerLayout";
+import MenuDrawer from "./components/MenuDrawer";
 
 declare global {
   interface Window {
@@ -8,9 +9,10 @@ declare global {
 
 function App() {
   return (
-      <div className="App">
-        <DebuggerLayout/>
-      </div>
+    <div className="App">
+      {/* <DebuggerLayout/> */}
+      <MenuDrawer />
+    </div>
   );
 }
 

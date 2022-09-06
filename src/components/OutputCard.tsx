@@ -3,7 +3,6 @@ import { JSONTree } from "react-json-tree";
 import { Box, Typography } from "@mui/material";
 import { GREY_3, GREY_6 } from "../configs/variables";
 
-
 interface IProps {
   response: JSON | undefined | any;
   placeholder: string;
@@ -30,22 +29,25 @@ const theme = {
   base0F: "#deaf8f",
 };
 
-export const OutputCard = ({response, placeholder}: IProps) => {
+export const OutputCard = ({ response, placeholder }: IProps) => {
   return (
-      <Box sx={{
-        width: "100%",
+    <Box
+      sx={{
+        width: "98%",
         margin: 2,
         overflow: "scroll",
         padding: 2,
-        border: `1px solid ${GREY_6}`
-      }}>
-        {response !== undefined ? (
-            <JSONTree data={response} theme={theme} invertTheme={false}/>
-        ) : (
-            <Typography variant={"body2"} sx={{color: `${GREY_3}`}}>
-              {placeholder}
-            </Typography>
-        )}
-      </Box>
+        border: `1px solid ${GREY_6}`,
+        maxHeight: "200px",
+      }}
+    >
+      {response !== undefined ? (
+        <JSONTree data={response} theme={theme} invertTheme={false} />
+      ) : (
+        <Typography variant={"body2"} sx={{ color: `${GREY_3}` }}>
+          {placeholder}
+        </Typography>
+      )}
+    </Box>
   );
 };

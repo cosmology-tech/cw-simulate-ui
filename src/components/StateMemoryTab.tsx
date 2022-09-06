@@ -1,7 +1,6 @@
-import { Tabs } from "antd";
+import { Tab, Tabs } from "@mui/material";
 import React from "react";
 import DiffSwitch from "./DiffSwitch";
-const { TabPane } = Tabs;
 
 interface IProps {
   currentTab: string;
@@ -10,6 +9,7 @@ interface IProps {
   isChecked: boolean;
   isStateTraversed: boolean;
 }
+
 const StateMemoryTab = ({
   currentTab,
   setCurrentTab,
@@ -17,8 +17,8 @@ const StateMemoryTab = ({
   setIsChecked,
   isStateTraversed,
 }: IProps) => {
-  const onChange = (key: string) => {
-    setCurrentTab(key);
+  const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
+    setCurrentTab(newValue);
   };
   return (
     <div
@@ -30,9 +30,14 @@ const StateMemoryTab = ({
       }}
     >
       <div style={{ display: "flex", marginLeft: 10 }}>
-        <Tabs defaultActiveKey={currentTab} onChange={onChange}>
-          <TabPane tab="State" key="state" />
-          {/* <TabPane tab="Memory" key="memory" /> */}
+        <Tabs
+          value={currentTab}
+          onChange={onChangeHandler}
+          aria-label="State/Memory Tab"
+        >
+          <Tab value="state" label="State" />
+          {/* <Tab value="memory" label="Memory" /> */}
+          {/* <Tab label="Memory" {...a11yProps(1)} /> */}
         </Tabs>
       </div>
       {isStateTraversed && (

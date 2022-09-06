@@ -3,22 +3,24 @@ import ReactCodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { Box } from "@mui/material";
 import { GREY_6 } from "../configs/variables";
+import { useRecoilState } from "recoil";
+import { payloadAtom } from "../atoms/payloadAtom";
 
-interface IProps {
-  payload: string;
-  setPayload: (value: string) => void;
-}
-
-export const JsonCodeMirrorEditor: React.FC<IProps> = ({
-  payload,
-  setPayload,
-}) => {
+export const JsonCodeMirrorEditor: React.FC = () => {
+  const [payload, setPayload] = useRecoilState(payloadAtom);
   const placeholder = {
     json: "Enter your JSON here",
   };
   return (
     <Box
-      sx={{ width: "100%", margin: 2, overflow: "scroll", padding: 2, border: `1px solid ${GREY_6}` }}
+      sx={{
+        width: "100%",
+        margin: 2,
+        overflow: "scroll",
+        padding: 2,
+        border: `1px solid ${GREY_6}`,
+        maxHeight: "200px",
+      }}
     >
       <ReactCodeMirror
         value={payload}

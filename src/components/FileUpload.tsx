@@ -13,16 +13,19 @@ import {
 import { useRecoilState } from "recoil";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import consoleLogsAtom from "../atoms/consoleLogsAtom";
+import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 
-const {Dragger} = Upload;
+const { Dragger } = Upload;
 
 interface IProps {
-  setIsFileUploaded: (uploadStatus: boolean) => void;
   setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
 
-const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationAtom);
+const FileUpload = ({ setWasmBuffer }: IProps) => {
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
+    snackbarNotificationAtom
+  );
+  const [_, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
   const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
   const backend: IBackend = {
     backend_api: new BasicBackendApi(),
@@ -32,7 +35,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
 
   // Custom function to store file
   const storeFile = (fileProps: RcCustomRequestOptions) => {
-    const {onSuccess, onError, file} = fileProps;
+    const { onSuccess, onError, file } = fileProps;
     setConsoleLogs([...consoleLogs, fileProps]);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -61,23 +64,23 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
     maxCount: 1,
     customRequest: storeFile,
     onChange(info) {
-      const {status} = info.file;
+      const { status } = info.file;
       if (status !== "uploading") {
         setConsoleLogs([...consoleLogs, info.file, info.fileList]);
       }
       if (status === "done") {
         setSnackbarNotification({
           ...snackbarNotification,
-          severity: 'success',
+          severity: "success",
           open: true,
-          message: `${info.file.name} file uploaded successfully.`
+          message: `${info.file.name} file uploaded successfully.`,
         });
       } else if (status === "error") {
         setSnackbarNotification({
           ...snackbarNotification,
-          severity: 'error',
+          severity: "error",
           open: true,
-          message: `${info.file.name} file upload failed.`
+          message: `${info.file.name} file upload failed.`,
         });
       }
     },
@@ -86,9 +89,17 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
     },
   };
   return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+      }}
+    >
       <Dragger {...props}>
         <p className="ant-upload-drag-icon">
-          <InboxOutlined/>
+          <InboxOutlined />
         </p>
         <p className="ant-upload-text">
           Click or drag file to this area to upload
@@ -97,6 +108,7 @@ const FileUpload = ({setIsFileUploaded, setWasmBuffer}: IProps) => {
           Once you upload the file Menu Options on right will start appearing.
         </p>
       </Dragger>
+    </div>
   );
 };
 
