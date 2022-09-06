@@ -75,6 +75,7 @@
     "@storybook/testing-library": "^0.0.13",
     "babel-plugin-named-exports-order": "^0.0.2",
     "postcss": "^8.4.16",
+    "postcss-import": "^15.0.0",
     "prop-types": "^15.8.1",
     "webpack": "^5.74.0"
   },
