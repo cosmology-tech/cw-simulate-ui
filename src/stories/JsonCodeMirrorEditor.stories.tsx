@@ -15,8 +15,8 @@ export default {
 
 export const Default = (args: any) => {
   return (
-      <Box sx={{maxWidth: "80%"}}>
-        <JsonCodeMirrorEditor {...args} />
-      </Box>
+    <Box sx={{maxWidth: "80%"}}>
+      <JsonCodeMirrorEditor {...args} />
+    </Box>
   );
 }
