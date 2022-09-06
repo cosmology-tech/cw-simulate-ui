@@ -8,6 +8,7 @@ interface IProps {
   currentState: number;
   isChecked: boolean;
 }
+
 export const BeforeAfterState = ({
   allStates,
   currentState,

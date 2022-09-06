@@ -1,12 +1,14 @@
-import { Button, Tooltip, Typography } from "antd";
 import React from "react";
 import { PlayCircleOutlined } from "@ant-design/icons";
+import { Tooltip, Typography } from "@mui/material";
+import { GREY_3 } from "../configs/variables";
+import { Button } from "antd";
 
 interface IProps {
   onInstantiateClickHandler: () => void;
 }
 
-export const Instantiate = ({ onInstantiateClickHandler }: IProps) => {
+export const Instantiate = ({onInstantiateClickHandler}: IProps) => {
   return (
     <div
       style={{
@@ -18,20 +20,19 @@ export const Instantiate = ({ onInstantiateClickHandler }: IProps) => {
       }}
     >
       <div>
-        <Typography.Title level={4} disabled>
+        <Typography variant={'h6'} sx={{color: `${GREY_3}`}}>
           Instantiate your contract by click below button in order to execute
           and query.
-        </Typography.Title>
+        </Typography>
       </div>
       <div>
         {" "}
         <Tooltip title="Instantiate your contract">
-          <Button
-            type="default"
-            shape="circle"
-            size="large"
-            icon={<PlayCircleOutlined />}
-            onClick={onInstantiateClickHandler}
+          <Button type="default"
+                  shape="circle"
+                  size="large"
+                  icon={<PlayCircleOutlined/>}
+                  onClick={onInstantiateClickHandler}
           />
         </Tooltip>
       </div>

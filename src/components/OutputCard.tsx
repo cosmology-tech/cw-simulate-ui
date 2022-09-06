@@ -1,13 +1,13 @@
 import React from "react";
-import { Card } from "antd";
 import { JSONTree } from "react-json-tree";
-import { Typography } from "antd";
+import { Box, Typography } from "@mui/material";
+import { GREY_3, GREY_6 } from "../configs/variables";
 
-const { Paragraph } = Typography;
 interface IProps {
   response: JSON | undefined | any;
   placeholder: string;
 }
+
 const theme = {
   scheme: "chalk",
   author: "chris kempson (http://chriskempson.com)",
@@ -29,18 +29,25 @@ const theme = {
   base0F: "#deaf8f",
 };
 
-export const OutputCard = ({ response, placeholder }: IProps) => {
+export const OutputCard = ({response, placeholder}: IProps) => {
   return (
-    <Card
-      style={{ width: "100%", margin: 10, overflow: "scroll" }}
-      bordered
-      bodyStyle={{ padding: "10" }}
+    <Box
+      sx={{
+        width: "98%",
+        margin: 2,
+        overflow: "scroll",
+        padding: 2,
+        border: `1px solid ${GREY_6}`,
+        maxHeight: "200px",
+      }}
     >
       {response !== undefined ? (
-        <JSONTree data={response} theme={theme} invertTheme={false} />
+        <JSONTree data={response} theme={theme} invertTheme={false}/>
       ) : (
-        <Paragraph disabled>{placeholder}</Paragraph>
+        <Typography variant={"body2"} sx={{color: `${GREY_3}`}}>
+          {placeholder}
+        </Typography>
       )}
-    </Card>
+    </Box>
   );
 };
