@@ -10,32 +10,32 @@ interface IProps {
 
 export const Instantiate = ({onInstantiateClickHandler}: IProps) => {
   return (
-      <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-      >
-        <div>
-          <Typography variant={'h6'} sx={{color: `${GREY_3}`}}>
-            Instantiate your contract by click below button in order to execute
-            and query.
-          </Typography>
-        </div>
-        <div>
-          {" "}
-          <Tooltip title="Instantiate your contract">
-            <Button type="default"
-                    shape="circle"
-                    size="large"
-                    icon={<PlayCircleOutlined/>}
-                    onClick={onInstantiateClickHandler}
-            />
-          </Tooltip>
-        </div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <div>
+        <Typography variant={'h6'} sx={{color: `${GREY_3}`}}>
+          Instantiate your contract by click below button in order to execute
+          and query.
+        </Typography>
       </div>
+      <div>
+        {" "}
+        <Tooltip title="Instantiate your contract">
+          <Button type="default"
+                  shape="circle"
+                  size="large"
+                  icon={<PlayCircleOutlined/>}
+                  onClick={onInstantiateClickHandler}
+          />
+        </Tooltip>
+      </div>
+    </div>
   );
 };

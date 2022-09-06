@@ -19,7 +19,7 @@ import { instantiatedAtom } from "../atoms/instantiatedAtom";
 import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 import { payloadAtom } from "../atoms/payloadAtom";
 
-const { Header, Content, Sider } = Layout;
+const {Header, Content, Sider} = Layout;
 
 enum MENU_KEYS {
   INSTANTIATE = "instantiate",
@@ -43,7 +43,7 @@ const DebuggerLayout = () => {
   );
   const [isInstantiated, setIsInstantiated] = useRecoilState(instantiatedAtom);
   const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
-  const { MOCK_ENV, MOCK_INFO } = Config;
+  const {MOCK_ENV, MOCK_INFO} = Config;
 
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
@@ -58,13 +58,13 @@ const DebuggerLayout = () => {
   };
 
   const items = [
-    getItem("Contract", MENU_KEYS.CONTRACT, <CheckCircleOutlined />),
-    getItem("Reset", MENU_KEYS.RESET, <ReloadOutlined />),
+    getItem("Contract", MENU_KEYS.CONTRACT, <CheckCircleOutlined/>),
+    getItem("Reset", MENU_KEYS.RESET, <ReloadOutlined/>),
   ];
 
   const onInstantiateClickHandler = () => {
     try {
-      const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
+      const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, {count: 20});
       addState("", "");
       setIsInstantiated(true);
       setSnackbarNotification({
@@ -100,9 +100,9 @@ const DebuggerLayout = () => {
         minHeight: "100vh",
       }}
     >
-      <SnackbarNotification />
+      <SnackbarNotification/>
       <Sider collapsed={collapsed}>
-        <div className="logo" />
+        <div className="logo"/>
         {isFileUploaded ? (
           <Menu
             theme="dark"
@@ -159,7 +159,7 @@ const DebuggerLayout = () => {
             }}
           >
             {!isFileUploaded ? (
-              <FileUpload setWasmBuffer={setWasmBuffer} />
+              <FileUpload setWasmBuffer={setWasmBuffer}/>
             ) : isInstantiated ? (
               <ExecuteQuery
                 response={response}

@@ -35,7 +35,7 @@ export const ExecuteQuery = ({
   setCurrentState,
   currentState,
 }: IProps) => {
-  const { MOCK_ENV, MOCK_INFO } = Config;
+  const {MOCK_ENV, MOCK_INFO} = Config;
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationAtom
   );
@@ -119,8 +119,8 @@ export const ExecuteQuery = ({
   }, [executeQueryTab]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <ExecuteQueryTab />
+    <div style={{display: "flex", flexDirection: "column"}}>
+      <ExecuteQueryTab/>
       <div
         style={{
           display: "flex",
@@ -129,13 +129,13 @@ export const ExecuteQuery = ({
           textAlign: "left",
         }}
       >
-        <JsonCodeMirrorEditor />
-        <OutputRenderer response={response} />
+        <JsonCodeMirrorEditor/>
+        <OutputRenderer response={response}/>
       </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
+      <div style={{display: "flex", flexDirection: "row"}}>
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{ margin: 2 }}
+          sx={{margin: 2}}
           variant={"contained"}
           onClick={onRunHandler}
           disabled={!payload.length}

@@ -8,7 +8,7 @@ interface IProps {
   afterStateJSON: JSON | undefined | any;
 }
 
-export const StateDiff = ({ beforeStateJSON, afterStateJSON }: IProps) => {
+export const StateDiff = ({beforeStateJSON, afterStateJSON}: IProps) => {
   return (
     <Box
       sx={{

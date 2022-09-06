@@ -9,21 +9,21 @@ export const ConsoleRenderer = ({logs}: IProps) => {
     let log = logs[i];
     if (typeof log != "object") {
       renderedLogs.push(
-          <p style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}} key={i}>
-            {log}
-          </p>
+        <p style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}} key={i}>
+          {log}
+        </p>
       );
     } else {
       renderedLogs.push(
-          <p style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}} key={i}>
-            {JSON.stringify(log)}
-          </p>
+        <p style={{fontFamily: "Monaco, Consolas, 'Courier New', monospace"}} key={i}>
+          {JSON.stringify(log)}
+        </p>
       );
     }
   }
   return (
-      <>
-        {renderedLogs}
-      </>
+    <>
+      {renderedLogs}
+    </>
   );
 };

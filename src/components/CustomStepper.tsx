@@ -12,6 +12,7 @@ interface IProps {
   setPayload: (val: string) => void;
   setCurrentTab: (val: string) => void;
 }
+
 export const CustomStepper = ({
   state,
   index,
@@ -22,7 +23,7 @@ export const CustomStepper = ({
   setCurrentTab,
 }: IProps) => {
   const onClickHandler = (e: any) => {
-    const { currentTab, res, payload } = state;
+    const {currentTab, res, payload} = state;
     setCurrentTab(currentTab);
     setCurrentState(index - 1);
     setResponse(res);
@@ -51,7 +52,7 @@ export const CustomStepper = ({
             alignItems: "center",
           }}
         >
-          <PlayCircleOutlineIcon />
+          <PlayCircleOutlineIcon/>
         </div>
       )}
       <div
@@ -64,9 +65,9 @@ export const CustomStepper = ({
           // paddingBottom: "10px",
         }}
       >
-        <Divider sx={{ background: "black", height: "1px", width: "100%" }}>
+        <Divider sx={{background: "black", height: "1px", width: "100%"}}>
           <p
-            style={{ margin: "4px", fontSize: "0.8rem", padding: "2px" }}
+            style={{margin: "4px", fontSize: "0.8rem", padding: "2px"}}
             id="1"
             className={index > 0 ? "execute" : ""}
             onClick={index > 0 ? onClickHandler : undefined}
@@ -91,7 +92,7 @@ export const CustomStepper = ({
           height: "40px",
         }}
       >
-        <Typography style={{ color: "black" }}>{index}</Typography>
+        <Typography style={{color: "black"}}>{index}</Typography>
       </div>
     </div>
   );

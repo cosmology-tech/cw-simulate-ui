@@ -10,6 +10,7 @@ interface IProps {
   setPayload: (val: string) => void;
   setCurrentTab: (val: string) => void;
 }
+
 export const StateTraversal = ({
   allStates,
   currentState,

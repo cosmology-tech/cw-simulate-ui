@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
+import { CSSObject, styled, Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
@@ -25,7 +25,6 @@ import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 import { instantiatedAtom } from "../atoms/instantiatedAtom";
 import { payloadAtom } from "../atoms/payloadAtom";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
-import { Config } from "../configs/config";
 import { IState } from "./ExecuteQuery";
 import GridLayout from "./GridLayout";
 import SnackbarNotification from "./SnackbarNotification";
@@ -53,7 +52,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 
-const DrawerHeader = styled("div")(({ theme }) => ({
+const DrawerHeader = styled("div")(({theme}) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "flex-end",
@@ -68,7 +67,7 @@ interface AppBarProps extends MuiAppBarProps {
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
+})<AppBarProps>(({theme, open}) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
@@ -86,7 +85,7 @@ const AppBar = styled(MuiAppBar, {
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
+})(({theme, open}) => ({
   width: drawerWidth,
   flexShrink: 0,
   whiteSpace: "nowrap",
@@ -136,8 +135,8 @@ export default function MenuDrawer() {
     setIsInstantiated(false);
   };
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
+    <Box sx={{display: "flex"}}>
+      <CssBaseline/>
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
@@ -147,13 +146,13 @@ export default function MenuDrawer() {
             edge="start"
             sx={{
               marginRight: 5,
-              ...(open && { display: "none" }),
+              ...(open && {display: "none"}),
             }}
           >
-            <MenuIcon />
+            <MenuIcon/>
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            CWSM Debugger
+            CosmWasm Debugger
           </Typography>
         </Toolbar>
       </AppBar>
@@ -161,17 +160,17 @@ export default function MenuDrawer() {
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
+              <ChevronRightIcon/>
             ) : (
-              <ChevronLeftIcon />
+              <ChevronLeftIcon/>
             )}
           </IconButton>
         </DrawerHeader>
-        <Divider />
+        <Divider/>
         {isFileUploaded ? (
           <List>
             {["Contracts", "Reset"].map((text, index) => (
-              <ListItem key={text} disablePadding sx={{ display: "block" }}>
+              <ListItem key={text} disablePadding sx={{display: "block"}}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -187,9 +186,9 @@ export default function MenuDrawer() {
                       justifyContent: "center",
                     }}
                   >
-                    {index === 0 ? <TextSnippetIcon /> : <RestartAltIcon />}
+                    {index === 0 ? <TextSnippetIcon/> : <RestartAltIcon/>}
                   </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary={text} sx={{opacity: open ? 1 : 0}}/>
                 </ListItemButton>
               </ListItem>
             ))}
@@ -200,9 +199,9 @@ export default function MenuDrawer() {
           )
         )}
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <SnackbarNotification />
-        <DrawerHeader />
+      <Box component="main" sx={{flexGrow: 1, p: 3}}>
+        <SnackbarNotification/>
+        <DrawerHeader/>
         <GridLayout
           response={response}
           setResponse={setResponse}

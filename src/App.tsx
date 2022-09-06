@@ -1,4 +1,3 @@
-import DebuggerLayout from "./components/DebuggerLayout";
 import MenuDrawer from "./components/MenuDrawer";
 
 declare global {
@@ -9,10 +8,9 @@ declare global {
 
 function App() {
   return (
-    <div className="App">
-      {/* <DebuggerLayout/> */}
-      <MenuDrawer />
-    </div>
+      <div className="App">
+        <MenuDrawer/>
+      </div>
   );
 }
 
