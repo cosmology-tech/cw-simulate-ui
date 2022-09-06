@@ -96,7 +96,8 @@ export default function GridLayout({
     <Box sx={{maxWidth: "92vw"}}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Item sx={{overflowX: "scroll", display: "flex", height: "10vh"}}>
+          {allStates.length > 0 && <Item
+            sx={{overflowX: "scroll", display: "flex", height: "10vh"}}>
             <div
               style={{
                 display: "flex",
@@ -116,7 +117,7 @@ export default function GridLayout({
                 setCurrentTab={setExecuteQueryTab}
               />
             </div>
-          </Item>
+          </Item>}
         </Grid>
         <Grid item xs={12}>
           <Item sx={{height: "40vh"}}>

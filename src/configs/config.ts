@@ -10,8 +10,8 @@ export const Config = {
     },
   },
   MOCK_INFO: {
-     sender: 'terra1337xewwfv3jdjuz8e0nea9vd8dpugc0k2dcyt3',
-  funds: [],
+    sender: 'terra1337xewwfv3jdjuz8e0nea9vd8dpugc0k2dcyt3',
+    funds: [],
   },
   MSG: {
     verifier: "terra14z56l0fp2lsf86zy3hty2z47ezkhnthtr9yq76",

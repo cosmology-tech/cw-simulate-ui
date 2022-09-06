@@ -1,8 +1,8 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scrollbar-width: thin;
@@ -10,7 +10,7 @@ body {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  monospace;
 }
 
 .site-layout .site-layout-background {
@@ -22,8 +22,9 @@ code {
 }
 
 textarea.ant-input {
- max-height: 280px !important;
+  max-height: 280px !important;
 }
+
 .ant-card-body {
   padding: 10px !important;
   max-height: 165px;
@@ -38,7 +39,7 @@ textarea.ant-input {
 }
 
 .execute:hover {
-  color: blue ;
+  color: blue;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.87);
   background-color: rgba(0, 0, 0, 0.08);
