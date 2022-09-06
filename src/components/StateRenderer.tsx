@@ -18,8 +18,7 @@ export const StateRenderer = ({
   const [currentTab, setCurrentTab] = React.useState("state");
   const [isChecked, setIsChecked] = React.useState(false);
   const blockState = window.VM?.backend?.storage.dict["c3RhdGU="];
-  const currentJSON =
-    blockState === undefined ? undefined : JSON.parse(window.atob(blockState));
+  const currentJSON = (isFileUploaded && blockState !== undefined) ? JSON.parse(window.atob(blockState)) : undefined;
   const isStateTraversed =
     isFileUploaded &&
     allStates &&

@@ -133,7 +133,9 @@ export default function MenuDrawer() {
     setPayload("");
     setAllStates([]);
     setIsInstantiated(false);
+    setConsoleLogs([]);
   };
+
   return (
     <Box sx={{display: "flex"}}>
       <CssBaseline/>
@@ -195,7 +197,8 @@ export default function MenuDrawer() {
           </List>
         ) : (
           open && (
-            <Typography component="div">No contract uploaded yet!</Typography>
+            <Typography component="div" sx={{textAlign: 'center'}}>No contract uploaded
+              yet!</Typography>
           )
         )}
       </Drawer>

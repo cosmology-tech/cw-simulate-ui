@@ -62,7 +62,6 @@ export const CustomStepper = ({
           width: `${index > 0 ? "110px" : "96px"}`,
           justifyContent: "center",
           alignItems: "center",
-          // paddingBottom: "10px",
         }}
       >
         <Divider sx={{background: "black", height: "1px", width: "100%"}}>
