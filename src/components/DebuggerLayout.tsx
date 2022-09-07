@@ -82,7 +82,7 @@ const DebuggerLayout = () => {
         message:
           "CosmWasm VM was not able to instantiate. Please check console for errors.",
       });
-      setConsoleLogs([...consoleLogs, err]);
+      setConsoleLogs([...consoleLogs, "Instantiate failed: " + err]);
     }
   };
   const onItemSelectHandler = (menuKey: string) => {

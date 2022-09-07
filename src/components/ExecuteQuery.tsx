@@ -78,7 +78,7 @@ export const ExecuteQuery = ({
         open: true,
         message: "Something went wrong while executing.",
       });
-      setConsoleLogs([...consoleLogs, err]);
+      setConsoleLogs([...consoleLogs, "Execute failed: " + err]);
     }
   };
   const query = () => {
@@ -99,7 +99,7 @@ export const ExecuteQuery = ({
         open: true,
         message: "Something went wrong while querying.",
       });
-      setConsoleLogs([...consoleLogs, err]);
+      setConsoleLogs([...consoleLogs, "Query failed: " + err]);
     }
   };
   const onRunHandler = () => {
