@@ -13,7 +13,6 @@ export const StateDiff = ({beforeStateJSON, afterStateJSON}: IProps) => {
     <Box
       sx={{
         width: "100%",
-        margin: 2,
         overflow: "scroll",
         padding: 2,
         border: `1px solid ${GREY_6}`,

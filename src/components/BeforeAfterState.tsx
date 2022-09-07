@@ -29,10 +29,10 @@ export const BeforeAfterState = ({
         justifyContent: "space-between",
       }}
     >
-      <OutputCard
+      {!isChecked && <OutputCard
         response={beforeStateJSON}
         placeholder="Your before state will appear here."
-      />
+      />}
       {!isChecked ? (
         <OutputCard
           response={afterStateJSON}

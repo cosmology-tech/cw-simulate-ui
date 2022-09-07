@@ -88,7 +88,7 @@ export default function GridLayout({
         message:
           "CosmWasm VM was not able to instantiate. Please check console for errors.",
       });
-      setConsoleLogs([...consoleLogs, err]);
+      setConsoleLogs([...consoleLogs, "Instantiate failed: " + err]);
     }
   };
 
