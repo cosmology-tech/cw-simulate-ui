@@ -58,6 +58,7 @@ const FileUpload = ({ setWasmBuffer }: IProps) => {
       reader.readAsArrayBuffer(file as Blob);
     });
   };
+
   const props: UploadProps = {
     name: "file",
     accept: ".wasm,",
@@ -88,6 +89,7 @@ const FileUpload = ({ setWasmBuffer }: IProps) => {
       setConsoleLogs([...consoleLogs, "Dropped files", e.dataTransfer.files]);
     },
   };
+
   return (
     <div
       style={{
