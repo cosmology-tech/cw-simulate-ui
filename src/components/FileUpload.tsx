@@ -12,7 +12,6 @@ import {
 } from "@terran-one/cosmwasm-vm-js";
 import { useRecoilState } from "recoil";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
-import consoleLogsAtom from "../atoms/consoleLogsAtom";
 import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 
 const {Dragger} = Upload;
@@ -26,7 +25,6 @@ const FileUpload = ({setWasmBuffer}: IProps) => {
     snackbarNotificationAtom
   );
   const [_, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
-  const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
   const backend: IBackend = {
     backend_api: new BasicBackendApi(),
     storage: new BasicKVIterStorage(),
@@ -36,7 +34,6 @@ const FileUpload = ({setWasmBuffer}: IProps) => {
   // Custom function to store file
   const storeFile = (fileProps: RcCustomRequestOptions) => {
     const {onSuccess, onError, file} = fileProps;
-    setConsoleLogs([...consoleLogs, fileProps]);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
@@ -66,9 +63,6 @@ const FileUpload = ({setWasmBuffer}: IProps) => {
     customRequest: storeFile,
     onChange(info) {
       const {status} = info.file;
-      if (status !== "uploading") {
-        setConsoleLogs([...consoleLogs, info.file, info.fileList]);
-      }
       if (status === "done") {
         setSnackbarNotification({
           ...snackbarNotification,
@@ -84,9 +78,6 @@ const FileUpload = ({setWasmBuffer}: IProps) => {
           message: `${info.file.name} file upload failed.`,
         });
       }
-    },
-    onDrop(e) {
-      setConsoleLogs([...consoleLogs, "Dropped files", e.dataTransfer.files]);
     },
   };
 
