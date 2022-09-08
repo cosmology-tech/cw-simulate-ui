@@ -6,10 +6,10 @@ export interface ChainConfig {
 }
 
 export const createSimulateEnv = (): CWSimulateEnv => {
-  if (!window.Env) {
+  if (!window.CWEnv) {
     return new CWSimulateEnv();
   }
-  return window.Env;
+  return window.CWEnv;
 }
 
 export const creatChain = (env: CWSimulateEnv, chainConfig: ChainConfig): CWChain => {
