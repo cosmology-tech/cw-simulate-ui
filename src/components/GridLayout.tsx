@@ -13,10 +13,8 @@ import { Instantiate } from "./Instantiate";
 import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 import { instantiatedAtom } from "../atoms/instantiatedAtom";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
-import consoleLogsAtom from "../atoms/consoleLogsAtom";
 import { Config } from "../configs/config";
 import { StateRenderer } from "./StateRenderer";
-import { ConsoleRenderer } from "./ConsoleRenderer";
 import { WelcomeScreen } from "./WelcomeScreen";
 import "../index.css";
 
@@ -54,7 +52,6 @@ export default function GridLayout({
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationAtom
   );
-  const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
   const [payload, setPayload] = useRecoilState(payloadAtom);
   const { MOCK_ENV, MOCK_INFO } = Config;
   const addState = (stateBefore: any, res: any) => {
@@ -80,7 +77,6 @@ export default function GridLayout({
         open: true,
         message: "CosmWasm VM successfully instantiated!",
       });
-      setConsoleLogs([...consoleLogs, res]);
     } catch (err) {
       setSnackbarNotification({
         ...snackbarNotification,
@@ -89,7 +85,6 @@ export default function GridLayout({
         message:
           "CosmWasm VM was not able to instantiate. Please check console for errors.",
       });
-      setConsoleLogs([...consoleLogs, "Instantiate failed: " + err]);
     }
   };
 
@@ -157,19 +152,6 @@ export default function GridLayout({
               allStates={allStates}
               currentState={currentState}
             />
-          </Item>
-        </Grid>
-        <Grid item xs={12}>
-          <Item
-            sx={{
-              height: "20vh",
-              background: "rgb(16 15 15)",
-              color: "white",
-              overflowY: "scroll",
-              textAlign: "left",
-            }}
-          >
-            <ConsoleRenderer logs={consoleLogs}></ConsoleRenderer>
           </Item>
         </Grid>
       </Grid>
