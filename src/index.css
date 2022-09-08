@@ -45,3 +45,9 @@ textarea.ant-input {
   background-color: rgba(0, 0, 0, 0.08);
   border-radius: 16px;
 }
+
+.outerGrid {
+-webkit-box-shadow: 6px 2px 34px -12px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 6px 2px 34px -12px rgba(0, 0, 0, 0.75);
+  box-shadow: 6px 2px 34px -12px rgba(0, 0, 0, 0.75);
+}

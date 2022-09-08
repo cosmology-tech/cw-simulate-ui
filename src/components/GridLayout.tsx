@@ -15,8 +15,10 @@ import { instantiatedAtom } from "../atoms/instantiatedAtom";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { Config } from "../configs/config";
 import { StateRenderer } from "./StateRenderer";
+import { WelcomeScreen } from "./WelcomeScreen";
+import "../index.css";
 
-const Item = styled(Paper)(({theme}) => ({
+const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -51,7 +53,7 @@ export default function GridLayout({
     snackbarNotificationAtom
   );
   const [payload, setPayload] = useRecoilState(payloadAtom);
-  const {MOCK_ENV, MOCK_INFO} = Config;
+  const { MOCK_ENV, MOCK_INFO } = Config;
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
@@ -66,7 +68,7 @@ export default function GridLayout({
 
   const onInstantiateClickHandler = () => {
     try {
-      const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, {count: 20});
+      const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
       addState("", "");
       setIsInstantiated(true);
       setSnackbarNotification({
@@ -86,35 +88,38 @@ export default function GridLayout({
     }
   };
 
-  return (
-    <Box sx={{maxWidth: "92vw"}}>
+  return !isFileUploaded ? (
+    <WelcomeScreen setWasmBuffer={setWasmBuffer} />
+  ) : (
+    <Box sx={{ maxWidth: "92vw" }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          {allStates.length > 0 && <Item
-            sx={{overflowX: "scroll", display: "flex", height: "10vh"}}>
-            <div
-              style={{
-                display: "flex",
-                height: "100%",
-                marginLeft: "10px",
-                alignItems: "center",
-                padding: "10px",
-                overflowX: "scroll",
-              }}
-            >
-              <StateTraversal
-                allStates={allStates}
-                currentState={currentState}
-                setCurrentState={setCurrentState}
-                setPayload={setPayload}
-                setResponse={setResponse}
-                setCurrentTab={setExecuteQueryTab}
-              />
-            </div>
-          </Item>}
+          {allStates.length > 0 && (
+            <Item sx={{ overflowX: "scroll", display: "flex", height: "10vh" }}>
+              <div
+                style={{
+                  display: "flex",
+                  height: "100%",
+                  marginLeft: "10px",
+                  alignItems: "center",
+                  padding: "10px",
+                  overflowX: "scroll",
+                }}
+              >
+                <StateTraversal
+                  allStates={allStates}
+                  currentState={currentState}
+                  setCurrentState={setCurrentState}
+                  setPayload={setPayload}
+                  setResponse={setResponse}
+                  setCurrentTab={setExecuteQueryTab}
+                />
+              </div>
+            </Item>
+          )}
         </Grid>
         <Grid item xs={12}>
-          <Item sx={{height: "40vh"}}>
+          <Item sx={{ height: "40vh" }}>
             <div
               style={{
                 padding: 10,
@@ -122,7 +127,7 @@ export default function GridLayout({
               }}
             >
               {!isFileUploaded ? (
-                <FileUpload setWasmBuffer={setWasmBuffer}/>
+                <FileUpload setWasmBuffer={setWasmBuffer} />
               ) : isInstantiated ? (
                 <ExecuteQuery
                   response={response}
@@ -141,7 +146,7 @@ export default function GridLayout({
           </Item>
         </Grid>
         <Grid item xs={12}>
-          <Item sx={{textAlign: "left", height: "30vh"}}>
+          <Item sx={{ textAlign: "left", height: "30vh" }}>
             <StateRenderer
               isFileUploaded={isFileUploaded}
               allStates={allStates}
