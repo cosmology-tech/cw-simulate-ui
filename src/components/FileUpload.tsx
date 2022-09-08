@@ -15,13 +15,13 @@ import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import consoleLogsAtom from "../atoms/consoleLogsAtom";
 import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 
-const {Dragger} = Upload;
+const { Dragger } = Upload;
 
 interface IProps {
   setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
 
-const FileUpload = ({setWasmBuffer}: IProps) => {
+const FileUpload = ({ setWasmBuffer }: IProps) => {
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationAtom
   );
@@ -35,7 +35,7 @@ const FileUpload = ({setWasmBuffer}: IProps) => {
 
   // Custom function to store file
   const storeFile = (fileProps: RcCustomRequestOptions) => {
-    const {onSuccess, onError, file} = fileProps;
+    const { onSuccess, onError, file } = fileProps;
     setConsoleLogs([...consoleLogs, fileProps]);
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -64,7 +64,7 @@ const FileUpload = ({setWasmBuffer}: IProps) => {
     maxCount: 1,
     customRequest: storeFile,
     onChange(info) {
-      const {status} = info.file;
+      const { status } = info.file;
       if (status !== "uploading") {
         setConsoleLogs([...consoleLogs, info.file, info.fileList]);
       }
@@ -99,14 +99,13 @@ const FileUpload = ({setWasmBuffer}: IProps) => {
     >
       <Dragger {...props}>
         <p className="ant-upload-drag-icon">
-          <InboxOutlined/>
+          <InboxOutlined style={{ fontSize: "30px" }} />
         </p>
         <p className="ant-upload-text">
-          Click or drag file to this area to upload
+          Click to upload a simulation file or contract binary
         </p>
-        <p className="ant-upload-hint">
-          Once you upload the file Menu Options on right will start appearing.
-        </p>
+        <p className="ant-upload-text">or</p>
+        <p className="ant-upload-hint">Drag & drop a file here</p>
       </Dragger>
     </div>
   );
