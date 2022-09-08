@@ -6,7 +6,6 @@ import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
-import consoleLogsAtom from "../atoms/consoleLogsAtom";
 import { Button } from "@mui/material";
 import { payloadAtom } from "../atoms/payloadAtom";
 
@@ -41,7 +40,6 @@ export const ExecuteQuery = ({
   );
   const [payload, setPayload] = useRecoilState(payloadAtom);
   const executeQueryTab = useRecoilValue(executeQueryTabAtom);
-  const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
@@ -61,7 +59,6 @@ export const ExecuteQuery = ({
       setResponse(res.read_json());
       if (!(res.read_json().error && res.read_json().error.length > 0)) {
         addState(stateBefore, res);
-        setConsoleLogs([...consoleLogs, res.read_json()]);
         setSnackbarNotification({
           ...snackbarNotification,
           severity: "success",
@@ -78,7 +75,6 @@ export const ExecuteQuery = ({
         open: true,
         message: "Something went wrong while executing.",
       });
-      setConsoleLogs([...consoleLogs, "Execute failed: " + err]);
     }
   };
   const query = () => {
@@ -86,7 +82,6 @@ export const ExecuteQuery = ({
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
-      setConsoleLogs([...consoleLogs, res.read_json()]);
       setSnackbarNotification({
         ...snackbarNotification,
         open: true,
@@ -99,7 +94,6 @@ export const ExecuteQuery = ({
         open: true,
         message: "Something went wrong while querying.",
       });
-      setConsoleLogs([...consoleLogs, "Query failed: " + err]);
     }
   };
   const onRunHandler = () => {
@@ -108,9 +102,6 @@ export const ExecuteQuery = ({
     } else {
       query();
     }
-  };
-  const onDryRunHandler = () => {
-    console.log("Have to add something here");
   };
   React.useEffect(() => {
     if (currentState === allStates.length - 1) {

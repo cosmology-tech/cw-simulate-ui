@@ -19,7 +19,6 @@ import ListItemText from "@mui/material/ListItemText";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useRecoilState } from "recoil";
-import consoleLogsAtom from "../atoms/consoleLogsAtom";
 import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
 import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 import { instantiatedAtom } from "../atoms/instantiatedAtom";
@@ -119,7 +118,6 @@ export default function MenuDrawer() {
     snackbarNotificationAtom
   );
   const [isInstantiated, setIsInstantiated] = useRecoilState(instantiatedAtom);
-  const [consoleLogs, setConsoleLogs] = useRecoilState(consoleLogsAtom);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -135,7 +133,6 @@ export default function MenuDrawer() {
     setPayload("");
     setAllStates([]);
     setIsInstantiated(false);
-    setConsoleLogs([]);
   };
 
   return (
