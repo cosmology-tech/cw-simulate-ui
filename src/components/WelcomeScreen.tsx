@@ -58,7 +58,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             direction="column"
             sx={{ alignItems: "center", display: "flex" }}
           >
-            <LibraryBooksIcon />
+            <LibraryBooksIcon sx={{ cursor: "pointer" }} />
             <Typography>Tutorials</Typography>
           </Grid>
           <Grid
@@ -66,7 +66,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             direction="column"
             sx={{ alignItems: "center", display: "flex" }}
           >
-            <ArticleIcon />
+            <ArticleIcon sx={{ cursor: "pointer" }} />
             <Typography>Documentation</Typography>
           </Grid>
           <Grid
@@ -74,7 +74,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             direction="column"
             sx={{ alignItems: "center", display: "flex" }}
           >
-            <NotesIcon />
+            <NotesIcon sx={{ cursor: "pointer" }} />
             <Typography>Examples</Typography>
           </Grid>
           <Grid
@@ -82,7 +82,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             direction="column"
             sx={{ alignItems: "center", display: "flex" }}
           >
-            <GitHubIcon />
+            <GitHubIcon sx={{ cursor: "pointer" }} />
             <Typography>Github</Typography>
           </Grid>
         </Grid>
