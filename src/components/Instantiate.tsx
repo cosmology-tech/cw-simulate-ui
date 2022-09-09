@@ -1,8 +1,7 @@
 import React from "react";
-import { PlayCircleOutlined } from "@ant-design/icons";
-import { Tooltip, Typography } from "@mui/material";
+import { Button, Tooltip, Typography } from "@mui/material";
 import { GREY_3 } from "../configs/variables";
-import { Button } from "antd";
+import { PlayCircleOutlined } from "@mui/icons-material";
 
 interface IProps {
   onInstantiateClickHandler: () => void;
@@ -28,12 +27,9 @@ export const Instantiate = ({onInstantiateClickHandler}: IProps) => {
       <div>
         {" "}
         <Tooltip title="Instantiate your contract">
-          <Button type="default"
-                  shape="circle"
-                  size="large"
-                  icon={<PlayCircleOutlined/>}
-                  onClick={onInstantiateClickHandler}
-          />
+          <Button onClick={onInstantiateClickHandler}>
+            <PlayCircleOutlined style={{fontSize: "50px"}}/>
+          </Button>
         </Tooltip>
       </div>
     </div>

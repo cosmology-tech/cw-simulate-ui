@@ -1,4 +1,4 @@
-const { ProvidePlugin } = require('webpack');
+const {ProvidePlugin} = require('webpack');
 
 module.exports = function override(config, env) {
   config.resolve.fallback = {

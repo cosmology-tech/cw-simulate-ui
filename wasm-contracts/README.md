@@ -1,11 +1,14 @@
-Test Contracts 
+Test Contracts
 ==============
+
 ### hello_world-aarch64.wasm
+
 | Execute      | Query        |
 |--------------|--------------|
 | increment {} | get_count {} |
 
 ### [hackatom.wasm](https://github.com/CosmWasm/cosmwasm/blob/main/contracts/hackatom/src/contract.rs)
+
 | Execute                     | Query                     |
 |-----------------------------|---------------------------|
 | release {}                  | verifier {}               |
