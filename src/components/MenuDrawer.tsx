@@ -18,15 +18,11 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import { useRecoilState } from "recoil";
-import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 import { instantiatedAtom } from "../atoms/instantiatedAtom";
 import { payloadAtom } from "../atoms/payloadAtom";
-import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { IState } from "./ExecuteQuery";
-import GridLayout from "./GridLayout";
-import SnackbarNotification from "./SnackbarNotification";
 import { ORANGE_3 } from "../configs/variables";
 import { Tooltip } from "@mui/material";
 
@@ -103,21 +99,12 @@ const Drawer = styled(MuiDrawer, {
 
 export default function MenuDrawer() {
   const theme = useTheme();
-  global.window.Buffer = global.window.Buffer || require("buffer").Buffer;
   const [open, setOpen] = React.useState(false);
-  const [collapsed, setCollapsed] = React.useState(true);
   const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
   const [wasmBuffers, setWasmBuffers] = React.useState<ArrayBuffer[]>([]);
   const [payload, setPayload] = useRecoilState(payloadAtom);
-  const [response, setResponse] = React.useState<JSON | undefined>();
   const [allStates, setAllStates] = React.useState<IState[]>([]);
-  const [currentState, setCurrentState] = React.useState(0);
-  const [executeQueryTab, setExecuteQueryTab] =
-    useRecoilState(executeQueryTabAtom);
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationAtom
-  );
-  const [isInstantiated, setIsInstantiated] = useRecoilState(instantiatedAtom);
+  const setIsInstantiated = useSetRecoilState(instantiatedAtom);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -203,20 +190,7 @@ export default function MenuDrawer() {
           )
         )}
       </Drawer>
-      <Box component="main" sx={{flexGrow: 1, p: 3}}>
-        <SnackbarNotification/>
-        <DrawerHeader/>
-        <GridLayout
-          response={response}
-          setResponse={setResponse}
-          allStates={allStates}
-          currentState={currentState}
-          setCurrentState={setCurrentState}
-          setWasmBuffers={setWasmBuffers}
-          wasmBuffers={wasmBuffers}
-          setAllStates={setAllStates}
-        />
-      </Box>
+      <DrawerHeader/>
     </Box>
   );
 }
