@@ -39,6 +39,7 @@ const FileUpload = ({setWasmBuffers, wasmBuffers}: IProps) => {
 
   return (
     <DropzoneArea
+      acceptedFiles={["application/wasm"]}
       showFileNames={true}
       dropzoneText={"Click to upload a simulation file or contract binary or Drag & drop a file here"}
       onDrop={handleOnFileDrop}

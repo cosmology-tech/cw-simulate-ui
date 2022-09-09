@@ -1,8 +1,8 @@
-import SnackbarNotification from "./SnackbarNotification";
-import GridLayout from "./GridLayout";
+import SnackbarNotification from "../SnackbarNotification";
+import GridLayout from "../GridLayout";
 import Box from "@mui/material/Box";
 import * as React from "react";
-import { IState } from "./ExecuteQuery";
+import { IState } from "../ExecuteQuery";
 
 const Home = () => {
   const [wasmBuffers, setWasmBuffers] = React.useState<ArrayBuffer[]>([]);
