@@ -24,7 +24,7 @@ import { instantiatedAtom } from "../atoms/instantiatedAtom";
 import { payloadAtom } from "../atoms/payloadAtom";
 import { IState } from "./ExecuteQuery";
 import { ORANGE_3 } from "../configs/variables";
-import { Tooltip } from "@mui/material";
+import { Link, Tooltip } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -189,6 +189,18 @@ export default function MenuDrawer() {
               yet!</Typography>
           )
         )}
+        <List sx={{position: 'absolute', bottom: 0}}>
+          <ListItem key="Documentation">
+            <Link href={"documentation"} underline={"none"}>
+              <ListItemText primary="Documentation" sx={{opacity: open ? 1 : 0}}/>
+            </Link>
+          </ListItem>
+          <ListItem key="Source Code">
+            <Link href={"https://github.com/Terran-One/cw-debug-ui"} underline={"none"}>
+              <ListItemText primary="Source Code" sx={{opacity: open ? 1 : 0}}/>
+            </Link>
+          </ListItem>
+        </List>
       </Drawer>
       <DrawerHeader/>
     </Box>

@@ -4,7 +4,10 @@ import { RecoilRoot } from "recoil";
 import './styles/styles.scss';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MenuDrawer from "./components/MenuDrawer";
-import Home from "./components/Home";
+import Home from "./components/home/Home";
+import Simulation from "./components/simulation/Simulation";
+import Chains from "./components/chains/Chains";
+import Chain from "./components/chains/Chain";
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
@@ -14,6 +17,10 @@ root.render(
         <MenuDrawer/>
         <Routes>
           <Route path={"/"} element={<Home/>}/>
+          <Route path={"/simulation"} element={<Simulation/>}/>
+          <Route path={"/chains"} element={<Chains/>}>
+            <Route path={":id"} element={<Chain/>}/>
+          </Route>
           <Route
             path="*"
             element={
