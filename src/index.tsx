@@ -19,7 +19,7 @@ root.render(
           <Route path={"/"} element={<Home/>}/>
           <Route path={"/simulation"} element={<Simulation/>}/>
           <Route path={"/chains"} element={<Chains/>}>
-            <Route path={"/:id"} element={<Chain/>}/>
+            <Route path={":id"} element={<Chain/>}/>
           </Route>
           <Route
             path="*"

@@ -7,12 +7,12 @@ import Instances from "./Instances";
 
 const Chain = () => {
   return (
-    <Box sx={{ display: "flex"}}>
-      <Config />
-      <State />
-      <Accounts />
-      <Codes />
-      <Instances />
+    <Box sx={{display: "flex"}}>
+      <Config/>
+      <State/>
+      <Accounts/>
+      <Codes/>
+      <Instances/>
     </Box>
   )
 }
