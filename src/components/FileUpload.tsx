@@ -1,106 +1,48 @@
 import React from "react";
-import { InboxOutlined } from "@ant-design/icons";
-import type { UploadProps } from "antd";
-import { Upload } from "antd";
-import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
-import {
-  BasicBackendApi,
-  BasicKVIterStorage,
-  BasicQuerier,
-  IBackend,
-  VMInstance,
-} from "@terran-one/cosmwasm-vm-js";
-import { useRecoilState } from "recoil";
-import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
-import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
-
-const { Dragger } = Upload;
+import { DropzoneArea } from "mui-file-dropzone";
+import { SnackbarProps } from "@mui/material";
 
 interface IProps {
   setWasmBuffer: (fileBuffer: ArrayBuffer | null) => void;
 }
 
-const FileUpload = ({ setWasmBuffer }: IProps) => {
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationAtom
-  );
-  const [_, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
-  const backend: IBackend = {
-    backend_api: new BasicBackendApi(),
-    storage: new BasicKVIterStorage(),
-    querier: new BasicQuerier(),
+const FileUpload = ({setWasmBuffer}: IProps) => {
+
+  const snackbarProps: SnackbarProps = {
+    anchorOrigin: {
+      vertical: "top",
+      horizontal: "center",
+    }
   };
 
-  // Custom function to store file
-  const storeFile = (fileProps: RcCustomRequestOptions) => {
-    const { onSuccess, onError, file } = fileProps;
-    return new Promise((resolve, reject) => {
+  const handleOnFileDrop = (files: File[]) => {
+    files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (event: ProgressEvent<FileReader>) => {
         if (event.target) {
           setWasmBuffer(event.target.result as ArrayBuffer);
-          window.VM = new VMInstance(backend);
-          window.VM.build(event.target.result).then(() => {
-            //TODO: Move the buffer either to redux or IndexedDB
-            setIsFileUploaded(true);
-            onSuccess!("done");
-            resolve(event.target!.result);
-          });
         }
-      };
-      reader.onerror = (err) => {
-        onError!(err, "error");
-        reject(err);
       };
       reader.readAsArrayBuffer(file as Blob);
     });
-  };
+  }
 
-  const props: UploadProps = {
-    name: "file",
-    accept: ".wasm,",
-    maxCount: 1,
-    customRequest: storeFile,
-    onChange(info) {
-      const { status } = info.file;
-      if (status === "done") {
-        setSnackbarNotification({
-          ...snackbarNotification,
-          severity: "success",
-          open: true,
-          message: `${info.file.name} file uploaded successfully.`,
-        });
-      } else if (status === "error") {
-        setSnackbarNotification({
-          ...snackbarNotification,
-          severity: "error",
-          open: true,
-          message: `${info.file.name} file upload failed.`,
-        });
-      }
-    },
-  };
+  const handleOnFileChange = (files: File[]) => {
+    // do nothing
+  }
+
+  const handleOnFileDelete = (file: File) => {
+    console.log(file);
+  }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-      }}
-    >
-      <Dragger {...props}>
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined style={{ fontSize: "30px" }} />
-        </p>
-        <p className="ant-upload-text">
-          Click to upload a simulation file or contract binary
-        </p>
-        <p className="ant-upload-text">or</p>
-        <p className="ant-upload-hint">Drag & drop a file here</p>
-      </Dragger>
-    </div>
+    <DropzoneArea
+      fileObjects={[""]}
+      dropzoneText={"Click to upload a simulation file or contract binary or Drag & drop a file here"}
+      onDrop={handleOnFileDrop}
+      onDelete={handleOnFileDelete}
+      alertSnackbarProps={snackbarProps}
+      onChange={handleOnFileChange}/>
   );
 };
 
