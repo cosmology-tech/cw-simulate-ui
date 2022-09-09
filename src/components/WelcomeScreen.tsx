@@ -5,6 +5,7 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
+import { createSimulateEnv } from "../utils/setupSimulation";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -19,6 +20,9 @@ interface IProps {
 }
 
 export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
+  const onCreateNewEnvironment = () => {
+    window.CWEnv = createSimulateEnv();
+  }
   return (
     <Grid
       sx={{
@@ -92,7 +96,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
           </Item>
         </Grid>
         <Grid item xs={12} sx={{ marginTop: 4, marginBottom: 6 }}>
-          <Button variant="contained" sx={{ borderRadius: "10px" }}>
+          <Button variant="contained" sx={{ borderRadius: "10px" }} onClick={onCreateNewEnvironment}>
             New Simulation Environment
           </Button>
         </Grid>
