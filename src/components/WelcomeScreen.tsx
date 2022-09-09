@@ -91,10 +91,17 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             <FileUpload setWasmBuffer={setWasmBuffer} />
           </Item>
         </Grid>
-        <Grid item xs={12} sx={{ marginTop: 4, marginBottom: 6 }}>
+        <Grid item xs={12} sx={{ marginTop: 4, marginBottom: 1 }}>
           <Button variant="contained" sx={{ borderRadius: "10px" }}>
             New Simulation Environment
           </Button>
+        </Grid>
+        <Grid
+          item
+          xs={6}
+          sx={{ borderRadius: "10px", marginTop: 1, marginBottom: 6 }}
+        >
+          <img src="/T1_Logo.svg" height="100px" />
         </Grid>
       </Grid>
     </Grid>
