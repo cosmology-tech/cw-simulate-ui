@@ -5,7 +5,6 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { createSimulateEnv } from "../utils/setupSimulation";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -20,9 +19,6 @@ interface IProps {
 }
 
 export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
-  const onCreateNewEnvironment = () => {
-    window.CWEnv = createSimulateEnv();
-  }
   return (
     <Grid
       sx={{
@@ -62,7 +58,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             direction="column"
             sx={{ alignItems: "center", display: "flex" }}
           >
-            <LibraryBooksIcon />
+            <LibraryBooksIcon sx={{ cursor: "pointer" }} />
             <Typography>Tutorials</Typography>
           </Grid>
           <Grid
@@ -70,7 +66,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             direction="column"
             sx={{ alignItems: "center", display: "flex" }}
           >
-            <ArticleIcon />
+            <ArticleIcon sx={{ cursor: "pointer" }} />
             <Typography>Documentation</Typography>
           </Grid>
           <Grid
@@ -78,7 +74,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             direction="column"
             sx={{ alignItems: "center", display: "flex" }}
           >
-            <NotesIcon />
+            <NotesIcon sx={{ cursor: "pointer" }} />
             <Typography>Examples</Typography>
           </Grid>
           <Grid
@@ -86,7 +82,7 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             direction="column"
             sx={{ alignItems: "center", display: "flex" }}
           >
-            <GitHubIcon />
+            <GitHubIcon sx={{ cursor: "pointer" }} />
             <Typography>Github</Typography>
           </Grid>
         </Grid>
@@ -95,10 +91,17 @@ export const WelcomeScreen = ({ setWasmBuffer }: IProps) => {
             <FileUpload setWasmBuffer={setWasmBuffer} />
           </Item>
         </Grid>
-        <Grid item xs={12} sx={{ marginTop: 4, marginBottom: 6 }}>
+        <Grid item xs={12} sx={{ marginTop: 4, marginBottom: 1 }}>
           <Button variant="contained" sx={{ borderRadius: "10px" }} onClick={onCreateNewEnvironment}>
             New Simulation Environment
           </Button>
+        </Grid>
+        <Grid
+          item
+          xs={6}
+          sx={{ borderRadius: "10px", marginTop: 1, marginBottom: 6 }}
+        >
+          <img src="/T1_Logo.svg" height="100px" />
         </Grid>
       </Grid>
     </Grid>
