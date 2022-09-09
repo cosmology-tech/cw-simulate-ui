@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { CSSObject, styled, Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
@@ -99,11 +100,11 @@ const Drawer = styled(MuiDrawer, {
 
 export default function MenuDrawer() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
-  const [wasmBuffers, setWasmBuffers] = React.useState<ArrayBuffer[]>([]);
+  const [wasmBuffers, setWasmBuffers] = useState<ArrayBuffer[]>([]);
   const [payload, setPayload] = useRecoilState(payloadAtom);
-  const [allStates, setAllStates] = React.useState<IState[]>([]);
+  const [allStates, setAllStates] = useState<IState[]>([]);
   const setIsInstantiated = useSetRecoilState(instantiatedAtom);
 
   const handleDrawerOpen = () => {

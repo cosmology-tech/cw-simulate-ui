@@ -1,11 +1,12 @@
 import { Button, Grid, Paper, styled, Typography } from "@mui/material";
 import React from "react";
-import FileUpload from "./FileUpload";
+import FileUpload from "../FileUpload";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { createSimulateEnv } from "../utils/setupSimulation";
+import { createSimulateEnv } from "../../utils/setupSimulation";
+import { Link } from "react-router-dom";
 
 const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -97,16 +98,19 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           </Item>
         </Grid>
         <Grid item xs={12}>
-          <Button variant="contained" sx={{borderRadius: "10px"}} onClick={onCreateNewEnvironment}>
-            New Simulation Environment
-          </Button>
+          <Link to={"/chains"}>
+            <Button variant="contained" sx={{borderRadius: "10px"}}
+                    onClick={onCreateNewEnvironment}>
+              New Simulation Environment
+            </Button>
+          </Link>
         </Grid>
         <Grid
           item
           xs={6}
           sx={{borderRadius: "10px", marginTop: 1, marginBottom: 6}}
         >
-          <img src="/T1_Logo.svg" height="100px"/>
+          <img src="/T1_Logo.svg" height="100px" alt={"T1 Logo"}/>
         </Grid>
       </Grid>
     </Grid>

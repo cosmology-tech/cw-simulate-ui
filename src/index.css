@@ -21,23 +21,6 @@ code {
   background: #141414;
 }
 
-textarea.ant-input {
-  max-height: 280px !important;
-}
-
-.ant-card-body {
-  padding: 10px !important;
-  max-height: 165px;
-}
-
-.ant-card-body > ul {
-  background-color: white;
-}
-
-.ant-steps {
-  width: auto !important;
-}
-
 .execute:hover {
   color: blue;
   cursor: pointer;
