@@ -29,19 +29,19 @@ const StateMemoryTab = ({
         alignItems: "center",
       }}
     >
-      <div style={{ display: "flex", marginLeft: 10 }}>
+      <div style={{display: "flex", marginLeft: 10}}>
         <Tabs
           value={currentTab}
           onChange={onChangeHandler}
           aria-label="State/Memory Tab"
         >
-          <Tab value="state" label="State" />
+          <Tab value="state" label="State"/>
           {/* <Tab value="memory" label="Memory" /> */}
         </Tabs>
       </div>
       {isStateTraversed && (
         <div>
-          <DiffSwitch isChecked={isChecked} setIsChecked={setIsChecked} />
+          <DiffSwitch isChecked={isChecked} setIsChecked={setIsChecked}/>
         </div>
       )}
     </div>

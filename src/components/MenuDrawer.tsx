@@ -107,7 +107,7 @@ export default function MenuDrawer() {
   const [open, setOpen] = React.useState(false);
   const [collapsed, setCollapsed] = React.useState(true);
   const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
-  const [wasmBuffer, setWasmBuffer] = React.useState<ArrayBuffer | null>(null);
+  const [wasmBuffers, setWasmBuffers] = React.useState<ArrayBuffer[]>([]);
   const [payload, setPayload] = useRecoilState(payloadAtom);
   const [response, setResponse] = React.useState<JSON | undefined>();
   const [allStates, setAllStates] = React.useState<IState[]>([]);
@@ -129,7 +129,7 @@ export default function MenuDrawer() {
 
   const onResetClickHandler = () => {
     setIsFileUploaded(false);
-    setWasmBuffer(null);
+    setWasmBuffers([]);
     setPayload("");
     setAllStates([]);
     setIsInstantiated(false);
@@ -212,7 +212,8 @@ export default function MenuDrawer() {
           allStates={allStates}
           currentState={currentState}
           setCurrentState={setCurrentState}
-          setWasmBuffer={setWasmBuffer}
+          setWasmBuffers={setWasmBuffers}
+          wasmBuffers={wasmBuffers}
           setAllStates={setAllStates}
         />
       </Box>
