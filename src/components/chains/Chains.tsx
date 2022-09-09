@@ -1,6 +1,14 @@
+import { Stack } from "@mui/material";
+
 const Chains = () => {
   return (
-    <p>Chains</p>
+    <Stack sx={{
+      alignItems: "center",
+      justifyContent: "center",
+      placeItems: "center",
+    }}>
+      <div>Chains</div>
+    </Stack>
   )
 }
 

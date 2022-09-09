@@ -1,5 +1,3 @@
-// @ts-nocheck
-// @ts-ignore
 import React from "react";
 import { DropzoneArea } from "react-mui-dropzone";
 import { SnackbarProps } from "@mui/material";

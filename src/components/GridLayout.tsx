@@ -15,7 +15,7 @@ import { instantiatedAtom } from "../atoms/instantiatedAtom";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { Config } from "../configs/config";
 import { StateRenderer } from "./StateRenderer";
-import { WelcomeScreen } from "./WelcomeScreen";
+import { WelcomeScreen } from "./home/WelcomeScreen";
 import "../index.css";
 
 const Item = styled(Paper)(({theme}) => ({
