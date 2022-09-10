@@ -1,6 +1,8 @@
 import React from "react";
 import { DropzoneArea } from "react-mui-dropzone";
 import { SnackbarProps } from "@mui/material";
+import { useRecoilState } from "recoil";
+import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 
 interface IProps {
   setWasmBuffers: (fileBuffer: ArrayBuffer[]) => void;
@@ -8,6 +10,7 @@ interface IProps {
 }
 
 const FileUpload = ({setWasmBuffers, wasmBuffers}: IProps) => {
+  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
   const snackbarProps: SnackbarProps = {
     anchorOrigin: {
       vertical: "top",
@@ -32,7 +35,7 @@ const FileUpload = ({setWasmBuffers, wasmBuffers}: IProps) => {
   }
 
   const handleOnFileDelete = (file: File) => {
-    console.log(file);
+    // do nothing
   }
 
   return (
