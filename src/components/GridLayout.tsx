@@ -8,14 +8,12 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { payloadAtom } from "../atoms/payloadAtom";
 import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
 import { ExecuteQuery, IState } from "./ExecuteQuery";
-import FileUpload from "./FileUpload";
 import { Instantiate } from "./Instantiate";
 import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 import { instantiatedAtom } from "../atoms/instantiatedAtom";
 import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
 import { Config } from "../configs/config";
 import { StateRenderer } from "./StateRenderer";
-import { WelcomeScreen } from "./home/WelcomeScreen";
 import "../index.css";
 
 const Item = styled(Paper)(({theme}) => ({
@@ -90,9 +88,7 @@ export default function GridLayout({
     }
   };
 
-  return !isFileUploaded ? (
-    <WelcomeScreen setWasmBuffers={setWasmBuffers} wasmBuffers={wasmBuffers}/>
-  ) : (
+  return (
     <Box sx={{maxWidth: "92vw"}}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
@@ -128,9 +124,7 @@ export default function GridLayout({
                 height: "100%",
               }}
             >
-              {!isFileUploaded ? (
-                <FileUpload setWasmBuffers={setWasmBuffers} wasmBuffers={wasmBuffers}/>
-              ) : isInstantiated ? (
+              {isInstantiated ? (
                 <ExecuteQuery
                   response={response}
                   setResponse={setResponse}

@@ -1,8 +1,9 @@
 import SnackbarNotification from "../SnackbarNotification";
-import GridLayout from "../GridLayout";
 import Box from "@mui/material/Box";
 import * as React from "react";
 import { IState } from "../ExecuteQuery";
+import { WelcomeScreen } from "./WelcomeScreen";
+import "../../index.css";
 
 const Home = () => {
   const [wasmBuffers, setWasmBuffers] = React.useState<ArrayBuffer[]>([]);
@@ -12,18 +13,12 @@ const Home = () => {
   return (
     <Box component="main" sx={{flexGrow: 1, p: 3}}>
       <SnackbarNotification/>
-      <GridLayout
-        response={response}
-        setResponse={setResponse}
-        allStates={allStates}
-        currentState={currentState}
-        setCurrentState={setCurrentState}
-        setWasmBuffers={setWasmBuffers}
+      <WelcomeScreen
         wasmBuffers={wasmBuffers}
-        setAllStates={setAllStates}
+        setWasmBuffers={setWasmBuffers}
       />
     </Box>
-  )
-}
+  );
+};
 
 export default Home;
