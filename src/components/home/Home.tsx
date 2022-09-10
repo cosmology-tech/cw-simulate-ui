@@ -1,5 +1,4 @@
 import SnackbarNotification from "../SnackbarNotification";
-import GridLayout from "../GridLayout";
 import Box from "@mui/material/Box";
 import * as React from "react";
 import { IState } from "../ExecuteQuery";
@@ -12,8 +11,8 @@ const Home = () => {
   const [allStates, setAllStates] = React.useState<IState[]>([]);
   const [currentState, setCurrentState] = React.useState(0);
   return (
-    <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-      <SnackbarNotification />
+    <Box component="main" sx={{flexGrow: 1, p: 3}}>
+      <SnackbarNotification/>
       <WelcomeScreen
         wasmBuffers={wasmBuffers}
         setWasmBuffers={setWasmBuffers}

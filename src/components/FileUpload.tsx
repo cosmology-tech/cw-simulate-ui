@@ -1,16 +1,16 @@
 import React from "react";
 import { DropzoneArea } from "react-mui-dropzone";
 import { SnackbarProps } from "@mui/material";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
 
 interface IProps {
-  setWasmBuffers: (fileBuffer: ArrayBuffer[]) => void;
   wasmBuffers: ArrayBuffer[];
+  setWasmBuffers: (fileBuffer: ArrayBuffer[]) => void;
 }
 
-const FileUpload = ({ setWasmBuffers, wasmBuffers }: IProps) => {
-  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
+const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
+  const setIsFileUploaded = useSetRecoilState(fileUploadedAtom);
   const snackbarProps: SnackbarProps = {
     anchorOrigin: {
       vertical: "top",
@@ -32,11 +32,23 @@ const FileUpload = ({ setWasmBuffers, wasmBuffers }: IProps) => {
   };
 
   const handleOnFileChange = (files: File[]) => {
-    // do nothing
+    if (files.length === 0) {
+      setIsFileUploaded(false);
+    }
   };
 
   const handleOnFileDelete = (file: File) => {
-    // do nothing
+    // Remove file from wasmBuffers
+    const index = wasmBuffers.findIndex((buffer) => {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file as Blob);
+      return reader.result === buffer;
+    });
+    if (index > -1) {
+      wasmBuffers.splice(index, 1);
+    } else {
+      console.error("File not found in wasmBuffers");
+    }
   };
 
   return (

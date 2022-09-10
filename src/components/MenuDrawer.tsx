@@ -28,9 +28,9 @@ import { Drawer, Link, Tooltip } from "@mui/material";
 
 const drawerWidth = 240;
 
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
+const Main = styled("main", {shouldForwardProp: (prop) => prop !== "open"})<{
   open?: boolean;
-}>(({ theme, open }) => ({
+}>(({theme, open}) => ({
   flexGrow: 1,
   padding: theme.spacing(3),
   transition: theme.transitions.create("margin", {
@@ -53,7 +53,7 @@ interface AppBarProps extends MuiAppBarProps {
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
+})<AppBarProps>(({theme, open}) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(["width", "margin"], {
     easing: theme.transitions.easing.sharp,
@@ -69,7 +69,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const DrawerHeader = styled("div")(({ theme }) => ({
+const DrawerHeader = styled("div")(({theme}) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
@@ -104,9 +104,9 @@ export default function MenuDrawer() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open} sx={{ backgroundColor: ORANGE_3 }}>
+    <Box sx={{display: "flex"}}>
+      <CssBaseline/>
+      <AppBar position="fixed" open={open} sx={{backgroundColor: ORANGE_3}}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -115,10 +115,10 @@ export default function MenuDrawer() {
             edge="start"
             sx={{
               marginRight: 5,
-              ...(open && { display: "none" }),
+              ...(open && {display: "none"}),
             }}
           >
-            <MenuIcon />
+            <MenuIcon/>
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             CosmWasm Simulator
@@ -140,17 +140,17 @@ export default function MenuDrawer() {
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
+              <ChevronRightIcon/>
             ) : (
-              <ChevronLeftIcon />
+              <ChevronLeftIcon/>
             )}
           </IconButton>
         </DrawerHeader>
-        <Divider />
+        <Divider/>
         {/* TODO: Add Chain Status here to get instiantiate instructuctions */}
         <List>
           {["Contracts", "Reset"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
+            <ListItem key={text} disablePadding sx={{display: "block"}}>
               <Tooltip title={text} placement="right">
                 <ListItemButton
                   sx={{
@@ -167,9 +167,9 @@ export default function MenuDrawer() {
                       justifyContent: "center",
                     }}
                   >
-                    {index === 0 ? <TextSnippetIcon /> : <RestartAltIcon />}
+                    {index === 0 ? <TextSnippetIcon/> : <RestartAltIcon/>}
                   </ListItemIcon>
-                  <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  <ListItemText primary={text} sx={{opacity: open ? 1 : 0}}/>
                 </ListItemButton>
               </Tooltip>
             </ListItem>
@@ -181,12 +181,12 @@ export default function MenuDrawer() {
               yet!</Typography>
           ) */}
         )
-        <List sx={{ position: "absolute", bottom: 0 }}>
+        <List sx={{position: "absolute", bottom: 0}}>
           <ListItem key="Documentation">
             <Link href={"documentation"} underline={"none"}>
               <ListItemText
                 primary="Documentation"
-                sx={{ opacity: open ? 1 : 0 }}
+                sx={{opacity: open ? 1 : 0}}
               />
             </Link>
           </ListItem>
@@ -197,13 +197,13 @@ export default function MenuDrawer() {
             >
               <ListItemText
                 primary="Source Code"
-                sx={{ opacity: open ? 1 : 0 }}
+                sx={{opacity: open ? 1 : 0}}
               />
             </Link>
           </ListItem>
         </List>
       </Drawer>
-      <DrawerHeader />
+      <DrawerHeader/>
     </Box>
   );
 }

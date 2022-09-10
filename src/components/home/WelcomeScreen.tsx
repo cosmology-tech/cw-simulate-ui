@@ -7,10 +7,10 @@ import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { createSimulateEnv } from "../../utils/setupSimulation";
 import { Link } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { fileUploadedAtom } from "../../atoms/fileUploadedAtom";
 
-const Item = styled(Paper)(({ theme }) => ({
+const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -23,7 +23,7 @@ interface IProps {
   wasmBuffers: ArrayBuffer[];
 }
 
-export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
+export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
   const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
   const onCreateNewEnvironment = () => {
     window.CWEnv = createSimulateEnv();
@@ -49,15 +49,15 @@ export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
         xl={8}
         container
         justifyContent="center"
-        sx={{ border: "1px solid #eae5e5", borderRadius: "10px", width: "60%" }}
+        sx={{border: "1px solid #eae5e5", borderRadius: "10px", width: "60%"}}
         className="outerGrid"
       >
         <Grid
           item
           xs={12}
-          sx={{ marginTop: 4, marginBottom: 4, textAlign: "center" }}
+          sx={{marginTop: 4, marginBottom: 4, textAlign: "center"}}
         >
-          <Typography variant="h2" sx={{ fontWeight: 600 }}>
+          <Typography variant="h2" sx={{fontWeight: 600}}>
             CosmWasm Simulator
           </Typography>
         </Grid>
@@ -85,7 +85,7 @@ export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
               marginRight: 1,
             }}
           >
-            <LibraryBooksIcon sx={{ cursor: "pointer" }} />
+            <LibraryBooksIcon sx={{cursor: "pointer"}}/>
             <Typography>Tutorials</Typography>
           </Grid>
           <Grid
@@ -98,7 +98,7 @@ export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
               marginRight: 1,
             }}
           >
-            <ArticleIcon sx={{ cursor: "pointer" }} />
+            <ArticleIcon sx={{cursor: "pointer"}}/>
             <Typography>Documentation</Typography>
           </Grid>
           <Grid
@@ -111,7 +111,7 @@ export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
               marginRight: 1,
             }}
           >
-            <NotesIcon sx={{ cursor: "pointer" }} />
+            <NotesIcon sx={{cursor: "pointer"}}/>
             <Typography>Examples</Typography>
           </Grid>
           <Grid
@@ -124,7 +124,7 @@ export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
               marginRight: 1,
             }}
           >
-            <GitHubIcon sx={{ cursor: "pointer" }} />
+            <GitHubIcon sx={{cursor: "pointer"}}/>
             <Typography>Github</Typography>
           </Grid>
         </Grid>
@@ -133,9 +133,9 @@ export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
           xs={11}
           lg={7}
           md={8}
-          sx={{ marginTop: 4, marginBottom: 4, width: "60%" }}
+          sx={{marginTop: 4, marginBottom: 4, width: "60%"}}
         >
-          <Item sx={{ border: "1px solid #eae5e5" }}>
+          <Item sx={{border: "1px solid #eae5e5"}}>
             <FileUpload
               setWasmBuffers={setWasmBuffers}
               wasmBuffers={wasmBuffers}
@@ -147,12 +147,12 @@ export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
           xs={8}
           md={10}
           lg={6}
-          sx={{ display: "flex", justifyContent: "center" }}
+          sx={{display: "flex", justifyContent: "center"}}
         >
-          <Link to={"/chains"} style={{ textDecoration: "none" }}>
+          <Link to={"/chains"} style={{textDecoration: "none"}}>
             <Button
               variant="contained"
-              sx={{ borderRadius: "10px" }}
+              sx={{borderRadius: "10px"}}
               onClick={onCreateNewEnvironment}
               disabled={!isFileUploaded}
             >
@@ -172,7 +172,7 @@ export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
             justifyContent: "center",
           }}
         >
-          <img src="/T1_Logo.svg" height="100px" alt={"T1 Logo"} />
+          <img src="/T1_Logo.svg" height="100px" alt={"T1 Logo"}/>
         </Grid>
       </Grid>
     </Grid>

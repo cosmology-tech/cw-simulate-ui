@@ -34,12 +34,14 @@ code {
   -moz-box-shadow: 6px 2px 34px -12px rgba(0, 0, 0, 0.75);
   box-shadow: 6px 2px 34px -12px rgba(0, 0, 0, 0.75);
 }
+
 .MuiDropzoneArea-root {
   border: none !important;
 }
+
 .dropzone {
   display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
