@@ -20,16 +20,15 @@ import { ChainConfig } from "../../utils/setupSimulation";
 const Chains = () => {
   const [chains, setChains] = useRecoilState(chainsState);
   const [openDialog, setOpenDialog] = useState(false);
+  const [chainConfig, setChainConfig] = useState<ChainConfig>({} as ChainConfig);
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationAtom
   );
 
-  const placeholder = {
-    json: {
-      "chainId": 'phoenix-1',
-      "bech32Prefix": 'terra',
-    }
-  };
+  const sampleConfigJSON = `{
+    "chainId": 'phoenix-1',
+    "bech32Prefix": 'terra'
+  }`;
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -39,16 +38,21 @@ const Chains = () => {
     setOpenDialog(false);
   }
 
+  const handleAddChain = () => {
+    console.log(chainConfig);
+    setSnackbarNotification({
+      ...snackbarNotification,
+      severity: "success",
+      open: true,
+      message: "Successfully added new chain config.",
+    });
+    setOpenDialog(false);
+  }
+
   const handleChainConfigChange = (val: string) => {
     try {
       const newChainConfig = JSON.parse(val) as ChainConfig;
-      console.log(newChainConfig);
-      setSnackbarNotification({
-        ...snackbarNotification,
-        severity: "success",
-        open: true,
-        message: "Successfully added new chain config.",
-      });
+      setChainConfig(newChainConfig);
     } catch (e) {
       setSnackbarNotification({
         ...snackbarNotification,
@@ -82,13 +86,13 @@ const Chains = () => {
           <ReactCodeMirror
             extensions={[json()]}
             onChange={(val: string) => handleChainConfigChange(val)}
-            placeholder={JSON.stringify(placeholder)}
+            value={sampleConfigJSON}
             minHeight={"200px"}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Add</Button>
+          <Button onClick={handleAddChain}>Add</Button>
         </DialogActions>
       </Dialog>
       {chains.length > 0 ? (chains.map((chain) => (
