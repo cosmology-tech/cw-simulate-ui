@@ -18,7 +18,7 @@ import { StateRenderer } from "./StateRenderer";
 import { WelcomeScreen } from "./home/WelcomeScreen";
 import "../index.css";
 
-const Item = styled(Paper)(({theme}) => ({
+const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -55,7 +55,7 @@ export default function GridLayout({
     snackbarNotificationAtom
   );
   const [payload, setPayload] = useRecoilState(payloadAtom);
-  const {MOCK_ENV, MOCK_INFO} = Config;
+  const { MOCK_ENV, MOCK_INFO } = Config;
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
@@ -70,7 +70,7 @@ export default function GridLayout({
 
   const onInstantiateClickHandler = () => {
     try {
-      const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, {count: 20});
+      const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
       addState("", "");
       setIsInstantiated(true);
       setSnackbarNotification({
@@ -90,14 +90,12 @@ export default function GridLayout({
     }
   };
 
-  return !isFileUploaded ? (
-    <WelcomeScreen setWasmBuffers={setWasmBuffers} wasmBuffers={wasmBuffers}/>
-  ) : (
-    <Box sx={{maxWidth: "92vw"}}>
+  return (
+    <Box sx={{ maxWidth: "92vw" }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
           {allStates.length > 0 && (
-            <Item sx={{overflowX: "scroll", display: "flex", height: "10vh"}}>
+            <Item sx={{ overflowX: "scroll", display: "flex", height: "10vh" }}>
               <div
                 style={{
                   display: "flex",
@@ -121,16 +119,14 @@ export default function GridLayout({
           )}
         </Grid>
         <Grid item xs={12}>
-          <Item sx={{height: "40vh"}}>
+          <Item sx={{ height: "40vh" }}>
             <div
               style={{
                 padding: 10,
                 height: "100%",
               }}
             >
-              {!isFileUploaded ? (
-                <FileUpload setWasmBuffers={setWasmBuffers} wasmBuffers={wasmBuffers}/>
-              ) : isInstantiated ? (
+              {isInstantiated ? (
                 <ExecuteQuery
                   response={response}
                   setResponse={setResponse}
@@ -148,7 +144,7 @@ export default function GridLayout({
           </Item>
         </Grid>
         <Grid item xs={12}>
-          <Item sx={{textAlign: "left", height: "30vh"}}>
+          <Item sx={{ textAlign: "left", height: "30vh" }}>
             <StateRenderer
               isFileUploaded={isFileUploaded}
               allStates={allStates}

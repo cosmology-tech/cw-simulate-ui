@@ -7,8 +7,10 @@ import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { createSimulateEnv } from "../../utils/setupSimulation";
 import { Link } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { fileUploadedAtom } from "../../atoms/fileUploadedAtom";
 
-const Item = styled(Paper)(({theme}) => ({
+const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -21,86 +23,139 @@ interface IProps {
   wasmBuffers: ArrayBuffer[];
 }
 
-export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
+export const WelcomeScreen = ({ setWasmBuffers, wasmBuffers }: IProps) => {
+  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
   const onCreateNewEnvironment = () => {
     window.CWEnv = createSimulateEnv();
-  }
+  };
 
   return (
     <Grid
+      xs={12}
+      md={12}
+      lg={12}
+      xl={12}
+      container
       sx={{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        placeItems: "center",
       }}
     >
       <Grid
+        xs={12}
+        md={10}
+        lg={10}
+        xl={8}
         container
-        direction="column"
-        alignItems="center"
-        sx={{border: "1px solid #eae5e5", borderRadius: "10px", width: "60%"}}
+        justifyContent="center"
+        sx={{ border: "1px solid #eae5e5", borderRadius: "10px", width: "60%" }}
         className="outerGrid"
       >
-        <Grid item xs={12} sx={{marginTop: 4, marginBottom: 4}}>
-          <Typography variant="h2" sx={{fontWeight: 600}}>
+        <Grid
+          item
+          xs={12}
+          sx={{ marginTop: 4, marginBottom: 4, textAlign: "center" }}
+        >
+          <Typography variant="h2" sx={{ fontWeight: 600 }}>
             CosmWasm Simulator
           </Typography>
         </Grid>
         <Grid
           item
-          xs={12}
+          xs={11}
+          lg={6}
+          md={8}
           sx={{
             marginTop: 4,
             marginBottom: 4,
             display: "flex",
             flexDirection: "row",
-            width: "50%",
+            flexWrap: "wrap",
             justifyContent: "space-between",
           }}
         >
           <Grid
             component="div"
             direction="column"
-            sx={{alignItems: "center", display: "flex"}}
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              marginLeft: 1,
+              marginRight: 1,
+            }}
           >
-            <LibraryBooksIcon sx={{cursor: "pointer"}}/>
+            <LibraryBooksIcon sx={{ cursor: "pointer" }} />
             <Typography>Tutorials</Typography>
           </Grid>
           <Grid
             component="div"
             direction="column"
-            sx={{alignItems: "center", display: "flex"}}
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              marginLeft: 1,
+              marginRight: 1,
+            }}
           >
-            <ArticleIcon sx={{cursor: "pointer"}}/>
+            <ArticleIcon sx={{ cursor: "pointer" }} />
             <Typography>Documentation</Typography>
           </Grid>
           <Grid
             component="div"
             direction="column"
-            sx={{alignItems: "center", display: "flex"}}
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              marginLeft: 1,
+              marginRight: 1,
+            }}
           >
-            <NotesIcon sx={{cursor: "pointer"}}/>
+            <NotesIcon sx={{ cursor: "pointer" }} />
             <Typography>Examples</Typography>
           </Grid>
           <Grid
             component="div"
             direction="column"
-            sx={{alignItems: "center", display: "flex"}}
+            sx={{
+              alignItems: "center",
+              display: "flex",
+              marginLeft: 1,
+              marginRight: 1,
+            }}
           >
-            <GitHubIcon sx={{cursor: "pointer"}}/>
+            <GitHubIcon sx={{ cursor: "pointer" }} />
             <Typography>Github</Typography>
           </Grid>
         </Grid>
-        <Grid item xs={12} sx={{marginTop: 4, marginBottom: 4, width: "60%"}}>
-          <Item sx={{border: "1px solid #eae5e5"}}>
-            <FileUpload setWasmBuffers={setWasmBuffers} wasmBuffers={wasmBuffers}/>
+        <Grid
+          item
+          xs={11}
+          lg={7}
+          md={8}
+          sx={{ marginTop: 4, marginBottom: 4, width: "60%" }}
+        >
+          <Item sx={{ border: "1px solid #eae5e5" }}>
+            <FileUpload
+              setWasmBuffers={setWasmBuffers}
+              wasmBuffers={wasmBuffers}
+            />
           </Item>
         </Grid>
-        <Grid item xs={12}>
-          <Link to={"/chains"}>
-            <Button variant="contained" sx={{borderRadius: "10px"}}
-                    onClick={onCreateNewEnvironment}>
+        <Grid
+          item
+          xs={8}
+          md={10}
+          lg={6}
+          sx={{ display: "flex", justifyContent: "center" }}
+        >
+          <Link to={"/chains"} style={{ textDecoration: "none" }}>
+            <Button
+              variant="contained"
+              sx={{ borderRadius: "10px" }}
+              onClick={onCreateNewEnvironment}
+              disabled={!isFileUploaded}
+            >
               New Simulation Environment
             </Button>
           </Link>
@@ -108,9 +163,16 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
         <Grid
           item
           xs={6}
-          sx={{borderRadius: "10px", marginTop: 1, marginBottom: 6}}
+          lg={8}
+          sx={{
+            borderRadius: "10px",
+            marginTop: 1,
+            marginBottom: 6,
+            display: "flex",
+            justifyContent: "center",
+          }}
         >
-          <img src="/T1_Logo.svg" height="100px" alt={"T1 Logo"}/>
+          <img src="/T1_Logo.svg" height="100px" alt={"T1 Logo"} />
         </Grid>
       </Grid>
     </Grid>
