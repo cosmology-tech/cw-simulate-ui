@@ -1,4 +1,3 @@
-import SnackbarNotification from "../SnackbarNotification";
 import Box from "@mui/material/Box";
 import * as React from "react";
 import { IState } from "../ExecuteQuery";
@@ -12,7 +11,6 @@ const Home = () => {
   const [currentState, setCurrentState] = React.useState(0);
   return (
     <Box component="main" sx={{flexGrow: 1, p: 3}}>
-      <SnackbarNotification/>
       <WelcomeScreen
         wasmBuffers={wasmBuffers}
         setWasmBuffers={setWasmBuffers}

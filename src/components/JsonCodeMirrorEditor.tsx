@@ -4,10 +4,10 @@ import { json } from "@codemirror/lang-json";
 import { Box } from "@mui/material";
 import { GREY_6 } from "../configs/variables";
 import { useRecoilState } from "recoil";
-import { payloadAtom } from "../atoms/payloadAtom";
+import { payloadState } from "../atoms/payloadState";
 
 export const JsonCodeMirrorEditor: React.FC = () => {
-  const [payload, setPayload] = useRecoilState(payloadAtom);
+  const [payload, setPayload] = useRecoilState(payloadState);
   const placeholder = {
     json: "Enter your JSON here",
   };

@@ -5,13 +5,13 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { StateTraversal } from "./StateTraversal";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { payloadAtom } from "../atoms/payloadAtom";
-import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
+import { payloadState } from "../atoms/payloadState";
+import { executeQueryTabState } from "../atoms/executeQueryTabState";
 import { ExecuteQuery, IState } from "./ExecuteQuery";
 import { Instantiate } from "./Instantiate";
-import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
-import { instantiatedAtom } from "../atoms/instantiatedAtom";
-import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
+import { fileUploadedState } from "../atoms/fileUploadedState";
+import { instantiatedState } from "../atoms/instantiatedState";
+import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { Config } from "../configs/config";
 import { StateRenderer } from "./StateRenderer";
 import "../index.css";
@@ -46,13 +46,13 @@ export default function GridLayout({
   setAllStates,
 }: IProps) {
   const [executeQueryTab, setExecuteQueryTab] =
-    useRecoilState(executeQueryTabAtom);
-  const isFileUploaded = useRecoilValue(fileUploadedAtom);
-  const [isInstantiated, setIsInstantiated] = useRecoilState(instantiatedAtom);
+    useRecoilState(executeQueryTabState);
+  const isFileUploaded = useRecoilValue(fileUploadedState);
+  const [isInstantiated, setIsInstantiated] = useRecoilState(instantiatedState);
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationAtom
+    snackbarNotificationState
   );
-  const [payload, setPayload] = useRecoilState(payloadAtom);
+  const [payload, setPayload] = useRecoilState(payloadState);
   const {MOCK_ENV, MOCK_INFO} = Config;
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {

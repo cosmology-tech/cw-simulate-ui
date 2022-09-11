@@ -4,10 +4,10 @@ import { Config } from "../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
-import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
+import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import { executeQueryTabState } from "../atoms/executeQueryTabState";
 import { Button } from "@mui/material";
-import { payloadAtom } from "../atoms/payloadAtom";
+import { payloadState } from "../atoms/payloadState";
 
 interface IProps {
   response: JSON | undefined;
@@ -36,10 +36,10 @@ export const ExecuteQuery = ({
 }: IProps) => {
   const {MOCK_ENV, MOCK_INFO} = Config;
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationAtom
+    snackbarNotificationState
   );
-  const [payload, setPayload] = useRecoilState(payloadAtom);
-  const executeQueryTab = useRecoilValue(executeQueryTabAtom);
+  const [payload, setPayload] = useRecoilState(payloadState);
+  const executeQueryTab = useRecoilValue(executeQueryTabState);
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,

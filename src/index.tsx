@@ -8,12 +8,14 @@ import Home from "./components/home/Home";
 import Simulation from "./components/simulation/Simulation";
 import Chains from "./components/chains/Chains";
 import Chain from "./components/chains/Chain";
+import SnackbarNotification from "./components/SnackbarNotification";
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
   <React.StrictMode>
     <RecoilRoot>
       <BrowserRouter>
+        <SnackbarNotification/>
         <MenuDrawer/>
         <Routes>
           <Route path={"/"} element={<Home/>}/>
