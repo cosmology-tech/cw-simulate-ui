@@ -1,11 +1,11 @@
 import React from "react";
 import { useRecoilState } from "recoil";
-import { executeQueryTabAtom } from "../atoms/executeQueryTabAtom";
+import { executeQueryTabState } from "../atoms/executeQueryTabState";
 import { TabContext, TabList } from "@mui/lab";
 import { Box, Tab } from "@mui/material";
 
 const ExecuteQueryTab = () => {
-  const [tabValue, setTabValue] = useRecoilState(executeQueryTabAtom);
+  const [tabValue, setTabValue] = useRecoilState(executeQueryTabState);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setTabValue(newValue);

@@ -8,7 +8,7 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import { createSimulateEnv } from "../../utils/setupSimulation";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
-import { fileUploadedAtom } from "../../atoms/fileUploadedAtom";
+import { fileUploadedState } from "../../atoms/fileUploadedState";
 
 const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -24,7 +24,7 @@ interface IProps {
 }
 
 export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
-  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
+  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedState);
   const onCreateNewEnvironment = () => {
     window.CWEnv = createSimulateEnv();
   };

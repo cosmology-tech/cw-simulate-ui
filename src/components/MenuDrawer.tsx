@@ -19,9 +19,9 @@ import ListItemText from "@mui/material/ListItemText";
 import TextSnippetIcon from "@mui/icons-material/TextSnippet";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { fileUploadedAtom } from "../atoms/fileUploadedAtom";
-import { instantiatedAtom } from "../atoms/instantiatedAtom";
-import { payloadAtom } from "../atoms/payloadAtom";
+import { fileUploadedState } from "../atoms/fileUploadedState";
+import { instantiatedState } from "../atoms/instantiatedState";
+import { payloadState } from "../atoms/payloadState";
 import { IState } from "./ExecuteQuery";
 import { ORANGE_3 } from "../configs/variables";
 import { Drawer, Link, Tooltip } from "@mui/material";
@@ -81,11 +81,11 @@ const DrawerHeader = styled("div")(({theme}) => ({
 export default function MenuDrawer() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedAtom);
+  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedState);
   const [wasmBuffers, setWasmBuffers] = useState<ArrayBuffer[]>([]);
-  const [payload, setPayload] = useRecoilState(payloadAtom);
+  const [payload, setPayload] = useRecoilState(payloadState);
   const [allStates, setAllStates] = useState<IState[]>([]);
-  const setIsInstantiated = useSetRecoilState(instantiatedAtom);
+  const setIsInstantiated = useSetRecoilState(instantiatedState);
 
   const handleDrawerOpen = () => {
     setOpen(true);

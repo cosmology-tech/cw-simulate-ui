@@ -1,10 +1,10 @@
 import { Alert, Snackbar } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { snackbarNotificationAtom } from "../atoms/snackbarNotificationAtom";
+import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { AlertColor } from "@mui/material/Alert/Alert";
 
 const SnackbarNotification = () => {
-  const [snackbarState, setSnackbarState] = useRecoilState(snackbarNotificationAtom);
+  const [snackbarState, setSnackbarState] = useRecoilState(snackbarNotificationState);
   return (
     <Snackbar autoHideDuration={2000}
               onClose={() => setSnackbarState({...snackbarState, open: false})}

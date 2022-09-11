@@ -6,29 +6,24 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  TextField,
   Typography
 } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { chainsState } from "../../atoms/chainsState";
 import { GREY_3 } from "../../configs/variables";
 import React, { useState } from "react";
-import ReactCodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
-import { snackbarNotificationAtom } from "../../atoms/snackbarNotificationAtom";
+import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { ChainConfig } from "../../utils/setupSimulation";
 
 const Chains = () => {
   const [chains, setChains] = useRecoilState(chainsState);
   const [openDialog, setOpenDialog] = useState(false);
   const [chainConfig, setChainConfig] = useState<ChainConfig>({} as ChainConfig);
+  const [chainNamesTextField, setChainNamesTextField] = useState<string>("");
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationAtom
+    snackbarNotificationState
   );
-
-  const sampleConfigJSON = `{
-    "chainId": 'phoenix-1',
-    "bech32Prefix": 'terra'
-  }`;
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -39,7 +34,6 @@ const Chains = () => {
   }
 
   const handleAddChain = () => {
-    console.log(chainConfig);
     setSnackbarNotification({
       ...snackbarNotification,
       severity: "success",
@@ -81,13 +75,17 @@ const Chains = () => {
         <DialogTitle>Add New Chain</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter the chain configuration below.
+            Enter chain names separated by commas. i.e. "phoenix-1", "osmosis-1", "terra-1".
           </DialogContentText>
-          <ReactCodeMirror
-            extensions={[json()]}
-            onChange={(val: string) => handleChainConfigChange(val)}
-            value={sampleConfigJSON}
-            minHeight={"200px"}
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Chain name"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => setChainNamesTextField(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
@@ -114,7 +112,7 @@ const Chains = () => {
           </Typography>
         </Grid>)}
     </Grid>
-  )
+  );
 }
 
 export default Chains;
