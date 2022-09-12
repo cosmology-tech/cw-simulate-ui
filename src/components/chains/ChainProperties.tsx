@@ -5,7 +5,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Button, Grid, IconButton, Typography } from "@mui/material";
-import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
+import Config from "./Config";
 
 export default function ChainProperties() {
   const [value, setValue] = React.useState("1");
@@ -61,17 +61,7 @@ export default function ChainProperties() {
           </IconButton>
         </Grid>
         <Grid xs={12} lg={12} sm={12} sx={{ marginTop: 4, marginBottom: 2 }}>
-          <Typography variant="h6">Configuration</Typography>
-          <JsonCodeMirrorEditor />
-          <Grid
-            item
-            xs={12}
-            sx={{ display: "flex", justifyContent: "end", marginTop: 2 }}
-          >
-            <Button variant="contained" sx={{ borderRadius: 2 }}>
-              <Typography variant="button">Update Configuration</Typography>
-            </Button>
-          </Grid>
+          <Config />
         </Grid>
       </Grid>
     </Box>
