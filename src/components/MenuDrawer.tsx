@@ -105,20 +105,12 @@ export default function MenuDrawer() {
           </IconButton>
           </div>
           <div>
-            <IconButton
-              sx={{
-                borderRadius: 5
-              }}
-            >
+            <IconButton sx={{ borderRadius: 5 }}>
               <Link href={"documentation"} underline={"none"}>
                 <HelpIcon sx={{color: WHITE}} />
               </Link>
             </IconButton>
-            <IconButton
-              sx={{
-                borderRadius: 5
-              }}
-            >
+            <IconButton sx={{ borderRadius: 5 }}>
               <Link href={"https://github.com/Terran-One/cw-debug-ui"} underline={"none"}>
                 <GitHubIcon sx={{color: WHITE}} />
               </Link>
