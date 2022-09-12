@@ -7,7 +7,7 @@ import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { createSimulateEnv } from "../../utils/setupSimulation";
 import { Link } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 
 const Item = styled(Paper)(({theme}) => ({
@@ -24,7 +24,7 @@ interface IProps {
 }
 
 export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
-  const [isFileUploaded] = useRecoilState(fileUploadedState);
+  const isFileUploaded = useRecoilValue(fileUploadedState);
   const onCreateNewEnvironment = () => {
     window.CWEnv = createSimulateEnv();
   };
