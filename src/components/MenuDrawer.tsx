@@ -10,6 +10,8 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import HelpIcon from "@mui/icons-material/Help";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
@@ -23,7 +25,7 @@ import { fileUploadedState } from "../atoms/fileUploadedState";
 import { instantiatedState } from "../atoms/instantiatedState";
 import { payloadState } from "../atoms/payloadState";
 import { IState } from "./ExecuteQuery";
-import { ORANGE_3 } from "../configs/variables";
+import { ORANGE_3, WHITE } from "../configs/variables";
 import { Drawer, Link, Tooltip } from "@mui/material";
 
 const drawerWidth = 240;
@@ -107,7 +109,8 @@ export default function MenuDrawer() {
     <Box sx={{display: "flex"}}>
       <CssBaseline/>
       <AppBar position="fixed" open={open} sx={{backgroundColor: ORANGE_3}}>
-        <Toolbar>
+        <Toolbar sx={{justifyContent: "space-between"}}>
+          <div>
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -120,9 +123,27 @@ export default function MenuDrawer() {
           >
             <MenuIcon/>
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            CosmWasm Simulator
-          </Typography>
+          </div>
+          <div>
+            <IconButton
+              sx={{
+                borderRadius: 5
+              }}
+            >
+              <Link href={"documentation"} underline={"none"}>
+                <HelpIcon sx={{color: WHITE}} />
+              </Link>
+            </IconButton>
+            <IconButton
+              sx={{
+                borderRadius: 5
+              }}
+            >
+              <Link href={"https://github.com/Terran-One/cw-debug-ui"} underline={"none"}>
+                <GitHubIcon sx={{color: WHITE}} />
+              </Link>
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -181,27 +202,6 @@ export default function MenuDrawer() {
               yet!</Typography>
           ) */}
         )
-        <List sx={{position: "absolute", bottom: 0}}>
-          <ListItem key="Documentation">
-            <Link href={"documentation"} underline={"none"}>
-              <ListItemText
-                primary="Documentation"
-                sx={{opacity: open ? 1 : 0}}
-              />
-            </Link>
-          </ListItem>
-          <ListItem key="Source Code">
-            <Link
-              href={"https://github.com/Terran-One/cw-debug-ui"}
-              underline={"none"}
-            >
-              <ListItemText
-                primary="Source Code"
-                sx={{opacity: open ? 1 : 0}}
-              />
-            </Link>
-          </ListItem>
-        </List>
       </Drawer>
       <DrawerHeader/>
     </Box>
