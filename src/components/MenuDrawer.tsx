@@ -6,7 +6,6 @@ import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -29,25 +28,6 @@ import { ORANGE_3, WHITE } from "../configs/variables";
 import { Drawer, Link, Tooltip } from "@mui/material";
 
 const drawerWidth = 240;
-
-const Main = styled("main", {shouldForwardProp: (prop) => prop !== "open"})<{
-  open?: boolean;
-}>(({theme, open}) => ({
-  flexGrow: 1,
-  padding: theme.spacing(3),
-  transition: theme.transitions.create("margin", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  marginLeft: `-${drawerWidth}px`,
-  ...(open && {
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginLeft: 0,
-  }),
-}));
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -83,10 +63,10 @@ const DrawerHeader = styled("div")(({theme}) => ({
 export default function MenuDrawer() {
   const theme = useTheme();
   const [open, setOpen] = useState(false);
-  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedState);
-  const [wasmBuffers, setWasmBuffers] = useState<ArrayBuffer[]>([]);
-  const [payload, setPayload] = useRecoilState(payloadState);
-  const [allStates, setAllStates] = useState<IState[]>([]);
+  const [_, setIsFileUploaded] = useRecoilState(fileUploadedState);
+  const [__, setWasmBuffers] = useState<ArrayBuffer[]>([]);
+  const [___, setPayload] = useRecoilState(payloadState);
+  const [____, setAllStates] = useState<IState[]>([]);
   const setIsInstantiated = useSetRecoilState(instantiatedState);
 
   const handleDrawerOpen = () => {
@@ -196,12 +176,6 @@ export default function MenuDrawer() {
             </ListItem>
           ))}
         </List>
-        {/* ) : (
-          open && (
-            <Typography component="div" sx={{textAlign: 'center'}}>No contract uploaded
-              yet!</Typography>
-          ) */}
-        )
       </Drawer>
       <DrawerHeader/>
     </Box>
