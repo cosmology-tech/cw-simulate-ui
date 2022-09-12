@@ -3,12 +3,14 @@ import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
 import "./styles/styles.scss";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MenuDrawer from "./components/MenuDrawer";
+import MenuDrawer, { drawerWidth } from "./components/MenuDrawer";
 import Home from "./components/home/Home";
 import Simulation from "./components/simulation/Simulation";
 import Chains from "./components/chains/Chains";
 import SnackbarNotification from "./components/SnackbarNotification";
 import Chain from "./components/chains/Chain";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
@@ -16,22 +18,27 @@ root.render(
     <RecoilRoot>
       <BrowserRouter>
         <SnackbarNotification/>
-        <MenuDrawer/>
-        <Routes>
-          <Route index element={<Home/>}/>
-          <Route path={"simulation"} element={<Simulation/>}/>
-          <Route path={"chains"} element={<Chains/>}>
-            <Route path={":id"} element={<Chain/>}/>
-          </Route>
-          <Route
-            path="*"
-            element={
-              <main style={{padding: "1rem"}}>
-                <p>There's nothing here!</p>
-              </main>
-            }
-          />
-        </Routes>
+        <Box sx={{ display: 'flex' }}>
+          <MenuDrawer/>
+          <Box component="main" sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
+            <Toolbar/>
+            <Routes>
+              <Route index element={<Home/>}/>
+              <Route path={"/simulation"} element={<Simulation/>}/>
+              <Route path={"/chains"} element={<Chains/>}>
+                <Route path={":id"} element={<Chain/>}/>
+              </Route>
+              <Route
+                path="*"
+                element={
+                  <main style={{padding: "1rem"}}>
+                    <p>There's nothing here!</p>
+                  </main>
+                }
+              />
+            </Routes>
+          </Box>
+        </Box>
       </BrowserRouter>
     </RecoilRoot>
   </React.StrictMode>
