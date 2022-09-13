@@ -7,7 +7,7 @@ import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { createSimulateEnv } from "../../utils/setupSimulation";
 import { Link } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 
 const Item = styled(Paper)(({theme}) => ({
@@ -24,7 +24,7 @@ interface IProps {
 }
 
 export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
-  const [isFileUploaded, setIsFileUploaded] = useRecoilState(fileUploadedState);
+  const isFileUploaded = useRecoilValue(fileUploadedState);
   const onCreateNewEnvironment = () => {
     window.CWEnv = createSimulateEnv();
   };
@@ -147,7 +147,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           xs={8}
           md={10}
           lg={6}
-          sx={{display: "flex", justifyContent: "center"}}
+          sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
         >
           <Link to={"/chains"} style={{textDecoration: "none"}}>
             <Button
@@ -159,20 +159,6 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
               New Simulation Environment
             </Button>
           </Link>
-        </Grid>
-        <Grid
-          item
-          xs={6}
-          lg={8}
-          sx={{
-            borderRadius: "10px",
-            marginTop: 1,
-            marginBottom: 6,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <img src="/T1_Logo.svg" height="100px" alt={"T1 Logo"}/>
         </Grid>
       </Grid>
     </Grid>

@@ -1,33 +1,21 @@
 import * as React from "react";
-import { useState } from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import HelpIcon from "@mui/icons-material/Help";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import TextSnippetIcon from "@mui/icons-material/TextSnippet";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import { useRecoilState, useSetRecoilState } from "recoil";
-import { fileUploadedState } from "../atoms/fileUploadedState";
-import { instantiatedState } from "../atoms/instantiatedState";
-import { payloadState } from "../atoms/payloadState";
-import { IState } from "./ExecuteQuery";
 import { ORANGE_3, WHITE } from "../configs/variables";
-import { Drawer, Link, Tooltip } from "@mui/material";
+import { Divider, Drawer, Link } from "@mui/material";
+import { useNavigate } from 'react-router-dom';
 
-const drawerWidth = 240;
+export const drawerWidth = 180;
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -35,20 +23,8 @@ interface AppBarProps extends MuiAppBarProps {
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({theme, open}) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(["width", "margin"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(["width", "margin"], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
+})<AppBarProps>(({theme}) => ({
+  zIndex: theme.zIndex.drawer - 1
 }));
 
 const DrawerHeader = styled("div")(({theme}) => ({
@@ -61,115 +37,68 @@ const DrawerHeader = styled("div")(({theme}) => ({
 }));
 
 export default function MenuDrawer() {
-  const theme = useTheme();
-  const [open, setOpen] = useState(false);
-  const [_, setIsFileUploaded] = useRecoilState(fileUploadedState);
-  const [__, setWasmBuffers] = useState<ArrayBuffer[]>([]);
-  const [___, setPayload] = useRecoilState(payloadState);
-  const [____, setAllStates] = useState<IState[]>([]);
-  const setIsInstantiated = useSetRecoilState(instantiatedState);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-
-  const onResetClickHandler = () => {
-    setIsFileUploaded(false);
-    setWasmBuffers([]);
-    setPayload("");
-    setAllStates([]);
-    setIsInstantiated(false);
-  };
+  const navigate = useNavigate();
 
   return (
-    <Box sx={{display: "flex"}}>
+    <>
       <CssBaseline/>
-      <AppBar position="fixed" open={open} sx={{backgroundColor: ORANGE_3}}>
+      <AppBar position="fixed" sx={{backgroundColor: ORANGE_3}}>
         <Toolbar sx={{justifyContent: "space-between"}}>
+          <div/>
           <div>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-                ...(open && {display: "none"}),
-              }}
-            >
-              <MenuIcon/>
-            </IconButton>
-          </div>
-          <div>
-            <IconButton sx={{borderRadius: 5}}>
+            <IconButton sx={{ borderRadius: 5 }}>
               <Link href={"documentation"} underline={"none"}>
-                <HelpIcon sx={{color: WHITE}}/>
+                <HelpIcon sx={{color: WHITE}} />
               </Link>
             </IconButton>
-            <IconButton sx={{borderRadius: 5}}>
+            <IconButton sx={{ borderRadius: 5 }}>
               <Link href={"https://github.com/Terran-One/cw-debug-ui"} underline={"none"}>
-                <GitHubIcon sx={{color: WHITE}}/>
+                <GitHubIcon sx={{color: WHITE}} />
               </Link>
             </IconButton>
           </div>
         </Toolbar>
       </AppBar>
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-        variant="persistent"
-        open={open}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon/>
-            ) : (
-              <ChevronLeftIcon/>
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <Divider/>
-        {/* TODO: Add Chain Status here to get instiantiate instructuctions */}
-        <List>
-          {["Contracts", "Reset"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{display: "block"}}>
-              <Tooltip title={text} placement="right">
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+        <Drawer
+          sx={{
+            "& .MuiDrawer-paper": {
+              width: drawerWidth,
+              boxSizing: "border-box",
+            },
+          }}
+          variant="permanent"
+          open
+        >
+          <DrawerHeader>
+            <ListItemButton sx={{borderRadius: 5}} onClick={() => navigate("/")}>
+              <img src="/T1.png" height="25px" alt={"Terran One"}/>
+              <div style={{color: ORANGE_3, fontWeight: "bold", fontSize: 14, marginLeft: 10}}>Terran One</div>
+            </ListItemButton>
+          </DrawerHeader>
+          <Divider/>
+          {/* TODO: Add Chain Status here to get instiantiate instructuctions */}
+          <List>
+            {["Simulation", "History", "Chains", "phoenix-1", "juno-1"].map((text, index) => (
+              <ListItem key={text} disablePadding sx={{display: "block"}}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
+                    justifyContent: "initial",
                     px: 2.5,
+                    "&.MuiButtonBase-root:hover": index === 2 && {
+                      bgcolor: "transparent",
+                      cursor: "default"
+                    } || {}
                   }}
-                  onClick={index === 1 ? onResetClickHandler : undefined}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {index === 0 ? <TextSnippetIcon/> : <RestartAltIcon/>}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={{opacity: open ? 1 : 0}}/>
+                  <ListItemText primary={text} sx={{opacity: 1, marginLeft: index > 2 && 3 || undefined}}/>
                 </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <DrawerHeader/>
-    </Box>
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+      </Box>
+    </>
   );
 }
