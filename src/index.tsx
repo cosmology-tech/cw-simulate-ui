@@ -1,16 +1,16 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
-import './styles/styles.scss';
+import "./styles/styles.scss";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MenuDrawer from "./components/MenuDrawer";
 import Home from "./components/home/Home";
 import Simulation from "./components/simulation/Simulation";
 import Chains from "./components/chains/Chains";
-import Chain from "./components/chains/Chain";
 import SnackbarNotification from "./components/SnackbarNotification";
+import Chain from "./components/chains/Chain";
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
   <React.StrictMode>
     <RecoilRoot>
@@ -18,9 +18,9 @@ root.render(
         <SnackbarNotification/>
         <MenuDrawer/>
         <Routes>
-          <Route path={"/"} element={<Home/>}/>
-          <Route path={"/simulation"} element={<Simulation/>}/>
-          <Route path={"/chains"} element={<Chains/>}>
+          <Route index element={<Home/>}/>
+          <Route path={"simulation"} element={<Simulation/>}/>
+          <Route path={"chains"} element={<Chains/>}>
             <Route path={":id"} element={<Chain/>}/>
           </Route>
           <Route
