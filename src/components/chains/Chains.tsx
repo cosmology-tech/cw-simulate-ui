@@ -48,7 +48,7 @@ const Chains = () => {
       ...snackbarNotification,
       severity: "success",
       open: true,
-      message: `Successfully added new chains.`,
+      message: 'Successfully added new chains.',
     });
     setOpenDialog(false);
   }
