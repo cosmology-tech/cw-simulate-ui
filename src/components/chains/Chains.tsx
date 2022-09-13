@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -6,16 +7,18 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  Stack,
   TextField,
   Typography
 } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { chainsState } from "../../atoms/chainsState";
-import { GREY_3 } from "../../configs/variables";
 import React, { useState } from "react";
 import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { ChainConfig } from "../../utils/setupSimulation";
 import { Outlet, useParams } from "react-router-dom";
+import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
+import T1Grid from "../T1Grid";
 
 const Chains = () => {
   const [chains, setChains] = useRecoilState(chainsState);
@@ -60,15 +63,24 @@ const Chains = () => {
   }
 
   return (
-    <>
+    <Box
+      sx={{
+        width: "100%",
+        typography: "body1",
+        marginTop: 4,
+        marginBottom: 4,
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
       {param.id === undefined ? (<Grid sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           placeItems: "center",
           padding: "10px",
-        }} container>
-          <Typography variant="h4" sx={{flexGrow: 1}}>
+        }} container xs={11} md={11} lg={10}>
+          <Typography variant="h5" sx={{flexGrow: 1}}>
             Chains
           </Typography>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>
@@ -78,7 +90,7 @@ const Chains = () => {
             <DialogTitle>Add New Chain</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Enter chain names separated by commas. i.e. "phoenix-1", "osmosis-1", "terra-1".
+                Enter chain names separated by commas. i.e. phoenix-1, osmosis-1, terra-1
               </DialogContentText>
               <TextField
                 autoFocus
@@ -88,7 +100,9 @@ const Chains = () => {
                 type="text"
                 fullWidth
                 variant="standard"
-                onChange={(e) => setChainNamesTextField(e.target.value)}
+                onChange={(e) => {
+                  setChainNamesTextField(e.target.value)
+                }}
               />
             </DialogContent>
             <DialogActions>
@@ -96,27 +110,28 @@ const Chains = () => {
               <Button onClick={handleAddChain}>Add</Button>
             </DialogActions>
           </Dialog>
-          {chains.length > 0 ? (chains.map((chain) => (
-              <Grid item xs={12} sx={{marginTop: 4, marginBottom: 4, width: "60%"}}>
-                <p>test</p>
-              </Grid>))) :
-            (<Grid item xs={12} sx={{
+          {!openDialog && chainNamesTextField.length > 0 ?
+            (<T1Grid items={chainNamesTextField.split(",")} hasRightDeleteButton={true}/>)
+            : (<Grid item xs={12} sx={{
               display: 'grid',
               marginTop: 4,
               marginBottom: 4,
               width: "60%",
-              border: `1px solid ${GREY_3}`,
-              borderRadius: "10px",
+              borderRadius: "5px",
               height: "50vh",
               alignItems: "center",
             }}>
-              <Typography variant="h6" sx={{textAlign: "center"}}>
-                No chain configuration found. Please add a chain configuration.
-              </Typography>
+              <Stack sx={{textAlign: 'center', alignItems: 'center'}}>
+                <ScreenSearchDesktopOutlined sx={{fontSize: "100px"}}/>
+                <Typography variant="h6">
+                  No chain configuration found. Please add a chain configuration.
+                </Typography>
+              </Stack>
             </Grid>)}
-        </Grid>) :
-        <Outlet/>}
-    </>
+        </Grid>)
+        : <Outlet/>
+      }
+    </Box>
   );
 }
 

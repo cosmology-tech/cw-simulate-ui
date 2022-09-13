@@ -91,28 +91,28 @@ export default function MenuDrawer() {
       <AppBar position="fixed" open={open} sx={{backgroundColor: ORANGE_3}}>
         <Toolbar sx={{justifyContent: "space-between"}}>
           <div>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && {display: "none"}),
-            }}
-          >
-            <MenuIcon/>
-          </IconButton>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && {display: "none"}),
+              }}
+            >
+              <MenuIcon/>
+            </IconButton>
           </div>
           <div>
-            <IconButton sx={{ borderRadius: 5 }}>
+            <IconButton sx={{borderRadius: 5}}>
               <Link href={"documentation"} underline={"none"}>
-                <HelpIcon sx={{color: WHITE}} />
+                <HelpIcon sx={{color: WHITE}}/>
               </Link>
             </IconButton>
-            <IconButton sx={{ borderRadius: 5 }}>
+            <IconButton sx={{borderRadius: 5}}>
               <Link href={"https://github.com/Terran-One/cw-debug-ui"} underline={"none"}>
-                <GitHubIcon sx={{color: WHITE}} />
+                <GitHubIcon sx={{color: WHITE}}/>
               </Link>
             </IconButton>
           </div>
