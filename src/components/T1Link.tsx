@@ -8,14 +8,19 @@ export interface IT1LinkProps extends PropsWithChildren {
   title?: string;
   target?: HTMLAttributeAnchorTarget;
   sx?: SxProps<Theme>;
+  disabled?: boolean;
 }
 export default function T1Link(props: IT1LinkProps) {
   const {
     to,
     sx,
+    disabled = false,
     ...rest
   } = props;
   
+  if (disabled) {
+    return <>{props.children}</>;
+  }
   if (isExternal(to)) {
     return <ExternalLink href={to} sx={sx} {...rest} />
   }
