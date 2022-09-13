@@ -87,7 +87,7 @@ export default function MenuDrawer() {
           </ListItemButton>
         </DrawerHeader>
         <Divider/>
-        {/* TODO: Add Chain Status here to get instiantiate instructuctions */}
+        {/* TODO: Show real chains */}
         <List>
           {["Simulation", "History", "Chains", "phoenix-1", "juno-1"].map((text, index) => (
             <ListItem key={text} disablePadding sx={{display: "block"}}>
@@ -106,6 +106,7 @@ export default function MenuDrawer() {
               </ListItemButton>
             </ListItem>
           ))}
+          {/* TODO: Inline add new chain */}
         </List>
       </Drawer>
     </Box>);
