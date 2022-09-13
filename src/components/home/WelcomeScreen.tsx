@@ -101,7 +101,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           lg={6}
           sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
         >
-          <T1Link to={"/chains"} sx={{textDecoration: "none"}}>
+          <T1Link to={"/chains"} sx={{textDecoration: "none"}} disabled={!isFileUploaded}>
             <Button
               variant="contained"
               sx={{borderRadius: "10px"}}
