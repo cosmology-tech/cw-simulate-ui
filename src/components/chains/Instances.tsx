@@ -1,7 +1,5 @@
 const Instances = () => {
-  return (
-    <p>Config</p>
-  )
-}
+  return <p>Instances</p>;
+};
 
 export default Instances;

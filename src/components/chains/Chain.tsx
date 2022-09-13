@@ -7,9 +7,13 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Grid, IconButton, Typography } from "@mui/material";
 import Config from "./Config";
 import { useParams } from "react-router-dom";
+import State from "./State";
+import Accounts from "./Accounts";
+import Codes from "./Codes";
+import Instances from "./Instances";
 
 export default function Chain() {
-  const [value, setValue] = React.useState("1");
+  const [value, setValue] = React.useState("config");
   const param = useParams();
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -43,11 +47,11 @@ export default function Chain() {
                   },
                 }}
               >
-                <Tab label="Config" value="config"/>
-                <Tab label="State" value="state"/>
-                <Tab label="Accounts" value="accounts"/>
-                <Tab label="Codes" value="codes"/>
-                <Tab label="Instances" value="instances"/>
+                <Tab label="Config" value="config" />
+                <Tab label="State" value="state" />
+                <Tab label="Accounts" value="accounts" />
+                <Tab label="Codes" value="codes" />
+                <Tab label="Instances" value="instances" />
               </TabList>
             </Box>
           </TabContext>
@@ -56,14 +60,18 @@ export default function Chain() {
           xs={3}
           md={3}
           lg={2}
-          sx={{display: "flex", justifyContent: "end"}}
+          sx={{ display: "flex", justifyContent: "end" }}
         >
           <IconButton aria-label="delete">
-            <DeleteForeverIcon/>
+            <DeleteForeverIcon />
           </IconButton>
         </Grid>
-        <Grid xs={12} lg={12} sm={12} sx={{marginTop: 4, marginBottom: 2}}>
-          <Config/>
+        <Grid xs={12} lg={12} sm={12} sx={{ marginTop: 4, marginBottom: 2 }}>
+          {value === "config" && <Config />}
+          {value === "state" && <State />}
+          {value === "accounts" && <Accounts />}
+          {value === "codes" && <Codes />}
+          {value === "instances" && <Instances />}
         </Grid>
       </Grid>
     </Box>
