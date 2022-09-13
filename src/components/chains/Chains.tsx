@@ -12,7 +12,7 @@ import {
   Typography
 } from "@mui/material";
 import { useRecoilState } from "recoil";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { Outlet, useParams } from "react-router-dom";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
@@ -25,6 +25,7 @@ const Chains = () => {
     snackbarNotificationState
   );
   const param = useParams();
+  const textFieldRef = useRef<any>(null);
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -35,11 +36,19 @@ const Chains = () => {
   }
 
   const handleAddChain = () => {
+    const newChainNames = textFieldRef.current.value.split(",").map((el: string) => el.trim());
+    const prevChainNames = new Set(chainNamesTextField);
+    if (newChainNames.length === 1) {
+      setChainNamesTextField([...prevChainNames.add(newChainNames[0])]);
+    } else {
+      setChainNamesTextField(Array.from(new Set([...prevChainNames, ...newChainNames])));
+    }
+
     setSnackbarNotification({
       ...snackbarNotification,
       severity: "success",
       open: true,
-      message: `Successfully added ${chainNamesTextField.length} new chains.`,
+      message: `Successfully added new chains.`,
     });
     setOpenDialog(false);
   }
@@ -82,9 +91,7 @@ const Chains = () => {
                 type="text"
                 fullWidth
                 variant="standard"
-                onChange={(e) => {
-                  setChainNamesTextField([...chainNamesTextField, ...e.target.value.split(",").map(e => e.trim())]);
-                }}
+                inputRef={textFieldRef}
               />
             </DialogContent>
             <DialogActions>
