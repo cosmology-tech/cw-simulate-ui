@@ -1,14 +1,15 @@
 import { Button, Grid, Paper, styled, Typography } from "@mui/material";
-import React from "react";
+import React, { HTMLAttributeAnchorTarget, PropsWithChildren } from "react";
 import FileUpload from "../FileUpload";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import { createSimulateEnv } from "../../utils/setupSimulation";
-import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
+import Link from "../Link";
+import { To } from "react-router-dom";
 
 const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -61,73 +62,24 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
             CosmWasm Simulator
           </Typography>
         </Grid>
-        <Grid
-          item
-          xs={11}
-          lg={6}
-          md={8}
-          sx={{
-            marginTop: 4,
-            marginBottom: 4,
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
-          }}
-        >
-          <Grid
-            component="div"
-            direction="column"
-            sx={{
-              alignItems: "center",
-              display: "flex",
-              marginLeft: 1,
-              marginRight: 1,
-            }}
-          >
+        <WelcomeNavIcons>
+          <NavIcon to='/tutorials'>
             <LibraryBooksIcon sx={{cursor: "pointer"}}/>
             <Typography>Tutorials</Typography>
-          </Grid>
-          <Grid
-            component="div"
-            direction="column"
-            sx={{
-              alignItems: "center",
-              display: "flex",
-              marginLeft: 1,
-              marginRight: 1,
-            }}
-          >
+          </NavIcon>
+          <NavIcon to='/documentation'>
             <ArticleIcon sx={{cursor: "pointer"}}/>
             <Typography>Documentation</Typography>
-          </Grid>
-          <Grid
-            component="div"
-            direction="column"
-            sx={{
-              alignItems: "center",
-              display: "flex",
-              marginLeft: 1,
-              marginRight: 1,
-            }}
-          >
+          </NavIcon>
+          <NavIcon to='/examples'>
             <NotesIcon sx={{cursor: "pointer"}}/>
             <Typography>Examples</Typography>
-          </Grid>
-          <Grid
-            component="div"
-            direction="column"
-            sx={{
-              alignItems: "center",
-              display: "flex",
-              marginLeft: 1,
-              marginRight: 1,
-            }}
-          >
+          </NavIcon>
+          <NavIcon to='https://github.com/Terran-One/cw-debug-ui'>
             <GitHubIcon sx={{cursor: "pointer"}}/>
             <Typography>Github</Typography>
-          </Grid>
-        </Grid>
+          </NavIcon>
+        </WelcomeNavIcons>
         <Grid
           item
           xs={11}
@@ -149,7 +101,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           lg={6}
           sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
         >
-          <Link to={"/chains"} style={{textDecoration: "none"}}>
+          <Link to={"/chains"} sx={{textDecoration: "none"}}>
             <Button
               variant="contained"
               sx={{borderRadius: "10px"}}
@@ -162,5 +114,55 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
         </Grid>
       </Grid>
     </Grid>
+  );
+};
+
+function WelcomeNavIcons({children}: PropsWithChildren) {
+  return (
+    <Grid
+      item
+      xs={11}
+      lg={6}
+      md={8}
+      sx={{
+        marginTop: 4,
+        marginBottom: 4,
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "space-between",
+      }}
+    >
+      {children}
+    </Grid>
+  )
+}
+
+interface INavIconProps extends PropsWithChildren {
+  to: To;
+  title?: string;
+  target?: HTMLAttributeAnchorTarget;
+}
+function NavIcon(props: INavIconProps) {
+  const {
+    children,
+    ...rest
+  } = props;
+  
+  return (
+    <Link {...rest}>
+      <Grid
+        component='div'
+        direction='column'
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          marginLeft: 1,
+          marginRight: 1,
+        }}
+      >
+        {children}
+      </Grid>
+    </Link>
   );
 };
