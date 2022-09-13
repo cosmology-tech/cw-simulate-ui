@@ -1,7 +1,5 @@
 const Codes = () => {
-  return (
-    <p>Config</p>
-  )
-}
+  return <p>Codes</p>;
+};
 
 export default Codes;
