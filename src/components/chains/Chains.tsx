@@ -106,7 +106,7 @@ const Chains = () => {
               <Stack sx={{textAlign: 'center', alignItems: 'center'}}>
                 <ScreenSearchDesktopOutlined sx={{fontSize: "100px"}}/>
                 <Typography variant="h6">
-                  No chain configuration found. Please add a chain configuration.
+                  No chain found. Please add a chain.
                 </Typography>
               </Stack>
             </Grid>)}
