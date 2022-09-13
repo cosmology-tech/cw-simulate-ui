@@ -12,19 +12,15 @@ import {
   Typography
 } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { chainsState } from "../../atoms/chainsState";
 import React, { useState } from "react";
 import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
-import { ChainConfig } from "../../utils/setupSimulation";
 import { Outlet, useParams } from "react-router-dom";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
 import T1Grid from "../T1Grid";
 
 const Chains = () => {
-  const [chains, setChains] = useRecoilState(chainsState);
   const [openDialog, setOpenDialog] = useState(false);
-  const [chainConfig, setChainConfig] = useState<ChainConfig>({} as ChainConfig);
-  const [chainNamesTextField, setChainNamesTextField] = useState<string>("");
+  const [chainNamesTextField, setChainNamesTextField] = useState<string[]>([]);
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationState
   );
@@ -43,23 +39,9 @@ const Chains = () => {
       ...snackbarNotification,
       severity: "success",
       open: true,
-      message: "Successfully added new chain config.",
+      message: `Successfully added ${chainNamesTextField.length} new chains.`,
     });
     setOpenDialog(false);
-  }
-
-  const handleChainConfigChange = (val: string) => {
-    try {
-      const newChainConfig = JSON.parse(val) as ChainConfig;
-      setChainConfig(newChainConfig);
-    } catch (e) {
-      setSnackbarNotification({
-        ...snackbarNotification,
-        severity: "error",
-        open: true,
-        message: "Invalid JSON. Please check your input.",
-      });
-    }
   }
 
   return (
@@ -87,7 +69,7 @@ const Chains = () => {
             Add Chain
           </Button>
           <Dialog open={openDialog} onClose={handleClose}>
-            <DialogTitle>Add New Chain</DialogTitle>
+            <DialogTitle>Add New Chains</DialogTitle>
             <DialogContent>
               <DialogContentText>
                 Enter chain names separated by commas. i.e. phoenix-1, osmosis-1, terra-1
@@ -101,7 +83,7 @@ const Chains = () => {
                 fullWidth
                 variant="standard"
                 onChange={(e) => {
-                  setChainNamesTextField(e.target.value)
+                  setChainNamesTextField([...chainNamesTextField, ...e.target.value.split(",").map(e => e.trim())]);
                 }}
               />
             </DialogContent>
@@ -111,7 +93,7 @@ const Chains = () => {
             </DialogActions>
           </Dialog>
           {!openDialog && chainNamesTextField.length > 0 ?
-            (<T1Grid items={chainNamesTextField.split(",")} hasRightDeleteButton={true}/>)
+            (<T1Grid items={[...new Set(chainNamesTextField)]} hasRightDeleteButton={true}/>)
             : (<Grid item xs={12} sx={{
               display: 'grid',
               marginTop: 4,
