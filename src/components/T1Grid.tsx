@@ -40,11 +40,11 @@ const T1Grid = ({items, rightButton, hasRightDeleteButton, handleDeleteItem}: IP
         placeItems: "center",
         padding: "10px",
       }} container xs={11} md={11} lg={10}>
-        {items?.map(el => el.trim()).map((item) => {
+        {items?.map((item) => {
           return (
             <>
               <Grid item xs={11} md={11} lg={10}>
-                <Item>
+                <Item key={item + "item"}>
                   <div style={{display: 'flex'}}>
                     <Link to={item} style={{flexGrow: 1, textDecoration: 'none', color: "unset"}}>
                       <Typography variant="h6">{item}</Typography>
