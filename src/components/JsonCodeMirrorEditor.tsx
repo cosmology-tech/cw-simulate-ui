@@ -1,7 +1,7 @@
 import React from "react";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
-import { Box, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { GREY_6 } from "../configs/variables";
 import { useRecoilState } from "recoil";
 import { payloadState } from "../atoms/payloadState";
@@ -27,7 +27,7 @@ export const JsonCodeMirrorEditor: React.FC = () => {
         extensions={[json()]}
         onChange={(val: string) => setPayload(val)}
         placeholder={JSON.stringify(placeholder)}
-        style={{ border: "none" }}
+        style={{border: "none"}}
       />
     </Grid>
   );
