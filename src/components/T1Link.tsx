@@ -3,13 +3,13 @@ import { styled, SxProps, Theme } from '@mui/material/styles';
 import { HTMLAttributeAnchorTarget, PropsWithChildren } from 'react';
 import { Link as RouterLink, To } from 'react-router-dom';
 
-export interface ILinkProps extends PropsWithChildren {
+export interface IT1LinkProps extends PropsWithChildren {
   to: To;
   title?: string;
   target?: HTMLAttributeAnchorTarget;
   sx?: SxProps<Theme>;
 }
-export default function Link(props: ILinkProps) {
+export default function T1Link(props: IT1LinkProps) {
   const {
     to,
     sx,

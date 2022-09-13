@@ -8,7 +8,7 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import { createSimulateEnv } from "../../utils/setupSimulation";
 import { useRecoilValue } from "recoil";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
-import Link from "../Link";
+import T1Link from "../T1Link";
 import { To } from "react-router-dom";
 
 const Item = styled(Paper)(({theme}) => ({
@@ -101,7 +101,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           lg={6}
           sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
         >
-          <Link to={"/chains"} sx={{textDecoration: "none"}}>
+          <T1Link to={"/chains"} sx={{textDecoration: "none"}}>
             <Button
               variant="contained"
               sx={{borderRadius: "10px"}}
@@ -110,7 +110,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
             >
               New Simulation Environment
             </Button>
-          </Link>
+          </T1Link>
         </Grid>
       </Grid>
     </Grid>
@@ -150,7 +150,7 @@ function NavIcon(props: INavIconProps) {
   } = props;
   
   return (
-    <Link {...rest}>
+    <T1Link {...rest}>
       <Grid
         component='div'
         direction='column'
@@ -163,6 +163,6 @@ function NavIcon(props: INavIconProps) {
       >
         {children}
       </Grid>
-    </Link>
+    </T1Link>
   );
 };
