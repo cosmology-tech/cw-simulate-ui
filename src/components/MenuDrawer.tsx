@@ -13,7 +13,10 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { ORANGE_3, WHITE } from "../configs/variables";
 import { Divider, Drawer, Link } from "@mui/material";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useRecoilValue } from "recoil";
+import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
+import T1Link from "./T1Link";
 
 export const drawerWidth = 180;
 
@@ -39,6 +42,7 @@ const DrawerHeader = styled("div")(({theme}) => ({
 export default function MenuDrawer() {
   const navigate = useNavigate();
   const location = useLocation();
+  const chains = useRecoilValue(chainNamesTextFieldState);
 
   const welcomeScreenLogo = (
     <IconButton sx={{borderRadius: 5}} onClick={() => navigate("/")}>
@@ -54,14 +58,14 @@ export default function MenuDrawer() {
           {location.pathname === '/' && welcomeScreenLogo}
         </div>
         <div>
-          <IconButton sx={{ borderRadius: 5 }}>
+          <IconButton sx={{borderRadius: 5}}>
             <Link href={"documentation"} underline={"none"}>
-              <HelpIcon sx={{color: WHITE}} />
+              <HelpIcon sx={{color: WHITE}}/>
             </Link>
           </IconButton>
-          <IconButton sx={{ borderRadius: 5 }}>
+          <IconButton sx={{borderRadius: 5}}>
             <Link href={"https://github.com/Terran-One/cw-debug-ui"} underline={"none"}>
-              <GitHubIcon sx={{color: WHITE}} />
+              <GitHubIcon sx={{color: WHITE}}/>
             </Link>
           </IconButton>
         </div>
@@ -69,7 +73,7 @@ export default function MenuDrawer() {
     </AppBar>);
 
   const drawer = (
-    <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+    <Box component="nav" sx={{width: {sm: drawerWidth}, flexShrink: {sm: 0}}}>
       <Drawer
         sx={{
           "& .MuiDrawer-paper": {
@@ -83,30 +87,43 @@ export default function MenuDrawer() {
         <DrawerHeader>
           <ListItemButton sx={{borderRadius: 5}} onClick={() => navigate("/")}>
             <img src="/T1.png" height="25px" alt={"Terran One"}/>
-            <div style={{color: ORANGE_3, fontWeight: "bold", fontSize: 14, marginLeft: 10}}>Terran One</div>
+            <div style={{color: ORANGE_3, fontWeight: "bold", fontSize: 14, marginLeft: 10}}>Terran
+              One
+            </div>
           </ListItemButton>
         </DrawerHeader>
         <Divider/>
-        {/* TODO: Show real chains */}
         <List>
-          {["Simulation", "History", "Chains", "phoenix-1", "juno-1"].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{display: "block"}}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: "initial",
-                  px: 2.5,
-                  "&.MuiButtonBase-root:hover": index === 2 && {
-                    bgcolor: "transparent",
-                    cursor: "default"
-                  } || {}
-                }}
-              >
-                <ListItemText primary={text} sx={{opacity: 1, marginLeft: index > 2 && 3 || undefined}}/>
-              </ListItemButton>
-            </ListItem>
+          {["Simulation", "History", "Chains"].map((text, index) => (
+            <T1Link to={`${text.toLowerCase()}`} sx={{textDecoration: "none"}}>
+              <ListItem key={text} disablePadding sx={{display: "block"}}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: "initial",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemText primary={text} sx={{opacity: 1}}/>
+                </ListItemButton>
+              </ListItem>
+            </T1Link>
           ))}
-          {/* TODO: Inline add new chain */}
+          {chains.map((chain) => (
+            <T1Link to={`/chains/${chain}`} sx={{textDecoration: "none"}}>
+              <ListItem key={chain} disablePadding sx={{display: "block"}}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: "initial",
+                    px: 2.5,
+                  }}
+                >
+                  <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}}/>
+                </ListItemButton>
+              </ListItem>
+            </T1Link>
+          ))}
         </List>
       </Drawer>
     </Box>);

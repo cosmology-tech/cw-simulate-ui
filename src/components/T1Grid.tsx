@@ -3,7 +3,10 @@ import React from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
-import { Link } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
+import T1Link from "./T1Link";
+import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 
 interface IProps {
   items?: any[],
@@ -20,7 +23,26 @@ const Item = styled(Paper)(({theme}) => ({
   color: theme.palette.text.secondary,
 }));
 
-const T1Grid = ({items, rightButton, hasRightDeleteButton, handleDeleteItem}: IProps) => {
+const T1Grid = ({items, rightButton, hasRightDeleteButton}: IProps) => {
+  const [chainNamesTextField, setChainNamesTextField] = useRecoilState<string[]>(chainNamesTextFieldState);
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
+    snackbarNotificationState
+  );
+  const handleDelete = (e: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const item = e.currentTarget.parentElement;
+    item.remove();
+    // Remove the item from the chainNamesTextFieldState
+    const newChainNames = chainNamesTextField.filter((el) => el !== item.innerText);
+    setChainNamesTextField(newChainNames);
+    setSnackbarNotification({
+      ...snackbarNotification,
+      open: true,
+      message: `Chain ${item.innerText} deleted`,
+      severity: "success",
+    });
+  }
   return (
     <Box
       sx={{
@@ -38,20 +60,19 @@ const T1Grid = ({items, rightButton, hasRightDeleteButton, handleDeleteItem}: IP
         alignItems: "center",
         justifyContent: "center",
         placeItems: "center",
-        padding: "10px",
-      }} container xs={11} md={11} lg={10}>
+      }} container xs={12} md={12} lg={12}>
         {items?.map((item) => {
           return (
             <>
-              <Grid item xs={11} md={11} lg={10}>
+              <Grid item xs={12} md={12} lg={12}>
                 <Item key={item + "item"}>
                   <div style={{display: 'flex'}}>
-                    <Link to={item} style={{flexGrow: 1, textDecoration: 'none', color: "unset"}}>
-                      <Typography variant="h6">{item}</Typography>
-                    </Link>
+                    <T1Link to={item} sx={{flexGrow: 1}}>
+                      <Typography variant="h6" sx={{paddingLeft: 3}}>{item}</Typography>
+                    </T1Link>
                     {rightButton}
                     {hasRightDeleteButton && (
-                      <IconButton aria-label="delete">
+                      <IconButton aria-label="delete" onClick={handleDelete}>
                         <DeleteForeverIcon/>
                       </IconButton>
                     )}
