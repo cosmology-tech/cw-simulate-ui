@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { CircularProgress, SnackbarProps } from "@mui/material";
+import { Box, CircularProgress, SnackbarProps } from "@mui/material";
 import { useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
 
@@ -53,7 +53,7 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
   };
 
   return (
-    <Suspense fallback={<CircularProgress />}>
+    <Suspense fallback={<Fallback />}>
       <DropzoneArea
         dropzoneClass="dropzone"
         acceptedFiles={["application/wasm"]}
@@ -69,5 +69,13 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
     </Suspense>
   );
 };
+
+function Fallback() {
+  return (
+    <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 250}}>
+      <CircularProgress />
+    </Box>
+  )
+}
 
 export default FileUpload;
