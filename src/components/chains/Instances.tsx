@@ -15,7 +15,7 @@ const Instances = () => {
           </Button>
         </Grid>
       </Grid>
-      <T1Grid items={["Instance1", "Instance2"]} rightButton={true} />
+      <T1Grid items={["Instance1", "Instance2"]} />
     </>
   );
 };
