@@ -45,3 +45,13 @@ code {
   align-items: center;
   justify-content: center;
 }
+
+.dropzone .MuiDropzonePreviewList-removeButton {
+  /* .MuiGrid-item padding */
+  top: 64px;
+  transform: translate(-50%, -50%);
+}
+
+.dropzone .MuiDropzonePreviewList-root {
+  justify-content: center;
+}

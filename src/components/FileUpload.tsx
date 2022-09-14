@@ -1,8 +1,9 @@
-import React from "react";
-import { DropzoneArea } from "react-mui-dropzone";
-import { SnackbarProps } from "@mui/material";
+import React, { Suspense } from "react";
+import { CircularProgress, SnackbarProps } from "@mui/material";
 import { useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
+
+const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
 interface IProps {
   wasmBuffers: ArrayBuffer[];
@@ -52,18 +53,20 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
   };
 
   return (
-    <DropzoneArea
-      dropzoneClass="dropzone"
-      acceptedFiles={["application/wasm"]}
-      showFileNames={true}
-      dropzoneText={
-        "Click to upload a simulation file or contract binary or Drag & drop a file here"
-      }
-      onDrop={handleOnFileDrop}
-      onDelete={handleOnFileDelete}
-      alertSnackbarProps={snackbarProps}
-      onChange={handleOnFileChange}
-    />
+    <Suspense fallback={<CircularProgress />}>
+      <DropzoneArea
+        dropzoneClass="dropzone"
+        acceptedFiles={["application/wasm"]}
+        showFileNames={true}
+        dropzoneText={
+          "Click to upload a simulation file or contract binary or Drag & drop a file here"
+        }
+        onDrop={handleOnFileDrop}
+        onDelete={handleOnFileDelete}
+        alertSnackbarProps={snackbarProps}
+        onChange={handleOnFileChange}
+      />
+    </Suspense>
   );
 };
 
