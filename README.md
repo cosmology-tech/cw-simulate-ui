@@ -8,7 +8,7 @@ without the need for setting up the Rust dev toolchain or a local dev testnet no
 Install and run via npm:
 
 ```sh
-npm install
+npm install --legacy-peer-deps
 npm start
 ```
 
