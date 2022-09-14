@@ -35,7 +35,7 @@ const COMMON_STYLE: SxProps<Theme> = {
   color: 'inherit',
   textDecoration: 'none',
   '&:hover': {
-    textDecoration: 'underline',
+    textDecoration: 'none',
   },
 };
 const ExternalLink = styled(MuiLink)(() => COMMON_STYLE);

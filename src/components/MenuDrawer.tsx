@@ -102,10 +102,6 @@ export default function MenuDrawer() {
                     minHeight: 48,
                     justifyContent: "initial",
                     px: 2.5,
-                    "&.MuiButtonBase-root:hover": index === 2 && {
-                      bgcolor: "transparent",
-                      cursor: "default"
-                    } || {}
                   }}
                 >
                   <ListItemText primary={text} sx={{opacity: 1}}/>
@@ -121,10 +117,6 @@ export default function MenuDrawer() {
                     minHeight: 48,
                     justifyContent: "initial",
                     px: 2.5,
-                    "&.MuiButtonBase-root:hover": {
-                      bgcolor: "transparent",
-                      cursor: "default"
-                    }
                   }}
                 >
                   <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}}/>
