@@ -10,14 +10,15 @@
     "@mui/icons-material": "^5.10.3",
     "@mui/lab": "^5.0.0-alpha.97",
     "@mui/material": "^5.10.3",
+    "@mui/styles": "^5.10.3",
     "@mui/x-data-grid": "^5.17.2",
     "@mui/x-data-grid-generator": "^5.17.2",
     "@terran-one/cw-simulate": "^1.0.4",
     "@uiw/react-codemirror": "^4.11.6",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-json-tree": "^0.17.0",
-    "react-json-view-compare": "git@github.com:5SSS/react-json-view-compare.git:6ebdf3c6ae991336b92c4755a9c856317a0c9c08",
+    "react-json-view-compare": "^2.0.1",
     "react-mui-dropzone": "^4.0.6",
     "react-object-table-viewer": "^1.0.7",
     "react-router-dom": "^6.3.0",
@@ -72,8 +73,8 @@
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.0.0",
     "@types/node": "^18.7.16",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "@types/react": "^18.0.18",
+    "@types/react-dom": "^18.0.6",
     "@types/react-router-dom": "^5.3.3",
     "babel-plugin-named-exports-order": "^0.0.2",
     "buffer": "^6.0.3",
@@ -81,6 +82,7 @@
     "postcss-import": "^15.0.0",
     "process": "^0.11.10",
     "react-app-rewired": "^2.2.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "webpack": "^5.74.0"
   }
 }
