@@ -1,6 +1,6 @@
 const Simulation = () => {
   return (
-    <p>Hello</p>
+    <p>Simulation</p>
   )
 };
 

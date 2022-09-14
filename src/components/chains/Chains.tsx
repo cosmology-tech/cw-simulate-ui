@@ -17,10 +17,11 @@ import { snackbarNotificationState } from "../../atoms/snackbarNotificationState
 import { Outlet, useParams } from "react-router-dom";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
 import T1Grid from "../T1Grid";
+import chainNamesTextFieldState from "../../atoms/chainNamesTextFieldState";
 
 const Chains = () => {
   const [openDialog, setOpenDialog] = useState(false);
-  const [chainNamesTextField, setChainNamesTextField] = useState<string[]>([]);
+  const [chainNamesTextField, setChainNamesTextField] = useRecoilState<Array<string>>(chainNamesTextFieldState);
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationState
   );
@@ -36,6 +37,15 @@ const Chains = () => {
   }
 
   const handleAddChain = () => {
+    if (textFieldRef.current.value === "") {
+      setSnackbarNotification({
+        ...snackbarNotification,
+        open: true,
+        message: "Please enter a chain name",
+        severity: "error",
+      });
+      return;
+    }
     const newChainNames = textFieldRef.current.value.split(",").map((el: string) => el.trim());
     const prevChainNames = new Set(chainNamesTextField);
     if (newChainNames.length === 1) {

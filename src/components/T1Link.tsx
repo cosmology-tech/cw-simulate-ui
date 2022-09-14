@@ -10,6 +10,7 @@ export interface IT1LinkProps extends PropsWithChildren {
   sx?: SxProps<Theme>;
   disabled?: boolean;
 }
+
 export default function T1Link(props: IT1LinkProps) {
   const {
     to,
@@ -17,14 +18,15 @@ export default function T1Link(props: IT1LinkProps) {
     disabled = false,
     ...rest
   } = props;
-  
+
   if (disabled) {
     return <>{props.children}</>;
   }
   if (isExternal(to)) {
+    // @ts-ignore
     return <ExternalLink href={to} sx={sx} {...rest} />
-  }
-  else {
+  } else {
+    // @ts-ignore
     return <InternalLink to={to} sx={sx} {...rest} />
   }
 }
