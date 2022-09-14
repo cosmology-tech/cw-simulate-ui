@@ -1,13 +1,12 @@
 import { JsonCodeMirrorEditor } from "../components/JsonCodeMirrorEditor";
 import { Box } from "@mui/material";
+import { RecoilRoot } from "recoil";
 
 export default {
   title: "JsonCodeMirrorEditor",
   component: JsonCodeMirrorEditor,
+  decorators: [(storyFn: any) => <RecoilRoot>{storyFn()}</RecoilRoot>],
   args: {
-    value: {
-      json: "Enter your JSON here",
-    },
     onChange: (val: string) => console.log(val),
     setPayload: (val: string) => console.log(val),
   }

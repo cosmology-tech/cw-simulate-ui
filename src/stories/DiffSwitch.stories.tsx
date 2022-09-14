@@ -1,8 +1,10 @@
+import { RecoilRoot } from "recoil";
 import DiffSwitch from "../components/DiffSwitch";
 
 export default {
   title: "DiffSwitch",
   component: DiffSwitch,
+  decorators: [(storyFn: any) => <RecoilRoot>{storyFn()}</RecoilRoot>],
   argTypes: {
     isChecked: {
       control: {
