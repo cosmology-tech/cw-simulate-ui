@@ -8,6 +8,10 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
+interface IProps {
+  rows: any;
+  columns: any;
+}
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
@@ -28,31 +32,39 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(key: any, value: any) {
-  return { key, value };
-}
-
-const rows = [createData("Key1", "value1"), createData("Key2", "value2")];
-
-export default function StateTable() {
+export default function TableLayout({ rows, columns }: IProps) {
+  const rowKeys = Object.keys(rows[0]);
+  console.log(rowKeys);
   return (
     <TableContainer component={Paper}>
       <Table sx={{ width: "100%" }} aria-label="customized table">
         <TableHead>
           <TableRow>
-            <StyledTableCell align="center">Key</StyledTableCell>
-            <StyledTableCell align="center">Value</StyledTableCell>
+            {columns.map((col: string) => (
+              <StyledTableCell align="center">{col}</StyledTableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.key}>
-              <StyledTableCell align="center" component="th" scope="row">
-                {row.key}
-              </StyledTableCell>
-              <StyledTableCell align="center">{row.value}</StyledTableCell>
-            </StyledTableRow>
-          ))}
+          {rows.map((row: any) => {
+            console.log(row);
+            return (
+              <StyledTableRow key={Math.random()}>
+                {rowKeys.map((rowkey) => {
+                  // @ts-ignore
+                  console.log(row.rowkey);
+                  return (
+                    <StyledTableCell align="center" component="th" scope="row">
+                      {
+                        //@ts-ignore
+                        row[rowkey]
+                      }
+                    </StyledTableCell>
+                  );
+                })}
+              </StyledTableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </TableContainer>

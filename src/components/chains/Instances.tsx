@@ -1,5 +1,7 @@
+import React from "react";
+
 const Instances = () => {
-  return <p>Instances</p>;
+  return <>Instances</>;
 };
 
 export default Instances;
