@@ -1,5 +1,5 @@
 import { Grid, Button, Typography } from "@mui/material";
-import StateTable from "./StateTable";
+import TableLayout from "./TableLayout";
 function createData(val1: any, val2: any, val3: any) {
   return { val1, val2, val3 };
 }
@@ -20,7 +20,7 @@ const Accounts = () => {
         </Grid>
       </Grid>
       <Grid item xs={12} sx={{ mt: 4 }}>
-        <StateTable rows={rows} columns={columnNames} />
+        <TableLayout rows={rows} columns={columnNames} />
       </Grid>
     </>
   );

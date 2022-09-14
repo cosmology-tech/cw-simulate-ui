@@ -32,7 +32,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function StateTable({ rows, columns }: IProps) {
+export default function TableLayout({ rows, columns }: IProps) {
   const rowKeys = Object.keys(rows[0]);
   console.log(rowKeys);
   return (

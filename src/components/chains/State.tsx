@@ -1,6 +1,6 @@
 import { Grid, TextField } from "@mui/material";
 import SearchBar from "./SearchBar";
-import StateTable from "./StateTable";
+import TableLayout from "./TableLayout";
 
 function createData(val1: any, val2: any) {
   return { val1, val2 };
@@ -17,7 +17,7 @@ const State = () => {
         </Grid>
       </Grid>
       <Grid item xs={12} sx={{ mt: 4 }}>
-        <StateTable rows={rows} columns={columnNames} />
+        <TableLayout rows={rows} columns={columnNames} />
       </Grid>
     </>
   );
