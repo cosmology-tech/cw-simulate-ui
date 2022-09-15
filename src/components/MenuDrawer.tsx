@@ -1,4 +1,7 @@
 import * as React from "react";
+import AddIcon from "@mui/icons-material/Add";
+import DownloadIcon from "@mui/icons-material/Download";
+import RemoveIcon from "@mui/icons-material/Remove";
 import { styled, SxProps } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
@@ -12,12 +15,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { ORANGE_3, WHITE } from "../configs/variables";
-import { Collapse, Divider, Drawer, Link } from "@mui/material";
+import { Alert, Collapse, Divider, Drawer, Input, Link, Snackbar } from "@mui/material";
 import { Theme } from "@mui/material/styles";
 import { To, useLocation } from 'react-router-dom';
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
 import T1Link from "./T1Link";
+import chainNamesSortedState from "../atoms/chainNamesSortedState";
 
 export const drawerWidth = 180;
 
@@ -102,9 +106,23 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
 
 interface IT1Drawer {}
 const T1Drawer = (props: IT1Drawer) => {
-  // const chains = useRecoilValue(chainNamesTextFieldState);
-  const chains = ['terra-1', 'cosmos-1', 'secret-1'].sort();
+  const chains = useRecoilValue(chainNamesSortedState);
+  const setChains = useSetRecoilState(chainNamesTextFieldState);
   const [chainsCollapsed, setChainsCollapsed] = React.useState(false);
+  const [showAddChain, setShowAddChain] = React.useState(false);
+  const [showInvalidChainSnack, setShowInvalidChainSnack] = React.useState(false);
+  
+  const handleDownloadSim = React.useCallback<React.MouseEventHandler>(e => {
+    e.stopPropagation();
+    e.preventDefault();
+    // TODO
+    console.log('not yet implemented');
+  }, []);
+  
+  const addChain = React.useCallback((chainName: string) => {
+    setShowAddChain(false);
+    setChains(curr => [...curr, chainName]);
+  }, []);
   
   return (
     <Box component="nav" sx={{width: {sm: drawerWidth}, flexShrink: {sm: 0}}}>
@@ -123,20 +141,60 @@ const T1Drawer = (props: IT1Drawer) => {
         </DrawerHeader>
         <Divider/>
         <List>
-          <MenuDrawerItem to="/simulation">
+          <MenuDrawerItem
+            to="/simulation"
+            buttons={
+              <IconButton className="btn-dl-sim">
+                <DownloadIcon
+                  fontSize="inherit"
+                  onClick={handleDownloadSim}
+                />
+              </IconButton>
+            }
+          >
             <ListItemText primary="Simulation" sx={{opacity: 1}} />
           </MenuDrawerItem>
-          <MenuDrawerItem onClick={() => setChainsCollapsed(v => !v)}>
+          <MenuDrawerItem
+            onClick={() => setChainsCollapsed(v => !v)}
+            buttons={
+              <>
+                <IconButton className="btn-add-chain" disabled={showAddChain}>
+                  <AddIcon
+                    fontSize="inherit"
+                    onClick={e => {
+                      e.stopPropagation();
+                      setShowAddChain(true);
+                    }}
+                  />
+                </IconButton>
+              </>
+            }
+          >
             <ListItemText primary="Chains" sx={{opacity: 1}} />
           </MenuDrawerItem>
-          <Collapse orientation="vertical" in={!chainsCollapsed}>
-            {chains.map((chain) => (
-              <MenuDrawerItem to={`/chains/${chain}`} key={chain}>
-                <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}} />
-              </MenuDrawerItem>
-            ))}
+          <Collapse orientation="vertical" in={!chainsCollapsed || showAddChain}>
+            <List>
+              {showAddChain && <AddChainItem
+                onSubmit={addChain}
+                onAbort={() => {
+                  setShowAddChain(false);
+                  setShowInvalidChainSnack(true);
+                  setChainsCollapsed(false);
+                }}
+              />}
+              {chains.map((chain) => (
+                <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
+                  <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}} />
+                </MenuDrawerItem>
+              ))}
+            </List>
           </Collapse>
         </List>
+        <Snackbar open={showInvalidChainSnack} autoHideDuration={6000} onClose={() => setShowInvalidChainSnack(false)}>
+          <Alert severity="error">
+            Chain name is already in use!
+          </Alert>
+        </Snackbar>
       </Drawer>
     </Box>
   )
@@ -146,12 +204,14 @@ const T1Drawer = (props: IT1Drawer) => {
 interface IMenuDrawerItemProps extends React.PropsWithChildren {
   sx?: SxProps<Theme>;
   to?: To;
+  buttons?: React.ReactNode;
   onClick?(): void;
 }
 function MenuDrawerItem(props: IMenuDrawerItemProps) {
   const {
     children,
     to,
+    buttons,
     sx,
     onClick,
   } = props;
@@ -165,14 +225,77 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
       <T1Link to={to ?? ''} disabled={!to} sx={{textDecoration: "none"}}>
         <ListItemButton
           sx={{
+            display: "flex",
+            flexDirection: "row",
             minHeight: 48,
             justifyContent: "initial",
+            alignItems: "center",
             px: 2.5,
+            pr: buttons ? 1 : undefined,
           }}
         >
-          {children}
+          <Box sx={{flex: 1}}>
+            {children}
+          </Box>
+          {buttons && <Box sx={{fontSize: "1.2rem"}}>
+            {buttons}
+          </Box>}
         </ListItemButton>
       </T1Link>
     </ListItem>
   )
+}
+
+interface IAddChainItemProps {
+  onSubmit(chainName: string): void;
+  onAbort(): void;
+}
+function AddChainItem(props: IAddChainItemProps) {
+  const {
+    onSubmit,
+    onAbort,
+  } = props;
+  
+  const chains = useRecoilValue(chainNamesTextFieldState);
+  const defaultChainName = getDefaultChainName(chains);
+  const [chainName, setChainName] = React.useState(defaultChainName);
+  const ref = React.useRef<HTMLInputElement>(null);
+  
+  const submit = React.useCallback(() => {
+    console.log(chains, chainName);
+    if (chains.includes(chainName) || !chainName.trim()) {
+      onAbort();
+    }
+    else {
+      onSubmit(chainName);
+    }
+  }, [chains, chainName]);
+  
+  return (
+    <MenuDrawerItem>
+      <Input
+        inputRef={ref}
+        defaultValue={defaultChainName}
+        onBlur={submit}
+        onKeyUp={() => {
+          setChainName(ref.current?.value?.toLowerCase() ?? '')
+        }}
+        onKeyDown={e => {
+          switch (e.key) {
+            case 'Enter': submit(); break;
+            case 'Escape': onAbort(); break;
+          }
+        }}
+        sx={{
+          marginLeft: 3,
+        }}
+      />
+    </MenuDrawerItem>
+  )
+}
+
+function getDefaultChainName(chains: string[]) {
+  let i = 1;
+  while (chains.includes(`untitled-${i}`)) ++i;
+  return `untitled-${i}`;
 }
