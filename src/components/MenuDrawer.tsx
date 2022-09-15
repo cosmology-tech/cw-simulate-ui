@@ -2,7 +2,7 @@ import * as React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { styled, SxProps } from "@mui/material/styles";
+import { styled, SxProps, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -113,8 +113,6 @@ const T1Drawer = (props: IT1Drawer) => {
   const [showInvalidChainSnack, setShowInvalidChainSnack] = React.useState(false);
   
   const handleDownloadSim = React.useCallback<React.MouseEventHandler>(e => {
-    e.stopPropagation();
-    e.preventDefault();
     // TODO
     console.log('not yet implemented');
   }, []);
@@ -161,10 +159,7 @@ const T1Drawer = (props: IT1Drawer) => {
                 <IconButton className="btn-add-chain" disabled={showAddChain}>
                   <AddIcon
                     fontSize="inherit"
-                    onClick={e => {
-                      e.stopPropagation();
-                      setShowAddChain(true);
-                    }}
+                    onClick={() => {setShowAddChain(true)}}
                   />
                 </IconButton>
               </>
@@ -173,7 +168,7 @@ const T1Drawer = (props: IT1Drawer) => {
             <ListItemText primary="Chains" sx={{opacity: 1}} />
           </MenuDrawerItem>
           <Collapse orientation="vertical" in={!chainsCollapsed || showAddChain}>
-            <List>
+            <List disablePadding>
               {showAddChain && <AddChainItem
                 onSubmit={addChain}
                 onAbort={() => {
@@ -205,6 +200,7 @@ interface IMenuDrawerItemProps extends React.PropsWithChildren {
   sx?: SxProps<Theme>;
   to?: To;
   buttons?: React.ReactNode;
+  hoverButtons?: boolean;
   onClick?(): void;
 }
 function MenuDrawerItem(props: IMenuDrawerItemProps) {
@@ -212,14 +208,23 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
     children,
     to,
     buttons,
+    hoverButtons = false,
     sx,
     onClick,
   } = props;
   
+  const theme = useTheme();
+  
   return (
     <ListItem
       disablePadding
-      sx={[{display: "block"}, ...(Array.isArray(sx) ? sx : [sx])]}
+      sx={[
+        {
+          position: "relative",
+          display: "block",
+        },
+        ...(Array.isArray(sx) ? sx : [sx])
+      ]}
       onClick={onClick}
     >
       <T1Link to={to ?? ''} disabled={!to} sx={{textDecoration: "none"}}>
@@ -237,10 +242,18 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
           <Box sx={{flex: 1}}>
             {children}
           </Box>
-          {buttons && <Box sx={{fontSize: "1.2rem"}}>
-            {buttons}
-          </Box>}
         </ListItemButton>
+        {buttons &&
+          <Box sx={{
+            position: "absolute",
+            right: theme.spacing(1),
+            top: "50%",
+            fontSize: "1.2rem",
+            transform: "translateY(-50%)",
+          }}>
+            {buttons}
+          </Box>
+        }
       </T1Link>
     </ListItem>
   )
@@ -262,7 +275,6 @@ function AddChainItem(props: IAddChainItemProps) {
   const ref = React.useRef<HTMLInputElement>(null);
   
   const submit = React.useCallback(() => {
-    console.log(chains, chainName);
     if (chains.includes(chainName) || !chainName.trim()) {
       onAbort();
     }
