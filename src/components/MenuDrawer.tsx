@@ -159,8 +159,8 @@ const T1Drawer = (props: IT1Drawer) => {
                 <IconButton className="btn-add-chain" disabled={showAddChain}>
                   <AddIcon
                     fontSize="inherit"
-                    onClick={e => {
-                      e.stopPropagation();
+                    onClick={() => {
+                      setChainsCollapsed(false);
                       setShowAddChain(true);
                     }}
                   />
@@ -170,7 +170,7 @@ const T1Drawer = (props: IT1Drawer) => {
           >
             <ListItemText primary="Chains" sx={{opacity: 1}} />
           </MenuDrawerItem>
-          <Collapse orientation="vertical" in={!chainsCollapsed || showAddChain}>
+          <Collapse orientation="vertical" in={chainsCollapsed || showAddChain}>
             <List disablePadding>
               {showAddChain && <AddChainItem
                 onSubmit={addChain}
