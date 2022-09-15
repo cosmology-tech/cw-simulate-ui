@@ -159,7 +159,10 @@ const T1Drawer = (props: IT1Drawer) => {
                 <IconButton className="btn-add-chain" disabled={showAddChain}>
                   <AddIcon
                     fontSize="inherit"
-                    onClick={() => {setShowAddChain(true)}}
+                    onClick={e => {
+                      e.stopPropagation();
+                      setShowAddChain(true);
+                    }}
                   />
                 </IconButton>
               </>
