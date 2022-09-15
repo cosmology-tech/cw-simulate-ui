@@ -6,7 +6,7 @@ import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../atoms/executeQueryTabState";
-import { Button } from "@mui/material";
+import { Button, Grid, Typography } from "@mui/material";
 import { payloadState } from "../atoms/payloadState";
 
 interface IProps {
@@ -34,7 +34,7 @@ export const ExecuteQuery = ({
   setCurrentState,
   currentState,
 }: IProps) => {
-  const {MOCK_ENV, MOCK_INFO} = Config;
+  const { MOCK_ENV, MOCK_INFO } = Config;
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationState
   );
@@ -110,9 +110,12 @@ export const ExecuteQuery = ({
   }, [executeQueryTab]);
 
   return (
-    <div style={{display: "flex", flexDirection: "column"}}>
-      <ExecuteQueryTab/>
-      <div
+    <Grid item xs={12} sx={{ m: 2 }}>
+      <Grid item xs={12}>
+        <ExecuteQueryTab />
+      </Grid>
+      <Grid
+        item
         style={{
           display: "flex",
           flexDirection: "row",
@@ -120,20 +123,20 @@ export const ExecuteQuery = ({
           textAlign: "left",
         }}
       >
-        <JsonCodeMirrorEditor/>
-        <OutputRenderer response={response}/>
-      </div>
-      <div style={{display: "flex", flexDirection: "row"}}>
+        <JsonCodeMirrorEditor />
+        {/* <OutputRenderer response={response}/> */}
+      </Grid>
+      <Grid xs={1}>
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{margin: 2}}
+          sx={{ mt: 2 }}
           variant={"contained"}
           onClick={onRunHandler}
           disabled={!payload.length}
         >
-          Run
+          <Typography variant="button">Run</Typography>
         </Button>
-      </div>
-    </div>
+      </Grid>
+    </Grid>
   );
 };
