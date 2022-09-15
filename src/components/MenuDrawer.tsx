@@ -287,6 +287,7 @@ function AddChainItem(props: IAddChainItemProps) {
     <MenuDrawerItem>
       <Input
         inputRef={ref}
+        autoFocus
         defaultValue={defaultChainName}
         onBlur={submit}
         onKeyUp={() => {
