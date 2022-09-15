@@ -1,5 +1,5 @@
 import * as React from "react";
-import { styled } from "@mui/material/styles";
+import { styled, SxProps } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -12,8 +12,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { ORANGE_3, WHITE } from "../configs/variables";
-import { Divider, Drawer, Link } from "@mui/material";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Collapse, Divider, Drawer, Link } from "@mui/material";
+import { Theme } from "@mui/material/styles";
+import { To, useLocation } from 'react-router-dom';
 import { useRecoilValue } from "recoil";
 import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
 import T1Link from "./T1Link";
@@ -40,22 +41,47 @@ const DrawerHeader = styled("div")(({theme}) => ({
 }));
 
 export default function MenuDrawer() {
-  const navigate = useNavigate();
   const location = useLocation();
-  const chains = useRecoilValue(chainNamesTextFieldState);
 
-  const welcomeScreenLogo = (
-    <IconButton sx={{borderRadius: 5}} onClick={() => navigate("/")}>
-      <img src="/T1_White.png" height="25px" alt={"Terran One"}/>
-      <div style={{color: WHITE, fontWeight: "bold", fontSize: 14, marginLeft: 10}}>Terran One</div>
-    </IconButton>
+  return (
+    <>
+      <CssBaseline/>
+      <T1AppBar />
+      {location.pathname !== '/' && <T1Drawer />}
+    </>
   );
+}
 
-  const appBar = (
+interface ILogoProps {
+  LinkComponent: React.ComponentType<React.PropsWithChildren<{
+    href: string;
+    sx: SxProps<Theme>;
+  }>>;
+  white?: boolean;
+}
+const Logo = React.memo((props: ILogoProps) => {
+  const {
+    LinkComponent,
+    white,
+  } = props;
+  
+  return (
+    <LinkComponent href="/" sx={{borderRadius: 5}}>
+      <img src={white ? "/T1_White.png" : "/T1.png"} height={25} alt={"Terran One"}/>
+      <div style={{color: white ? WHITE : ORANGE_3, fontWeight: "bold", fontSize: 14, marginLeft: 10}}>Terran One</div>
+    </LinkComponent>
+  )
+});
+
+interface IT1AppBarProps {}
+const T1AppBar = React.memo((props: IT1AppBarProps) => {
+  const location = useLocation();
+  
+  return (
     <AppBar position="fixed" sx={{backgroundColor: ORANGE_3}}>
       <Toolbar sx={{justifyContent: "space-between"}}>
         <div>
-          {location.pathname === '/' && welcomeScreenLogo}
+          {location.pathname === '/' && <Logo LinkComponent={IconButton} white />}
         </div>
         <div>
           <IconButton sx={{borderRadius: 5}}>
@@ -70,9 +96,17 @@ export default function MenuDrawer() {
           </IconButton>
         </div>
       </Toolbar>
-    </AppBar>);
+    </AppBar>
+  )
+});
 
-  const drawer = (
+interface IT1Drawer {}
+const T1Drawer = (props: IT1Drawer) => {
+  // const chains = useRecoilValue(chainNamesTextFieldState);
+  const chains = ['terra-1', 'cosmos-1', 'secret-1'].sort();
+  const [chainsCollapsed, setChainsCollapsed] = React.useState(false);
+  
+  return (
     <Box component="nav" sx={{width: {sm: drawerWidth}, flexShrink: {sm: 0}}}>
       <Drawer
         sx={{
@@ -85,54 +119,60 @@ export default function MenuDrawer() {
         open
       >
         <DrawerHeader>
-          <ListItemButton sx={{borderRadius: 5}} onClick={() => navigate("/")}>
-            <img src="/T1.png" height="25px" alt={"Terran One"}/>
-            <div style={{color: ORANGE_3, fontWeight: "bold", fontSize: 14, marginLeft: 10}}>Terran
-              One
-            </div>
-          </ListItemButton>
+          <Logo LinkComponent={ListItemButton} />
         </DrawerHeader>
         <Divider/>
         <List>
-          {["Simulation", "History", "Chains"].map((text, index) => (
-            <T1Link to={`${text.toLowerCase()}`} sx={{textDecoration: "none"}}>
-              <ListItem key={text} disablePadding sx={{display: "block"}}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: "initial",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemText primary={text} sx={{opacity: 1}}/>
-                </ListItemButton>
-              </ListItem>
-            </T1Link>
-          ))}
-          {chains.map((chain) => (
-            <T1Link to={`/chains/${chain}`} sx={{textDecoration: "none"}}>
-              <ListItem key={chain} disablePadding sx={{display: "block"}}>
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: "initial",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}}/>
-                </ListItemButton>
-              </ListItem>
-            </T1Link>
-          ))}
+          <MenuDrawerItem to="/simulation">
+            <ListItemText primary="Simulation" sx={{opacity: 1}} />
+          </MenuDrawerItem>
+          <MenuDrawerItem onClick={() => setChainsCollapsed(v => !v)}>
+            <ListItemText primary="Chains" sx={{opacity: 1}} />
+          </MenuDrawerItem>
+          <Collapse orientation="vertical" in={!chainsCollapsed}>
+            {chains.map((chain) => (
+              <MenuDrawerItem to={`/chains/${chain}`} key={chain}>
+                <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}} />
+              </MenuDrawerItem>
+            ))}
+          </Collapse>
         </List>
       </Drawer>
-    </Box>);
+    </Box>
+  )
+};
 
+
+interface IMenuDrawerItemProps extends React.PropsWithChildren {
+  sx?: SxProps<Theme>;
+  to?: To;
+  onClick?(): void;
+}
+function MenuDrawerItem(props: IMenuDrawerItemProps) {
+  const {
+    children,
+    to,
+    sx,
+    onClick,
+  } = props;
+  
   return (
-    <>
-      <CssBaseline/>
-      {appBar}
-      {location.pathname !== '/' && drawer}
-    </>
-  );
+    <ListItem
+      disablePadding
+      sx={[{display: "block"}, ...(Array.isArray(sx) ? sx : [sx])]}
+      onClick={onClick}
+    >
+      <T1Link to={to ?? ''} disabled={!to} sx={{textDecoration: "none"}}>
+        <ListItemButton
+          sx={{
+            minHeight: 48,
+            justifyContent: "initial",
+            px: 2.5,
+          }}
+        >
+          {children}
+        </ListItemButton>
+      </T1Link>
+    </ListItem>
+  )
 }
