@@ -174,10 +174,10 @@ const T1Drawer = (props: IT1Drawer) => {
             <List disablePadding>
               {showAddChain && <AddChainItem
                 onSubmit={addChain}
-                onAbort={() => {
+                onAbort={(error) => {
                   setShowAddChain(false);
-                  setShowInvalidChainSnack(true);
                   setChainsCollapsed(false);
+                  error && setShowInvalidChainSnack(true);
                 }}
               />}
               {chains.map((chain) => (
@@ -233,18 +233,12 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
       <T1Link to={to ?? ''} disabled={!to} sx={{textDecoration: "none"}}>
         <ListItemButton
           sx={{
-            display: "flex",
-            flexDirection: "row",
             minHeight: 48,
             justifyContent: "initial",
-            alignItems: "center",
             px: 2.5,
-            pr: buttons ? 1 : undefined,
           }}
         >
-          <Box sx={{flex: 1}}>
-            {children}
-          </Box>
+          {children}
         </ListItemButton>
         {buttons &&
           <Box sx={{
@@ -264,7 +258,7 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
 
 interface IAddChainItemProps {
   onSubmit(chainName: string): void;
-  onAbort(): void;
+  onAbort(isError: boolean): void;
 }
 function AddChainItem(props: IAddChainItemProps) {
   const {
@@ -279,7 +273,7 @@ function AddChainItem(props: IAddChainItemProps) {
   
   const submit = React.useCallback(() => {
     if (chains.includes(chainName) || !chainName.trim()) {
-      onAbort();
+      onAbort(true);
     }
     else {
       onSubmit(chainName);
@@ -299,7 +293,7 @@ function AddChainItem(props: IAddChainItemProps) {
         onKeyDown={e => {
           switch (e.key) {
             case 'Enter': submit(); break;
-            case 'Escape': onAbort(); break;
+            case 'Escape': onAbort(false); break;
           }
         }}
         sx={{
