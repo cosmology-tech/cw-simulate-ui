@@ -19,7 +19,8 @@ export const JsonCodeMirrorEditor: React.FC = () => {
         overflow: "scroll",
         padding: 2,
         border: `1px solid ${GREY_6}`,
-        maxHeight: "200px",
+        height: "200px",
+        width: "100%",
       }}
     >
       <ReactCodeMirror
@@ -27,7 +28,7 @@ export const JsonCodeMirrorEditor: React.FC = () => {
         extensions={[json()]}
         onChange={(val: string) => setPayload(val)}
         placeholder={JSON.stringify(placeholder)}
-        style={{border: "none"}}
+        style={{ border: "none", height: "100%" }}
       />
     </Grid>
   );
