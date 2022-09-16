@@ -117,8 +117,10 @@ interface IT1Drawer {
 }
 
 const T1Drawer = (props: IT1Drawer) => {
-  //const chains = useRecoilValue(filteredChainsFromSimulationState);
-  //const chainNames = chains.map((chain: {chainId: string}} => chain.chainId);
+  // const chains = useRecoilValue(filteredChainsFromSimulationState);
+  // const chainNames: string[] = chains.map((chain: {
+  //   chainId: string;
+  // }) => chain.chainId);
   const chains = useRecoilValue(chainNamesTextFieldState);
   const setChains = useSetRecoilState(chainNamesTextFieldState);
   const [showAddChain, setShowAddChain] = React.useState(false);
@@ -162,7 +164,7 @@ const T1Drawer = (props: IT1Drawer) => {
               </IconButton>
             }
           >
-            <ListItemText primary="Simulation" />
+            <ListItemText primary="Simulation" sx={{opacity: 1}}/>
           </MenuDrawerItem>
           <MenuDrawerItem
             disablePointerEvents={true}
@@ -187,7 +189,7 @@ const T1Drawer = (props: IT1Drawer) => {
               </>
             }
           >
-            <ListItemText primary="Chains" sx={{ '& .MuiListItemText-primary': { fontWeight: 'bold' } }} />
+            <ListItemText primary="Chains" sx={{ opacity: 1, '& .MuiListItemText-primary': { fontWeight: 'bold' } }} />
           </MenuDrawerItem>
           <List disablePadding>
             {showAddChain && <AddChainItem
@@ -199,7 +201,7 @@ const T1Drawer = (props: IT1Drawer) => {
             />}
             {chains.map(chain => ( // ToDo: use chainNames when this is wired up
               <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
-                <ListItemText primary={chain} sx={{marginLeft: 3}} />
+                <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}} />
               </MenuDrawerItem>
             ))}
           </List>
