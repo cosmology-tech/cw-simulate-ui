@@ -1,5 +1,5 @@
 {
-  "simulationdd": {
+  "simulation": {
     "chains": [
       {
         "chainId": "test-chain-1",
