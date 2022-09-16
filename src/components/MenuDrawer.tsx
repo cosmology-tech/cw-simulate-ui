@@ -1,5 +1,6 @@
 import * as React from "react";
 import AddIcon from "@mui/icons-material/Add";
+import SortIcon from "@mui/icons-material/SortByAlpha";
 import DownloadIcon from "@mui/icons-material/Download";
 import { styled, SxProps, Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -14,12 +15,12 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { ORANGE_3, WHITE } from "../configs/variables";
-import { Alert, Collapse, Divider, Drawer, Input, Link, Snackbar } from "@mui/material";
+import { Alert, Divider, Drawer, Input, Link, Snackbar } from "@mui/material";
 import { To, useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
+//import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 import T1Link from "./T1Link";
-import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 import { downloadJSON } from "../utils/fileUtils";
 
 export const drawerWidth = 180;
@@ -83,10 +84,7 @@ const Logo = React.memo((props: ILogoProps) => {
   )
 });
 
-interface IT1AppBarProps {
-}
-
-const T1AppBar = React.memo((props: IT1AppBarProps) => {
+const T1AppBar = React.memo(() => {
   const location = useLocation();
 
   return (
@@ -115,13 +113,10 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
 interface IT1Drawer {
 }
 
-const T1Drawer = (props: IT1Drawer) => {
-  const chains = useRecoilValue(filteredChainsFromSimulationState);
-  const sortedChains: string[] = chains.map((chain: {
-    chainId: string;
-  }) => chain.chainId).sort();
+const T1Drawer = () => {
+  const chains = useRecoilValue(chainNamesTextFieldState);
+  //const chainNames = chains.map((chain: {chainId: string}} => chain.chainId);
   const setChains = useSetRecoilState(chainNamesTextFieldState);
-  const [chainsCollapsed, setChainsCollapsed] = React.useState(false);
   const [showAddChain, setShowAddChain] = React.useState(false);
   const [showInvalidChainSnack, setShowInvalidChainSnack] = React.useState(false);
 
@@ -132,7 +127,7 @@ const T1Drawer = (props: IT1Drawer) => {
 
   const addChain = React.useCallback((chainName: string) => {
     setShowAddChain(false);
-    setChains(curr => [...curr, chainName]);
+    setChains(curr => [chainName, ...curr]);
   }, []);
 
   return (
@@ -163,43 +158,47 @@ const T1Drawer = (props: IT1Drawer) => {
               </IconButton>
             }
           >
-            <ListItemText primary="Simulation" sx={{opacity: 1}}/>
+            <ListItemText primary="Simulation" />
           </MenuDrawerItem>
           <MenuDrawerItem
-            onClick={() => setChainsCollapsed(v => !v)}
+            disablePointerEvents={true}
             buttons={
               <>
-                <IconButton className="btn-add-chain" disabled={showAddChain}>
-                  <AddIcon
-                    fontSize="inherit"
-                    onClick={() => {
-                      setChainsCollapsed(false);
-                      setShowAddChain(true);
-                    }}
-                  />
+                <IconButton
+                  disabled={chains.length < 2 || showAddChain}
+                  onClick={() => {
+                    setChains(curr => [...curr].sort());
+                  }}
+                >
+                  <SortIcon fontSize="inherit" />
+                </IconButton>
+                <IconButton
+                  disabled={showAddChain}
+                  onClick={() => {
+                    setShowAddChain(true);
+                  }}
+                >
+                  <AddIcon fontSize="inherit" />
                 </IconButton>
               </>
             }
           >
-            <ListItemText primary="Chains" sx={{opacity: 1}}/>
+            <ListItemText primary="Chains" sx={{ '& .MuiListItemText-primary': { fontWeight: 'bold' } }} />
           </MenuDrawerItem>
-          <Collapse orientation="vertical" in={chainsCollapsed || showAddChain}>
-            <List disablePadding>
-              {showAddChain && <AddChainItem
-                onSubmit={addChain}
-                onAbort={(error) => {
-                  setShowAddChain(false);
-                  setChainsCollapsed(false);
-                  error && setShowInvalidChainSnack(true);
-                }}
-              />}
-              {sortedChains.map((chain) => (
-                <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
-                  <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}}/>
-                </MenuDrawerItem>
-              ))}
-            </List>
-          </Collapse>
+          <List disablePadding>
+            {showAddChain && <AddChainItem
+              onSubmit={addChain}
+              onAbort={(error) => {
+                setShowAddChain(false);
+                error && setShowInvalidChainSnack(true);
+              }}
+            />}
+            {chains.map(chain => (
+              <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
+                <ListItemText primary={chain} sx={{marginLeft: 3}} />
+              </MenuDrawerItem>
+            ))}
+          </List>
         </List>
         <Snackbar open={showInvalidChainSnack} autoHideDuration={6000}
                   onClose={() => setShowInvalidChainSnack(false)}>
@@ -212,7 +211,6 @@ const T1Drawer = (props: IT1Drawer) => {
   )
 };
 
-
 interface IMenuDrawerItemProps extends React.PropsWithChildren {
   sx?: SxProps<Theme>;
   to?: To;
@@ -220,6 +218,7 @@ interface IMenuDrawerItemProps extends React.PropsWithChildren {
   hoverButtons?: boolean;
 
   onClick?(): void;
+  disablePointerEvents?: boolean;
 }
 
 function MenuDrawerItem(props: IMenuDrawerItemProps) {
@@ -230,6 +229,7 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
     hoverButtons = false,
     sx,
     onClick,
+    disablePointerEvents = false
   } = props;
 
   const theme = useTheme();
@@ -252,6 +252,7 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
             minHeight: 48,
             justifyContent: "initial",
             px: 2.5,
+            'pointer-events': disablePointerEvents ? 'none' : undefined
           }}
         >
           {children}
