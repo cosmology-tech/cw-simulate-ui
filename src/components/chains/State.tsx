@@ -23,7 +23,7 @@ const State = () => {
         </Grid>
       </Grid>
       <Grid item xs={12} sx={{mt: 4}}>
-        <TableLayout rows={states} columns={columnNames}/>
+        <TableLayout rows={[states]} columns={columnNames}/>
       </Grid>
     </>
   );

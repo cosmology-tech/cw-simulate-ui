@@ -127,7 +127,7 @@ const T1Drawer = (props: IT1Drawer) => {
 
   const handleDownloadSim = React.useCallback<React.MouseEventHandler>(e => {
     e.preventDefault();
-    downloadJSON(JSON.stringify(chains), 'simulation.json');
+    downloadJSON(JSON.stringify(chains, null, 2), 'simulation.json');
   }, []);
 
   const addChain = React.useCallback((chainName: string) => {
