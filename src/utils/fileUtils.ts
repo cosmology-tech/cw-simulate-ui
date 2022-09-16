@@ -1,5 +1,7 @@
-import {Validator} from 'jsonschema';
-import * as validJson from './validSimulationSchema.json';
+import { Validator } from 'jsonschema';
+import * as validSimulationSchema from './validSimulationSchema.json';
+import * as validConfigSchema from './validConfigSchema.json';
+
 /**
  * Read the upload wasm file and convert to ArrayBuffer
  * @param file - upload wasm file
@@ -51,7 +53,7 @@ export const base64ToArrayBuffer = (base64: string): ArrayBuffer => {
  */
 export const downloadJSON = (content: string, fileName: string, contentType = 'application/json') => {
   const a = document.createElement('a');
-  const file = new Blob([content], { type: contentType });
+  const file = new Blob([content], {type: contentType});
   a.href = URL.createObjectURL(file);
   a.download = fileName;
   a.click();
@@ -59,9 +61,30 @@ export const downloadJSON = (content: string, fileName: string, contentType = 'a
   URL.revokeObjectURL(a.href);
 }
 
-// validate the simulation JSON with JSON schema
-export const validateSimulationJSON = (simulationJSON: any): boolean => {
-  const validator = new Validator();
-  const result = validator.validate(simulationJSON, validJson);
+/**
+ * Validate JSON with its schema
+ * @param json
+ * @param jsonSchema
+ */
+export const validateJSON = (json: any, jsonSchema: any): boolean => {
+  const v = new Validator();
+  const result = v.validate(json, jsonSchema);
+  // TODO: Return error message
   return result.valid;
+}
+
+/**
+ * validate the simulation JSON with JSON schema
+ * @param simulationJSON - simulation JSON
+ */
+export const validateSimulationJSON = (simulationJSON: any): boolean => {
+  return validateJSON(simulationJSON, validSimulationSchema);
+}
+
+/**
+ * validate the config JSON with JSON schema
+ * @param configJSON
+ */
+export const validateConfigJSON = (configJSON: any): boolean => {
+  return validateJSON(configJSON, validConfigSchema);
 }

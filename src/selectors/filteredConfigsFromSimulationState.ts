@@ -1,19 +1,19 @@
-import { selector } from "recoil";
+import { selectorFamily } from "recoil";
 import simulationState from "../atoms/simulationState";
 
-const filteredConfigsFromSimulationState = selector({
+const filteredConfigsFromSimulationState = selectorFamily({
   key: "filteredConfigsFromSimulationState",
-  get: ({get}) => {
+  get: (chainId: string) => ({get}) => {
     const simulation = get(simulationState);
-    // return all chainId and bech32Prefix from simulation
     // @ts-ignore
-    return simulation.simulation.chains.map((chain) => {
+    return simulation.simulation.chains.filter((chain) => chain.chainId === chainId).map((chain) => {
       return {
         chainId: chain.chainId,
         bech32Prefix: chain.bech32Prefix
       };
-    });
+    })[0];
   }
 });
 
 export default filteredConfigsFromSimulationState;
+

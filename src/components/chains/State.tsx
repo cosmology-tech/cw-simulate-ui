@@ -12,8 +12,8 @@ function createData(val1: any, val2: any) {
 const columnNames = ["Key", "Value"];
 const State = () => {
   const param = useParams();
-  const states = useRecoilValue(filteredStatesFromSimulationState).filter((state: any) => state.chainId === param.id)[0].states;
-  const stateRows = Object.entries(states).map((state: any) => createData(state[0], state[1]));
+  const states = useRecoilValue(filteredStatesFromSimulationState(param.id as string)).states;
+  const stateRows = Object.entries(states).map(([key, value]) => createData(key, value));
   return (
     <>
       <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>

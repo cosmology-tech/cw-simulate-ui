@@ -41,8 +41,8 @@
         "bech32Prefix": {
           "type": "string"
         },
-        "state": {
-          "$ref": "#/definitions/State"
+        "states": {
+          "$ref": "#/definitions/States"
         },
         "accounts": {
           "type": "array",
@@ -154,7 +154,7 @@
       "required": [],
       "title": "Message"
     },
-    "State": {
+    "States": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
@@ -165,7 +165,7 @@
           "type": "string"
         }
       },
-      "title": "State"
+      "title": "States"
     }
   }
 }

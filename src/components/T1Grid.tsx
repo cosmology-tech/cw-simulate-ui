@@ -16,7 +16,7 @@ interface IProps {
   handleDeleteItem?: (e: any) => void;
 }
 
-const Item = styled(Paper)(({ theme }) => ({
+const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -32,9 +32,7 @@ const T1Grid = ({
   hasRightDeleteButton,
   children,
 }: IProps) => {
-  const [chainNamesTextField, setChainNamesTextField] = useRecoilState<
-    string[]
-  >(chainNamesTextFieldState);
+  const [chainNamesTextField, setChainNamesTextField] = useRecoilState<string[]>(chainNamesTextFieldState);
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationState
   );
@@ -87,16 +85,16 @@ const T1Grid = ({
             <>
               <Grid item xs={12} md={12} lg={12}>
                 <Item key={item + "item"}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <T1Link to={item} sx={{ flexGrow: 1 }}>
-                      <Typography variant="h6" sx={{ paddingLeft: 3 }}>
+                  <div style={{display: "flex", alignItems: "center"}}>
+                    <T1Link to={item} sx={{flexGrow: 1}}>
+                      <Typography variant="h6" sx={{paddingLeft: 3}}>
                         {item}
                       </Typography>
                     </T1Link>
                     {rightButton}
                     {hasRightDeleteButton && (
                       <IconButton aria-label="delete" onClick={handleDelete}>
-                        <DeleteForeverIcon />
+                        <DeleteForeverIcon/>
                       </IconButton>
                     )}
                   </div>
@@ -113,18 +111,18 @@ const T1Grid = ({
                   }}
                 >
                   {children?.map((instance) => (
-                    <Grid item xs={11} md={10} lg={11} sx={{ width: "100%" }}>
+                    <Grid item xs={11} md={10} lg={11} sx={{width: "100%"}}>
                       <Item
                         sx={{
                           display: "flex",
                           justifyContent: "space-between",
                         }}
                       >
-                        <Typography variant="h6" sx={{ paddingLeft: 3 }}>
+                        <Typography variant="h6" sx={{paddingLeft: 3}}>
                           {instance}
                         </Typography>
                         <IconButton aria-label="delete" onClick={handleDelete}>
-                          <DeleteForeverIcon />
+                          <DeleteForeverIcon/>
                         </IconButton>
                       </Item>
                     </Grid>

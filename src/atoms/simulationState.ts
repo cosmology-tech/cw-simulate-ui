@@ -4,9 +4,7 @@ import { recoilPersist } from "recoil-persist";
 const {persistAtom} = recoilPersist();
 const simulationState = atom({
   key: 'simulationState',
-  default: {
-    chains: []
-  },
+  default: {},
   effects_UNSTABLE: [persistAtom]
 });
 

@@ -14,10 +14,10 @@ const ExecuteQueryTab = () => {
   return (
     <>
       <TabContext value={tabValue}>
-        <Box sx={{ border: "none" }}>
+        <Box sx={{border: "none"}}>
           <TabList onChange={handleChange} aria-label="Execute and Query tabs">
-            <Tab label="Execute" value="execute" />
-            <Tab label="Query" value="query" />
+            <Tab label="Execute" value="execute"/>
+            <Tab label="Query" value="query"/>
           </TabList>
         </Box>
       </TabContext>

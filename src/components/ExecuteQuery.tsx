@@ -1,5 +1,4 @@
 import React from "react";
-import { OutputRenderer } from "./OutputRenderer";
 import { Config } from "../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
@@ -34,7 +33,7 @@ export const ExecuteQuery = ({
   setCurrentState,
   currentState,
 }: IProps) => {
-  const { MOCK_ENV, MOCK_INFO } = Config;
+  const {MOCK_ENV, MOCK_INFO} = Config;
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationState
   );
@@ -110,9 +109,9 @@ export const ExecuteQuery = ({
   }, [executeQueryTab]);
 
   return (
-    <Grid item xs={12} sx={{ m: 2 }}>
+    <Grid item xs={12} sx={{m: 2}}>
       <Grid item xs={12}>
-        <ExecuteQueryTab />
+        <ExecuteQueryTab/>
       </Grid>
       <Grid
         item
@@ -129,7 +128,7 @@ export const ExecuteQuery = ({
       <Grid xs={1}>
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{ mt: 2 }}
+          sx={{mt: 2}}
           variant={"contained"}
           onClick={onRunHandler}
           disabled={!payload.length}

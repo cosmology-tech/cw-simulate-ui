@@ -3,13 +3,13 @@ import React from "react";
 import T1Grid from "../T1Grid";
 import InstantiateModal from "./InstantiateModal";
 
-const Codes = () => {
+const CodesAndInstances = () => {
   const [open, setOpen] = React.useState(false);
   return (
     <>
-      <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
-        <Grid item xs={4} sx={{ display: "flex", justifyContent: "end" }}>
-          <Button variant="contained" sx={{ borderRadius: 2 }}>
+      <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>
+        <Grid item xs={4} sx={{display: "flex", justifyContent: "end"}}>
+          <Button variant="contained" sx={{borderRadius: 2}}>
             <Typography variant="button">Upload Code</Typography>
           </Button>
         </Grid>
@@ -21,16 +21,16 @@ const Codes = () => {
           <Button
             variant="contained"
             onClick={() => setOpen(true)}
-            sx={{ borderRadius: 2 }}
+            sx={{borderRadius: 2}}
           >
             <Typography variant="button">Instantiate</Typography>
           </Button>
         }
         hasRightDeleteButton={true}
       />
-      <InstantiateModal open={open} setOpen={setOpen} />
+      <InstantiateModal open={open} setOpen={setOpen}/>
     </>
   );
 };
 
-export default Codes;
+export default CodesAndInstances;

@@ -4,7 +4,7 @@
       {
         "chainId": "test-chain-1",
         "bech32Prefix": "cosmos1",
-        "state": {
+        "states": {
           "key1": "value1",
           "key2": "value2"
         },
@@ -55,7 +55,7 @@
       {
         "chainId": "test-chain-2",
         "bech32Prefix": "terra1",
-        "state": {
+        "states": {
           "key1": "value1",
           "key2": "value2"
         },
