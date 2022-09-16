@@ -10,7 +10,6 @@ import { useParams } from "react-router-dom";
 import State from "./State";
 import Accounts from "./Accounts";
 import Codes from "./Codes";
-import Instances from "./Instances";
 
 export default function Chain() {
   const [value, setValue] = React.useState("config");
@@ -51,7 +50,6 @@ export default function Chain() {
                 <Tab label="State" value="state" />
                 <Tab label="Accounts" value="accounts" />
                 <Tab label="Codes" value="codes" />
-                <Tab label="Instances" value="instances" />
               </TabList>
             </Box>
           </TabContext>
@@ -71,7 +69,6 @@ export default function Chain() {
           {value === "state" && <State />}
           {value === "accounts" && <Accounts />}
           {value === "codes" && <Codes />}
-          {value === "instances" && <Instances />}
         </Grid>
       </Grid>
     </Box>

@@ -9,6 +9,7 @@ import T1Link from "./T1Link";
 import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 
 interface IProps {
+  children?: any[];
   items?: any[];
   rightButton?: React.ReactNode;
   hasRightDeleteButton?: boolean;
@@ -20,10 +21,17 @@ const Item = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(1),
   margin: theme.spacing(1),
+  marginRight: 0,
+  marginLeft: 0,
   color: theme.palette.text.secondary,
 }));
 
-const T1Grid = ({ items, rightButton, hasRightDeleteButton }: IProps) => {
+const T1Grid = ({
+  items,
+  rightButton,
+  hasRightDeleteButton,
+  children,
+}: IProps) => {
   const [chainNamesTextField, setChainNamesTextField] = useRecoilState<
     string[]
   >(chainNamesTextFieldState);
@@ -57,7 +65,8 @@ const T1Grid = ({ items, rightButton, hasRightDeleteButton }: IProps) => {
         display: "flex",
         justifyContent: "center",
         flexGrow: 1,
-        padding: "2rem",
+        paddingTop: "2rem",
+        paddingBottom: "2rem",
       }}
     >
       <Grid
@@ -92,6 +101,35 @@ const T1Grid = ({ items, rightButton, hasRightDeleteButton }: IProps) => {
                     )}
                   </div>
                 </Item>
+                <Grid
+                  item
+                  xs={12}
+                  md={12}
+                  lg={12}
+                  sx={{
+                    display: "flex",
+                    alignItems: "end",
+                    flexDirection: "column",
+                  }}
+                >
+                  {children?.map((instance) => (
+                    <Grid item xs={11} md={10} lg={11} sx={{ width: "100%" }}>
+                      <Item
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Typography variant="h6" sx={{ paddingLeft: 3 }}>
+                          {instance}
+                        </Typography>
+                        <IconButton aria-label="delete" onClick={handleDelete}>
+                          <DeleteForeverIcon />
+                        </IconButton>
+                      </Item>
+                    </Grid>
+                  ))}
+                </Grid>
               </Grid>
             </>
           );
