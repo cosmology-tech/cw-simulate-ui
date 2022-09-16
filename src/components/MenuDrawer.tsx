@@ -1,8 +1,7 @@
 import * as React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import DownloadIcon from "@mui/icons-material/Download";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { styled, SxProps, useTheme } from "@mui/material/styles";
+import { styled, SxProps, Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
@@ -16,12 +15,12 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { ORANGE_3, WHITE } from "../configs/variables";
 import { Alert, Collapse, Divider, Drawer, Input, Link, Snackbar } from "@mui/material";
-import { Theme } from "@mui/material/styles";
 import { To, useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
 import T1Link from "./T1Link";
-import chainNamesSortedState from "../atoms/chainNamesSortedState";
+import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
+import { downloadJSON } from "../utils/fileUtils";
 
 export const drawerWidth = 180;
 
@@ -50,8 +49,8 @@ export default function MenuDrawer() {
   return (
     <>
       <CssBaseline/>
-      <T1AppBar />
-      {location.pathname !== '/' && <T1Drawer />}
+      <T1AppBar/>
+      {location.pathname !== '/' && <T1Drawer/>}
     </>
   );
 }
@@ -63,29 +62,38 @@ interface ILogoProps {
   }>>;
   white?: boolean;
 }
+
 const Logo = React.memo((props: ILogoProps) => {
   const {
     LinkComponent,
     white,
   } = props;
-  
+
   return (
     <LinkComponent href="/" sx={{borderRadius: 5}}>
       <img src={white ? "/T1_White.png" : "/T1.png"} height={25} alt={"Terran One"}/>
-      <div style={{color: white ? WHITE : ORANGE_3, fontWeight: "bold", fontSize: 14, marginLeft: 10}}>Terran One</div>
+      <div style={{
+        color: white ? WHITE : ORANGE_3,
+        fontWeight: "bold",
+        fontSize: 14,
+        marginLeft: 10
+      }}>Terran One
+      </div>
     </LinkComponent>
   )
 });
 
-interface IT1AppBarProps {}
+interface IT1AppBarProps {
+}
+
 const T1AppBar = React.memo((props: IT1AppBarProps) => {
   const location = useLocation();
-  
+
   return (
     <AppBar position="fixed" sx={{backgroundColor: ORANGE_3}}>
       <Toolbar sx={{justifyContent: "space-between"}}>
         <div>
-          {location.pathname === '/' && <Logo LinkComponent={IconButton} white />}
+          {location.pathname === '/' && <Logo LinkComponent={IconButton} white/>}
         </div>
         <div>
           <IconButton sx={{borderRadius: 5}}>
@@ -104,24 +112,29 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
   )
 });
 
-interface IT1Drawer {}
+interface IT1Drawer {
+}
+
 const T1Drawer = (props: IT1Drawer) => {
-  const chains = useRecoilValue(chainNamesSortedState);
+  const chains = useRecoilValue(filteredChainsFromSimulationState);
+  const sortedChains: string[] = chains.map((chain: {
+    chainId: string;
+  }) => chain.chainId).sort();
   const setChains = useSetRecoilState(chainNamesTextFieldState);
   const [chainsCollapsed, setChainsCollapsed] = React.useState(false);
   const [showAddChain, setShowAddChain] = React.useState(false);
   const [showInvalidChainSnack, setShowInvalidChainSnack] = React.useState(false);
-  
+
   const handleDownloadSim = React.useCallback<React.MouseEventHandler>(e => {
-    // TODO
-    console.log('not yet implemented');
+    e.preventDefault();
+    downloadJSON(JSON.stringify(chains, null, 2), 'simulation.json');
   }, []);
-  
+
   const addChain = React.useCallback((chainName: string) => {
     setShowAddChain(false);
     setChains(curr => [...curr, chainName]);
   }, []);
-  
+
   return (
     <Box component="nav" sx={{width: {sm: drawerWidth}, flexShrink: {sm: 0}}}>
       <Drawer
@@ -135,7 +148,7 @@ const T1Drawer = (props: IT1Drawer) => {
         open
       >
         <DrawerHeader>
-          <Logo LinkComponent={ListItemButton} />
+          <Logo LinkComponent={ListItemButton}/>
         </DrawerHeader>
         <Divider/>
         <List>
@@ -150,7 +163,7 @@ const T1Drawer = (props: IT1Drawer) => {
               </IconButton>
             }
           >
-            <ListItemText primary="Simulation" sx={{opacity: 1}} />
+            <ListItemText primary="Simulation" sx={{opacity: 1}}/>
           </MenuDrawerItem>
           <MenuDrawerItem
             onClick={() => setChainsCollapsed(v => !v)}
@@ -168,7 +181,7 @@ const T1Drawer = (props: IT1Drawer) => {
               </>
             }
           >
-            <ListItemText primary="Chains" sx={{opacity: 1}} />
+            <ListItemText primary="Chains" sx={{opacity: 1}}/>
           </MenuDrawerItem>
           <Collapse orientation="vertical" in={chainsCollapsed || showAddChain}>
             <List disablePadding>
@@ -180,15 +193,16 @@ const T1Drawer = (props: IT1Drawer) => {
                   error && setShowInvalidChainSnack(true);
                 }}
               />}
-              {chains.map((chain) => (
+              {sortedChains.map((chain) => (
                 <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
-                  <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}} />
+                  <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}}/>
                 </MenuDrawerItem>
               ))}
             </List>
           </Collapse>
         </List>
-        <Snackbar open={showInvalidChainSnack} autoHideDuration={6000} onClose={() => setShowInvalidChainSnack(false)}>
+        <Snackbar open={showInvalidChainSnack} autoHideDuration={6000}
+                  onClose={() => setShowInvalidChainSnack(false)}>
           <Alert severity="error">
             Chain name is already in use!
           </Alert>
@@ -204,8 +218,10 @@ interface IMenuDrawerItemProps extends React.PropsWithChildren {
   to?: To;
   buttons?: React.ReactNode;
   hoverButtons?: boolean;
+
   onClick?(): void;
 }
+
 function MenuDrawerItem(props: IMenuDrawerItemProps) {
   const {
     children,
@@ -215,9 +231,9 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
     sx,
     onClick,
   } = props;
-  
+
   const theme = useTheme();
-  
+
   return (
     <ListItem
       disablePadding
@@ -258,28 +274,29 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
 
 interface IAddChainItemProps {
   onSubmit(chainName: string): void;
+
   onAbort(isError: boolean): void;
 }
+
 function AddChainItem(props: IAddChainItemProps) {
   const {
     onSubmit,
     onAbort,
   } = props;
-  
+
   const chains = useRecoilValue(chainNamesTextFieldState);
   const defaultChainName = getDefaultChainName(chains);
   const [chainName, setChainName] = React.useState(defaultChainName);
-  const ref = React.useRef<HTMLInputElement>(null);
-  
+  const ref = React.useRef<HTMLInputElement>();
+
   const submit = React.useCallback(() => {
     if (chains.includes(chainName) || !chainName.trim()) {
       onAbort(true);
-    }
-    else {
+    } else {
       onSubmit(chainName);
     }
   }, [chains, chainName]);
-  
+
   return (
     <MenuDrawerItem>
       <Input
@@ -292,8 +309,12 @@ function AddChainItem(props: IAddChainItemProps) {
         }}
         onKeyDown={e => {
           switch (e.key) {
-            case 'Enter': submit(); break;
-            case 'Escape': onAbort(false); break;
+            case 'Enter':
+              submit();
+              break;
+            case 'Escape':
+              onAbort(false);
+              break;
           }
         }}
         sx={{

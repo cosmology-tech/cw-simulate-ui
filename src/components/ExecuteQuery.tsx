@@ -123,7 +123,7 @@ export const ExecuteQuery = ({
           textAlign: "left",
         }}
       >
-        <JsonCodeMirrorEditor />
+        <JsonCodeMirrorEditor jsonValue={""}/>
         {/* <OutputRenderer response={response}/> */}
       </Grid>
       <Grid xs={1}>

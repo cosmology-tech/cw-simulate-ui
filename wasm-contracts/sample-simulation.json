@@ -1,0 +1,108 @@
+{
+  "simulation": {
+    "chains": [
+      {
+        "chainId": "test-chain-1",
+        "bech32Prefix": "cosmos1",
+        "state": {
+          "key1": "value1",
+          "key2": "value2"
+        },
+        "accounts": [
+          {
+            "id": "alice",
+            "accountAddress": "cosmos1a2lzd...",
+            "balance": 100000000
+          },
+          {
+            "id": "bob",
+            "accountAddress": "cosmos1c3lzd...",
+            "balance": 100000000
+          }
+        ],
+        "codes": [
+          {
+            "id": "contract1",
+            "wasmBinaryB64": "base64-encoded-bytes",
+            "instances": [
+              {
+                "id": "instance1",
+                "message": {
+                  "count": 0
+                }
+              }
+            ]
+          },
+          {
+            "id": "contract2",
+            "wasmBinaryB64": "base64-encoded-bytes",
+            "instances": [
+              {
+                "id": "instance1",
+                "message": {
+                  "name": "Bob",
+                  "symbol": "B",
+                  "decimals": 18,
+                  "validator": "cosmos1c3lzd...",
+                  "exit_tax": 0.01,
+                  "min_withdrawal": 100000000
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "chainId": "test-chain-2",
+        "bech32Prefix": "terra1",
+        "state": {
+          "key1": "value1",
+          "key2": "value2"
+        },
+        "accounts": [
+          {
+            "id": "alice",
+            "accountAddress": "cosmos1a2lzd...",
+            "balance": 100000000
+          },
+          {
+            "id": "bob",
+            "accountAddress": "cosmos1c3lzd...",
+            "balance": 100000000
+          }
+        ],
+        "codes": [
+          {
+            "id": "contract1",
+            "wasmBinaryB64": "base64-encoded-bytes",
+            "instances": [
+              {
+                "id": "instance1",
+                "message": {
+                  "count": 0
+                }
+              }
+            ]
+          },
+          {
+            "id": "contract2",
+            "wasmBinaryB64": "base64-encoded-bytes",
+            "instances": [
+              {
+                "id": "instance1",
+                "message": {
+                  "name": "Bob",
+                  "symbol": "B",
+                  "decimals": 18,
+                  "validator": "cosmos1c3lzd...",
+                  "exit_tax": 0.01,
+                  "min_withdrawal": 100000000
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
