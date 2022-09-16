@@ -19,8 +19,8 @@ import { Alert, Divider, Drawer, Input, Link, Snackbar } from "@mui/material";
 import { To, useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
-//import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 import T1Link from "./T1Link";
+//import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 import { downloadJSON } from "../utils/fileUtils";
 
 export const drawerWidth = 180;
