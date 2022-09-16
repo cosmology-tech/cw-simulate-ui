@@ -20,7 +20,7 @@ import { To, useLocation } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
 import T1Link from "./T1Link";
-//import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
+import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 import { downloadJSON } from "../utils/fileUtils";
 
 export const drawerWidth = 180;
@@ -114,8 +114,9 @@ interface IT1Drawer {
 }
 
 const T1Drawer = () => {
-  const chains = useRecoilValue(chainNamesTextFieldState);
+  //const chains = useRecoilValue(filteredChainsFromSimulationState);
   //const chainNames = chains.map((chain: {chainId: string}} => chain.chainId);
+  const chains = useRecoilValue(chainNamesTextFieldState);
   const setChains = useSetRecoilState(chainNamesTextFieldState);
   const [showAddChain, setShowAddChain] = React.useState(false);
   const [showInvalidChainSnack, setShowInvalidChainSnack] = React.useState(false);
@@ -193,7 +194,7 @@ const T1Drawer = () => {
                 error && setShowInvalidChainSnack(true);
               }}
             />}
-            {chains.map(chain => (
+            {chains.map(chain => ( // ToDo: use chainNames when this is wired up
               <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
                 <ListItemText primary={chain} sx={{marginLeft: 3}} />
               </MenuDrawerItem>
