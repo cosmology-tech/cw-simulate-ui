@@ -6,7 +6,11 @@ import { GREY_6 } from "../configs/variables";
 import { useRecoilState } from "recoil";
 import { payloadState } from "../atoms/payloadState";
 
-export const JsonCodeMirrorEditor: React.FC = () => {
+interface IJsonCodeMirrorEditorProps {
+  jsonValue: string;
+}
+
+export const JsonCodeMirrorEditor = ({jsonValue}: IJsonCodeMirrorEditorProps) => {
   const [payload, setPayload] = useRecoilState(payloadState);
   const placeholder = {
     json: "Enter your JSON here",
@@ -24,11 +28,11 @@ export const JsonCodeMirrorEditor: React.FC = () => {
       }}
     >
       <ReactCodeMirror
-        value={payload}
+        value={jsonValue}
         extensions={[json()]}
         onChange={(val: string) => setPayload(val)}
         placeholder={JSON.stringify(placeholder)}
-        style={{ border: "none", height: "100%" }}
+        style={{border: "none", height: "100%"}}
       />
     </Grid>
   );

@@ -1,7 +1,9 @@
 import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
+import simulationState from "../atoms/simulationState";
+import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
@@ -12,6 +14,10 @@ interface IProps {
 
 const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
   const setIsFileUploaded = useSetRecoilState(fileUploadedState);
+  const setSimulationState = useSetRecoilState(simulationState);
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
+    snackbarNotificationState
+  );
   const snackbarProps: SnackbarProps = {
     anchorOrigin: {
       vertical: "top",
@@ -20,16 +26,44 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
   };
 
   const handleOnFileDrop = (files: File[]) => {
-    files.forEach((file) => {
+    // Only allow one file to be uploaded
+    const file: File = files[0];
+    if (file.type === "application/wasm") {
       const reader = new FileReader();
-      reader.onload = (event: ProgressEvent<FileReader>) => {
-        if (event.target) {
-          setWasmBuffers([...wasmBuffers, event.target.result as ArrayBuffer]);
-          setIsFileUploaded(true);
-        }
+      reader.readAsArrayBuffer(file);
+      reader.onload = () => {
+        const fileBuffer = reader.result as ArrayBuffer;
+        setWasmBuffers([...wasmBuffers, fileBuffer]);
+        setIsFileUploaded(true);
       };
-      reader.readAsArrayBuffer(file as Blob);
-    });
+
+      reader.onerror = () => {
+        setSnackbarNotification({
+          ...snackbarNotification,
+          open: true,
+          message: "Error reading WASM binary file",
+          severity: "error",
+        });
+      }
+    }
+
+    if (file.type === "application/json") {
+      const reader = new FileReader();
+      reader.readAsText(file);
+      reader.onload = () => {
+        setSimulationState(JSON.parse(reader.result as string));
+        setIsFileUploaded(true);
+      };
+
+      reader.onerror = () => {
+        setSnackbarNotification({
+          ...snackbarNotification,
+          open: true,
+          message: "Error reading simulation file",
+          severity: "error",
+        });
+      }
+    }
   };
 
   const handleOnFileChange = (files: File[]) => {
@@ -53,10 +87,10 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
   };
 
   return (
-    <Suspense fallback={<Fallback />}>
+    <Suspense fallback={<Fallback/>}>
       <DropzoneArea
         dropzoneClass="dropzone"
-        acceptedFiles={["application/wasm"]}
+        acceptedFiles={["application/wasm", "application/json"]}
         showFileNames={true}
         dropzoneText={
           "Click to upload a simulation file or contract binary or Drag & drop a file here"
@@ -65,6 +99,7 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
         onDelete={handleOnFileDelete}
         alertSnackbarProps={snackbarProps}
         onChange={handleOnFileChange}
+        filesLimit={1}
       />
     </Suspense>
   );
@@ -73,7 +108,7 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
 function Fallback() {
   return (
     <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 250}}>
-      <CircularProgress />
+      <CircularProgress/>
     </Box>
   )
 }
