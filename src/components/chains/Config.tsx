@@ -8,6 +8,10 @@ const Config = () => {
   const configValue = useRecoilValue(filteredChainsFromSimulationState);
   const param = useParams();
   const jsonValue = JSON.stringify(configValue.filter((config: any) => config.chainId === param.id)[0], null, 2);
+
+  const handleOnClick = (e: any) => {
+    // TODO: set config to the simulation state
+  }
   return (
     <>
       <Typography variant="h6">Configuration</Typography>
@@ -17,7 +21,7 @@ const Config = () => {
         xs={12}
         sx={{display: "flex", justifyContent: "end", marginTop: 2}}
       >
-        <Button variant="contained" sx={{borderRadius: 2}}>
+        <Button variant="contained" sx={{borderRadius: 2}} onClick={handleOnClick}>
           <Typography variant="button">Update Configuration</Typography>
         </Button>
       </Grid>

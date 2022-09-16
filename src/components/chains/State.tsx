@@ -9,12 +9,11 @@ function createData(val1: any, val2: any) {
   return {val1, val2};
 }
 
-const rows = [createData("Key1", "value1"), createData("Key2", "value2")];
 const columnNames = ["Key", "Value"];
 const State = () => {
   const param = useParams();
   const states = useRecoilValue(filteredStatesFromSimulationState).filter((state: any) => state.chainId === param.id)[0].states;
-  console.log(states);
+  const stateRows = Object.entries(states).map((state: any) => createData(state[0], state[1]));
   return (
     <>
       <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>
@@ -23,7 +22,7 @@ const State = () => {
         </Grid>
       </Grid>
       <Grid item xs={12} sx={{mt: 4}}>
-        <TableLayout rows={[states]} columns={columnNames}/>
+        <TableLayout rows={stateRows} columns={columnNames}/>
       </Grid>
     </>
   );
