@@ -1,6 +1,6 @@
 import * as React from "react";
 import AddIcon from "@mui/icons-material/Add";
-import SortIcon from "@mui/icons-material/SortByAlpha";
+import SortIcon from "@mui/icons-material/ImportExport";
 import DownloadIcon from "@mui/icons-material/Download";
 import { styled, SxProps, Theme, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";

@@ -24,7 +24,7 @@ const Simulation = () => {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Item sx={{ height: "38vh" }}>
+          <Item sx={{ height: "50vh" }}>
             <StateFlow />
           </Item>
         </Grid>
