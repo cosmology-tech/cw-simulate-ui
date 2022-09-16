@@ -1,0 +1,171 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/Welcome1",
+  "definitions": {
+    "Welcome1": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "simulation": {
+          "$ref": "#/definitions/Simulation"
+        }
+      },
+      "required": [
+        "simulation"
+      ],
+      "title": "Welcome1"
+    },
+    "Simulation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chains": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Chain"
+          }
+        }
+      },
+      "required": [
+        "chains"
+      ],
+      "title": "Simulation"
+    },
+    "Chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chainId": {
+          "type": "string"
+        },
+        "bech32Prefix": {
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/definitions/State"
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Account"
+          }
+        },
+        "codes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Code"
+          }
+        }
+      },
+      "required": [
+        "bech32Prefix",
+        "chainId"
+      ],
+      "title": "Chain"
+    },
+    "Account": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "accountAddress": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "accountAddress",
+        "balance",
+        "id"
+      ],
+      "title": "Account"
+    },
+    "Code": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "wasmBinaryB64": {
+          "type": "string"
+        },
+        "instances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Instance"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "instances",
+        "wasmBinaryB64"
+      ],
+      "title": "Code"
+    },
+    "Instance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "message": {
+          "$ref": "#/definitions/Message"
+        }
+      },
+      "required": [
+        "id",
+        "message"
+      ],
+      "title": "Instance"
+    },
+    "Message": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "count": {
+          "type": "integer"
+        },
+        "name": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "decimals": {
+          "type": "integer"
+        },
+        "validator": {
+          "type": "string"
+        },
+        "exit_tax": {
+          "type": "number"
+        },
+        "min_withdrawal": {
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "title": "Message"
+    },
+    "State": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key1": {
+          "type": "string"
+        },
+        "key2": {
+          "type": "string"
+        }
+      },
+      "title": "State"
+    }
+  }
+}

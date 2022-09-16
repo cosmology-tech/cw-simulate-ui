@@ -1,3 +1,5 @@
+import {Validator} from 'jsonschema';
+import * as validJson from './validSimulationSchema.json';
 /**
  * Read the upload wasm file and convert to ArrayBuffer
  * @param file - upload wasm file
@@ -55,4 +57,11 @@ export const downloadJSON = (content: string, fileName: string, contentType = 'a
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
+}
+
+// validate the simulation JSON with JSON schema
+export const validateSimulationJSON = (simulationJSON: any): boolean => {
+  const validator = new Validator();
+  const result = validator.validate(simulationJSON, validJson);
+  return result.valid;
 }

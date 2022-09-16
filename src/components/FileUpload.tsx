@@ -4,6 +4,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
 import simulationState from "../atoms/simulationState";
 import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import { validateSimulationJSON } from "../utils/fileUtils";
 
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
@@ -51,8 +52,13 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
       const reader = new FileReader();
       reader.readAsText(file);
       reader.onload = () => {
-        setSimulationState(JSON.parse(reader.result as string));
-        setIsFileUploaded(true);
+        const json = JSON.parse(reader.result as string)
+        if (validateSimulationJSON(json)) {
+          setSimulationState(json);
+          setIsFileUploaded(true);
+        } else {
+          // TODO: Add error message when JSON is invalid
+        }
       };
 
       reader.onerror = () => {
