@@ -43,7 +43,7 @@ export const ExecuteQuery = ({
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
-      payload: payload,
+      payload: JSON.stringify(payload.json),
       currentTab: executeQueryTab,
       chainStateAfter: window.VM?.backend?.storage.dict["c3RhdGU="],
       res: res.read_json(),
@@ -55,7 +55,7 @@ export const ExecuteQuery = ({
   const execute = () => {
     try {
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
-      const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
+      const res = window.VM.execute(MOCK_ENV, MOCK_INFO, payload.json);
       setResponse(res.read_json());
       if (!(res.read_json().error && res.read_json().error.length > 0)) {
         addState(stateBefore, res);
@@ -80,7 +80,7 @@ export const ExecuteQuery = ({
   const query = () => {
     try {
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
-      const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
+      const res = window.VM.query(MOCK_ENV, payload.json);
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
       setSnackbarNotification({
         ...snackbarNotification,
@@ -105,7 +105,7 @@ export const ExecuteQuery = ({
   };
   React.useEffect(() => {
     if (currentState === allStates.length - 1) {
-      setPayload("");
+      setPayload({ json: {}, text: undefined });
     }
   }, [executeQueryTab]);
 
@@ -132,7 +132,7 @@ export const ExecuteQuery = ({
           sx={{ mt: 2 }}
           variant={"contained"}
           onClick={onRunHandler}
-          disabled={!payload.length}
+          disabled={!Object.keys(payload.json).length}
         >
           <Typography variant="button">Run</Typography>
         </Button>

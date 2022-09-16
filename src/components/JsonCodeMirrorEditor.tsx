@@ -1,35 +1,14 @@
 import React from "react";
-import ReactCodeMirror from "@uiw/react-codemirror";
-import { json } from "@codemirror/lang-json";
-import { Grid } from "@mui/material";
-import { GREY_6 } from "../configs/variables";
 import { useRecoilState } from "recoil";
 import { payloadState } from "../atoms/payloadState";
+import JsonEditor from "./json-editor/JsonEditor";
 
 export const JsonCodeMirrorEditor: React.FC = () => {
   const [payload, setPayload] = useRecoilState(payloadState);
-  const placeholder = {
-    json: "Enter your JSON here",
-  };
   return (
-    <Grid
-      item
-      sx={{
-        marginTop: 2,
-        overflow: "scroll",
-        padding: 2,
-        border: `1px solid ${GREY_6}`,
-        height: "200px",
-        width: "100%",
-      }}
-    >
-      <ReactCodeMirror
-        value={payload}
-        extensions={[json()]}
-        onChange={(val: string) => setPayload(val)}
-        placeholder={JSON.stringify(placeholder)}
-        style={{ border: "none", height: "100%" }}
-      />
-    </Grid>
+    <JsonEditor
+      content={payload}
+      readOnly={false}
+      onChange={setPayload} />
   );
 };

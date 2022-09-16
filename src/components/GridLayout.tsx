@@ -53,11 +53,17 @@ export default function GridLayout({
     snackbarNotificationState
   );
   const [payload, setPayload] = useRecoilState(payloadState);
+  const setPayloadFromString = (payload: string) => {
+    setPayload({
+      json: JSON.parse(payload),
+      text: undefined
+    });
+  };
   const {MOCK_ENV, MOCK_INFO} = Config;
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
-      payload: payload,
+      payload: JSON.stringify(payload.json),
       currentTab: executeQueryTab,
       chainStateAfter: window.VM?.backend?.storage.dict["c3RhdGU="],
       res: res,
@@ -108,7 +114,7 @@ export default function GridLayout({
                   allStates={allStates}
                   currentState={currentState}
                   setCurrentState={setCurrentState}
-                  setPayload={setPayload}
+                  setPayload={setPayloadFromString}
                   setResponse={setResponse}
                   setCurrentTab={setExecuteQueryTab}
                 />
