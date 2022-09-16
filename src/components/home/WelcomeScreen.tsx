@@ -143,12 +143,13 @@ interface INavIconProps extends PropsWithChildren {
   title?: string;
   target?: HTMLAttributeAnchorTarget;
 }
+
 function NavIcon(props: INavIconProps) {
   const {
     children,
     ...rest
   } = props;
-  
+
   return (
     <T1Link {...rest}>
       <Grid

@@ -33,7 +33,7 @@ export const StateRenderer = ({
     allStates.length - 1 > 0 &&
     allStates.length - 1 !== currentState;
   return (
-    <Grid item xs={12} sx={{ m: 2 }}>
+    <Grid item xs={12} sx={{m: 2}}>
       <Grid item xs={12}>
         <StateMemoryTab
           currentTab={currentTab}
@@ -58,7 +58,7 @@ export const StateRenderer = ({
             />
           )
         ) : (
-          <OutputRenderer response={response} />
+          <OutputRenderer response={response}/>
         )}
       </Grid>
     </Grid>

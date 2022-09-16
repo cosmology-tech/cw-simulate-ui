@@ -8,8 +8,7 @@ import filteredAccountsFromSimulationState
 const columnNames = ["ID", "Account Address", "Balance"];
 const Accounts = () => {
   const param = useParams();
-  const accounts = useRecoilValue(filteredAccountsFromSimulationState).filter((account: any) => account.chainId === param.id)[0].accounts;
-  console.log(accounts);
+  const accounts = useRecoilValue(filteredAccountsFromSimulationState(param.id as string)).accounts;
   return (
     <>
       <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>

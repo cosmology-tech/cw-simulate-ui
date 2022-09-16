@@ -4,7 +4,6 @@ import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 
 const style = {
@@ -22,7 +21,8 @@ interface IProps {
   open: boolean;
   setOpen: (val: boolean) => void;
 }
-export default function InstantiateModal({ open, setOpen }: IProps) {
+
+export default function InstantiateModal({open, setOpen}: IProps) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -41,8 +41,8 @@ export default function InstantiateModal({ open, setOpen }: IProps) {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <JsonCodeMirrorEditor jsonValue={""} />
-            <Button variant="contained" sx={{ mt: 4, borderRadius: 2 }}>
+            <JsonCodeMirrorEditor jsonValue={""}/>
+            <Button variant="contained" sx={{mt: 4, borderRadius: 2}}>
               Run
             </Button>
           </Box>

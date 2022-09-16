@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "$ref": "#/definitions/Config",
+  "definitions": {
+    "Config": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "chainId": {
+          "type": "string"
+        },
+        "bech32Prefix": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "bech32Prefix",
+        "chainId"
+      ],
+      "title": "Config"
+    }
+  }
+}

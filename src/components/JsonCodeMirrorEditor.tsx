@@ -3,7 +3,7 @@ import ReactCodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { Grid } from "@mui/material";
 import { GREY_6 } from "../configs/variables";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { payloadState } from "../atoms/payloadState";
 
 interface IJsonCodeMirrorEditorProps {
@@ -11,7 +11,7 @@ interface IJsonCodeMirrorEditorProps {
 }
 
 export const JsonCodeMirrorEditor = ({jsonValue}: IJsonCodeMirrorEditorProps) => {
-  const [payload, setPayload] = useRecoilState(payloadState);
+  const setPayload = useSetRecoilState(payloadState);
   const placeholder = {
     json: "Enter your JSON here",
   };

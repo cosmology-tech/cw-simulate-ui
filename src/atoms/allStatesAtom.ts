@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+
 export interface IState {
   chainStateBefore: string;
   payload: string;

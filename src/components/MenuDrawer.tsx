@@ -175,7 +175,7 @@ const T1Drawer = (props: IT1Drawer) => {
                     setChains(curr => [...curr].sort());
                   }}
                 >
-                  <SortIcon fontSize="inherit" />
+                  <SortIcon fontSize="inherit"/>
                 </IconButton>
                 <IconButton
                   disabled={showAddChain}
@@ -183,12 +183,13 @@ const T1Drawer = (props: IT1Drawer) => {
                     setShowAddChain(true);
                   }}
                 >
-                  <AddIcon fontSize="inherit" />
+                  <AddIcon fontSize="inherit"/>
                 </IconButton>
               </>
             }
           >
-            <ListItemText primary="Chains" sx={{ opacity: 1, '& .MuiListItemText-primary': { fontWeight: 'bold' } }} />
+            <ListItemText primary="Chains"
+                          sx={{opacity: 1, '& .MuiListItemText-primary': {fontWeight: 'bold'}}}/>
           </MenuDrawerItem>
           <List disablePadding>
             {showAddChain && <AddChainItem
@@ -200,7 +201,7 @@ const T1Drawer = (props: IT1Drawer) => {
             />}
             {chainNames.map(chain => (
               <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
-                <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}} />
+                <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}}/>
               </MenuDrawerItem>
             ))}
           </List>
@@ -221,9 +222,9 @@ interface IMenuDrawerItemProps extends React.PropsWithChildren {
   to?: To;
   buttons?: React.ReactNode;
   hoverButtons?: boolean;
+  disablePointerEvents?: boolean;
 
   onClick?(): void;
-  disablePointerEvents?: boolean;
 }
 
 function MenuDrawerItem(props: IMenuDrawerItemProps) {
