@@ -117,11 +117,10 @@ interface IT1Drawer {
 }
 
 const T1Drawer = (props: IT1Drawer) => {
-  // const chains = useRecoilValue(filteredChainsFromSimulationState);
-  // const chainNames: string[] = chains.map((chain: {
-  //   chainId: string;
-  // }) => chain.chainId);
-  const chains = useRecoilValue(chainNamesTextFieldState);
+  const chains = useRecoilValue(filteredChainsFromSimulationState);
+  const chainNames: string[] = chains.map((chain: {
+    chainId: string;
+  }) => chain.chainId);
   const setChains = useSetRecoilState(chainNamesTextFieldState);
   const [showAddChain, setShowAddChain] = React.useState(false);
   const [showInvalidChainSnack, setShowInvalidChainSnack] = React.useState(false);
@@ -199,7 +198,7 @@ const T1Drawer = (props: IT1Drawer) => {
                 error && setShowInvalidChainSnack(true);
               }}
             />}
-            {chains.map(chain => ( // ToDo: use chainNames when this is wired up
+            {chainNames.map(chain => (
               <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
                 <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}} />
               </MenuDrawerItem>
