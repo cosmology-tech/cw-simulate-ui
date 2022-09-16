@@ -5,6 +5,7 @@ import filteredChainsFromSimulationState from "../../selectors/filteredConfigsFr
 import { useNavigate, useParams } from "react-router-dom";
 import { payloadState } from "../../atoms/payloadState";
 import simulationState from "../../atoms/simulationState";
+import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 
 const Config = () => {
   const param = useParams();
@@ -17,6 +18,9 @@ const Config = () => {
   const jsonValue = JSON.stringify(currentConfig, null, 2);
 
   const navigate = useNavigate();
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
+    snackbarNotificationState
+  );
 
   const handleOnClick = () => {
     const currentChain = simulation.simulation.chains.find((c: any) => c.chainId === param.id);
@@ -41,6 +45,13 @@ const Config = () => {
     if (newChain.chainId !== currentChain.chainId) {
       navigate(`/chains/${newChain.chainId}`);
     }
+
+    setSnackbarNotification({
+      ...snackbarNotification,
+      severity: "success",
+      open: true,
+      message: 'Configuration successfully updated.',
+    });
   }
 
   return (
