@@ -84,7 +84,10 @@ const Logo = React.memo((props: ILogoProps) => {
   )
 });
 
-const T1AppBar = React.memo(() => {
+interface IT1AppBarProps {
+}
+
+const T1AppBar = React.memo((props: IT1AppBarProps) => {
   const location = useLocation();
 
   return (
@@ -113,7 +116,7 @@ const T1AppBar = React.memo(() => {
 interface IT1Drawer {
 }
 
-const T1Drawer = () => {
+const T1Drawer = (props: IT1Drawer) => {
   //const chains = useRecoilValue(filteredChainsFromSimulationState);
   //const chainNames = chains.map((chain: {chainId: string}} => chain.chainId);
   const chains = useRecoilValue(chainNamesTextFieldState);
