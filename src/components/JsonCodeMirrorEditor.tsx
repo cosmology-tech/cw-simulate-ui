@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
 import { Grid } from "@mui/material";
 import { GREY_6 } from "../configs/variables";
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { payloadState } from "../atoms/payloadState";
 
 interface IJsonCodeMirrorEditorProps {
@@ -11,10 +11,9 @@ interface IJsonCodeMirrorEditorProps {
 }
 
 export const JsonCodeMirrorEditor = ({jsonValue}: IJsonCodeMirrorEditorProps) => {
-  const [payload, setPayload] = useRecoilState(payloadState);
-  const placeholder = {
-    json: "Enter your JSON here",
-  };
+  const setPayload = useSetRecoilState(payloadState);
+  useEffect(() => setPayload(jsonValue), []);
+
   return (
     <Grid
       item
@@ -31,7 +30,7 @@ export const JsonCodeMirrorEditor = ({jsonValue}: IJsonCodeMirrorEditorProps) =>
         value={jsonValue}
         extensions={[json()]}
         onChange={(val: string) => setPayload(val)}
-        placeholder={JSON.stringify(placeholder)}
+        placeholder={JSON.stringify({ json: "Enter your JSON here" })}
         style={{border: "none", height: "100%"}}
       />
     </Grid>
