@@ -6,18 +6,46 @@ import TabList from "@mui/lab/TabList";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Grid, IconButton, Typography } from "@mui/material";
 import Config from "./Config";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import State from "./State";
 import Accounts from "./Accounts";
 import CodesAndInstances from "./CodesAndInstances";
+import { useRecoilState } from "recoil";
+import simulationState from "../../atoms/simulationState";
+import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 
 export default function Chain() {
   const [value, setValue] = React.useState("config");
+  const [simulation, setSimulation] = useRecoilState(simulationState);
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
+    snackbarNotificationState
+  );
   const param = useParams();
-
+  const navigate = useNavigate();
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
   };
+
+  const handleOnDeleteChain = () => {
+    let newSimulation = {...simulation};
+    const prevChains = newSimulation.simulation.chains;
+    const newChains = prevChains.filter((chain: any) => chain.chainId !== param.id);
+    newSimulation = {
+      ...newSimulation,
+      simulation: {
+        ...newSimulation.simulation,
+        chains: newChains,
+      }
+    }
+    setSimulation(newSimulation);
+    setSnackbarNotification({
+      ...snackbarNotification,
+      open: true,
+      message: "Chain deleted successfully",
+      severity: "success",
+    });
+    navigate("/chains");
+  }
 
   return (
     <Box
@@ -60,7 +88,7 @@ export default function Chain() {
           lg={2}
           sx={{display: "flex", justifyContent: "end"}}
         >
-          <IconButton aria-label="delete">
+          <IconButton aria-label="delete" onClick={handleOnDeleteChain}>
             <DeleteForeverIcon/>
           </IconButton>
         </Grid>

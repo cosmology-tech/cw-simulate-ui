@@ -58,8 +58,8 @@
         }
       },
       "required": [
-        "bech32Prefix",
-        "chainId"
+        "chainId",
+        "bech32Prefix"
       ],
       "title": "Chain"
     },
@@ -103,7 +103,6 @@
       },
       "required": [
         "id",
-        "instances",
         "wasmBinaryB64"
       ],
       "title": "Code"

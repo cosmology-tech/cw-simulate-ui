@@ -2,13 +2,12 @@ import { Button, Grid, Typography } from "@mui/material";
 import TableLayout from "./TableLayout";
 import { useParams } from "react-router-dom";
 import { useRecoilValue } from "recoil";
-import filteredAccountsFromSimulationState
-  from "../../selectors/filteredAccountsFromSimulationState";
+import filteredAccountsByChainId from "../../selectors/filteredAccountsByChainId";
 
 const columnNames = ["ID", "Account Address", "Balance"];
 const Accounts = () => {
   const param = useParams();
-  const accounts = useRecoilValue(filteredAccountsFromSimulationState(param.id as string)).accounts;
+  const accounts = useRecoilValue(filteredAccountsByChainId(param.id as string)).accounts;
   return (
     <>
       <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>

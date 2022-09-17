@@ -34,3 +34,6 @@ export const createContractInstance = async (chain: CWChain, wasmByteCode: Buffe
   return await chain.instantiateContract(code.codeId);
 }
 
+export const buildCwChain = (chains: any, env: CWSimulateEnv) => {
+}
+

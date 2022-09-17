@@ -34,7 +34,7 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 }));
 
 export default function TableLayout({rows, columns}: IProps) {
-  const rowKeys = Object.keys(rows[0]);
+  const rowKeys = rows !== undefined ? Object.keys(rows[0]) : [];
   return (
     <TableContainer component={Paper}>
       <Table sx={{width: "100%"}} aria-label="customized table">
@@ -46,7 +46,7 @@ export default function TableLayout({rows, columns}: IProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row: any) => {
+          {rows?.map((row: any) => {
             return (
               <StyledTableRow key={Math.random()}>
                 {rowKeys.map((rowkey) => {

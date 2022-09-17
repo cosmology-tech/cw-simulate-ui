@@ -11,17 +11,20 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import React, { useRef, useState } from "react";
 import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { Outlet, useParams } from "react-router-dom";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
 import T1Grid from "../T1Grid";
-import chainNamesTextFieldState from "../../atoms/chainNamesTextFieldState";
+import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
+import simulationState from "../../atoms/simulationState";
 
 const Chains = () => {
   const [openDialog, setOpenDialog] = useState(false);
-  const [chainNamesTextField, setChainNamesTextField] = useRecoilState<Array<string>>(chainNamesTextFieldState);
+  const [simulation, setSimulation] = useRecoilState(simulationState);
+  const chains = useRecoilValue(filteredChainsFromSimulationState);
+  const chainNames = chains?.map((chain: any) => chain.chainId).sort();
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationState
   );
@@ -46,14 +49,29 @@ const Chains = () => {
       });
       return;
     }
-    const newChainNames = textFieldRef.current.value.split(",").map((el: string) => el.trim());
-    const prevChainNames = new Set(chainNamesTextField);
-    if (newChainNames.length === 1) {
-      setChainNamesTextField([...prevChainNames.add(newChainNames[0])]);
-    } else {
-      setChainNamesTextField(Array.from(new Set([...prevChainNames, ...newChainNames])));
-    }
 
+    const newChainNames = textFieldRef.current.value.split(",").map((el: string) => el.trim());
+    let newSimulation = {...simulation};
+    const prevChains = newSimulation.simulation.chains;
+    const isChainExist = newChainNames.some((chainName: string) => prevChains.some((chain: any) => chain.chainId === chainName));
+    if (isChainExist) {
+      setSnackbarNotification({
+        ...snackbarNotification,
+        open: true,
+        message: "Chain already exist. Please enter a new chain name",
+        severity: "error",
+      });
+      return;
+    }
+    const newChains = newChainNames.map((chainName: string) => ({
+      chainId: chainName,
+      bech32Prefix: "terra"
+    }));
+    newSimulation = {
+      ...newSimulation,
+      simulation: {...newSimulation.simulation, chains: [...prevChains, ...newChains]}
+    };
+    setSimulation(newSimulation);
     setSnackbarNotification({
       ...snackbarNotification,
       severity: "success",
@@ -61,6 +79,10 @@ const Chains = () => {
       message: 'Successfully added new chains.',
     });
     setOpenDialog(false);
+  }
+
+  const handleDeleteChain = () => {
+
   }
 
   return (
@@ -109,8 +131,9 @@ const Chains = () => {
               <Button onClick={handleAddChain}>Add</Button>
             </DialogActions>
           </Dialog>
-          {!openDialog && chainNamesTextField.length > 0 ?
-            (<T1Grid items={[...new Set(chainNamesTextField)]} hasRightDeleteButton={true}/>)
+          {!openDialog && chainNames.length > 0 ?
+            (<T1Grid items={[...new Set(chainNames)]} hasRightDeleteButton={true}
+                     handleDeleteItem={handleDeleteChain}/>)
             : (<Grid item xs={12} sx={{
               display: 'grid',
               marginTop: 4,

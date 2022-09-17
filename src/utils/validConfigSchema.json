@@ -14,8 +14,8 @@
         }
       },
       "required": [
-        "bech32Prefix",
-        "chainId"
+        "chainId",
+        "bech32Prefix"
       ],
       "title": "Config"
     }

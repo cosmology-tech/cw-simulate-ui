@@ -5,11 +5,13 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { createSimulateEnv } from "../../utils/setupSimulation";
-import { useRecoilValue } from "recoil";
+import { creatChain, createSimulateEnv } from "../../utils/setupSimulation";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import T1Link from "../T1Link";
 import { To } from "react-router-dom";
+import simulationState from "../../atoms/simulationState";
+import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
 
 const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -26,8 +28,18 @@ interface IProps {
 
 export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
   const isFileUploaded = useRecoilValue(fileUploadedState);
+  const [simulation, setSimulation] = useRecoilState(simulationState);
+  const chains = useRecoilValue(filteredChainsFromSimulationState);
   const onCreateNewEnvironment = () => {
     window.CWEnv = createSimulateEnv();
+    if (simulation) {
+      window.CWEnv.chains = {};
+    } else {
+      // Default to 1 chain
+      window.CWEnv.chains = {
+        chains: creatChain(window.CWEnv, {chainId: "untitled-1", bech32Prefix: "terra"}),
+      }
+    }
   };
 
   return (
