@@ -3,17 +3,17 @@ import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useNavigate, useParams } from "react-router-dom";
 import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
-import { payloadState } from "../../atoms/payloadState";
 import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { validateConfigJSON } from "../../utils/fileUtils";
 import simulationState from "../../atoms/simulationState";
+import { useState } from "react";
 
 const Config = () => {
   const param = useParams();
   const configValue = useRecoilValue(filteredConfigsByChainId(param.id as string));
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const jsonValue = JSON.stringify(configValue, null, 2);
-  const jsonPayload = useRecoilValue(payloadState);
+  const [jsonPayload, setJsonPayload] = useState("");
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationState);
   const navigate = useNavigate();
 
@@ -68,10 +68,14 @@ const Config = () => {
     });
   };
 
+  const handleSetPayload = (payload: string) => {
+    setJsonPayload(payload);
+  }
+
   return (
     <>
       <Typography variant="h6">Configuration</Typography>
-      <JsonCodeMirrorEditor jsonValue={jsonValue}/>
+      <JsonCodeMirrorEditor jsonValue={jsonValue} setPayload={handleSetPayload}/>
       <Grid
         item
         xs={12}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Config } from "../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
@@ -6,7 +6,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../atoms/executeQueryTabState";
 import { Button, Grid, Typography } from "@mui/material";
-import { payloadState } from "../atoms/payloadState";
 
 interface IProps {
   response: JSON | undefined;
@@ -37,7 +36,7 @@ export const ExecuteQuery = ({
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
     snackbarNotificationState
   );
-  const [payload, setPayload] = useRecoilState(payloadState);
+  const [payload, setPayload] = useState("");
   const executeQueryTab = useRecoilValue(executeQueryTabState);
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
@@ -108,6 +107,10 @@ export const ExecuteQuery = ({
     }
   }, [executeQueryTab]);
 
+  const handleSetPayload = (val: string) => {
+    setPayload(val);
+  }
+
   return (
     <Grid item xs={12} sx={{m: 2}}>
       <Grid item xs={12}>
@@ -122,7 +125,7 @@ export const ExecuteQuery = ({
           textAlign: "left",
         }}
       >
-        <JsonCodeMirrorEditor jsonValue={""}/>
+        <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload}/>
         {/* <OutputRenderer response={response}/> */}
       </Grid>
       <Grid xs={1}>

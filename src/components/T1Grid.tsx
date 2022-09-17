@@ -11,6 +11,7 @@ interface IProps {
   rightButton?: React.ReactNode;
   hasRightDeleteButton?: boolean;
   handleDeleteItem: () => void;
+  childRef?: any;
 }
 
 const Item = styled(Paper)(({theme}) => ({
@@ -28,25 +29,9 @@ const T1Grid = ({
   items,
   rightButton,
   hasRightDeleteButton,
-  handleDeleteItem
+  handleDeleteItem,
+  childRef,
 }: IProps) => {
-  // const handleDelete = (e: any) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-  //   const item = e.currentTarget.parentElement;
-  //   item.remove();
-  //   // Remove the item from the chainNamesTextFieldState
-  //   const newChainNames = chainNamesTextField.filter(
-  //     (el) => el !== item.innerText
-  //   );
-  //   setChainNamesTextField(newChainNames);
-  //   setSnackbarNotification({
-  //     ...snackbarNotification,
-  //     open: true,
-  //     message: `Chain ${item.innerText} deleted`,
-  //     severity: "success",
-  //   });
-  // };
   return (
     <Box
       sx={{
@@ -81,7 +66,7 @@ const T1Grid = ({
                 <Item key={item + "item"}>
                   <div style={{display: "flex", alignItems: "center"}}>
                     <T1Link to={item} sx={{flexGrow: 1}}>
-                      <Typography variant="h6" sx={{paddingLeft: 3}}>
+                      <Typography variant="h6" sx={{paddingLeft: 3}} ref={childRef}>
                         {item}
                       </Typography>
                     </T1Link>
@@ -105,18 +90,20 @@ const T1Grid = ({
                   }}
                 >
                   {children?.map((instance) => (
-                    <Grid item xs={11} md={10} lg={11} sx={{width: "100%"}}>
+                    <Grid item xs={11} md={10} lg={11} sx={{width: "100%"}} key={instance + "item"}>
                       <Item
                         sx={{
                           display: "flex",
                           justifyContent: "space-between",
                         }}
+                        key={instance}
                       >
-                        <Typography variant="h6" sx={{paddingLeft: 3}}>
+                        <Typography variant="h6" sx={{paddingLeft: 3}} key={instance + "h6"}>
                           {instance}
                         </Typography>
-                        <IconButton aria-label="delete" onClick={handleDeleteItem}>
-                          <DeleteForeverIcon/>
+                        <IconButton aria-label="delete" onClick={handleDeleteItem}
+                                    key={instance + "icon"}>
+                          <DeleteForeverIcon key={instance + "deleteIcon"}/>
                         </IconButton>
                       </Item>
                     </Grid>

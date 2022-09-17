@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import Backdrop from "@mui/material/Backdrop";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
@@ -25,6 +26,11 @@ interface IProps {
 export default function InstantiateModal({open, setOpen}: IProps) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [payload, setPayload] = useState("");
+
+  const handleSetPayload = (val: string) => {
+    setPayload(val);
+  }
 
   return (
     <div>
@@ -41,7 +47,7 @@ export default function InstantiateModal({open, setOpen}: IProps) {
       >
         <Fade in={open}>
           <Box sx={style}>
-            <JsonCodeMirrorEditor jsonValue={""}/>
+            <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload}/>
             <Button variant="contained" sx={{mt: 4, borderRadius: 2}}>
               Run
             </Button>

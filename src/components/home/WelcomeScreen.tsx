@@ -5,7 +5,7 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import ArticleIcon from "@mui/icons-material/Article";
 import NotesIcon from "@mui/icons-material/Notes";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { creatChain, createSimulateEnv } from "../../utils/setupSimulation";
+import { creatChainForSimulation, createSimulateEnv } from "../../utils/setupSimulation";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import T1Link from "../T1Link";
@@ -29,17 +29,16 @@ interface IProps {
 export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
   const isFileUploaded = useRecoilValue(fileUploadedState);
   const [simulation, setSimulation] = useRecoilState(simulationState);
+  const currentChains = useRecoilValue(filteredChainsFromSimulationState);
   const chains = useRecoilValue(filteredChainsFromSimulationState);
   const onCreateNewEnvironment = () => {
     window.CWEnv = createSimulateEnv();
-    if (simulation) {
-      window.CWEnv.chains = {};
-    } else {
-      // Default to 1 chain
-      window.CWEnv.chains = {
-        chains: creatChain(window.CWEnv, {chainId: "untitled-1", bech32Prefix: "terra"}),
-      }
-    }
+    currentChains.forEach((chain: any) => {
+      creatChainForSimulation(window.CWEnv, {
+        chainId: chain.chainId,
+        bech32Prefix: chain.bech32Prefix
+      });
+    });
   };
 
   return (
