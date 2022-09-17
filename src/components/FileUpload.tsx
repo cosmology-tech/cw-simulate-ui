@@ -31,16 +31,29 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
     const file: File = files[0];
     if (file.type === "application/wasm") {
       const reader = new FileReader();
-      reader.readAsArrayBuffer(file);
+      reader.readAsDataURL(file);
       reader.onload = () => {
-        const fileBuffer = reader.result as ArrayBuffer;
+        const fileBuffer = reader.result;
         const newSimulation = {
           simulation: {
             chains: [
               {
                 chainId: "untitled-1",
                 bech32Prefix: "terra",
-              }
+                accounts: [
+                  {
+                    "id": "alice",
+                    "accountAddress": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
+                    "balance": 100000000
+                  }
+                ],
+                codes: [
+                  {
+                    "id": `${file.name}`,
+                    "wasmBinaryB64": `${fileBuffer}`,
+                  }
+                ]
+              },
             ]
           }
         }

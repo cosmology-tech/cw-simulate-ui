@@ -1,17 +1,16 @@
-import { selector } from "recoil";
+import { selectorFamily } from "recoil";
 import simulationState from "../atoms/simulationState";
 
-const filteredCodesByChainId = selector({
+const filteredCodesByChainId = selectorFamily({
   key: "filteredCodesByChainId",
-  get: ({get}) => {
+  get: (chainId: string) => ({get}) => {
     const simulation = get(simulationState);
     // @ts-ignore
-    return simulation.simulation?.chains?.map((chain) => {
+    return simulation.simulation?.chains?.filter((chain) => chain.chainId === chainId).map((chain) => {
       return {
-        chainId: chain.chainId,
         codes: chain.codes
-      }
-    });
+      };
+    })[0];
   }
 });
 

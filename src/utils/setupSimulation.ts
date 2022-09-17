@@ -20,7 +20,7 @@ export const createSimulateEnv = (): CWSimulateEnv => {
  * @param env
  * @param chainConfig
  */
-export const creatChain = (env: CWSimulateEnv, chainConfig: ChainConfig): CWChain => {
+export const creatChainForSimulation = (env: CWSimulateEnv, chainConfig: ChainConfig): CWChain => {
   return env.createChain(chainConfig);
 }
 

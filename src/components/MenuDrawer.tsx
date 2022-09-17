@@ -22,7 +22,7 @@ import T1Link from "./T1Link";
 import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 import { downloadJSON } from "../utils/fileUtils";
 import simulationState from "../atoms/simulationState";
-import { ChainConfig, creatChain } from "../utils/setupSimulation";
+import { ChainConfig, creatChainForSimulation } from "../utils/setupSimulation";
 import filteredConfigsByChainId from "../selectors/filteredConfigsByChainId";
 
 export const drawerWidth = 180;
@@ -80,7 +80,7 @@ const Logo = React.memo((props: ILogoProps) => {
         fontWeight: "bold",
         fontSize: 14,
         marginLeft: 10
-      }}>Terran One
+      }} onClick={() => localStorage.clear()}>Terran One
       </div>
     </LinkComponent>
   )
@@ -145,6 +145,13 @@ const T1Drawer = (props: IT1Drawer) => {
       {
         chainId: chainName,
         bech32Prefix: "terra",
+        accounts: [
+          {
+            "id": "alice",
+            "accountAddress": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
+            "balance": 100000000
+          }
+        ],
       }
     ];
     newSimulation = {
@@ -154,7 +161,7 @@ const T1Drawer = (props: IT1Drawer) => {
       }
     };
     setSimulation(newSimulation);
-    creatChain(window.CWEnv, chainConfig as ChainConfig)
+    creatChainForSimulation(window.CWEnv, chainConfig as ChainConfig)
   }, []);
 
   const handleSortChains = React.useCallback<React.MouseEventHandler>(e => {

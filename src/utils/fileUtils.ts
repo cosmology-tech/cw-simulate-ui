@@ -1,6 +1,7 @@
 import { Validator } from 'jsonschema';
 import * as validSimulationSchema from './validSimulationSchema.json';
 import * as validConfigSchema from './validConfigSchema.json';
+import * as validAccountSchema from './validAccountSchema.json';
 
 /**
  * Read the upload wasm file and convert to ArrayBuffer
@@ -87,4 +88,8 @@ export const validateSimulationJSON = (simulationJSON: any): boolean => {
  */
 export const validateConfigJSON = (configJSON: any): boolean => {
   return validateJSON(configJSON, validConfigSchema);
+}
+
+export const validateAccountJSON = (accountJSON: any): boolean => {
+  return validateJSON(accountJSON, validAccountSchema);
 }
