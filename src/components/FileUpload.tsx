@@ -34,7 +34,17 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
       reader.readAsArrayBuffer(file);
       reader.onload = () => {
         const fileBuffer = reader.result as ArrayBuffer;
-        setWasmBuffers([...wasmBuffers, fileBuffer]);
+        const newSimulation = {
+          simulation: {
+            chains: [
+              {
+                chainId: "untitled-1",
+                bech32Prefix: "terra",
+              }
+            ]
+          }
+        }
+        setSimulationState(newSimulation);
         setIsFileUploaded(true);
       };
 

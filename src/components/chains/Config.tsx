@@ -2,7 +2,7 @@ import { Button, Grid, Typography } from "@mui/material";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useNavigate, useParams } from "react-router-dom";
-import filteredConfigsFromSimulationState from "../../selectors/filteredConfigsFromSimulationState";
+import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
 import { payloadState } from "../../atoms/payloadState";
 import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { validateConfigJSON } from "../../utils/fileUtils";
@@ -10,7 +10,7 @@ import simulationState from "../../atoms/simulationState";
 
 const Config = () => {
   const param = useParams();
-  const configValue = useRecoilValue(filteredConfigsFromSimulationState(param.id as string));
+  const configValue = useRecoilValue(filteredConfigsByChainId(param.id as string));
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const jsonValue = JSON.stringify(configValue, null, 2);
   const jsonPayload = useRecoilValue(payloadState);
@@ -36,7 +36,7 @@ const Config = () => {
     newChain.chainId = json.chainId;
     newChain.bech32Prefix = json.bech32Prefix;
     const chainIds = newSimulation.simulation.chains.map((chain: any) => chain.chainId);
-    if (chainIds.includes(json.chainId)) {
+    if (json.chainId !== configValue.chainId && chainIds.includes(json.chainId)) {
       setSnackbarNotification({
         ...snackbarNotification,
         open: true,

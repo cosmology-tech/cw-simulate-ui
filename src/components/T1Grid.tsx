@@ -3,17 +3,14 @@ import React from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
-import { useRecoilState } from "recoil";
-import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
 import T1Link from "./T1Link";
-import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 
 interface IProps {
   children?: any[];
   items?: any[];
   rightButton?: React.ReactNode;
   hasRightDeleteButton?: boolean;
-  handleDeleteItem?: (e: any) => void;
+  handleDeleteItem: () => void;
 }
 
 const Item = styled(Paper)(({theme}) => ({
@@ -27,32 +24,29 @@ const Item = styled(Paper)(({theme}) => ({
 }));
 
 const T1Grid = ({
+  children,
   items,
   rightButton,
   hasRightDeleteButton,
-  children,
+  handleDeleteItem
 }: IProps) => {
-  const [chainNamesTextField, setChainNamesTextField] = useRecoilState<string[]>(chainNamesTextFieldState);
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationState
-  );
-  const handleDelete = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const item = e.currentTarget.parentElement;
-    item.remove();
-    // Remove the item from the chainNamesTextFieldState
-    const newChainNames = chainNamesTextField.filter(
-      (el) => el !== item.innerText
-    );
-    setChainNamesTextField(newChainNames);
-    setSnackbarNotification({
-      ...snackbarNotification,
-      open: true,
-      message: `Chain ${item.innerText} deleted`,
-      severity: "success",
-    });
-  };
+  // const handleDelete = (e: any) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
+  //   const item = e.currentTarget.parentElement;
+  //   item.remove();
+  //   // Remove the item from the chainNamesTextFieldState
+  //   const newChainNames = chainNamesTextField.filter(
+  //     (el) => el !== item.innerText
+  //   );
+  //   setChainNamesTextField(newChainNames);
+  //   setSnackbarNotification({
+  //     ...snackbarNotification,
+  //     open: true,
+  //     message: `Chain ${item.innerText} deleted`,
+  //     severity: "success",
+  //   });
+  // };
   return (
     <Box
       sx={{
@@ -93,7 +87,7 @@ const T1Grid = ({
                     </T1Link>
                     {rightButton}
                     {hasRightDeleteButton && (
-                      <IconButton aria-label="delete" onClick={handleDelete}>
+                      <IconButton aria-label="delete" onClick={handleDeleteItem}>
                         <DeleteForeverIcon/>
                       </IconButton>
                     )}
@@ -121,7 +115,7 @@ const T1Grid = ({
                         <Typography variant="h6" sx={{paddingLeft: 3}}>
                           {instance}
                         </Typography>
-                        <IconButton aria-label="delete" onClick={handleDelete}>
+                        <IconButton aria-label="delete" onClick={handleDeleteItem}>
                           <DeleteForeverIcon/>
                         </IconButton>
                       </Item>

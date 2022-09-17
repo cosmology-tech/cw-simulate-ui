@@ -16,12 +16,14 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { ORANGE_3, WHITE } from "../configs/variables";
 import { Alert, Divider, Drawer, Input, Link, Snackbar } from "@mui/material";
-import { To, useLocation } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import chainNamesTextFieldState from "../atoms/chainNamesTextFieldState";
+import { To, useLocation, useParams } from 'react-router-dom';
+import { useRecoilState, useRecoilValue } from "recoil";
 import T1Link from "./T1Link";
 import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 import { downloadJSON } from "../utils/fileUtils";
+import simulationState from "../atoms/simulationState";
+import { ChainConfig, creatChain } from "../utils/setupSimulation";
+import filteredConfigsByChainId from "../selectors/filteredConfigsByChainId";
 
 export const drawerWidth = 180;
 
@@ -117,23 +119,56 @@ interface IT1Drawer {
 }
 
 const T1Drawer = (props: IT1Drawer) => {
+  const param = useParams();
   const chains = useRecoilValue(filteredChainsFromSimulationState);
-  const chainNames: string[] = chains.map((chain: {
+  const chainConfig = useRecoilValue(filteredConfigsByChainId(param.id as string));
+  const chainNames: string[] = chains?.map((chain: {
     chainId: string;
   }) => chain.chainId);
-  const setChains = useSetRecoilState(chainNamesTextFieldState);
   const [showAddChain, setShowAddChain] = React.useState(false);
   const [showInvalidChainSnack, setShowInvalidChainSnack] = React.useState(false);
+  const [simulation, setSimulation] = useRecoilState(simulationState);
 
   const handleDownloadSim = React.useCallback<React.MouseEventHandler>(e => {
     e.preventDefault();
-    downloadJSON(JSON.stringify(chains, null, 2), 'simulation.json');
+    downloadJSON(JSON.stringify(simulation, null, 2), 'simulation.json');
   }, []);
 
   const addChain = React.useCallback((chainName: string) => {
     setShowAddChain(false);
-    setChains(curr => [chainName, ...curr]);
+    if (chainNames.includes(chainName)) {
+      setShowInvalidChainSnack(true);
+    }
+    let newSimulation = {...simulation};
+    const newChains = [
+      ...newSimulation.simulation.chains,
+      {
+        chainId: chainName,
+        bech32Prefix: "terra",
+      }
+    ];
+    newSimulation = {
+      simulation: {
+        ...newSimulation.simulation,
+        chains: newChains,
+      }
+    };
+    setSimulation(newSimulation);
+    creatChain(window.CWEnv, chainConfig as ChainConfig)
   }, []);
+
+  const handleSortChains = React.useCallback<React.MouseEventHandler>(e => {
+    e.preventDefault();
+    let newSimulation = {...simulation};
+    const newChains = [...newSimulation.simulation.chains].sort((a, b) => a.chainId.localeCompare(b.chainId));
+    newSimulation = {
+      simulation: {
+        ...newSimulation.simulation,
+        chains: newChains,
+      }
+    };
+    setSimulation(newSimulation);
+  }, [simulation]);
 
   return (
     <Box component="nav" sx={{width: {sm: drawerWidth}, flexShrink: {sm: 0}}}>
@@ -166,14 +201,13 @@ const T1Drawer = (props: IT1Drawer) => {
             <ListItemText primary="Simulation" sx={{opacity: 1}}/>
           </MenuDrawerItem>
           <MenuDrawerItem
+            to="/chains"
             disablePointerEvents={true}
             buttons={
               <>
                 <IconButton
-                  disabled={chains.length < 2 || showAddChain}
-                  onClick={() => {
-                    setChains(curr => [...curr].sort());
-                  }}
+                  disabled={chains?.length < 2 || showAddChain}
+                  onClick={handleSortChains}
                 >
                   <SortIcon fontSize="inherit"/>
                 </IconButton>
@@ -189,7 +223,7 @@ const T1Drawer = (props: IT1Drawer) => {
             }
           >
             <ListItemText primary="Chains"
-                          sx={{opacity: 1, '& .MuiListItemText-primary': {fontWeight: 'bold'}}}/>
+                          sx={{opacity: 1}}/>
           </MenuDrawerItem>
           <List disablePadding>
             {showAddChain && <AddChainItem
@@ -198,6 +232,7 @@ const T1Drawer = (props: IT1Drawer) => {
                 setShowAddChain(false);
                 error && setShowInvalidChainSnack(true);
               }}
+              chains={chainNames}
             />}
             {chainNames.map(chain => (
               <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
@@ -280,6 +315,8 @@ function MenuDrawerItem(props: IMenuDrawerItemProps) {
 }
 
 interface IAddChainItemProps {
+  chains: string[];
+
   onSubmit(chainName: string): void;
 
   onAbort(isError: boolean): void;
@@ -289,9 +326,9 @@ function AddChainItem(props: IAddChainItemProps) {
   const {
     onSubmit,
     onAbort,
+    chains
   } = props;
 
-  const chains = useRecoilValue(chainNamesTextFieldState);
   const defaultChainName = getDefaultChainName(chains);
   const [chainName, setChainName] = React.useState(defaultChainName);
   const ref = React.useRef<HTMLInputElement>();

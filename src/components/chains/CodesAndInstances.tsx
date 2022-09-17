@@ -15,6 +15,8 @@ const CodesAndInstances = () => {
         </Grid>
       </Grid>
       <T1Grid
+        handleDeleteItem={() => {
+        }}
         children={["Instance1", "Instance2"]}
         items={["Phoneix1", "Phoneix2"]}
         rightButton={

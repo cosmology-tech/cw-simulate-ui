@@ -1,12 +1,12 @@
 import { selectorFamily } from "recoil";
 import simulationState from "../atoms/simulationState";
 
-const filteredAccountsFromSimulationState = selectorFamily({
-  key: "filteredAccountsFromSimulationState",
+const filteredAccountsByChainId = selectorFamily({
+  key: "filteredAccountsByChainId",
   get: (chainId: string) => ({get}) => {
     const simulation = get(simulationState);
     // @ts-ignore
-    return simulation.simulation.chains.filter((chain) => chain.chainId === chainId).map((chain) => {
+    return simulation.simulation?.chains?.filter((chain) => chain.chainId === chainId).map((chain) => {
       return {
         accounts: chain.accounts
       };
@@ -14,4 +14,4 @@ const filteredAccountsFromSimulationState = selectorFamily({
   }
 });
 
-export default filteredAccountsFromSimulationState;
+export default filteredAccountsByChainId;

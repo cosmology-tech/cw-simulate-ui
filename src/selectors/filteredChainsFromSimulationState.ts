@@ -6,7 +6,7 @@ const filteredChainsFromSimulationState = selector({
   get: ({get}) => {
     const simulation = get(simulationState);
     // @ts-ignore
-    return simulation.simulation.chains;
+    return simulation?.simulation?.chains;
   }
 });
 
