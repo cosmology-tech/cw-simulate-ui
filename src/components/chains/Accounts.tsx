@@ -84,7 +84,7 @@ const Accounts = () => {
   return (
     <>
       <Dialog open={openDialog} onClose={handleClose}>
-        <DialogTitle>Add New Chains</DialogTitle>
+        <DialogTitle>Add New Account</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Enter account address and balance.

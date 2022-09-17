@@ -132,7 +132,7 @@ const T1Drawer = (props: IT1Drawer) => {
   const handleDownloadSim = React.useCallback<React.MouseEventHandler>(e => {
     e.preventDefault();
     downloadJSON(JSON.stringify(simulation, null, 2), 'simulation.json');
-  }, []);
+  }, [simulation]);
 
   const addChain = React.useCallback((chainName: string) => {
     setShowAddChain(false);
@@ -161,8 +161,11 @@ const T1Drawer = (props: IT1Drawer) => {
       }
     };
     setSimulation(newSimulation);
-    creatChainForSimulation(window.CWEnv, chainConfig as ChainConfig)
-  }, []);
+    creatChainForSimulation(window.CWEnv, {
+      chainId: chainName,
+      bech32Prefix: "terra"
+    } as ChainConfig);
+  }, [simulation, chainConfig]);
 
   const handleSortChains = React.useCallback<React.MouseEventHandler>(e => {
     e.preventDefault();

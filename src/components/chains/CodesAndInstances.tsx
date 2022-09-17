@@ -18,6 +18,7 @@ import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { createContractInstance } from "../../utils/setupSimulation";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
 import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
+import FileUpload from "../FileUpload";
 
 const CodesAndInstances = () => {
   const param = useParams();
@@ -30,6 +31,7 @@ const CodesAndInstances = () => {
     snackbarNotificationState
   );
   const [openDialog, setOpenDialog] = useState(false);
+  const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const itemRef = useRef<any>();
   const placeholder = {
     "counter": 0,
@@ -38,8 +40,16 @@ const CodesAndInstances = () => {
     setOpenDialog(true);
   }
 
+  const handleClickOpenUploadDialog = () => {
+    setOpenUploadDialog(true);
+  }
+
   const handleClose = () => {
     setOpenDialog(false);
+  }
+
+  const handleCloseUploadDialog = () => {
+    setOpenUploadDialog(false);
   }
 
   const handleInstantiate = () => {
@@ -66,6 +76,39 @@ const CodesAndInstances = () => {
       }
     }
     let newSimulation = {...simulation};
+    const contractInstances = window.CWEnv.chains[param.id as string].contracts;
+    const allInstances: any[] = [];
+    for (const key in contractInstances) {
+      // Build instances array for the contract
+      allInstances.push({
+        id: contractInstances[key].contractAddress,
+        message: contractInstances[key].executionHistory[0].request.instantiateMsg
+      });
+    }
+    newSimulation = {
+      ...newSimulation,
+      simulation: {
+        ...newSimulation.simulation,
+        chains: newSimulation.simulation.chains.map((chain: any) => {
+          if (chain.chainId === param.id) {
+            return {
+              ...chain,
+              codes: chain.codes.map((code: any) => {
+                if (code.id === contractId) {
+                  return {
+                    ...code,
+                    instances: allInstances
+                  }
+                }
+                return code;
+              })
+            }
+          }
+          return chain;
+        })
+      }
+    }
+    setSimulation(newSimulation);
     setSnackbarNotification({
       ...snackbarNotification,
       open: true,
@@ -78,11 +121,15 @@ const CodesAndInstances = () => {
   const setCodeMirrorPayload = (val: string) => {
     setPayload(val);
   }
+
+  const handleUpload = () => {
+    setOpenUploadDialog(false);
+  }
   return (
     <>
       <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>
         <Grid item xs={4} sx={{display: "flex", justifyContent: "end"}}>
-          <Button variant="contained" sx={{borderRadius: 2}}>
+          <Button variant="contained" sx={{borderRadius: 2}} onClick={handleClickOpenUploadDialog}>
             <Typography variant="button">Upload Code</Typography>
           </Button>
         </Grid>
@@ -108,7 +155,7 @@ const CodesAndInstances = () => {
         <DialogTitle>Enter Instantiate Message</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Enter account address and balance.
+            Enter the instantiate message for the contract.
           </DialogContentText>
           <JsonCodeMirrorEditor jsonValue={""} placeholder={placeholder}
                                 setPayload={setCodeMirrorPayload}/>
@@ -116,6 +163,17 @@ const CodesAndInstances = () => {
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleInstantiate}>Add</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openUploadDialog} onClose={handleCloseUploadDialog}>
+        <DialogTitle>Upload Code</DialogTitle>
+        <DialogContent>
+          <FileUpload
+            dropzoneText={"Click to upload a contract binary or Drag & drop a file here"}/>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseUploadDialog}>Cancel</Button>
+          <Button onClick={handleUpload}>Add</Button>
         </DialogActions>
       </Dialog>
     </>

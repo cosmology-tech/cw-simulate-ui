@@ -9,11 +9,10 @@ import { validateSimulationJSON } from "../utils/fileUtils";
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
 interface IProps {
-  wasmBuffers: ArrayBuffer[];
-  setWasmBuffers: (fileBuffer: ArrayBuffer[]) => void;
+  dropzoneText?: string;
 }
 
-const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
+const FileUpload = ({dropzoneText}: IProps) => {
   const setIsFileUploaded = useSetRecoilState(fileUploadedState);
   const setSimulationState = useSetRecoilState(simulationState);
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
@@ -25,6 +24,8 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
       horizontal: "center",
     },
   };
+
+  const text = dropzoneText || "Click to upload a simulation file or contract binary or Drag & drop a file here";
 
   const handleOnFileDrop = (files: File[]) => {
     // Only allow one file to be uploaded
@@ -102,17 +103,7 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
   };
 
   const handleOnFileDelete = (file: File) => {
-    // Remove file from wasmBuffers
-    const index = wasmBuffers.findIndex((buffer) => {
-      const reader = new FileReader();
-      reader.readAsArrayBuffer(file as Blob);
-      return reader.result === buffer;
-    });
-    if (index > -1) {
-      wasmBuffers.splice(index, 1);
-    } else {
-      console.error("File not found in wasmBuffers");
-    }
+    // TODO: clear local storage and CWEnv
   };
 
   return (
@@ -121,9 +112,7 @@ const FileUpload = ({wasmBuffers, setWasmBuffers}: IProps) => {
         dropzoneClass="dropzone"
         acceptedFiles={["application/wasm", "application/json"]}
         showFileNames={true}
-        dropzoneText={
-          "Click to upload a simulation file or contract binary or Drag & drop a file here"
-        }
+        dropzoneText={text}
         onDrop={handleOnFileDrop}
         onDelete={handleOnFileDelete}
         alertSnackbarProps={snackbarProps}
