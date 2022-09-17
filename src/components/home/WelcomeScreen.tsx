@@ -99,10 +99,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           sx={{marginTop: 4, marginBottom: 4, width: "60%"}}
         >
           <Item sx={{border: "1px solid #eae5e5"}}>
-            <FileUpload
-              setWasmBuffers={setWasmBuffers}
-              wasmBuffers={wasmBuffers}
-            />
+            <FileUpload/>
           </Item>
         </Grid>
         <Grid
