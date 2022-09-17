@@ -58,7 +58,8 @@
         }
       },
       "required": [
-        "chainId"
+        "chainId",
+        "bech32Prefix"
       ],
       "title": "Chain"
     },
