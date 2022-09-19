@@ -5,11 +5,10 @@ import { Grid, Typography } from "@mui/material";
 import SearchBar from "./SearchBar";
 import TableLayout from "./TableLayout";
 
-function createData(val1: any, val2: any) {
-  return {val1, val2};
+function createData(key: any, value: any) {
+  return {key, value};
 }
 
-const columnNames = ["Key", "Value"];
 const State = () => {
   const param = useParams();
   const states = useRecoilValue(filteredStatesByChainId(param.id as string)).states;
@@ -24,7 +23,14 @@ const State = () => {
             </Grid>
           </Grid>
           <Grid item xs={12} sx={{mt: 4}}>
-            <TableLayout rows={stateRows} columns={columnNames}/>
+            <TableLayout
+              rows={stateRows}
+              columns={{
+                key: 'Key',
+                value: 'Value',
+              }}
+              keyField='key'
+            />
           </Grid>
         </>
       ) : (
