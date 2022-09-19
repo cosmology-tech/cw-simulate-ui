@@ -80,7 +80,7 @@ export default function TableLayout<T extends DataSet>(props: ITableLayoutProps<
               ...labels.map((label, idx) => (
                 <StyledTableCell key={keys[idx]} align="center">{label}</StyledTableCell>
               )),
-              ...(RowMenu ? [<StyledTableCell />] : []),
+              ...(RowMenu ? [<StyledTableCell key="t1rowmenu" />] : []),
             ]}
           </TableRow>
         </TableHead>
@@ -104,7 +104,7 @@ interface T1TableRowProps<T extends DataSet> {
   data: T[];
   row: T;
   index: number;
-  keys: (keyof T)[];
+  keys: (keyof T & string)[];
   RowMenu: ITableLayoutProps<T>['RowMenu'];
 }
 function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
@@ -123,7 +123,7 @@ function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
   return (
     <StyledTableRow>
       {keys.map(key => (
-        <StyledTableCell align="center" component="th" scope="row">
+        <StyledTableCell align="center" component="th" scope="row" key={key}>
           {row[key]}
         </StyledTableCell>
       ))}
