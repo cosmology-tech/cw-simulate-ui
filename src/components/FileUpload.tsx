@@ -35,30 +35,31 @@ const FileUpload = ({dropzoneText}: IProps) => {
       reader.readAsDataURL(file);
       reader.onload = () => {
         const fileBuffer = reader.result;
-        const newSimulation = {
+        setSimulationState({
           simulation: {
             chains: [
               {
-                chainId: "untitled-1",
-                bech32Prefix: "terra",
+                chainId: 'untitled-1',
+                bech32Prefix: 'terra',
                 accounts: [
                   {
-                    "id": "alice",
-                    "accountAddress": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
-                    "balance": 100000000
-                  }
+                    id: 'alice',
+                    address: 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6',
+                    balance: 100000000,
+                  },
                 ],
                 codes: [
                   {
-                    "id": `${file.name}`,
-                    "wasmBinaryB64": `${fileBuffer}`,
-                  }
-                ]
+                    id: file.name,
+                    wasmBinaryB64: fileBuffer!.toString(),
+                    instances: [],
+                  },
+                ],
+                states: [],
               },
-            ]
-          }
-        }
-        setSimulationState(newSimulation);
+            ],
+          },
+        });
         setIsFileUploaded(true);
       };
 

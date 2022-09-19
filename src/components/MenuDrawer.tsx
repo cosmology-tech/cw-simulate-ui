@@ -139,28 +139,30 @@ const T1Drawer = (props: IT1Drawer) => {
     if (chainNames.includes(chainName)) {
       setShowInvalidChainSnack(true);
     }
-    let newSimulation = {...simulation};
-    const newChains = [
-      ...newSimulation.simulation.chains,
-      {
-        chainId: chainName,
-        bech32Prefix: "terra",
-        accounts: [
+    
+    setSimulation({
+      ...simulation,
+      simulation: {
+        ...simulation.simulation,
+        chains: [
+          ...simulation.simulation.chains,
           {
-            "id": "alice",
-            "accountAddress": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
-            "balance": 100000000
+            chainId: chainName,
+            bech32Prefix: 'terra',
+            accounts: [
+              {
+                id: 'alice',
+                address: 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6',
+                balance: 100000000,
+              }
+            ],
+            codes: [],
+            states: [],
           }
         ],
       }
-    ];
-    newSimulation = {
-      simulation: {
-        ...newSimulation.simulation,
-        chains: newChains,
-      }
-    };
-    setSimulation(newSimulation);
+    });
+    
     creatChainForSimulation(window.CWEnv, {
       chainId: chainName,
       bech32Prefix: "terra"

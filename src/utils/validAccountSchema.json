@@ -9,15 +9,22 @@
         "id": {
           "type": "string"
         },
-        "accountAddress": {
+        "address": {
           "type": "string"
         },
         "balance": {
-          "type": "integer"
+          "oneOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ]
         }
       },
       "required": [
-        "accountAddress",
+        "address",
         "balance",
         "id"
       ],

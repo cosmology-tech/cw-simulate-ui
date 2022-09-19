@@ -1,4 +1,4 @@
-import * as React from "react";
+import { ReactNode, useMemo } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -7,11 +7,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
-interface IProps {
-  rows: any;
-  columns: any;
-}
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -33,36 +28,60 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
   },
 }));
 
-export default function TableLayout({rows, columns}: IProps) {
-  const rowKeys = rows !== undefined ? Object.keys(rows[0]) : [];
+export type ITableLayoutProps<T extends DataSet> =
+  {
+    rowMenu?: ReactNode;
+  } & (
+  | {
+      rows: T[];
+      columns: ColumnMap<T>;
+      keyField: keyof T;
+    }
+  | {
+      rows: (T & {id: string})[];
+      columns: ColumnMap<T & {id: string}>;
+    }
+  )
+
+type DataSet = {
+  [key: string]: string;
+}
+
+/** Mapping from keys of T to display values/labels. */
+type ColumnMap<T extends DataSet> = {
+  [column in keyof T]?: string;
+}
+
+export default function TableLayout<T extends DataSet>(props: ITableLayoutProps<T>) {
+  const {
+    rows,
+    columns,
+  } = props;
+  const keyField = 'keyField' in props ? props.keyField : 'id' as keyof T;
+  
+  const keys   = useMemo(() => Object.keys(columns) as (keyof T & string)[], [columns]);
+  const labels = useMemo(() => Object.values(columns) as string[], [columns]);
+  
   return (
     <TableContainer component={Paper}>
       <Table sx={{width: "100%"}} aria-label="customized table">
         <TableHead>
           <TableRow>
-            {columns.map((col: string) => (
-              <StyledTableCell align="center">{col}</StyledTableCell>
+            {labels.map((label, idx) => (
+              <StyledTableCell key={keys[idx]} align="center">{label}</StyledTableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows?.map((row: any) => {
-            return (
-              <StyledTableRow key={Math.random()}>
-                {rowKeys.map((rowkey) => {
-                  // @ts-ignore
-                  return (
-                    <StyledTableCell align="center" component="th" scope="row">
-                      {
-                        //@ts-ignore
-                        row[rowkey]
-                      }
-                    </StyledTableCell>
-                  );
-                })}
-              </StyledTableRow>
-            );
-          })}
+          {rows.map((row: T) => (
+            <StyledTableRow key={row[keyField]}>
+              {keys.map(key => (
+                <StyledTableCell align="center" component="th" scope="row">
+                  {row[key]}
+                </StyledTableCell>
+              ))}
+            </StyledTableRow>
+          ))}
         </TableBody>
       </Table>
     </TableContainer>

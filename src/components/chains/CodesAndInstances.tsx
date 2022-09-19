@@ -23,8 +23,8 @@ import FileUpload from "../FileUpload";
 const CodesAndInstances = () => {
   const param = useParams();
   const codesAndInstances = useRecoilValue(filteredCodesByChainId(param.id as string));
-  const codes = codesAndInstances.codes?.map((code: any) => code.id);
-  const instances = codesAndInstances.codes?.flatMap((code: any) => code.instances)?.map((instance: any) => instance?.id).filter((instance: any) => instance !== undefined);
+  const codes = codesAndInstances.codes?.map(code => code.id);
+  const instances = codesAndInstances.codes?.flatMap(code => code.instances)?.map(instance => instance.id).filter(instance => !!instance);
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const [payload, setPayload] = useState<string>("");
   const [snackbarNotification, setSnackbarNotification] = useRecoilState(
@@ -63,7 +63,18 @@ const CodesAndInstances = () => {
       return;
     }
     const contractId = itemRef.current?.innerText;
-    const wasmBytes = base64ToArrayBuffer(codesAndInstances.codes?.find((code: any) => code.id === contractId)?.wasmBinaryB64.split("data:application/wasm;base64,")[1]);
+    const binary = codesAndInstances.codes?.find((code: any) => code.id === contractId)?.wasmBinaryB64.split("data:application/wasm;base64,")[1];
+    if (!binary) {
+      setSnackbarNotification({
+        ...snackbarNotification,
+        open: true,
+        message: 'Failed to extract WASM bytecode',
+        severity: 'error',
+      });
+      return;
+    }
+    
+    const wasmBytes = base64ToArrayBuffer(binary);
     const newInstantiateMsg = payload.length === 0 ? JSON.parse(payload) : placeholder;
     for (const chain in window.CWEnv.chains) {
       if (chain === param.id) {
