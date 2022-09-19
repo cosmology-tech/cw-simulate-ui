@@ -6,15 +6,19 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
   Typography
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import TableLayout from "./TableLayout";
 import { useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import filteredAccountsByChainId from "../../selectors/filteredAccountsByChainId";
 import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import simulationState from "../../atoms/simulationState";
+import simulationState, { Account } from "../../atoms/simulationState";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 
@@ -41,6 +45,7 @@ const Accounts = () => {
   
   const handleClickOpen = () => {
     setOpenDialog(true);
+    setPayload(DEFAULT_VALUE);
   }
 
   const handleClose = () => {
@@ -105,6 +110,29 @@ const Accounts = () => {
     });
     setOpenDialog(false);
   }
+  
+  const handleDeleteAccount = (id: string) => {
+    setSimulation({
+      ...simulation,
+      simulation: {
+        ...simulation.simulation,
+        chains: simulation.simulation.chains.map(chain => {
+          if (chain.chainId !== param.id) return chain;
+          return {
+            ...chain,
+            accounts: chain.accounts.filter(acc => acc.id !== id),
+          };
+        }),
+      },
+    });
+    
+    setSnackbarNotification({
+      ...snackbarNotification,
+      open: true,
+      message: 'Account successfully removed',
+      severity: 'success',
+    });
+  }
 
   const handleSetPayload = (payload: string) => {
     setPayload(payload);
@@ -140,6 +168,16 @@ const Accounts = () => {
             address: 'Account Address',
             balance: 'Balance',
           }}
+          RowMenu={props => (
+            <>
+              <MenuItem onClick={() => handleDeleteAccount(props.row.id)}>
+                <ListItemIcon>
+                  <DeleteIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText>Delete</ListItemText>
+              </MenuItem>
+            </>
+          )}
         />
       </Grid>
     </>
