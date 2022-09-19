@@ -131,7 +131,7 @@ const Chains = () => {
               <Button onClick={handleAddChain}>Add</Button>
             </DialogActions>
           </Dialog>
-          {!openDialog && chainNames.length > 0 ?
+          {!openDialog && chainNames?.length > 0 ?
             (<T1Grid items={[...new Set(chainNames)]} hasRightDeleteButton={true}
                      handleDeleteItem={handleDeleteChain}/>)
             : (<Grid item xs={12} sx={{

@@ -136,7 +136,7 @@ const T1Drawer = (props: IT1Drawer) => {
 
   const addChain = React.useCallback((chainName: string) => {
     setShowAddChain(false);
-    if (chainNames.includes(chainName)) {
+    if (chainNames?.includes(chainName)) {
       setShowInvalidChainSnack(true);
     }
     let newSimulation = {...simulation};
@@ -244,7 +244,7 @@ const T1Drawer = (props: IT1Drawer) => {
               }}
               chains={chainNames}
             />}
-            {chainNames.map(chain => (
+            {chainNames?.map(chain => (
               <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
                 <ListItemText primary={chain} sx={{opacity: 1, marginLeft: 3}}/>
               </MenuDrawerItem>
@@ -344,7 +344,7 @@ function AddChainItem(props: IAddChainItemProps) {
   const ref = React.useRef<HTMLInputElement>();
 
   const submit = React.useCallback(() => {
-    if (chains.includes(chainName) || !chainName.trim()) {
+    if (chains?.includes(chainName) || !chainName.trim()) {
       onAbort(true);
     } else {
       onSubmit(chainName);
@@ -381,6 +381,6 @@ function AddChainItem(props: IAddChainItemProps) {
 
 function getDefaultChainName(chains: string[]) {
   let i = 1;
-  while (chains.includes(`untitled-${i}`)) ++i;
+  while (chains?.includes(`untitled-${i}`)) ++i;
   return `untitled-${i}`;
 }
