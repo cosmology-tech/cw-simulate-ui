@@ -7,8 +7,9 @@ import { allStatesAtom } from "../../atoms/allStatesAtom";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { StateRenderer } from "../StateRenderer";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
+import { StateTraversal } from "../StateTraversal";
 
-const Item = styled(Paper)(({theme}) => ({
+const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -21,11 +22,11 @@ const Simulation = () => {
   const [currentState, setCurrentState] = useRecoilState(currentStateNumber);
   const isFileUploaded = useRecoilValue(fileUploadedState);
   return (
-    <Box sx={{flexGrow: 1}}>
+    <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Item sx={{height: "50vh"}}>
-            <StateFlow/>
+          <Item sx={{ height: "50vh" }}>
+            <StateTraversal />
           </Item>
         </Grid>
         <Grid item xs={12}>
@@ -39,7 +40,7 @@ const Simulation = () => {
               pb: 0,
             }}
           >
-            <Grid item xs={6} sx={{paddingLeft: "0px !important"}}>
+            <Grid item xs={6} sx={{ paddingLeft: "0px !important" }}>
               <ExecuteQuery
                 response={response}
                 setResponse={setResponse}
@@ -49,8 +50,8 @@ const Simulation = () => {
                 currentState={currentState}
               />
             </Grid>
-            <Divider orientation="vertical" flexItem/>
-            <Grid item xs={6} sx={{paddingLeft: "0px !important"}}>
+            <Divider orientation="vertical" flexItem />
+            <Grid item xs={6} sx={{ paddingLeft: "0px !important" }}>
               <StateRenderer
                 isFileUploaded={isFileUploaded}
                 allStates={allStates}

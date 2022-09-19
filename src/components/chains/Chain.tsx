@@ -27,16 +27,18 @@ export default function Chain() {
   };
 
   const handleOnDeleteChain = () => {
-    let newSimulation = {...simulation};
+    let newSimulation = { ...simulation };
     const prevChains = newSimulation.simulation.chains;
-    const newChains = prevChains.filter((chain: any) => chain.chainId !== param.id);
+    const newChains = prevChains.filter(
+      (chain: any) => chain.chainId !== param.id
+    );
     newSimulation = {
       ...newSimulation,
       simulation: {
         ...newSimulation.simulation,
         chains: newChains,
-      }
-    }
+      },
+    };
     setSimulation(newSimulation);
     setSnackbarNotification({
       ...snackbarNotification,
@@ -45,7 +47,7 @@ export default function Chain() {
       severity: "success",
     });
     navigate("/chains");
-  }
+  };
 
   return (
     <Box
@@ -74,29 +76,36 @@ export default function Chain() {
                   },
                 }}
               >
-                <Tab label="Config" value="config"/>
-                <Tab label="State" value="state"/>
-                <Tab label="Accounts" value="accounts"/>
-                <Tab label="Codes And Instances" value="codesAndInstances"/>
+                <Tab label="Config" value="config" />
+                <Tab label="State" value="state" />
+                <Tab label="Accounts" value="accounts" />
+                <Tab label="Codes And Instances" value="codesAndInstances" />
               </TabList>
             </Box>
           </TabContext>
         </Grid>
         <Grid
+          item
           xs={3}
           md={3}
           lg={2}
-          sx={{display: "flex", justifyContent: "end"}}
+          sx={{ display: "flex", justifyContent: "end" }}
         >
           <IconButton aria-label="delete" onClick={handleOnDeleteChain}>
-            <DeleteForeverIcon/>
+            <DeleteForeverIcon />
           </IconButton>
         </Grid>
-        <Grid xs={12} lg={12} sm={12} sx={{marginTop: 4, marginBottom: 2}}>
-          {value === "config" && <Config/>}
-          {value === "state" && <State/>}
-          {value === "accounts" && <Accounts/>}
-          {value === "codesAndInstances" && <CodesAndInstances/>}
+        <Grid
+          item
+          xs={12}
+          lg={12}
+          sm={12}
+          sx={{ marginTop: 4, marginBottom: 2 }}
+        >
+          {value === "config" && <Config />}
+          {value === "state" && <State />}
+          {value === "accounts" && <Accounts />}
+          {value === "codesAndInstances" && <CodesAndInstances />}
         </Grid>
       </Grid>
     </Box>

@@ -1,4 +1,11 @@
-import { ComponentType, ReactNode, useId, useMemo, useRef, useState } from "react";
+import {
+  ComponentType,
+  ReactNode,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -10,7 +17,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { IconButton, Menu } from "@mui/material";
 
-const StyledTableCell = styled(TableCell)(({theme}) => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
@@ -20,7 +27,7 @@ const StyledTableCell = styled(TableCell)(({theme}) => ({
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({theme}) => ({
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
@@ -30,20 +37,19 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
   },
 }));
 
-export type ITableLayoutProps<T extends DataSet> =
-  {
-    RowMenu?: ComponentType<ITableLayoutRowMenuProps<T>>;
-  } & (
+export type ITableLayoutProps<T extends DataSet> = {
+  RowMenu?: ComponentType<ITableLayoutRowMenuProps<T>>;
+} & (
   | {
       rows: T[];
       columns: ColumnMap<T>;
       keyField: keyof T;
     }
   | {
-      rows: (T & {id: string})[];
-      columns: ColumnMap<T & {id: string}>;
+      rows: (T & { id: string })[];
+      columns: ColumnMap<T & { id: string }>;
     }
-  )
+);
 
 export interface ITableLayoutRowMenuProps<T extends DataSet> {
   row: T;
@@ -53,32 +59,35 @@ export interface ITableLayoutRowMenuProps<T extends DataSet> {
 
 type DataSet = {
   [key: string]: string;
-}
+};
 
 /** Mapping from keys of T to display values/labels. */
 type ColumnMap<T extends DataSet> = {
   [column in keyof T]?: string;
-}
+};
 
-export default function TableLayout<T extends DataSet>(props: ITableLayoutProps<T>) {
-  const {
-    rows,
-    columns,
-    RowMenu,
-  } = props;
-  const keyField = 'keyField' in props ? props.keyField : 'id' as keyof T;
-  
-  const keys   = useMemo(() => Object.keys(columns) as (keyof T & string)[], [columns]);
+export default function TableLayout<T extends DataSet>(
+  props: ITableLayoutProps<T>
+) {
+  const { rows, columns, RowMenu } = props;
+  const keyField = "keyField" in props ? props.keyField : ("id" as keyof T);
+
+  const keys = useMemo(
+    () => Object.keys(columns) as (keyof T & string)[],
+    [columns]
+  );
   const labels = useMemo(() => Object.values(columns) as string[], [columns]);
-  
+
   return (
     <TableContainer component={Paper}>
-      <Table sx={{width: "100%"}} aria-label="customized table">
+      <Table sx={{ width: "100%" }} aria-label="customized table">
         <TableHead>
           <TableRow>
             {[
               ...labels.map((label, idx) => (
-                <StyledTableCell key={keys[idx]} align="center">{label}</StyledTableCell>
+                <StyledTableCell key={keys[idx]} align="center">
+                  {label}
+                </StyledTableCell>
               )),
               ...(RowMenu ? [<StyledTableCell key="t1rowmenu" />] : []),
             ]}
@@ -86,13 +95,16 @@ export default function TableLayout<T extends DataSet>(props: ITableLayoutProps<
         </TableHead>
         <TableBody>
           {rows.map((row, index) => (
-            <T1TableRow {...{
-              data: rows,
-              row,
-              index,
-              keys,
-              RowMenu,
-            }} key={row[keyField]} />
+            <T1TableRow
+              {...{
+                data: rows,
+                row,
+                index,
+                keys,
+                RowMenu,
+              }}
+              key={row[keyField]}
+            />
           ))}
         </TableBody>
       </Table>
@@ -105,31 +117,30 @@ interface T1TableRowProps<T extends DataSet> {
   row: T;
   index: number;
   keys: (keyof T & string)[];
-  RowMenu: ITableLayoutProps<T>['RowMenu'];
+  RowMenu: ITableLayoutProps<T>["RowMenu"];
 }
 function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
-  const {
-    data,
-    row,
-    index,
-    keys,
-    RowMenu,
-  } = props;
-  
+  const { data, row, index, keys, RowMenu } = props;
+
   const ref = useRef<HTMLButtonElement>(null);
   const menuButtonId = useId();
   const [menuOpen, setMenuOpen] = useState(false);
-  
+
   return (
     <StyledTableRow>
-      {keys.map(key => (
+      {keys.map((key) => (
         <StyledTableCell align="center" component="th" scope="row" key={key}>
           {row[key]}
         </StyledTableCell>
       ))}
       {RowMenu && (
         <StyledTableCell align="center" component="th" scope="row">
-          <IconButton ref={ref} id={menuButtonId} disabled={menuOpen} onClick={() => setMenuOpen(true)}>
+          <IconButton
+            ref={ref}
+            id={menuButtonId}
+            disabled={menuOpen}
+            onClick={() => setMenuOpen(true)}
+          >
             <MoreVertIcon fontSize="inherit" />
           </IconButton>
           <Menu
@@ -137,16 +148,16 @@ function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
             onClose={() => setMenuOpen(false)}
             anchorEl={ref.current}
             anchorOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             transformOrigin={{
-              vertical: 'top',
-              horizontal: 'right',
+              vertical: "top",
+              horizontal: "right",
             }}
             aria-labelledby={menuButtonId}
           >
-            <RowMenu {...{data, row, index}} />
+            <RowMenu {...{ data, row, index }} />
           </Menu>
         </StyledTableCell>
       )}
