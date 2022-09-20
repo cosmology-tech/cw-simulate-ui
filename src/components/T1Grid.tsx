@@ -14,7 +14,7 @@ interface IProps {
   childRef?: any;
 }
 
-const Item = styled(Paper)(({theme}) => ({
+const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -64,16 +64,23 @@ const T1Grid = ({
             <>
               <Grid item xs={12} md={12} lg={12}>
                 <Item key={item + "item"}>
-                  <div style={{display: "flex", alignItems: "center"}}>
-                    <T1Link to={item} sx={{flexGrow: 1}}>
-                      <Typography variant="h6" sx={{paddingLeft: 3}} ref={childRef}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <T1Link to={item} sx={{ flexGrow: 1 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{ paddingLeft: 3 }}
+                        ref={childRef}
+                      >
                         {item}
                       </Typography>
                     </T1Link>
                     {rightButton}
                     {hasRightDeleteButton && (
-                      <IconButton aria-label="delete" onClick={handleDeleteItem}>
-                        <DeleteForeverIcon/>
+                      <IconButton
+                        aria-label="delete"
+                        onClick={handleDeleteItem}
+                      >
+                        <DeleteForeverIcon />
                       </IconButton>
                     )}
                   </div>
@@ -90,7 +97,14 @@ const T1Grid = ({
                   }}
                 >
                   {children?.map((instance) => (
-                    <Grid item xs={11} md={10} lg={11} sx={{width: "100%"}} key={instance + "item"}>
+                    <Grid
+                      item
+                      xs={11}
+                      md={10}
+                      lg={11}
+                      sx={{ width: "100%" }}
+                      key={instance + "item"}
+                    >
                       <Item
                         sx={{
                           display: "flex",
@@ -98,12 +112,24 @@ const T1Grid = ({
                         }}
                         key={instance}
                       >
-                        <Typography variant="h6" sx={{paddingLeft: 3}} key={instance + "h6"}>
+                        <Typography
+                          variant="h6"
+                          align="center"
+                          sx={{
+                            paddingLeft: 3,
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                          key={instance + "h6"}
+                        >
                           {instance}
                         </Typography>
-                        <IconButton aria-label="delete" onClick={handleDeleteItem}
-                                    key={instance + "icon"}>
-                          <DeleteForeverIcon key={instance + "deleteIcon"}/>
+                        <IconButton
+                          aria-label="delete"
+                          onClick={handleDeleteItem}
+                          key={instance + "icon"}
+                        >
+                          <DeleteForeverIcon key={instance + "deleteIcon"} />
                         </IconButton>
                       </Item>
                     </Grid>
