@@ -22,7 +22,6 @@ import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSi
 import filteredConfigsByChainId from "../selectors/filteredConfigsByChainId";
 import { downloadJSON } from "../utils/fileUtils";
 import { ChainConfig, creatChainForSimulation } from "../utils/setupSimulation";
-import { classNames } from "../utils/arrayUtils";
 
 export const drawerWidth = 180;
 
