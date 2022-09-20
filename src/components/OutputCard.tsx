@@ -33,7 +33,7 @@ export const OutputCard = ({ response, placeholder }: IProps) => {
   return (
     <Box
       sx={{
-        width: "98%",
+        width: "100%",
         mt: 2,
         overflow: "scroll",
         padding: 2,
