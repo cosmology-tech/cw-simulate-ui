@@ -29,22 +29,22 @@ const theme = {
   base0F: "#deaf8f",
 };
 
-export const OutputCard = ({response, placeholder}: IProps) => {
+export const OutputCard = ({ response, placeholder }: IProps) => {
   return (
     <Box
       sx={{
-        width: "98%",
+        width: "100%",
         mt: 2,
         overflow: "scroll",
         padding: 2,
         border: `1px solid ${GREY_6}`,
-        height: "200px",
+        height: "100%",
       }}
     >
       {response !== undefined ? (
-        <JSONTree data={response} theme={theme} invertTheme={false}/>
+        <JSONTree data={response} theme={theme} invertTheme={false} />
       ) : (
-        <Typography variant={"body2"} sx={{color: `${GREY_3}`}}>
+        <Typography variant={"body2"} sx={{ color: `${GREY_3}` }}>
           {placeholder}
         </Typography>
       )}

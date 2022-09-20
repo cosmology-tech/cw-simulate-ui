@@ -22,31 +22,41 @@ root.render(
   <React.StrictMode>
     <RecoilRoot>
       <BrowserRouter>
-        <SnackbarNotification/>
-        <Box sx={{display: "flex"}}>
-          <MenuDrawer/>
+        <SnackbarNotification />
+        <Box sx={{ display: "flex", height: "100%" }}>
+          <MenuDrawer />
           <Box
             component="main"
             sx={{
               flexGrow: 1,
               p: 3,
-              width: {sm: `calc(100% - ${drawerWidth}px)`},
+              width: { sm: `calc(100% - ${drawerWidth}px)` },
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            <Toolbar/>
+            <Toolbar />
             <Routes>
-              <Route index
-                     element={isSimulationExist ? <Navigate replace to='/simulation'/> : <Home/>}/>
-              <Route path={"/simulation"} element={<Simulation/>}>
-                <Route path={":instanceId"} element={<Simulation/>}/>
+              <Route
+                index
+                element={
+                  isSimulationExist ? (
+                    <Navigate replace to="/simulation" />
+                  ) : (
+                    <Home />
+                  )
+                }
+              />
+              <Route path={"/simulation"} element={<Simulation />}>
+                <Route path={":instanceId"} element={<Simulation />} />
               </Route>
-              <Route path={"/chains"} element={<Chains/>}>
-                <Route path={":id"} element={<Chain/>}/>
+              <Route path={"/chains"} element={<Chains />}>
+                <Route path={":id"} element={<Chain />} />
               </Route>
               <Route
                 path="*"
                 element={
-                  <main style={{padding: "1rem"}}>
+                  <main style={{ padding: "1rem" }}>
                     <p>There's nothing here!</p>
                   </main>
                 }

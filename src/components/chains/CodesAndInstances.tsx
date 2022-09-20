@@ -82,7 +82,7 @@ const CodesAndInstances = () => {
 
     const wasmBytes = base64ToArrayBuffer(binary);
     const newInstantiateMsg =
-      payload.length === 0 ? JSON.parse(payload) : placeholder;
+      payload.length === 0 ? placeholder : JSON.parse(payload);
     for (const chain in window.CWEnv.chains) {
       if (chain === param.id) {
         createContractInstance(
@@ -188,7 +188,7 @@ const CodesAndInstances = () => {
       />
       <Dialog open={openDialog} onClose={handleClose}>
         <DialogTitle>Enter Instantiate Message</DialogTitle>
-        <DialogContent>
+        <DialogContent sx={{ height: "20vh" }}>
           <DialogContentText>
             Enter the instantiate message for the contract.
           </DialogContentText>
