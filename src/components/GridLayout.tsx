@@ -4,14 +4,14 @@ import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import { StateTraversal } from "./StateTraversal";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { payloadState } from "../atoms/payloadState";
 import { executeQueryTabState } from "../atoms/executeQueryTabState";
 import { ExecuteQuery, IState } from "./ExecuteQuery";
 import { Instantiate } from "./Instantiate";
 import { fileUploadedState } from "../atoms/fileUploadedState";
 import { instantiatedState } from "../atoms/instantiatedState";
-import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import { showNotification, snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { Config } from "../configs/config";
 import { StateRenderer } from "./StateRenderer";
 import "../index.css";
@@ -41,17 +41,13 @@ export default function GridLayout({
   allStates,
   currentState,
   setCurrentState,
-  setWasmBuffers,
-  wasmBuffers,
   setAllStates,
 }: IProps) {
   const [executeQueryTab, setExecuteQueryTab] =
     useRecoilState(executeQueryTabState);
   const isFileUploaded = useRecoilValue(fileUploadedState);
   const [isInstantiated, setIsInstantiated] = useRecoilState(instantiatedState);
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationState
-  );
+  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
   const [payload, setPayload] = useRecoilState(payloadState);
   const {MOCK_ENV, MOCK_INFO} = Config;
   const addState = (stateBefore: any, res: any) => {
@@ -71,20 +67,9 @@ export default function GridLayout({
       const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, {count: 20});
       addState("", "");
       setIsInstantiated(true);
-      setSnackbarNotification({
-        ...snackbarNotification,
-        severity: "success",
-        open: true,
-        message: "CosmWasm VM successfully instantiated!",
-      });
+      showNotification(setSnackbarNotification, "CosmWasm VM successfully instantiated!");
     } catch (err) {
-      setSnackbarNotification({
-        ...snackbarNotification,
-        severity: "error",
-        open: true,
-        message:
-          "CosmWasm VM was not able to instantiate. Please check console for errors.",
-      });
+      showNotification(setSnackbarNotification, "CosmWasm VM was not able to instantiate. Please check console for errors.", "error");
     }
   };
 

@@ -7,10 +7,8 @@ const filteredWasmB64ByContractId = selectorFamily({
     const simulation = get(simulationState);
     // @ts-ignore
     return simulation.simulation?.chains?.filter((chain) => chain.chainId === chainIdAndcodeId.chainId).map((chain) => {
-      debugger;
       // @ts-ignore
       chain.codes.filter((code) => code.id === chainIdAndcodeId.codeId).map((code) => {
-        debugger;
         return {
           wasmB64: code.wasmBinaryB64
         };
