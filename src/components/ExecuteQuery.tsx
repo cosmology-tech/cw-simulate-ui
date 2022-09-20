@@ -3,7 +3,10 @@ import { Config } from "../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { showNotification, snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import {
+  showNotification,
+  snackbarNotificationState,
+} from "../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../atoms/executeQueryTabState";
 import { Button, Grid, Typography } from "@mui/material";
 
@@ -32,7 +35,7 @@ export const ExecuteQuery = ({
   setCurrentState,
   currentState,
 }: IProps) => {
-  const {MOCK_ENV, MOCK_INFO} = Config;
+  const { MOCK_ENV, MOCK_INFO } = Config;
   const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
   const [payload, setPayload] = useState("");
   const executeQueryTab = useRecoilValue(executeQueryTabState);
@@ -61,7 +64,11 @@ export const ExecuteQuery = ({
         throw res.read_json().error;
       }
     } catch (err) {
-      showNotification(setSnackbarNotification, "Something went wrong while executing.", "error");
+      showNotification(
+        setSnackbarNotification,
+        "Something went wrong while executing.",
+        "error"
+      );
     }
   };
   const query = () => {
@@ -71,7 +78,11 @@ export const ExecuteQuery = ({
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
       showNotification(setSnackbarNotification, "Query was successful!");
     } catch (err) {
-      showNotification(setSnackbarNotification, "Something went wrong while querying.", "error");
+      showNotification(
+        setSnackbarNotification,
+        "Something went wrong while querying.",
+        "error"
+      );
     }
   };
   const onRunHandler = () => {
@@ -89,29 +100,34 @@ export const ExecuteQuery = ({
 
   const handleSetPayload = (val: string) => {
     setPayload(val);
-  }
+  };
 
   return (
-    <Grid item xs={12} sx={{m: 2}}>
+    <Grid item xs={12} sx={{ height: "100%", overflow: "scroll" }}>
       <Grid item xs={12}>
-        <ExecuteQueryTab/>
+        <ExecuteQueryTab />
       </Grid>
       <Grid
         item
-        style={{
+        sx={{
           display: "flex",
           flexDirection: "row",
           justifyContent: "space-between",
           textAlign: "left",
+          height: "60%",
+          mt: 2,
         }}
       >
-        <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload}/>
+        <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload} />
         {/* <OutputRenderer response={response}/> */}
       </Grid>
-      <Grid xs={1}>
+      <Grid
+        xs={2}
+        sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}
+      >
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           variant={"contained"}
           onClick={onRunHandler}
           disabled={!payload.length}

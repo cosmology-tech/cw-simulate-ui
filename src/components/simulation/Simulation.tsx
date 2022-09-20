@@ -22,25 +22,28 @@ const Simulation = () => {
   const [currentState, setCurrentState] = useRecoilState(currentStateNumber);
   const isFileUploaded = useRecoilValue(fileUploadedState);
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Item sx={{ height: "50vh" }}>
+    <Box sx={{ flexGrow: 1, height: "100%" }}>
+      <Grid container spacing={2} sx={{ height: "100%" }}>
+        <Grid item xs={4}>
+          <Item sx={{ height: "100%" }}>
             <StateTraversal />
           </Item>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={8} sx={{ height: "100%" }}>
           <Item
             sx={{
-              borderTopRightRadius: 0,
-              borderBottomRightRadius: 0,
               display: "flex",
-              flexDirection: "row",
+              flexDirection: "column",
               pt: 0,
               pb: 0,
+              height: "100%",
             }}
           >
-            <Grid item xs={6} sx={{ paddingLeft: "0px !important" }}>
+            <Grid
+              item
+              xs={12}
+              sx={{ paddingLeft: "0px !important", m: 2, height: "50%" }}
+            >
               <ExecuteQuery
                 response={response}
                 setResponse={setResponse}
@@ -50,8 +53,16 @@ const Simulation = () => {
                 currentState={currentState}
               />
             </Grid>
-            <Divider orientation="vertical" flexItem />
-            <Grid item xs={6} sx={{ paddingLeft: "0px !important" }}>
+            <Divider flexItem />
+            <Grid
+              item
+              xs={12}
+              sx={{
+                paddingLeft: "0px !important",
+                overflow: "scroll",
+                m: 2,
+              }}
+            >
               <StateRenderer
                 isFileUploaded={isFileUploaded}
                 allStates={allStates}

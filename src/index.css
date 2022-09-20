@@ -55,3 +55,24 @@ code {
 .dropzone .MuiDropzonePreviewList-root {
   justify-content: center;
 }
+
+html,
+body,
+#app,
+#root,
+#app>div {
+  height: 100%
+}
+
+
+.cm-focused {
+  outline: none !important;
+}
+
+.cm-editor {
+  height: 100%;
+}
+
+.cm-gutters {
+  min-height: inherit;
+}

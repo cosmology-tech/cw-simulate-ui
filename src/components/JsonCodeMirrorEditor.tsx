@@ -13,20 +13,19 @@ interface IJsonCodeMirrorEditorProps {
 export const JsonCodeMirrorEditor = ({
   jsonValue,
   placeholder,
-  setPayload
+  setPayload,
 }: IJsonCodeMirrorEditorProps) => {
   const defaultPlaceholder = placeholder || {
-    "json": "Enter your json here"
+    json: "Enter your json here",
   };
   return (
     <Grid
       item
       sx={{
-        marginTop: 2,
         overflow: "scroll",
         padding: 2,
         border: `1px solid ${GREY_6}`,
-        height: "200px",
+        height: "100%",
         width: "100%",
       }}
     >
@@ -35,7 +34,7 @@ export const JsonCodeMirrorEditor = ({
         extensions={[json()]}
         onChange={(val: string) => setPayload(val)}
         placeholder={JSON.stringify(defaultPlaceholder, null, 2)}
-        style={{border: "none", height: "100%"}}
+        style={{ border: "none", height: "100%" }}
       />
     </Grid>
   );
