@@ -1,29 +1,28 @@
 import * as React from "react";
-import AddIcon from "@mui/icons-material/Add";
-import SortIcon from "@mui/icons-material/ImportExport";
-import DownloadIcon from "@mui/icons-material/Download";
-import { styled, SxProps, Theme, useTheme } from "@mui/material/styles";
-import Box from "@mui/material/Box";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import CssBaseline from "@mui/material/CssBaseline";
-import IconButton from "@mui/material/IconButton";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import HelpIcon from "@mui/icons-material/Help";
-import ListItem from "@mui/material/ListItem";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import TreeView from "@mui/lab/TreeView";
+import TreeItem from "@mui/lab/TreeItem";
+import { Divider, Drawer, Link, Menu, MenuItem, Popover, Typography } from "@mui/material";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import IconButton from "@mui/material/IconButton";
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import { ORANGE_3, WHITE } from "../configs/variables";
-import { Alert, Divider, Drawer, Input, Link, Snackbar } from "@mui/material";
-import { To, useLocation, useParams } from "react-router-dom";
+import { styled, SxProps, Theme } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import T1Link from "./T1Link";
-import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
-import { downloadJSON } from "../utils/fileUtils";
 import simulationState from "../atoms/simulationState";
-import { ChainConfig, creatChainForSimulation } from "../utils/setupSimulation";
+import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import { ORANGE_3, WHITE } from "../configs/variables";
+import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 import filteredConfigsByChainId from "../selectors/filteredConfigsByChainId";
+import { downloadJSON } from "../utils/fileUtils";
+import { ChainConfig, creatChainForSimulation } from "../utils/setupSimulation";
+import { classNames } from "../utils/arrayUtils";
 
 export const drawerWidth = 180;
 
@@ -130,16 +129,18 @@ interface IT1Drawer {}
 
 const T1Drawer = (props: IT1Drawer) => {
   const param = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  
   const chains = useRecoilValue(filteredChainsFromSimulationState);
   const chainConfig = useRecoilValue(
     filteredConfigsByChainId(param.id as string)
   );
   const chainNames: string[] = chains?.map(
     (chain: { chainId: string }) => chain.chainId
-  );
+  ).sort((lhs, rhs) => lhs.localeCompare(rhs));
   const [showAddChain, setShowAddChain] = React.useState(false);
-  const [showInvalidChainSnack, setShowInvalidChainSnack] =
-    React.useState(false);
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationState);
   const [simulation, setSimulation] = useRecoilState(simulationState);
 
   const handleDownloadSim = React.useCallback<React.MouseEventHandler>(
@@ -149,12 +150,23 @@ const T1Drawer = (props: IT1Drawer) => {
     },
     [simulation]
   );
+  
+  const handleAddChain = React.useCallback(() => {
+    // TODO
+    console.log('TODO: add chain')
+  }, [])
 
   const addChain = React.useCallback(
     (chainName: string) => {
       setShowAddChain(false);
       if (chainNames?.includes(chainName)) {
-        setShowInvalidChainSnack(true);
+        setSnackbarNotification({
+          ...snackbarNotification,
+          open: true,
+          message: "A chain with such a name already exists",
+          severity: "error",
+        });
+        return;
       }
 
       setSimulation({
@@ -185,37 +197,24 @@ const T1Drawer = (props: IT1Drawer) => {
         bech32Prefix: "terra",
       } as ChainConfig);
     },
-    [simulation, chainConfig]
+    [simulation, chainConfig, snackbarNotification]
   );
+  
+  const handleFocusNode = React.useCallback((e: React.SyntheticEvent, value: string) => {
+    if (location.pathname === `/${value}`) return;
+    navigate(`/${value}`);
+  }, [location]);
 
-  const handleSortChains = React.useCallback<React.MouseEventHandler>(
-    (e) => {
-      e.preventDefault();
-      let newSimulation = { ...simulation };
-      const newChains = [...newSimulation.simulation.chains].sort((a, b) =>
-        a.chainId.localeCompare(b.chainId)
-      );
-      newSimulation = {
-        simulation: {
-          ...newSimulation.simulation,
-          chains: newChains,
-        },
-      };
-      setSimulation(newSimulation);
-    },
-    [simulation]
-  );
-
+  // NOTE: TreeView `nodeId`s are used to navigate - prefixed root slash is always prepended.
   return (
-    <Box
-      component="nav"
-      sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-    >
+    <Box component="nav">
       <Drawer
         sx={{
+          width: drawerWidth,
+          flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: drawerWidth,
             boxSizing: "border-box",
+            width: drawerWidth,
           },
         }}
         variant="permanent"
@@ -225,187 +224,139 @@ const T1Drawer = (props: IT1Drawer) => {
           <Logo LinkComponent={ListItemButton} />
         </DrawerHeader>
         <Divider />
-        <List>
-          <MenuDrawerItem
-            to="/simulation"
-            buttons={
-              <IconButton className="btn-dl-sim">
-                <DownloadIcon fontSize="inherit" onClick={handleDownloadSim} />
-              </IconButton>
-            }
-          >
-            <ListItemText primary="Simulation" sx={{ opacity: 1 }} />
-          </MenuDrawerItem>
-          <MenuDrawerItem
-            to="/chains"
-            disablePointerEvents={true}
-            buttons={
-              <>
-                <IconButton
-                  disabled={chains?.length < 2 || showAddChain}
-                  onClick={handleSortChains}
-                >
-                  <SortIcon fontSize="inherit" />
-                </IconButton>
-                <IconButton
-                  disabled={showAddChain}
-                  onClick={() => {
-                    setShowAddChain(true);
-                  }}
-                >
-                  <AddIcon fontSize="inherit" />
-                </IconButton>
-              </>
-            }
-          >
-            <ListItemText primary="Chains" sx={{ opacity: 1 }} />
-          </MenuDrawerItem>
-          <List disablePadding>
-            {showAddChain && (
-              <AddChainItem
-                onSubmit={addChain}
-                onAbort={(error) => {
-                  setShowAddChain(false);
-                  error && setShowInvalidChainSnack(true);
-                }}
-                chains={chainNames}
-              />
-            )}
-            {chainNames?.map((chain) => (
-              <MenuDrawerItem key={chain} to={`/chains/${chain}`}>
-                <ListItemText
-                  primary={chain}
-                  sx={{ opacity: 1, marginLeft: 3 }}
-                />
-              </MenuDrawerItem>
-            ))}
-          </List>
-        </List>
-        <Snackbar
-          open={showInvalidChainSnack}
-          autoHideDuration={6000}
-          onClose={() => setShowInvalidChainSnack(false)}
+        <TreeView
+          defaultExpandIcon={<SubtreeIcon />}
+          defaultCollapseIcon={<SubtreeIcon expanded />}
+          sx={{
+            marginTop: 2,
+            '& .MuiTreeItem-content': {
+              py: 1,
+            },
+          }}
+          onNodeFocus={handleFocusNode}
+          selected={location.pathname.substring(1)}
         >
-          <Alert severity="error">Chain name is already in use!</Alert>
-        </Snackbar>
+          <T1TreeItem nodeId="simulation" label="Simulation" />
+          <T1TreeItem
+            nodeId="chains"
+            label="Chains"
+            options={[
+              <MenuItem onClick={handleAddChain}>Add Chain</MenuItem>
+            ]}
+          >
+            {chainNames.map(chain => (
+              <T1TreeItem nodeId={`chains/${chain}`} label={chain} />
+            ))}
+          </T1TreeItem>
+        </TreeView>
       </Drawer>
     </Box>
   );
 };
 
-interface IMenuDrawerItemProps extends React.PropsWithChildren {
-  sx?: SxProps<Theme>;
-  to?: To;
-  buttons?: React.ReactNode;
-  hoverButtons?: boolean;
-  disablePointerEvents?: boolean;
-
-  onClick?(): void;
+interface ISubtreeIconProps {
+  expanded?: boolean;
+}
+/** Subtree expand/collapse icon w/ built-in simple CSS animation */
+function SubtreeIcon({ expanded }: ISubtreeIconProps) {
+  return (
+    <ChevronRightIcon
+      sx={{
+        transition: 'transform .15s linear',
+        transform: `rotate(${expanded ? '90deg' : '0'})`,
+      }}
+    />
+  )
 }
 
-function MenuDrawerItem(props: IMenuDrawerItemProps) {
+interface IT1TreeItemProps {
+  children?: React.ReactNode;
+  nodeId: string;
+  label: string;
+  options?: React.ReactNode;
+  icon?: React.ReactNode;
+  sx?: SxProps<Theme>;
+}
+function T1TreeItem(props: IT1TreeItemProps) {
   const {
-    children,
-    to,
-    buttons,
-    hoverButtons = false,
+    label,
+    options,
     sx,
-    onClick,
-    disablePointerEvents = false,
+    ...rest
   } = props;
-
-  const theme = useTheme();
-
+  
+  const [showOptions, setShowOptions] = React.useState(false);
+  const [hovering, setHovering] = React.useState(false);
+  const rootRef = React.useRef<Element>(null);
+  const optsBtnRef = React.useRef<HTMLButtonElement>(null);
+  
+  const handleClickOptions = React.useCallback<React.MouseEventHandler>(e => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowOptions(true);
+  }, []);
+  
   return (
-    <ListItem
-      disablePadding
+    <TreeItem
+      ref={rootRef}
+      label={
+        <Box
+          sx={{
+            position: 'relative',
+            py: 0.5,
+          }}
+          className="T1TreeItem-label"
+        >
+          <Typography variant="body1">{label}</Typography>
+          {options && (
+            <Box
+              className="T1TreeItem-optionsButton"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                right: 0,
+                opacity: 0,
+                pr: 1,
+                transition: 'opacity .2s ease-out',
+                transform: 'translateY(-50%)',
+              }}
+              onClick={e => { e.stopPropagation() }}
+            >
+              <IconButton ref={optsBtnRef} onClick={handleClickOptions}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                open={showOptions}
+                onClose={() => setShowOptions(false)}
+                anchorEl={optsBtnRef.current}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'left',
+                }}
+              >
+                {options}
+              </Menu>
+            </Box>
+          )}
+        </Box>
+      }
       sx={[
         {
-          position: "relative",
-          display: "block",
+          '& > .MuiTreeItem-content:hover .T1TreeItem-optionsButton': {
+            opacity: 1,
+          },
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
-      onClick={onClick}
-    >
-      <T1Link to={to ?? ""} disabled={!to} sx={{ textDecoration: "none" }}>
-        <ListItemButton
-          sx={{
-            minHeight: 48,
-            justifyContent: "initial",
-            px: 2.5,
-            "pointer-events": disablePointerEvents ? "none" : undefined,
-          }}
-        >
-          {children}
-        </ListItemButton>
-        {buttons && (
-          <Box
-            sx={{
-              position: "absolute",
-              right: theme.spacing(1),
-              top: "50%",
-              fontSize: "1.2rem",
-              transform: "translateY(-50%)",
-            }}
-          >
-            {buttons}
-          </Box>
-        )}
-      </T1Link>
-    </ListItem>
-  );
-}
-
-interface IAddChainItemProps {
-  chains: string[];
-
-  onSubmit(chainName: string): void;
-
-  onAbort(isError: boolean): void;
-}
-
-function AddChainItem(props: IAddChainItemProps) {
-  const { onSubmit, onAbort, chains } = props;
-
-  const defaultChainName = getDefaultChainName(chains);
-  const [chainName, setChainName] = React.useState(defaultChainName);
-  const ref = React.useRef<HTMLInputElement>();
-
-  const submit = React.useCallback(() => {
-    if (chains?.includes(chainName) || !chainName.trim()) {
-      onAbort(true);
-    } else {
-      onSubmit(chainName);
-    }
-  }, [chains, chainName]);
-
-  return (
-    <MenuDrawerItem>
-      <Input
-        inputRef={ref}
-        autoFocus
-        defaultValue={defaultChainName}
-        onBlur={submit}
-        onKeyUp={() => {
-          setChainName(ref.current?.value?.toLowerCase() ?? "");
-        }}
-        onKeyDown={(e) => {
-          switch (e.key) {
-            case "Enter":
-              submit();
-              break;
-            case "Escape":
-              onAbort(false);
-              break;
-          }
-        }}
-        sx={{
-          marginLeft: 3,
-        }}
-      />
-    </MenuDrawerItem>
-  );
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      {...rest}
+    />
+  )
 }
 
 function getDefaultChainName(chains: string[]) {
