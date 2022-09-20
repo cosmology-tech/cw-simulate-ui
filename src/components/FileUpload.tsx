@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
-import simulationState, { Chain } from "../atoms/simulationState";
+import simulationState from "../atoms/simulationState";
 import { showNotification, snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { validateSimulationJSON } from "../utils/fileUtils";
 import { useParams } from "react-router-dom";
@@ -38,7 +38,6 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
           const prevChains = [...simulation.simulation.chains] || [];
           const prevChain = prevChains.find((chain: any) => chain.id === param.id);
           const prevCodes = prevChain?.codes || [];
-          debugger;
           reader.onload = () => {
             const fileBuffer = reader.result;
             if (prevChains.length === 0) {

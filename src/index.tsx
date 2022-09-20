@@ -16,6 +16,8 @@ const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 // Check if value exists in localStorage. If exists, redirect to /simulation, else redirect to /home
 const isSimulationExist = localStorage.getItem("simulationState");
+
+// TODO: Populate window.CWEnv with the data from simulationState/local storage
 root.render(
   <React.StrictMode>
     <RecoilRoot>
@@ -35,7 +37,9 @@ root.render(
             <Routes>
               <Route index
                      element={isSimulationExist ? <Navigate replace to='/simulation'/> : <Home/>}/>
-              <Route path={"/simulation"} element={<Simulation/>}/>
+              <Route path={"/simulation"} element={<Simulation/>}>
+                <Route path={":instanceId"} element={<Simulation/>}/>
+              </Route>
               <Route path={"/chains"} element={<Chains/>}>
                 <Route path={":id"} element={<Chain/>}/>
               </Route>
