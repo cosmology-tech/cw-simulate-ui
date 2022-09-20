@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Config } from "../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { showNotification, snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../atoms/executeQueryTabState";
 import { Button, Grid, Typography } from "@mui/material";
 
@@ -33,9 +33,7 @@ export const ExecuteQuery = ({
   currentState,
 }: IProps) => {
   const {MOCK_ENV, MOCK_INFO} = Config;
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationState
-  );
+  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
   const [payload, setPayload] = useState("");
   const executeQueryTab = useRecoilValue(executeQueryTabState);
   const addState = (stateBefore: any, res: any) => {
@@ -58,22 +56,12 @@ export const ExecuteQuery = ({
       setResponse(res.read_json());
       if (!(res.read_json().error && res.read_json().error.length > 0)) {
         addState(stateBefore, res);
-        setSnackbarNotification({
-          ...snackbarNotification,
-          severity: "success",
-          open: true,
-          message: "Execution was successful!",
-        });
+        showNotification(setSnackbarNotification, "Execution was successful!");
       } else {
         throw res.read_json().error;
       }
     } catch (err) {
-      setSnackbarNotification({
-        ...snackbarNotification,
-        severity: "error",
-        open: true,
-        message: "Something went wrong while executing.",
-      });
+      showNotification(setSnackbarNotification, "Something went wrong while executing.", "error");
     }
   };
   const query = () => {
@@ -81,18 +69,9 @@ export const ExecuteQuery = ({
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
-      setSnackbarNotification({
-        ...snackbarNotification,
-        open: true,
-        message: "Query was successful!",
-      });
+      showNotification(setSnackbarNotification, "Query was successful!");
     } catch (err) {
-      setSnackbarNotification({
-        ...snackbarNotification,
-        severity: "error",
-        open: true,
-        message: "Something went wrong while querying.",
-      });
+      showNotification(setSnackbarNotification, "Something went wrong while querying.", "error");
     }
   };
   const onRunHandler = () => {

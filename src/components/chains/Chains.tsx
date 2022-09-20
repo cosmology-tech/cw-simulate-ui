@@ -11,9 +11,9 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import React, { useRef, useState } from "react";
-import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
+import { showNotification, snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { Outlet, useParams } from "react-router-dom";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
 import T1Grid from "../T1Grid";
@@ -25,9 +25,7 @@ const Chains = () => {
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const chains = useRecoilValue(filteredChainsFromSimulationState);
   const chainNames = chains?.map((chain: any) => chain.chainId).sort();
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(
-    snackbarNotificationState
-  );
+  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
   const param = useParams();
   const textFieldRef = useRef<any>(null);
 
@@ -41,12 +39,7 @@ const Chains = () => {
 
   const handleAddChain = () => {
     if (textFieldRef.current.value === "") {
-      setSnackbarNotification({
-        ...snackbarNotification,
-        open: true,
-        message: "Please enter a chain name",
-        severity: "error",
-      });
+      showNotification(setSnackbarNotification, "Please enter a chain name", "error");
       return;
     }
 
@@ -55,12 +48,7 @@ const Chains = () => {
     const prevChains = newSimulation.simulation.chains;
     const isChainExist = newChainNames.some((chainName: string) => prevChains.some((chain: any) => chain.chainId === chainName));
     if (isChainExist) {
-      setSnackbarNotification({
-        ...snackbarNotification,
-        open: true,
-        message: "Chain already exist. Please enter a new chain name",
-        severity: "error",
-      });
+      showNotification(setSnackbarNotification, "Chain already exist. Please enter a new chain name", "error");
       return;
     }
     const newChains = newChainNames.map((chainName: string) => ({
@@ -72,12 +60,7 @@ const Chains = () => {
       simulation: {...newSimulation.simulation, chains: [...prevChains, ...newChains]}
     };
     setSimulation(newSimulation);
-    setSnackbarNotification({
-      ...snackbarNotification,
-      severity: "success",
-      open: true,
-      message: 'Successfully added new chains.',
-    });
+    showNotification(setSnackbarNotification, "Successfully added new chains.");
     setOpenDialog(false);
   }
 
@@ -131,7 +114,7 @@ const Chains = () => {
               <Button onClick={handleAddChain}>Add</Button>
             </DialogActions>
           </Dialog>
-          {!openDialog && chainNames.length > 0 ?
+          {!openDialog && chainNames?.length > 0 ?
             (<T1Grid items={[...new Set(chainNames)]} hasRightDeleteButton={true}
                      handleDeleteItem={handleDeleteChain}/>)
             : (<Grid item xs={12} sx={{

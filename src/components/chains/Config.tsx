@@ -1,9 +1,9 @@
 import { Button, Grid, Typography } from "@mui/material";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useNavigate, useParams } from "react-router-dom";
 import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
-import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
+import { showNotification, snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { validateConfigJSON } from "../../utils/fileUtils";
 import simulationState from "../../atoms/simulationState";
 import { useState } from "react";
@@ -14,19 +14,14 @@ const Config = () => {
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const jsonValue = JSON.stringify(configValue, null, 2);
   const [jsonPayload, setJsonPayload] = useState("");
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationState);
+  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
   const navigate = useNavigate();
 
   const handleOnClick = (e: any) => {
     e.preventDefault();
     const json = jsonPayload !== "" ? JSON.parse(jsonPayload) : JSON.parse(jsonValue);
     if (!validateConfigJSON(json)) {
-      setSnackbarNotification({
-        ...snackbarNotification,
-        open: true,
-        message: "Invalid Config JSON",
-        severity: "error",
-      });
+      showNotification(setSnackbarNotification, "Invalid Config JSON", "error");
       return;
     }
 
@@ -36,13 +31,9 @@ const Config = () => {
     newChain.chainId = json.chainId;
     newChain.bech32Prefix = json.bech32Prefix;
     const chainIds = newSimulation.simulation.chains.map((chain: any) => chain.chainId);
+    // @ts-ignore
     if (json.chainId !== configValue.chainId && chainIds.includes(json.chainId)) {
-      setSnackbarNotification({
-        ...snackbarNotification,
-        open: true,
-        message: "Chain ID already exists",
-        severity: "error",
-      });
+      showNotification(setSnackbarNotification, "Chain ID already exists", "error");
       return;
     }
     newSimulation = {
@@ -60,12 +51,7 @@ const Config = () => {
     if (json.chainId !== param.id) {
       navigate(`/chains/${json.chainId}`);
     }
-    setSnackbarNotification({
-      ...snackbarNotification,
-      open: true,
-      message: "Config updated successfully",
-      severity: "success"
-    });
+    showNotification(setSnackbarNotification, "Config updated successfully");
   };
 
   const handleSetPayload = (payload: string) => {

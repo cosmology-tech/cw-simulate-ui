@@ -35,7 +35,7 @@ export type Instance = {
   message: unknown;
 }
 
-const {persistAtom} = recoilPersist();
+const {persistAtom} = recoilPersist({key: "simulationState"});
 const simulationState = atom<Simulation>({
   key: 'simulationState',
   default: {simulation: {chains: []}},
