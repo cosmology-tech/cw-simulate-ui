@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
 import "./styles/styles.scss";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import MenuDrawer, { drawerWidth } from "./components/MenuDrawer";
 import Home from "./components/home/Home";
 import Simulation from "./components/simulation/Simulation";
@@ -33,7 +33,8 @@ root.render(
           >
             <Toolbar/>
             <Routes>
-              <Route index element={isSimulationExist ? <Simulation/> : <Home/>}/>
+              <Route index
+                     element={isSimulationExist ? <Navigate replace to='/simulation'/> : <Home/>}/>
               <Route path={"/simulation"} element={<Simulation/>}/>
               <Route path={"/chains"} element={<Chains/>}>
                 <Route path={":id"} element={<Chain/>}/>
