@@ -3,7 +3,7 @@ import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useNavigate, useParams } from "react-router-dom";
 import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
-import { showNotification, snackbarNotificationState } from "../../atoms/snackbarNotificationState";
+import { useNotification } from "../../atoms/snackbarNotificationState";
 import { validateConfigJSON } from "../../utils/fileUtils";
 import simulationState from "../../atoms/simulationState";
 import { useState } from "react";
@@ -14,14 +14,14 @@ const Config = () => {
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const jsonValue = JSON.stringify(configValue, null, 2);
   const [jsonPayload, setJsonPayload] = useState("");
-  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
+  const setNotification = useNotification();
   const navigate = useNavigate();
 
   const handleOnClick = (e: any) => {
     e.preventDefault();
     const json = jsonPayload !== "" ? JSON.parse(jsonPayload) : JSON.parse(jsonValue);
     if (!validateConfigJSON(json)) {
-      showNotification(setSnackbarNotification, "Invalid Config JSON", "error");
+      setNotification("Invalid Config JSON", { severity: "error" });
       return;
     }
 
@@ -33,7 +33,7 @@ const Config = () => {
     const chainIds = newSimulation.simulation.chains.map((chain: any) => chain.chainId);
     // @ts-ignore
     if (json.chainId !== configValue.chainId && chainIds.includes(json.chainId)) {
-      showNotification(setSnackbarNotification, "Chain ID already exists", "error");
+      setNotification("Chain ID already exists", { severity: "error" });
       return;
     }
     newSimulation = {
@@ -51,7 +51,7 @@ const Config = () => {
     if (json.chainId !== param.id) {
       navigate(`/chains/${json.chainId}`);
     }
-    showNotification(setSnackbarNotification, "Config updated successfully");
+    setNotification("Config updated successfully");
   };
 
   const handleSetPayload = (payload: string) => {
