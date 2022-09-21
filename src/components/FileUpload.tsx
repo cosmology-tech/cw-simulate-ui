@@ -2,8 +2,8 @@ import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
-import simulationState, { Simulation } from "../atoms/simulationState";
-import { showNotification, snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import simulationState from "../atoms/simulationState";
+import { useNotification } from "../atoms/snackbarNotificationState";
 import { validateSimulationJSON } from "../utils/fileUtils";
 import { useParams } from "react-router-dom";
 import { Chain, Code } from "../atoms/simulationState";
@@ -18,7 +18,6 @@ interface IProps {
 const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
   const setIsFileUploaded = useSetRecoilState(fileUploadedState);
   const [simulation, setSimulation] = useRecoilState(simulationState);
-  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
   const param = useParams();
   const snackbarProps: SnackbarProps = {
     anchorOrigin: {
@@ -26,8 +25,9 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
       horizontal: "center",
     },
   };
-
+  
   const text = dropzoneText || "Click to upload a simulation file or contract binary or Drag & drop a file here";
+  const setNotification = useNotification();
 
   const handleOnFileDrop = (files: File[]) => {
     // Only allow one file to be uploaded
@@ -61,7 +61,7 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
           }
 
           reader.onerror = () => {
-            showNotification(setSnackbarNotification, "Error reading WASM binary file", "error");
+            setNotification("Error reading WASM binary file", { severity: "error" });
           }
         }
 
@@ -79,7 +79,7 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
           };
 
           reader.onerror = () => {
-            showNotification(setSnackbarNotification, "Error reading simulation file", "error");
+            setNotification("Error reading simulation file", { severity: "error" });
           }
         }
       }

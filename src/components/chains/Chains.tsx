@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import React, { useRef, useState } from "react";
-import { showNotification, snackbarNotificationState } from "../../atoms/snackbarNotificationState";
+import { useNotification } from "../../atoms/snackbarNotificationState";
 import { Outlet, useParams } from "react-router-dom";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
 import T1Grid from "../T1Grid";
@@ -25,9 +25,10 @@ const Chains = () => {
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const chains = useRecoilValue(filteredChainsFromSimulationState);
   const chainNames = chains?.map((chain: any) => chain.chainId).sort();
-  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
   const param = useParams();
   const textFieldRef = useRef<any>(null);
+  
+  const setNotification = useNotification();
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -39,7 +40,7 @@ const Chains = () => {
 
   const handleAddChain = () => {
     if (textFieldRef.current.value === "") {
-      showNotification(setSnackbarNotification, "Please enter a chain name", "error");
+      setNotification("Please enter a chain name", { severity: "error" });
       return;
     }
 
@@ -48,7 +49,7 @@ const Chains = () => {
     const prevChains = newSimulation.simulation.chains;
     const isChainExist = newChainNames.some((chainName: string) => prevChains.some((chain: any) => chain.chainId === chainName));
     if (isChainExist) {
-      showNotification(setSnackbarNotification, "Chain already exist. Please enter a new chain name", "error");
+      setNotification("Chain already exist. Please enter a new chain name", { severity: "error" });
       return;
     }
     const newChains = newChainNames.map((chainName: string) => ({
@@ -60,7 +61,7 @@ const Chains = () => {
       simulation: {...newSimulation.simulation, chains: [...prevChains, ...newChains]}
     };
     setSimulation(newSimulation);
-    showNotification(setSnackbarNotification, "Successfully added new chains.");
+    setNotification("Successfully added new chains.");
     setOpenDialog(false);
   }
 
