@@ -185,6 +185,7 @@ const CodesAndInstances = () => {
           </Button>
         }
         hasRightDeleteButton={true}
+        useLinks={false}
       />
       <Dialog open={openDialog} onClose={handleClose}>
         <DialogTitle>Enter Instantiate Message</DialogTitle>
