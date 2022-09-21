@@ -1,13 +1,12 @@
 import { Box, Divider, Grid, Paper, styled } from "@mui/material";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ExecuteQuery } from "../ExecuteQuery";
-import StateFlow from "../StateFlow";
 import { responseState } from "../../atoms/responseState";
 import { allStatesAtom } from "../../atoms/allStatesAtom";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { StateRenderer } from "../StateRenderer";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
-import { StateTraversal } from "../StateTraversal";
+import StateStepper from "./StateStepper";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -24,9 +23,11 @@ const Simulation = () => {
   return (
     <Box sx={{ flexGrow: 1, height: "100%" }}>
       <Grid container spacing={2} sx={{ height: "100%" }}>
-        <Grid item xs={4}>
-          <Item sx={{ height: "100%" }}>
-            <StateTraversal />
+        <Grid item xs={4} sx={{ height: "100%" }}>
+          <Item sx={{ height: "100%", overflow: "scroll" }}>
+            <Grid item xs={12} sx={{ height: "100%", p: 1 }}>
+              <StateStepper />
+            </Grid>
           </Item>
         </Grid>
         <Grid item xs={8} sx={{ height: "100%" }}>

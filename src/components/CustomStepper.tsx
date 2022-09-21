@@ -3,28 +3,25 @@ import { IState } from "./ExecuteQuery";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";
 import { Divider, Typography } from "@mui/material";
 import { ORANGE_3 } from "../configs/variables";
+import { currentStateNumber } from "../atoms/currentStateNumber";
+import { responseState } from "../atoms/responseState";
+import { payloadState } from "../atoms/payloadState";
+import { executeQueryTabState } from "../atoms/executeQueryTabState";
+import { useRecoilState } from "recoil";
 
 interface IProps {
   state: IState;
   index: number;
-  currentState: number;
-  setCurrentState: (val: number) => void;
-  setResponse: (val: JSON | undefined) => void;
-  setPayload: (val: string) => void;
-  setCurrentTab: (val: string) => void;
 }
 
-export const CustomStepper = ({
-  state,
-  index,
-  currentState,
-  setCurrentState,
-  setResponse,
-  setPayload,
-  setCurrentTab,
-}: IProps) => {
+export const CustomStepper = ({ state, index }: IProps) => {
+  const [response, setResponse] = useRecoilState(responseState);
+  const [currentState, setCurrentState] = useRecoilState(currentStateNumber);
+  const [payload, setPayload] = useRecoilState(payloadState);
+  const [currentTab, setCurrentTab] = useRecoilState(executeQueryTabState);
+
   const onClickHandler = (e: any) => {
-    const {currentTab, res, payload} = state;
+    const { currentTab, res, payload } = state;
     setCurrentTab(currentTab);
     setCurrentState(index - 1);
     setResponse(res);
@@ -53,7 +50,7 @@ export const CustomStepper = ({
             alignItems: "center",
           }}
         >
-          <PlayCircleOutlineIcon/>
+          <PlayCircleOutlineIcon />
         </div>
       )}
       <div
@@ -62,12 +59,12 @@ export const CustomStepper = ({
           flexDirection: "column",
           width: `${index > 0 ? "110px" : "96px"}`,
           justifyContent: "center",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
-        <Divider sx={{background: "black", height: "1px", width: "100%"}}>
+        <Divider sx={{ background: "black", height: "1px", width: "100%" }}>
           <p
-            style={{margin: "4px", fontSize: "0.8rem", padding: "2px"}}
+            style={{ margin: "4px", fontSize: "0.8rem", padding: "2px" }}
             id="1"
             className={index > 0 ? "execute" : ""}
             onClick={index > 0 ? onClickHandler : undefined}
@@ -92,7 +89,7 @@ export const CustomStepper = ({
           height: "40px",
         }}
       >
-        <Typography style={{color: "black"}}>{index}</Typography>
+        <Typography style={{ color: "black" }}>{index}</Typography>
       </div>
     </div>
   );
