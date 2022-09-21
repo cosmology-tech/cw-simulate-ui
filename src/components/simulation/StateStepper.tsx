@@ -48,9 +48,7 @@ const theme = {
 
 export default function StateStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
-  const [completed, setCompleted] = React.useState<{
-    [k: number]: boolean;
-  }>({});
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const handleStep = (step: number) => () => {
     setActiveStep(step);
@@ -67,16 +65,16 @@ export default function StateStepper() {
         <Step key={label} onClick={handleStep(index)}>
           <StepLabel>
             <div style={{ display: "flex", alignItems: "flex-start" }}>
-              {activeStep === index ? (
-                <ArrowDropDownIcon />
+              {activeStep === index && isOpen ? (
+                <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
               ) : (
-                <ArrowRightIcon />
+                <ArrowRightIcon onClick={() => setIsOpen(true)} />
               )}
               {label}
             </div>
           </StepLabel>
           <StepContent>
-            {activeStep === index && (
+            {activeStep === index && isOpen && (
               <Zoom in={true} style={{ transitionDelay: "520ms" }}>
                 <Paper
                   elevation={3}
