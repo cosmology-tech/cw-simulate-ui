@@ -12,6 +12,7 @@ interface IProps {
   hasRightDeleteButton?: boolean;
   handleDeleteItem: () => void;
   childRef?: any;
+  useLinks?: boolean | undefined;
 }
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -31,6 +32,7 @@ const T1Grid = ({
   hasRightDeleteButton,
   handleDeleteItem,
   childRef,
+  useLinks
 }: IProps) => {
   return (
     <Box
@@ -60,20 +62,27 @@ const T1Grid = ({
         lg={12}
       >
         {items?.map((item) => {
+          const itemText =
+            <Typography variant="h6" sx={{ paddingLeft: 3 }} ref={childRef}>
+              {item}
+            </Typography>;
+
           return (
             <>
               <Grid item xs={12} md={12} lg={12}>
                 <Item key={item + "item"}>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <div style={{ flexGrow: 1 }}>
-                      <Typography
-                        variant="h6"
-                        sx={{ paddingLeft: 3 }}
-                        ref={childRef}
-                      >
-                        {item}
-                      </Typography>
-                    </div>
+                    {
+                      useLinks === undefined || useLinks
+                        ?
+                          <T1Link to={item} sx={{ flexGrow: 1 }}>
+                            {itemText}
+                          </T1Link>
+                        :
+                          <div style={{ flexGrow: 1 }}>
+                            {itemText}
+                          </div>
+                    }
                     {rightButton}
                     {hasRightDeleteButton && (
                       <IconButton
