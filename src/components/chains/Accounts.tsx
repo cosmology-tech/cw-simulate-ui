@@ -20,7 +20,7 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import simulationState from "../../atoms/simulationState";
 import { validateAccountJSON } from "../../utils/fileUtils";
-import { showNotification, snackbarNotificationState } from "../../atoms/snackbarNotificationState";
+import { useNotification } from "../../atoms/snackbarNotificationState";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
@@ -33,7 +33,7 @@ const Accounts = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
-  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
+  const setNotification = useNotification();
 
   const accounts = useRecoilValue(filteredAccountsByChainId(param.id as string)).accounts;
   const data = useMemo(() =>
@@ -54,17 +54,17 @@ const Accounts = () => {
     const json = JSON.parse(payload);
 
     if (payload.length === 0 || !validateAccountJSON(json)) {
-      showNotification(setSnackbarNotification, "Invalid Account JSON", "error");
+      setNotification("Invalid Account JSON", { severity: "error" });
       return;
     }
 
     if (accounts.find(acc => acc.id === json.id)) {
-      showNotification(setSnackbarNotification, "An account with this ID already exists", "error");
+      setNotification("An account with this ID already exists", { severity: "error" });
       return;
     }
 
     if (accounts.find(acc => acc.address === json.address)) {
-      showNotification(setSnackbarNotification, "An account with this address already exists", "error");
+      setNotification("An account with this address already exists", { severity: "error" });
       return;
     }
 
@@ -85,7 +85,7 @@ const Accounts = () => {
       },
     });
 
-    showNotification(setSnackbarNotification, "Account added successfully");
+    setNotification("Account added successfully");
     setOpenDialog(false);
   }
 
@@ -104,7 +104,7 @@ const Accounts = () => {
       },
     });
 
-    showNotification(setSnackbarNotification, "Account successfully removed");
+    setNotification("Account successfully removed");
   }
 
   const handleSetPayload = (payload: string) => {

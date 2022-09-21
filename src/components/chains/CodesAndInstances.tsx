@@ -17,10 +17,7 @@ import simulationState from "../../atoms/simulationState";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { createContractInstance } from "../../utils/setupSimulation";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
-import {
-  showNotification,
-  snackbarNotificationState,
-} from "../../atoms/snackbarNotificationState";
+import { useNotification } from "../../atoms/snackbarNotificationState";
 import FileUpload from "../FileUpload";
 
 const CodesAndInstances = () => {
@@ -35,7 +32,7 @@ const CodesAndInstances = () => {
     .filter((instance) => !!instance);
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const [payload, setPayload] = useState<string>("");
-  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
+  const setNotification = useNotification();
   const [openDialog, setOpenDialog] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const itemRef = useRef<any>();
@@ -60,11 +57,7 @@ const CodesAndInstances = () => {
 
   const handleInstantiate = () => {
     if (payload.length === 0) {
-      showNotification(
-        setSnackbarNotification,
-        "Payload cannot be empty",
-        "error"
-      );
+      setNotification("Payload cannot be empty", { severity: "error" });
       return;
     }
     const contractId = itemRef.current?.innerText;
@@ -72,11 +65,7 @@ const CodesAndInstances = () => {
       ?.find((code: any) => code.id === contractId)
       ?.wasmBinaryB64.split("data:application/wasm;base64,")[1];
     if (!binary) {
-      showNotification(
-        setSnackbarNotification,
-        "Failed to extract WASM bytecode",
-        "error"
-      );
+      setNotification("Failed to extract WASM bytecode", { severity: "error" });
       return;
     }
 
@@ -98,11 +87,7 @@ const CodesAndInstances = () => {
               newInstantiateMsg
             );
           } catch (e) {
-            showNotification(
-              setSnackbarNotification,
-              "Unable to instantiate with " + e,
-              "error"
-            );
+            setNotification("Unable to instantiate with " + e, { severity: "error" });
           }
         });
       }
@@ -141,7 +126,7 @@ const CodesAndInstances = () => {
         }),
       },
     });
-    showNotification(setSnackbarNotification, "Contract instance created");
+    setNotification("Contract instance created");
     setOpenDialog(false);
   };
 
