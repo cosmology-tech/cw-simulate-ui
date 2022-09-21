@@ -65,7 +65,7 @@ const T1Grid = ({
               <Grid item xs={12} md={12} lg={12}>
                 <Item key={item + "item"}>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <T1Link to={item} sx={{ flexGrow: 1 }}>
+                    <div style={{ flexGrow: 1 }}>
                       <Typography
                         variant="h6"
                         sx={{ paddingLeft: 3 }}
@@ -73,7 +73,7 @@ const T1Grid = ({
                       >
                         {item}
                       </Typography>
-                    </T1Link>
+                    </div>
                     {rightButton}
                     {hasRightDeleteButton && (
                       <IconButton
