@@ -45,8 +45,8 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
                 simulation: {
                   chains: [
                     {
-                      chainId: 'untitled-1',
-                      bech32Prefix: 'terra',
+                      chainId: 'terratest-1',
+                      bech32Prefix: 'terratest',
                       accounts: [
                         {
                           id: 'alice',
