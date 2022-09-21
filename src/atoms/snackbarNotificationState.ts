@@ -1,7 +1,22 @@
-import { atom } from "recoil";
+import { atom, useSetRecoilState } from "recoil";
+import type { AlertProps } from "@mui/material/Alert";
+import type { SnackbarProps } from "@mui/material/Snackbar";
+import type { Defined } from "../utils/typeUtils";
+import { useCallback } from "react";
 
-export type SEVERITY = 'success' | 'info' | 'warning' | 'error';
-export const snackbarNotificationState = atom({
+interface SnackbarNotificationState {
+  severity: Severity;
+  open: boolean;
+  message: string;
+  vertical: Defined<SnackbarProps['anchorOrigin']>['vertical'];
+  horizontal: Defined<SnackbarProps['anchorOrigin']>['horizontal'];
+}
+
+export type Severity = Defined<AlertProps['severity']>;
+
+export type SnackbarNotificationOptions = Partial<Pick<SnackbarNotificationState, "severity" | "vertical" | "horizontal">>;
+
+export const snackbarNotificationState = atom<SnackbarNotificationState>({
   key: 'snackbarNotificationState',
   default: {
     open: false,
@@ -12,7 +27,20 @@ export const snackbarNotificationState = atom({
   },
 });
 
-export const showNotification = (setNotification: any, message: string = "", severity: SEVERITY = 'success') => {
+export const useNotification = () => {
+  const setNotification = useSetRecoilState(snackbarNotificationState);
+  const fn = useCallback((message: string, options: SnackbarNotificationOptions = {}) => {
+    setNotification(prev => ({
+      ...prev,
+      ...options,
+      message,
+      open: true,
+    }));
+  }, []);
+  return fn;
+};
+
+export const showNotification = (setNotification: any, message = "", severity: Severity = 'success') => {
   setNotification({
     open: true,
     message,

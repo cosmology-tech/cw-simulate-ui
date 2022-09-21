@@ -9,7 +9,7 @@ const SnackbarNotification = () => {
     <Snackbar autoHideDuration={2000}
               onClose={() => setSnackbarState({...snackbarState, open: false})}
               open={snackbarState.open}
-              anchorOrigin={{vertical: "top", horizontal: "center"}}
+              anchorOrigin={{vertical: snackbarState.vertical, horizontal: snackbarState.horizontal}}
               key={snackbarState.vertical + snackbarState.horizontal}
               transitionDuration={1000}>
       <Alert severity={snackbarState.severity as AlertColor} sx={{width: "100%"}}>
