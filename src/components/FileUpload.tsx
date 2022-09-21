@@ -2,10 +2,11 @@ import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
-import simulationState from "../atoms/simulationState";
+import simulationState, { Simulation } from "../atoms/simulationState";
 import { showNotification, snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { validateSimulationJSON } from "../utils/fileUtils";
 import { useParams } from "react-router-dom";
+import { Chain, Code } from "../atoms/simulationState";
 
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
@@ -43,28 +44,7 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
             if (prevChains.length === 0) {
               setSimulation({
                 simulation: {
-                  chains: [
-                    {
-                      chainId: 'terratest-1',
-                      bech32Prefix: 'terratest',
-                      accounts: [
-                        {
-                          id: 'alice',
-                          address: 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6',
-                          balance: 100000000,
-                        },
-                      ],
-                      codes: [
-                        ...prevCodes,
-                        {
-                          id: file.name,
-                          wasmBinaryB64: fileBuffer!.toString(),
-                          instances: [],
-                        },
-                      ],
-                      states: [],
-                    },
-                  ],
+                  chains: [buildDefaultChain(prevCodes, file.name, fileBuffer!)],
                 },
               });
             } else {
@@ -72,22 +52,7 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
                 ...simulation,
                 simulation: {
                   ...simulation.simulation,
-                  chains: simulation.simulation.chains.map((chain: any) => {
-                    if (chain.chainId === param.id) {
-                      return {
-                        ...chain,
-                        codes: [
-                          ...chain.codes,
-                          {
-                            id: file.name,
-                            wasmBinaryB64: fileBuffer!.toString(),
-                            instances: [],
-                          }
-                        ],
-                      }
-                    }
-                    return chain;
-                  })
+                  chains: buildChainsFromWasm(simulation.simulation.chains, param.id!, file.name, fileBuffer!)
                 }
               });
             }
@@ -148,6 +113,48 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
     </Suspense>
   );
 };
+
+function buildChainsFromWasm(chains: Chain[], chainId: string, fileName: string, fileBuffer: string | ArrayBuffer): Chain[] {
+  return chains.map((chain: any) => {
+    if (chain.chainId === chainId) {
+      return {
+        ...chain,
+        codes: [
+          ...chain.codes,
+          {
+            id: fileName,
+            wasmBinaryB64: fileBuffer.toString(),
+            instances: [],
+          }
+        ],
+      };
+    }
+    return chain;
+  });
+}
+
+function buildDefaultChain(existingCodes: Code[], fileName: string, fileBuffer: string | ArrayBuffer): Chain {
+  return {
+    chainId: 'terratest-1',
+    bech32Prefix: 'terratest',
+    accounts: [
+      {
+        id: 'alice',
+        address: 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6',
+        balance: 100000000,
+      },
+    ],
+    codes: [
+      ...existingCodes,
+      {
+        id: fileName,
+        wasmBinaryB64: fileBuffer.toString(),
+        instances: [],
+      },
+    ],
+    states: [],
+  };
+}
 
 function Fallback() {
   return (
