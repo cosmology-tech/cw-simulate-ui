@@ -16,3 +16,6 @@ yarn-error.log*
 yarn.lock
 
 .vscode
+
+# Misc local helpers & files
+tsconfig.tmp.json

@@ -11,7 +11,7 @@ import { ExecuteQuery, IState } from "./ExecuteQuery";
 import { Instantiate } from "./Instantiate";
 import { fileUploadedState } from "../atoms/fileUploadedState";
 import { instantiatedState } from "../atoms/instantiatedState";
-import { showNotification, snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import { useNotification } from "../atoms/snackbarNotificationState";
 import { Config } from "../configs/config";
 import { StateRenderer } from "./StateRenderer";
 import "../index.css";
@@ -47,7 +47,6 @@ export default function GridLayout({
     useRecoilState(executeQueryTabState);
   const isFileUploaded = useRecoilValue(fileUploadedState);
   const [isInstantiated, setIsInstantiated] = useRecoilState(instantiatedState);
-  const setSnackbarNotification = useSetRecoilState(snackbarNotificationState);
   const [payload, setPayload] = useRecoilState(payloadState);
   const { MOCK_ENV, MOCK_INFO } = Config;
   const addState = (stateBefore: any, res: any) => {
@@ -61,15 +60,17 @@ export default function GridLayout({
     setAllStates([...allStates, stateObj]);
     setCurrentState(allStates.length);
   };
+  
+  const setNotification = useNotification();
 
   const onInstantiateClickHandler = () => {
     try {
       const res = window.VM.instantiate(MOCK_ENV, MOCK_INFO, { count: 20 });
       addState("", "");
       setIsInstantiated(true);
-      showNotification(setSnackbarNotification, "CosmWasm VM successfully instantiated!");
+      setNotification("CosmWasm VM successfully instantiated!");
     } catch (err) {
-      showNotification(setSnackbarNotification, "CosmWasm VM was not able to instantiate. Please check console for errors.", "error");
+      setNotification("CosmWasm VM was not able to instantiate. Please check console for errors.", { severity: "error" });
     }
   };
 
