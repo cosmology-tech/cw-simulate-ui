@@ -30,8 +30,10 @@ export const snackbarNotificationState = atom<SnackbarNotificationState>({
 export const useNotification = () => {
   const setNotification = useSetRecoilState(snackbarNotificationState);
   const fn = useCallback((message: string, options: SnackbarNotificationOptions = {}) => {
-    setNotification(prev => ({
-      ...prev,
+    setNotification(() => ({
+      horizontal: 'center',
+      vertical: 'top',
+      severity: 'success',
       ...options,
       message,
       open: true,
