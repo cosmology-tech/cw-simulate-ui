@@ -42,6 +42,7 @@ export const useNotification = () => {
   return fn;
 };
 
+/** @deprecated */
 export const showNotification = (setNotification: any, message = "", severity: Severity = 'success') => {
   setNotification({
     open: true,
