@@ -10,12 +10,12 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import T1Grid from "../T1Grid";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import filteredCodesByChainId from "../../selectors/filteredCodesByChainId";
 import { useParams } from "react-router-dom";
 import simulationState from "../../atoms/simulationState";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { createContractInstance } from "../../utils/setupSimulation";
+import { useChains, useCreateContractInstance } from "../../utils/setupSimulation";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import FileUpload from "../FileUpload";
@@ -31,6 +31,8 @@ const CodesAndInstances = () => {
     ?.map((instance) => instance.id)
     .filter((instance) => !!instance);
   const [simulation, setSimulation] = useRecoilState(simulationState);
+  const simulateEnvChains = useChains();
+  const createContractInstance = useCreateContractInstance();
   const [payload, setPayload] = useState<string>("");
   const setNotification = useNotification();
   const [openDialog, setOpenDialog] = useState(false);
@@ -72,10 +74,10 @@ const CodesAndInstances = () => {
     const wasmBytes = base64ToArrayBuffer(binary);
     const newInstantiateMsg =
       payload.length === 0 ? placeholder : JSON.parse(payload);
-    for (const chain in window.CWEnv.chains) {
-      if (chain === param.id) {
+    for (const chainId in simulateEnvChains) {
+      if (chainId === param.id) {
         createContractInstance(
-          window.CWEnv.chains[chain],
+          simulateEnvChains[chainId],
           wasmBytes as Buffer
         ).then((contract) => {
           try {
@@ -93,7 +95,7 @@ const CodesAndInstances = () => {
       }
     }
 
-    const contractInstances = window.CWEnv.chains[param.id as string].contracts;
+    const contractInstances = simulateEnvChains[param.id as string].contracts;
     const allInstances: any[] = [];
     for (const key in contractInstances) {
       // Build instances array for the contract

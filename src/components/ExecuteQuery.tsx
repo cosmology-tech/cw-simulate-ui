@@ -51,7 +51,6 @@ export const ExecuteQuery = ({
 
   const execute = () => {
     try {
-      // TODO: window.CWEnv.chains['untitled-1'].contracts['terra13hkgfq43gch3hr8a23gm3rfcj44wyvp75h3rk7'].execute
       const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
       const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
       setResponse(res.read_json());
