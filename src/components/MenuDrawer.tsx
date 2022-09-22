@@ -83,7 +83,6 @@ const Logo = React.memo((props: ILogoProps) => {
           fontSize: 14,
           marginLeft: 10,
         }}
-        onClick={() => localStorage.clear()}
       >
         Terran One
       </div>
@@ -130,7 +129,7 @@ const T1Drawer = (props: IT1Drawer) => {
   const param = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const chains = useRecoilValue(filteredChainsFromSimulationState);
   const chainConfig = useRecoilValue(
     filteredConfigsByChainId(param.id as string)
@@ -149,7 +148,7 @@ const T1Drawer = (props: IT1Drawer) => {
     },
     [simulation]
   );
-  
+
   const handleAddChain = React.useCallback(() => {
     // TODO
     console.log('TODO: add chain')
@@ -198,7 +197,7 @@ const T1Drawer = (props: IT1Drawer) => {
     },
     [simulation, chainConfig, snackbarNotification]
   );
-  
+
   const handleFocusNode = React.useCallback((e: React.SyntheticEvent, value: string) => {
     if (location.pathname === `/${value}`) return;
     navigate(`/${value}`);
@@ -283,18 +282,18 @@ function T1TreeItem(props: IT1TreeItemProps) {
     sx,
     ...rest
   } = props;
-  
+
   const [showOptions, setShowOptions] = React.useState(false);
   const [hovering, setHovering] = React.useState(false);
   const rootRef = React.useRef<Element>(null);
   const optsBtnRef = React.useRef<HTMLButtonElement>(null);
-  
+
   const handleClickOptions = React.useCallback<React.MouseEventHandler>(e => {
     e.preventDefault();
     e.stopPropagation();
     setShowOptions(true);
   }, []);
-  
+
   return (
     <TreeItem
       ref={rootRef}
