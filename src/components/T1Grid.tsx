@@ -62,14 +62,14 @@ const T1Grid = ({
         md={12}
         lg={12}
       >
-        {items?.map((item) => {
+        {items?.map((item, i) => {
           const itemText =
             <Typography variant="h6" sx={{ paddingLeft: 3 }} ref={childRef}>
               {item}
             </Typography>;
 
           return (
-            <>
+            <div key={i} style={{width: '100%'}}>
               <Grid item xs={12} md={12} lg={12}>
                 <Item key={item + "item"}>
                   <div style={{ display: "flex", alignItems: "center" }}>
@@ -144,7 +144,7 @@ const T1Grid = ({
                   ))}
                 </Grid>
               </Grid>
-            </>
+            </div>
           );
         })}
       </Grid>

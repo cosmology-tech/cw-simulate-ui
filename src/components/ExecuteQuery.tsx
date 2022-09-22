@@ -46,7 +46,7 @@ export const ExecuteQuery = ({
     setAllStates([...allStates, stateObj]);
     setCurrentState(allStates.length);
   };
-  
+
   const setNotification = useNotification();
 
   const execute = () => {
@@ -112,6 +112,7 @@ export const ExecuteQuery = ({
         {/* <OutputRenderer response={response}/> */}
       </Grid>
       <Grid
+        item
         xs={2}
         sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}
       >
