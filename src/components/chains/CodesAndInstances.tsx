@@ -15,7 +15,7 @@ import filteredCodesByChainId from "../../selectors/filteredCodesByChainId";
 import { useParams } from "react-router-dom";
 import simulationState from "../../atoms/simulationState";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { useChains, useCreateContractInstance } from "../../utils/setupSimulation";
+import { useChains, useCreateContractInstance, useInstantiate } from "../../utils/setupSimulation";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import FileUpload from "../FileUpload";
@@ -31,6 +31,7 @@ const CodesAndInstances = () => {
     ?.map((instance) => instance.id)
     .filter((instance) => !!instance);
   const [simulation, setSimulation] = useRecoilState(simulationState);
+  const instantiate = useInstantiate();
   const simulateEnvChains = useChains();
   const createContractInstance = useCreateContractInstance();
   const [payload, setPayload] = useState<string>("");
@@ -81,7 +82,9 @@ const CodesAndInstances = () => {
           wasmBytes as Buffer
         ).then((contract) => {
           try {
-            contract.instantiate(
+            instantiate(
+              chainId,
+              contract,
               {
                 sender: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
                 funds: [],
@@ -89,7 +92,8 @@ const CodesAndInstances = () => {
               newInstantiateMsg
             );
           } catch (e) {
-            setNotification("Unable to instantiate with " + e, { severity: "error" });
+            setNotification(`Unable to instantiate with ${e}`, { severity: "error" });
+            console.error(e);
           }
         });
       }
