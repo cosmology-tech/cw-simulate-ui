@@ -9,7 +9,7 @@ import {
   Grid,
   Stack,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import React, { useRef, useState } from "react";
@@ -27,16 +27,16 @@ const Chains = () => {
   const chainNames = chains?.map((chain: any) => chain.chainId).sort();
   const param = useParams();
   const textFieldRef = useRef<any>(null);
-  
+
   const setNotification = useNotification();
 
   const handleClickOpen = () => {
     setOpenDialog(true);
-  }
+  };
 
   const handleClose = () => {
     setOpenDialog(false);
-  }
+  };
 
   const handleAddChain = () => {
     if (textFieldRef.current.value === "") {
@@ -44,30 +44,40 @@ const Chains = () => {
       return;
     }
 
-    const newChainNames = textFieldRef.current.value.split(",").map((el: string) => el.trim());
-    let newSimulation = {...simulation};
+    const newChainNames = textFieldRef.current.value
+      .split(",")
+      .map((el: string) => el.trim());
+    let newSimulation = { ...simulation };
     const prevChains = newSimulation.simulation.chains;
-    const isChainExist = newChainNames.some((chainName: string) => prevChains.some((chain: any) => chain.chainId === chainName));
+    const isChainExist = newChainNames.some((chainName: string) =>
+      prevChains.some((chain: any) => chain.chainId === chainName)
+    );
     if (isChainExist) {
-      setNotification("Chain already exist. Please enter a new chain name", { severity: "error" });
+      setNotification("Chain already exist. Please enter a new chain name", {
+        severity: "error",
+      });
       return;
     }
     const newChains = newChainNames.map((chainName: string) => ({
       chainId: chainName,
-      bech32Prefix: "terra"
+      bech32Prefix: "terra",
+      accounts: [],
+      codes: [],
+      states: [],
     }));
     newSimulation = {
       ...newSimulation,
-      simulation: {...newSimulation.simulation, chains: [...prevChains, ...newChains]}
+      simulation: {
+        ...newSimulation.simulation,
+        chains: [...prevChains, ...newChains],
+      },
     };
     setSimulation(newSimulation);
     setNotification("Successfully added new chains.");
     setOpenDialog(false);
-  }
+  };
 
-  const handleDeleteChain = () => {
-
-  }
+  const handleDeleteChain = () => {};
 
   return (
     <Box
@@ -80,14 +90,21 @@ const Chains = () => {
         justifyContent: "center",
       }}
     >
-      {param.id === undefined ? (<Grid sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          placeItems: "center",
-          padding: "10px",
-        }} container xs={11} md={11} lg={10}>
-          <Typography variant="h5" sx={{flexGrow: 1}}>
+      {param.id === undefined ? (
+        <Grid
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            placeItems: "center",
+            padding: "10px",
+          }}
+          container
+          xs={11}
+          md={11}
+          lg={10}
+        >
+          <Typography variant="h5" sx={{ flexGrow: 1 }}>
             Chains
           </Typography>
           <Button variant="contained" color="primary" onClick={handleClickOpen}>
@@ -97,7 +114,8 @@ const Chains = () => {
             <DialogTitle>Add New Chains</DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Enter chain names separated by commas. i.e. phoenix-1, osmosis-1, terra-1
+                Enter chain names separated by commas. i.e. phoenix-1,
+                osmosis-1, terra-1
               </DialogContentText>
               <TextField
                 autoFocus
@@ -115,30 +133,40 @@ const Chains = () => {
               <Button onClick={handleAddChain}>Add</Button>
             </DialogActions>
           </Dialog>
-          {!openDialog && chainNames?.length > 0 ?
-            (<T1Grid items={[...new Set(chainNames)]} hasRightDeleteButton={true}
-                     handleDeleteItem={handleDeleteChain}/>)
-            : (<Grid item xs={12} sx={{
-              display: 'grid',
-              marginTop: 4,
-              marginBottom: 4,
-              width: "60%",
-              borderRadius: "5px",
-              height: "50vh",
-              alignItems: "center",
-            }}>
-              <Stack sx={{textAlign: 'center', alignItems: 'center'}}>
-                <ScreenSearchDesktopOutlined sx={{fontSize: "100px"}}/>
+          {!openDialog && chainNames?.length > 0 ? (
+            <T1Grid
+              items={[...new Set(chainNames)]}
+              hasRightDeleteButton={true}
+              handleDeleteItem={handleDeleteChain}
+            />
+          ) : (
+            <Grid
+              item
+              xs={12}
+              sx={{
+                display: "grid",
+                marginTop: 4,
+                marginBottom: 4,
+                width: "60%",
+                borderRadius: "5px",
+                height: "50vh",
+                alignItems: "center",
+              }}
+            >
+              <Stack sx={{ textAlign: "center", alignItems: "center" }}>
+                <ScreenSearchDesktopOutlined sx={{ fontSize: "100px" }} />
                 <Typography variant="h6">
                   No chain found. Please add a chain.
                 </Typography>
               </Stack>
-            </Grid>)}
-        </Grid>)
-        : <Outlet/>
-      }
+            </Grid>
+          )}
+        </Grid>
+      ) : (
+        <Outlet />
+      )}
     </Box>
   );
-}
+};
 
 export default Chains;
