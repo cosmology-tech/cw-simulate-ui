@@ -263,9 +263,10 @@ function ChainsItem(props: IChainsItemProps) {
       ]}
       optionsExtras={[
         <AddChainPopover
+          key="add-chain"
           open={showAddChain}
           menuRef={menuEl}
-          onClose={() => {console.log(":D"); setShowAddChain(false)}}
+          onClose={() => {setShowAddChain(false)}}
         />
       ]}
     >
