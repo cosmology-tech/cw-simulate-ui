@@ -14,7 +14,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import { styled, SxProps, Theme } from "@mui/material/styles";
 import Toolbar from "@mui/material/Toolbar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import simulationState from "../atoms/simulationState";
 import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
 import { ORANGE_3, WHITE } from "../configs/variables";
@@ -126,78 +126,9 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
 interface IT1Drawer {}
 
 const T1Drawer = (props: IT1Drawer) => {
-  const param = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const chains = useRecoilValue(filteredChainsFromSimulationState);
-  const chainConfig = useRecoilValue(
-    filteredConfigsByChainId(param.id as string)
-  );
-  const chainNames: string[] = chains?.map(
-    (chain: { chainId: string }) => chain.chainId
-  ).sort((lhs, rhs) => lhs.localeCompare(rhs));
-  const [showAddChain, setShowAddChain] = React.useState(false);
-  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationState);
-  const [simulation, setSimulation] = useRecoilState(simulationState);
-
-  const handleDownloadSim = React.useCallback<React.MouseEventHandler>(
-    (e) => {
-      e.preventDefault();
-      downloadJSON(JSON.stringify(simulation, null, 2), "simulation.json");
-    },
-    [simulation]
-  );
-
-  const handleAddChain = React.useCallback(() => {
-    // TODO
-    console.log('TODO: add chain')
-  }, [])
-
-  const addChain = React.useCallback(
-    (chainName: string) => {
-      setShowAddChain(false);
-      if (chainNames?.includes(chainName)) {
-        setSnackbarNotification({
-          ...snackbarNotification,
-          open: true,
-          message: "A chain with such a name already exists",
-          severity: "error",
-        });
-        return;
-      }
-
-      setSimulation({
-        ...simulation,
-        simulation: {
-          ...simulation.simulation,
-          chains: [
-            ...simulation.simulation.chains,
-            {
-              chainId: chainName,
-              bech32Prefix: "terra",
-              accounts: [
-                {
-                  id: "alice",
-                  address: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
-                  balance: 100000000,
-                },
-              ],
-              codes: [],
-              states: [],
-            },
-          ],
-        },
-      });
-
-      creatChainForSimulation(window.CWEnv, {
-        chainId: chainName,
-        bech32Prefix: "terra",
-      } as ChainConfig);
-    },
-    [simulation, chainConfig, snackbarNotification]
-  );
-
+  
   const handleFocusNode = React.useCallback((e: React.SyntheticEvent, value: string) => {
     if (location.pathname === `/${value}`) return;
     navigate(`/${value}`);
@@ -234,23 +165,116 @@ const T1Drawer = (props: IT1Drawer) => {
           onNodeFocus={handleFocusNode}
           selected={location.pathname.substring(1)}
         >
-          <T1TreeItem nodeId="simulation" label="Simulation" />
-          <T1TreeItem
-            nodeId="chains"
-            label="Chains"
-            options={[
-              <MenuItem onClick={handleAddChain} key={'addChain'}>Add Chain</MenuItem>
-            ]}
-          >
-            {chainNames.map((chain, i) => (
-              <T1TreeItem nodeId={`chains/${chain}`} label={chain} key={i} />
-            ))}
-          </T1TreeItem>
+          <SimulationItem />
+          <ChainsItem />
         </TreeView>
       </Drawer>
     </Box>
   );
 };
+
+interface ISimulationItemProps {}
+function SimulationItem(props: ISimulationItemProps) {
+  const simulation = useRecoilValue(simulationState);
+  
+  const handleDownloadSim = React.useCallback<React.MouseEventHandler>(
+    (e) => {
+      e.preventDefault();
+      downloadJSON(JSON.stringify(simulation, null, 2), "simulation.json");
+    },
+    [simulation]
+  );
+  
+  return <T1TreeItem nodeId="simulation" label="Simulation" />
+}
+
+interface IChainsItemProps {
+  
+}
+function ChainsItem(props: IChainsItemProps) {
+  const param = useParams();
+  
+  const chains = useRecoilValue(filteredChainsFromSimulationState);
+  const chainConfig = useRecoilValue(filteredConfigsByChainId(param.id!));
+  const chainNames = chains
+    .map(({chainId}) => chainId)
+    .sort((lhs, rhs) => lhs.localeCompare(rhs));
+  const [showAddChain, setShowAddChain] = React.useState(false);
+  const [snackbarNotification, setSnackbarNotification] = useRecoilState(snackbarNotificationState);
+  const setSimulation = useSetRecoilState(simulationState);
+  
+  const [menuEl, setMenuEl] = React.useState<HTMLUListElement | null>(null);
+  
+  const handleAddChain = React.useCallback(() => {
+    setShowAddChain(true);
+  }, []);
+
+  const addChain = React.useCallback(
+    (chainName: string) => {
+      setShowAddChain(false);
+      if (chainNames.includes(chainName)) {
+        setSnackbarNotification({
+          ...snackbarNotification,
+          open: true,
+          message: "A chain with such a name already exists",
+          severity: "error",
+        });
+        return;
+      }
+
+      setSimulation(prev => ({
+        ...prev,
+        simulation: {
+          ...prev.simulation,
+          chains: [
+            ...prev.simulation.chains,
+            {
+              chainId: chainName,
+              bech32Prefix: "terra",
+              accounts: [
+                {
+                  id: "alice",
+                  address: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
+                  balance: 100000000,
+                },
+              ],
+              codes: [],
+              states: [],
+            },
+          ],
+        },
+      }));
+
+      creatChainForSimulation(window.CWEnv, {
+        chainId: chainName,
+        bech32Prefix: "terra",
+      } as ChainConfig);
+    },
+    [chainConfig, snackbarNotification]
+  );
+  
+  return (
+    <T1TreeItem
+      nodeId="chains"
+      label="Chains"
+      menuRef={setMenuEl}
+      options={[
+        <MenuItem key="add-chain" onClick={handleAddChain}>Add Chain</MenuItem>
+      ]}
+      optionsExtras={[
+        <AddChainPopover
+          open={showAddChain}
+          menuRef={menuEl}
+          onClose={() => {console.log(":D"); setShowAddChain(false)}}
+        />
+      ]}
+    >
+      {chainNames.map(chain => (
+        <T1TreeItem key={chain} nodeId={`chains/${chain}`} label={chain} />
+      ))}
+    </T1TreeItem>
+  )
+}
 
 interface ISubtreeIconProps {
   expanded?: boolean;
@@ -272,14 +296,19 @@ interface IT1TreeItemProps {
   nodeId: string;
   label: string;
   options?: React.ReactNode;
+  /** Additional menus or popovers for `options` items. */
+  optionsExtras?: React.ReactNode;
   icon?: React.ReactNode;
   sx?: SxProps<Theme>;
+  menuRef?: React.Ref<HTMLUListElement>;
 }
 function T1TreeItem(props: IT1TreeItemProps) {
   const {
     label,
     options,
+    optionsExtras,
     sx,
+    menuRef,
     ...rest
   } = props;
 
@@ -325,6 +354,9 @@ function T1TreeItem(props: IT1TreeItemProps) {
               </IconButton>
               <Menu
                 open={showOptions}
+                MenuListProps={{
+                  ref: menuRef,
+                }}
                 onClose={() => setShowOptions(false)}
                 anchorEl={optsBtnRef.current}
                 anchorOrigin={{
@@ -338,6 +370,7 @@ function T1TreeItem(props: IT1TreeItemProps) {
               >
                 {options}
               </Menu>
+              {optionsExtras}
             </Box>
           )}
         </Box>
@@ -354,6 +387,38 @@ function T1TreeItem(props: IT1TreeItemProps) {
       onMouseLeave={() => setHovering(false)}
       {...rest}
     />
+  )
+}
+
+interface IAddChainPopoverProps {
+  open: boolean;
+  menuRef: HTMLUListElement | React.RefObject<HTMLUListElement> | null;
+  onClose(): void;
+}
+function AddChainPopover(props: IAddChainPopoverProps) {
+  const {
+    open,
+    menuRef: anchorRef,
+    onClose,
+  } = props;
+  
+  const anchor = anchorRef
+    ? ('current' in anchorRef ? anchorRef.current : anchorRef)
+    : null;
+  
+  return (
+    <Popover
+      open={open}
+      anchorEl={anchor}
+      anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+      transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+      onClose={onClose}
+      sx={{ ml: 0.5 }}
+    >
+      <Box sx={{ p: 1 }}>
+        foobar
+      </Box>
+    </Popover>
   )
 }
 
