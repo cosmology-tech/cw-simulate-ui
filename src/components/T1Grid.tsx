@@ -72,17 +72,15 @@ const T1Grid = ({
               <Grid item xs={12} md={12} lg={12}>
                 <Item key={item + "item"}>
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    {
-                      useLinks === undefined || useLinks
-                        ?
-                          <T1Link to={item} sx={{ flexGrow: 1 }}>
-                            {itemText}
-                          </T1Link>
-                        :
-                          <div style={{ flexGrow: 1 }}>
-                            {itemText}
-                          </div>
-                    }
+                    {useLinks === undefined || useLinks
+                      ?
+                        <T1Link to={item} sx={{ flexGrow: 1 }}>
+                          {itemText}
+                        </T1Link>
+                      :
+                        <div style={{ flexGrow: 1 }}>
+                          {itemText}
+                        </div>}
                     {rightButton}
                     {hasRightDeleteButton && (
                       <IconButton
