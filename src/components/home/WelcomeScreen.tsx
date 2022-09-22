@@ -163,6 +163,7 @@ function NavIcon(props: INavIconProps) {
   return (
     <T1Link {...rest}>
       <Grid
+        container
         component='div'
         direction='column'
         sx={{
