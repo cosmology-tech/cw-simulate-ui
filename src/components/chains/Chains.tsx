@@ -100,6 +100,7 @@ const Chains = () => {
             padding: "10px",
           }}
           container
+          item
           xs={11}
           md={11}
           lg={10}

@@ -57,6 +57,7 @@ const T1Grid = ({
           placeItems: "center",
         }}
         container
+        item
         xs={12}
         md={12}
         lg={12}

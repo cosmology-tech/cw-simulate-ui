@@ -48,6 +48,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
       lg={12}
       xl={12}
       container
+      item
       sx={{
         display: "flex",
         alignItems: "center",
@@ -60,6 +61,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
         lg={10}
         xl={8}
         container
+        item
         justifyContent="center"
         sx={{border: "1px solid #eae5e5", borderRadius: "10px", width: "60%"}}
         className="outerGrid"
@@ -161,6 +163,7 @@ function NavIcon(props: INavIconProps) {
   return (
     <T1Link {...rest}>
       <Grid
+        container
         component='div'
         direction='column'
         sx={{

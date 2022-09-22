@@ -60,7 +60,7 @@ export default function Chain() {
         justifyContent: "center",
       }}
     >
-      <Grid container xs={11} md={11} lg={10} alignItems="center">
+      <Grid container item xs={11} md={11} lg={10} alignItems="center">
         <Grid item xs={3} md={3} lg={4}>
           <Typography variant="h5">{param.id}</Typography>
         </Grid>
