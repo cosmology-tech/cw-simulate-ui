@@ -239,11 +239,11 @@ const T1Drawer = (props: IT1Drawer) => {
             nodeId="chains"
             label="Chains"
             options={[
-              <MenuItem onClick={handleAddChain}>Add Chain</MenuItem>
+              <MenuItem onClick={handleAddChain} key={'addChain'}>Add Chain</MenuItem>
             ]}
           >
-            {chainNames.map(chain => (
-              <T1TreeItem nodeId={`chains/${chain}`} label={chain} />
+            {chainNames.map((chain, i) => (
+              <T1TreeItem nodeId={`chains/${chain}`} label={chain} key={i} />
             ))}
           </T1TreeItem>
         </TreeView>
