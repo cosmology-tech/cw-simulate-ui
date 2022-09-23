@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
 import "./styles/styles.scss";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import MenuDrawer, { drawerWidth } from "./components/MenuDrawer";
+import MenuDrawer, { DRAWER_WIDTH } from "./components/MenuDrawer";
 import Home from "./components/home/Home";
 import Simulation from "./components/simulation/Simulation";
 import Chains from "./components/chains/Chains";
@@ -30,7 +30,7 @@ root.render(
             sx={{
               flexGrow: 1,
               p: 3,
-              width: { sm: `calc(100% - ${drawerWidth}px)` },
+              width: { sm: `calc(100% - ${DRAWER_WIDTH}px)` },
               display: "flex",
               flexDirection: "column",
             }}
