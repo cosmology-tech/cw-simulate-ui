@@ -1,12 +1,9 @@
-import { Box, Popover, MenuItem } from "@mui/material";
-import { RefObject, useCallback, useState } from "react";
-import { useParams } from "react-router";
+import { Box, Popover, MenuItem, Typography, Divider, Input, Button } from "@mui/material";
+import { RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import simulationState from "../../atoms/simulationState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
-import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
-import { ChainConfig, creatChainForSimulation } from "../../utils/setupSimulation";
 import T1MenuItem from "./T1MenuItem";
 
 export interface IChainsItemProps {
@@ -14,61 +11,13 @@ export interface IChainsItemProps {
 }
 
 export default function ChainsItem(props: IChainsItemProps) {
-  const param = useParams();
-  
   const chains = useRecoilValue(filteredChainsFromSimulationState);
-  const chainConfig = useRecoilValue(filteredConfigsByChainId(param.id!));
   const chainNames = chains
     .map(({chainId}) => chainId)
     .sort((lhs, rhs) => lhs.localeCompare(rhs));
   const [showAddChain, setShowAddChain] = useState(false);
-  const setSimulation = useSetRecoilState(simulationState);
-  const setNotification = useNotification();
   
   const [menuEl, setMenuEl] = useState<HTMLUListElement | null>(null);
-  
-  const handleAddChain = useCallback(() => {
-    setShowAddChain(true);
-  }, []);
-
-  const addChain = useCallback(
-    (chainName: string) => {
-      setShowAddChain(false);
-      if (chainNames.includes(chainName)) {
-        setNotification("A chain with such a name already exists", { severity: "error" });
-        return;
-      }
-
-      setSimulation(prev => ({
-        ...prev,
-        simulation: {
-          ...prev.simulation,
-          chains: [
-            ...prev.simulation.chains,
-            {
-              chainId: chainName,
-              bech32Prefix: "terra",
-              accounts: [
-                {
-                  id: "alice",
-                  address: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
-                  balance: 100000000,
-                },
-              ],
-              codes: [],
-              states: [],
-            },
-          ],
-        },
-      }));
-
-      creatChainForSimulation(window.CWEnv, {
-        chainId: chainName,
-        bech32Prefix: "terra",
-      } as ChainConfig);
-    },
-    [chainConfig]
-  );
   
   return (
     <T1MenuItem
@@ -76,14 +25,17 @@ export default function ChainsItem(props: IChainsItemProps) {
       label="Chains"
       menuRef={setMenuEl}
       options={[
-        <MenuItem key="add-chain" onClick={handleAddChain}>Add Chain</MenuItem>
+        <MenuItem key="add-chain" onClick={() => {setShowAddChain(true)}}>Add Chain</MenuItem>
       ]}
-      optionsExtras={[
+      optionsExtras={({ close }) => [
         <AddChainPopover
           key="add-chain"
           open={showAddChain}
           menuRef={menuEl}
-          onClose={() => {setShowAddChain(false)}}
+          onClose={() => {
+            setShowAddChain(false);
+            close();
+          }}
         />
       ]}
     >
@@ -110,6 +62,56 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     ? ('current' in anchorRef ? anchorRef.current : anchorRef)
     : null;
   
+  const chainNames = useChainNames(true);
+  const setSimulation = useSetRecoilState(simulationState);
+  const setNotification = useNotification();
+  
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  const addChain = useCallback(() => {
+    const chainName = inputRef.current?.value;
+    if (!chainName || !isValidChainName(chainName)) {
+      setNotification("Please specify a valid chain name.", { severity: "error" });
+      return;
+    }
+    
+    if (chainNames.includes(chainName)) {
+      setNotification("A chain with such a name already exists", { severity: "error" });
+      return;
+    }
+
+    setSimulation(prev => ({
+      ...prev,
+      simulation: {
+        ...prev.simulation,
+        chains: [
+          ...prev.simulation.chains,
+          {
+            chainId: chainName,
+            bech32Prefix: "terra",
+            accounts: [
+              {
+                id: "alice",
+                address: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
+                balance: 100000000,
+              },
+            ],
+            codes: [],
+            states: [],
+          },
+        ],
+      },
+    }));
+    
+    // CWEnv is currently being restructured
+    // creatChainForSimulation(window.CWEnv, {
+    //   chainId: chainName,
+    //   bech32Prefix: "terra",
+    // } as ChainConfig);
+    
+    onClose();
+  }, []);
+  
   return (
     <Popover
       open={open}
@@ -119,8 +121,22 @@ function AddChainPopover(props: IAddChainPopoverProps) {
       onClose={onClose}
       sx={{ ml: 0.5 }}
     >
-      <Box sx={{ p: 1 }}>
-        foobar
+      <Box sx={{ display: 'flex', flexDirection: 'column', p: 1, maxWidth: 460 }}>
+        <Typography variant="h6" sx={{ textAlign: 'center' }}>
+          Add a new Chain
+        </Typography>
+        <Divider />
+        <Typography variant="overline">
+          Enter a valid chain name, e.g. "phoenix-1" or "osmosis-1":
+        </Typography>
+        <Input
+          inputRef={inputRef}
+          defaultValue={getDefaultChainName(chainNames)}
+          sx={{ mb: 1 }}
+        />
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button onClick={addChain}>Submit</Button>
+        </Box>
       </Box>
     </Popover>
   )
@@ -131,3 +147,14 @@ function getDefaultChainName(chains: string[]) {
   while (chains?.includes(`untitled-${i}`)) ++i;
   return `untitled-${i}`;
 }
+
+function useChainNames(sorted = false) {
+  const names = useRecoilValue(filteredChainsFromSimulationState)
+    .map(({ chainId }) => chainId);
+  return useMemo(() => {
+    if (sorted) names.sort((lhs, rhs) => lhs.localeCompare(rhs));
+    return names;
+  }, [names]);
+}
+
+const isValidChainName = (name: string) => !!name.match(/^.+-\d+$/);
