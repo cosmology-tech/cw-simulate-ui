@@ -1,4 +1,4 @@
-import { Box, Popover, MenuItem, Typography, Divider, Input, Button } from "@mui/material";
+import { Box, Popover, MenuItem, Typography, Divider, Input, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import simulationState from "../../atoms/simulationState";
@@ -11,11 +11,9 @@ export interface IChainsItemProps {
 }
 
 export default function ChainsItem(props: IChainsItemProps) {
-  const chains = useRecoilValue(filteredChainsFromSimulationState);
-  const chainNames = chains
-    .map(({chainId}) => chainId)
-    .sort((lhs, rhs) => lhs.localeCompare(rhs));
+  const chainNames = useChainNames(true);
   const [showAddChain, setShowAddChain] = useState(false);
+  const [showDelChain, setShowDelChain] = useState<string | undefined>();
   
   const [menuEl, setMenuEl] = useState<HTMLUListElement | null>(null);
   
@@ -40,7 +38,22 @@ export default function ChainsItem(props: IChainsItemProps) {
       ]}
     >
       {chainNames.map(chain => (
-        <T1MenuItem key={chain} nodeId={`chains/${chain}`} label={chain} />
+        <T1MenuItem
+          key={chain}
+          nodeId={`chains/${chain}`}
+          label={chain}
+          options={[
+            <MenuItem key="remove-chain" onClick={() => {setShowDelChain(chain)}}>Remove</MenuItem>
+          ]}
+          optionsExtras={({ close }) => [
+            <DeleteChainDialog
+              key="remove-chain"
+              chainId={chain}
+              open={showDelChain === chain}
+              onClose={() => {setShowDelChain(undefined)}}
+            />
+          ]}
+        />
       ))}
     </T1MenuItem>
   )
@@ -62,7 +75,7 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     ? ('current' in anchorRef ? anchorRef.current : anchorRef)
     : null;
   
-  const chainNames = useChainNames(true);
+  const chainNames = useChainNames(false);
   const setSimulation = useSetRecoilState(simulationState);
   const setNotification = useNotification();
   
@@ -110,7 +123,7 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     // } as ChainConfig);
     
     onClose();
-  }, []);
+  }, [chainNames]);
   
   return (
     <Popover
@@ -139,6 +152,47 @@ function AddChainPopover(props: IAddChainPopoverProps) {
         </Box>
       </Box>
     </Popover>
+  )
+}
+
+interface IDeleteChainDialogProps {
+  chainId: string;
+  open: boolean;
+  onClose(): void;
+}
+function DeleteChainDialog(props: IDeleteChainDialogProps) {
+  const {
+    chainId,
+    ...rest
+  } = props;
+  
+  const setSimulation = useSetRecoilState(simulationState);
+  
+  const deleteChain = useCallback(() => {
+    setSimulation(prev => ({
+      ...prev,
+      simulation: {
+        ...prev.simulation,
+        chains: [
+          ...prev.simulation.chains.filter(chain => chain.chainId !== chainId),
+        ],
+      },
+    }));
+    
+    rest.onClose();
+  }, []);
+  
+  return (
+    <Dialog {...rest}>
+      <DialogTitle>Confirm Chain Removal</DialogTitle>
+      <DialogContent>
+        Are you absolutely certain you wish to remove chain {chainId}?
+      </DialogContent>
+      <DialogActions>
+        <Button variant="outlined" onClick={() => {rest.onClose()}}>Cancel</Button>
+        <Button variant="contained" color="error" onClick={deleteChain}>Delete</Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 
