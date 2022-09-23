@@ -2,6 +2,7 @@ import { CWChain, CWContractCode, CWContractInstance, CWSimulateEnv, MsgInfo } f
 import { useRecoilState, useRecoilValue } from "recoil";
 import { recoilPersist } from "recoil-persist";
 import { atom } from "recoil";
+import { BasicKVIterStorage, IStorage, IBackend, VMInstance } from '@terran-one/cosmwasm-vm-js';
 
 const { persistAtom } = recoilPersist({ key: "cwSimulateEnvState" });
 const cwSimulateEnvState = atom<CWSimulateEnv>({
@@ -45,14 +46,14 @@ export function useCreateContractInstance() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
   return async function (chain: CWChain, wasmByteCode: Buffer): Promise<CWContractInstance> {
-    const newSimulateEnv = cloneSimulateEnv(simulateEnv);
-    const newChain = cloneChain(chain);
+    const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
+    const _chain_ = cloneChain(chain);
 
-    const code = newChain.storeCode(wasmByteCode);
-    const contract = await newChain.instantiateContract(code.codeId);
+    const code = _chain_.storeCode(wasmByteCode);
+    const contract = await _chain_.instantiateContract(code.codeId);
 
-    newSimulateEnv.chains[newChain.chainId] = cloneChain(newChain);
-    setSimulateEnv(newSimulateEnv);
+    _simulateEnv_.chains[_chain_.chainId] = cloneChain(_chain_);
+    setSimulateEnv(_simulateEnv_);
 
     return contract;
   }
@@ -67,53 +68,75 @@ export function useInstantiate() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
   return function(chainId: string, contract: CWContractInstance, info: MsgInfo, message: any) {
-    const newContract = cloneContractInstance(simulateEnv.chains[chainId], contract);
-    newContract.instantiate(info, message);
+    const _contract_ = cloneContractInstance(contract, simulateEnv.chains[chainId]);
+    _contract_.instantiate(info, message);
 
-    const newSimulateEnv = cloneSimulateEnv(simulateEnv);
-    newSimulateEnv.chains[chainId].contracts[newContract.contractAddress] = newContract;
+    const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
+    _simulateEnv_.chains[chainId].contracts[_contract_.contractAddress] = _contract_;
 
-    setSimulateEnv(newSimulateEnv);
+    setSimulateEnv(_simulateEnv_);
   }
 }
 
+// CWSimulateEnv cloning helpers (deep-ish copy)
+
 function cloneSimulateEnv(simulateEnv: CWSimulateEnv): CWSimulateEnv {
-  const newEnv = new CWSimulateEnv();
+  const _simulateEnv_ = new CWSimulateEnv();
 
   for (const chainId in simulateEnv.chains) {
-    const chain = simulateEnv.chains[chainId];
-    newEnv.chains[chainId] = cloneChain(chain);
+    _simulateEnv_.chains[chainId] = cloneChain(simulateEnv.chains[chainId]);
   }
 
-  return newEnv;
+  return _simulateEnv_;
 }
 
 function cloneChain(chain: CWChain): CWChain {
-  const newChain = new CWChain(chain.chainId, chain.bech32Prefix, chain.height, chain.time);
+  const _chain_ = new CWChain(chain.chainId, chain.bech32Prefix, chain.height, chain.time);
 
   for (const codeId in chain.codes) {
-    const code = chain.codes[codeId];
-    newChain.codes[codeId] = new CWContractCode(code.codeId, code.wasmBytecode);
+    _chain_.codes[codeId] = cloneCWContractCode(chain.codes[codeId]);
   }
 
   for (const contractId in chain.contracts) {
-    const code = chain.contracts[contractId];
-    newChain.contracts[contractId] = cloneContractInstance(chain, code);
+    _chain_.contracts[contractId] = cloneContractInstance(chain.contracts[contractId], _chain_);
   }
 
-  return newChain;
+  return _chain_;
 }
 
-function cloneContractInstance(chain: CWChain, contractInstance: CWContractInstance): CWContractInstance {
-  const instance = new CWContractInstance(
-    chain,
+function cloneContractInstance(contractInstance: CWContractInstance, _chain_: CWChain): CWContractInstance {
+  const _contractInstance_ = new CWContractInstance(
+    _chain_,
     contractInstance.contractAddress,
-    contractInstance.contractCode,
-    contractInstance.storage
+    cloneCWContractCode(contractInstance.contractCode),
+    cloneBasicKVIterStorage(contractInstance.storage)
   );
-  instance.vm = contractInstance.vm;
-  instance.executionHistory = contractInstance.executionHistory;
-  instance.instantiate = contractInstance.instantiate;
 
-  return instance;
+  _contractInstance_.executionHistory = cloneExecutionHistory(contractInstance.executionHistory);
+  _contractInstance_.vm = cloneVMInstance(contractInstance.vm, _contractInstance_.vm.backend);
+
+  return _contractInstance_;
+}
+
+function cloneExecutionHistory(executionHistory: any[]) {
+  return [...executionHistory];
+}
+
+function cloneCWContractCode(code: CWContractCode) {
+  return new CWContractCode(code.codeId, code.wasmBytecode);
+}
+
+function cloneBasicKVIterStorage(storage: IStorage) {
+  if (storage instanceof BasicKVIterStorage)
+    return new BasicKVIterStorage(storage.iterators);
+
+  throw new Error(`IStorage implementation ${typeof storage} not supported`)
+}
+
+function cloneVMInstance(vm: VMInstance, _backend_: IBackend) {
+  const _vm_ = new VMInstance(_backend_);
+  _vm_.PREFIX = vm.PREFIX;
+  _vm_.bech32 = vm.bech32;
+  _vm_.instance = vm.instance; // WebAssembly backend
+  return _vm_;
 }
