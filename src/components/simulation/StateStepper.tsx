@@ -1,16 +1,24 @@
 import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
-import StepButton from "@mui/material/StepButton";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { Paper, StepContent, StepLabel, Zoom } from "@mui/material";
+import {
+  Divider,
+  Grid,
+  Paper,
+  Slide,
+  StepContent,
+  StepLabel,
+  Typography,
+  Zoom,
+} from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { JSONTree } from "react-json-tree";
-import { data } from "../../data/dummy";
+import { executionHistory } from "../../data/dummy";
+// import { executionHistory } from "../../data/test";
 
 const steps = [
   "Instantiate",
-  "Execute",
   "Execute",
   "Execute",
   "Execute",
@@ -49,48 +57,114 @@ const theme = {
 export default function StateStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
-
+  const containerRef = React.useRef();
   const handleStep = (step: number) => () => {
     setActiveStep(step);
   };
-
+  // const { request, response } = executionHistory[0];
   return (
-    <Stepper
-      nonLinear
-      activeStep={activeStep}
-      orientation="vertical"
-      sx={{ height: "40vh" }}
-    >
-      {steps.map((label, index) => (
-        <Step key={label} onClick={handleStep(index)}>
-          <StepLabel>
-            <div style={{ display: "flex", alignItems: "flex-start" }}>
-              {activeStep === index && isOpen ? (
-                <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
-              ) : (
-                <ArrowRightIcon onClick={() => setIsOpen(true)} />
-              )}
-              {label}
-            </div>
-          </StepLabel>
-          <StepContent>
-            {activeStep === index && isOpen && (
-              <Zoom in={true} style={{ transitionDelay: "520ms" }}>
-                <Paper
-                  elevation={3}
-                  sx={{
-                    height: "14vh",
-                    overflow: "scroll",
-                    textAlign: "left",
-                  }}
+    <Stepper nonLinear activeStep={activeStep} orientation="vertical">
+      {executionHistory.map((historyObj, index) => {
+        const { request, response } = historyObj;
+        const label = Object.keys(request)[2];
+        return (
+          <Step key={label} onClick={handleStep(index)}>
+            <StepLabel ref={containerRef}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                {activeStep === index && isOpen ? (
+                  <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
+                ) : (
+                  <ArrowRightIcon onClick={() => setIsOpen(true)} />
+                )}
+                {label}
+              </div>
+            </StepLabel>
+            <StepContent>
+              {activeStep === index && isOpen && (
+                <Slide
+                  direction="down"
+                  in={true}
+                  container={containerRef.current}
                 >
-                  <JSONTree data={data} theme={theme} invertTheme={false} />
-                </Paper>
-              </Zoom>
-            )}
-          </StepContent>
-        </Step>
-      ))}
+                  <Paper
+                    elevation={3}
+                    sx={{
+                      height: "30vh",
+                      overflow: "scroll",
+                      textAlign: "left",
+                      display: "flex",
+                      flexDirection: "column",
+                      borderTop: "1px solid rgb(0, 0, 0, 0.12)",
+                    }}
+                  >
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        position: "relative",
+                        overflow: "scroll",
+                        mb: 1,
+                      }}
+                    >
+                      <div style={{ position: "sticky", top: 0 }}>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            position: "sticky",
+                          }}
+                        >
+                          Request
+                        </Typography>
+                        <Divider orientation="horizontal" />
+                      </div>
+                      <div style={{ overflow: "scroll" }}>
+                        <JSONTree
+                          data={request}
+                          theme={theme}
+                          invertTheme={false}
+                        />
+                      </div>
+                    </Grid>
+                    <Divider orientation="vertical" flexItem />
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        overflow: "scroll",
+                        position: "relative",
+                      }}
+                    >
+                      <div style={{ position: "sticky", top: 0 }}>
+                        <Divider orientation="horizontal" />
+                        <Typography
+                          variant="caption"
+                          sx={{ display: "flex", justifyContent: "center" }}
+                        >
+                          Response
+                        </Typography>
+                        <Divider orientation="horizontal" />
+                      </div>
+                      <div style={{ overflow: "scroll" }}>
+                        <JSONTree
+                          data={response}
+                          theme={theme}
+                          invertTheme={false}
+                        />
+                      </div>
+                    </Grid>
+                  </Paper>
+                </Slide>
+              )}
+            </StepContent>
+          </Step>
+        );
+      })}
     </Stepper>
   );
 }

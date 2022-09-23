@@ -33,6 +33,7 @@ root.render(
               width: { sm: `calc(100% - ${drawerWidth}px)` },
               display: "flex",
               flexDirection: "column",
+              overflow: "scroll",
             }}
           >
             <Toolbar />
