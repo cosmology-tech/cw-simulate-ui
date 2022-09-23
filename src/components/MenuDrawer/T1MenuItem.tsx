@@ -1,18 +1,23 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Box, IconButton, Menu, SxProps, Theme, Typography } from "@mui/material";
 import TreeItem from "@mui/lab/TreeItem";
-import { MouseEventHandler, useCallback, useState, useRef } from "react";
+import { MouseEventHandler, useCallback, useState, useRef, ReactNode, useMemo } from "react";
 
 export interface IT1TreeItemProps {
-  children?: React.ReactNode;
+  children?: ReactNode;
   nodeId: string;
   label: string;
-  options?: React.ReactNode;
+  options?: Options;
   /** Additional menus or popovers for `options` items. */
-  optionsExtras?: React.ReactNode;
-  icon?: React.ReactNode;
+  optionsExtras?: Options;
+  icon?: ReactNode;
   sx?: SxProps<Theme>;
   menuRef?: React.Ref<HTMLUListElement>;
+}
+
+type Options = ReactNode | ((api: OptionsAPI) => ReactNode)
+export interface OptionsAPI {
+  close(): void;
 }
 
 export default function T1TreeItem(props: IT1TreeItemProps) {
@@ -34,6 +39,10 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
     e.stopPropagation();
     setShowOptions(true);
   }, []);
+  
+  const api = useMemo(() => ({
+    close: () => {setShowOptions(false)},
+  }), [])
 
   return (
     <TreeItem
@@ -80,9 +89,9 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
                   horizontal: 'left',
                 }}
               >
-                {options}
+                {typeof options === 'function' ? options(api) : options}
               </Menu>
-              {optionsExtras}
+              {typeof optionsExtras === 'function' ? optionsExtras(api) : optionsExtras}
             </Box>
           )}
         </Box>
