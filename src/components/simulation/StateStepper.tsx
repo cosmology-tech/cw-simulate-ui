@@ -64,11 +64,11 @@ export default function StateStepper() {
   // const { request, response } = executionHistory[0];
   return (
     <Stepper nonLinear activeStep={activeStep} orientation="vertical">
-      {executionHistory.map((historyObj, index) => {
+      {executionHistory.map((historyObj: {request: any, response: any}, index) => {
         const { request, response } = historyObj;
         const label = Object.keys(request)[2];
         return (
-          <Step key={label} onClick={handleStep(index)}>
+          <Step key={`${label}${index}`} onClick={handleStep(index)}>
             <StepLabel ref={containerRef}>
               <div style={{ display: "flex", alignItems: "center" }}>
                 {activeStep === index && isOpen ? (
