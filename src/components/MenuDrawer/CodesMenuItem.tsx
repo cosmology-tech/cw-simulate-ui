@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import filteredCodesByChainId from "../../selectors/filteredCodesByChainId";
 import CodeMenuItem from "./CodeMenuItem";
@@ -11,7 +12,7 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
     chainId,
   } = props;
   
-  const codes = useRecoilValue(filteredCodesByChainId(chainId)).codes;
+  const codes = useCodes(chainId, true);
   
   return (
     <T1MenuItem
@@ -27,4 +28,13 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
       ))}
     </T1MenuItem>
   )
+}
+
+function useCodes(chainId: string, sorted = false) {
+  const codes = useRecoilValue(filteredCodesByChainId(chainId)).codes;
+  return useMemo(() => {
+    return sorted
+      ? [...codes].sort((lhs, rhs) => lhs.id.localeCompare(rhs.id))
+      : codes;
+  }, [codes]);
 }
