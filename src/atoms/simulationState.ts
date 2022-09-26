@@ -1,5 +1,4 @@
 import { atom } from "recoil";
-import { recoilPersist } from "recoil-persist";
 
 export type Simulation = {
   simulation: {
@@ -35,11 +34,9 @@ export type Instance = {
   message: unknown;
 }
 
-const {persistAtom} = recoilPersist({key: "simulationState"});
 const simulationState = atom<Simulation>({
   key: 'simulationState',
   default: {simulation: {chains: []}},
-  effects_UNSTABLE: [persistAtom]
 });
 
 export default simulationState;
