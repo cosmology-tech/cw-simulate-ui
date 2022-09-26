@@ -25,9 +25,9 @@ export function useCreateChainForSimulation() {
       simulateEnv = new CWSimulateEnv();
     }
 
-    const env = cloneSimulateEnv(simulateEnv);
-    const chain = env.createChain(chainConfig);
-    setSimulateEnv(env);
+    const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
+    const chain = _simulateEnv_.createChain(chainConfig);
+    setSimulateEnv(_simulateEnv_);
 
     return chain;
   }, [simulateEnv, setSimulateEnv]);
