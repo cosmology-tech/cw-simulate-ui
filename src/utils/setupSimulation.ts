@@ -16,8 +16,6 @@ export interface ChainConfig {
 
 /**
  * Create a chain for a given chain config.
- * @param env
- * @param chainConfig
  */
 export function useCreateChainForSimulation() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
@@ -37,8 +35,6 @@ export function useCreateChainForSimulation() {
 
 /**
  * Create a contract instance for a given chain.
- * @param chain
- * @param wasmByteCode
  */
 export function useCreateContractInstance() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
@@ -57,11 +53,17 @@ export function useCreateContractInstance() {
   }, [simulateEnv, setSimulateEnv]);
 }
 
+/**
+ * Gets the chains defined in the current environment.
+ */
 export function useChains() {
   let simulateEnv = useRecoilValue(cwSimulateEnvState);
   return simulateEnv.chains;
 }
 
+/**
+ * Instantiates a contract.
+ */
 export function useInstantiate() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
