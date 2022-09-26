@@ -1,7 +1,8 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import simulationState from "../../atoms/simulationState";
+import CodesMenuItem from "./CodesMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
 export interface IChainMenuItemProps {
@@ -18,6 +19,7 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
     <T1MenuItem
       key={chainId}
       nodeId={`chains/${chainId}`}
+      link={`/chains/${chainId}`}
       label={chainId}
       options={[
         <MenuItem key="remove-chain" onClick={() => {setShowDelChain(true)}}>Remove</MenuItem>
@@ -33,7 +35,9 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
           }}
         />
       ]}
-    />
+    >
+      <CodesMenuItem chainId={chainId} />
+    </T1MenuItem>
   )
 }
 

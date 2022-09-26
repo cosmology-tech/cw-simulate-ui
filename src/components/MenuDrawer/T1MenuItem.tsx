@@ -1,12 +1,14 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Box, IconButton, Menu, SxProps, Theme, Typography } from "@mui/material";
 import TreeItem from "@mui/lab/TreeItem";
-import { MouseEventHandler, useCallback, useState, useRef, ReactNode, useMemo } from "react";
+import { MouseEventHandler, useCallback, useState, useRef, ReactNode, useMemo, useEffect, useContext } from "react";
+import { MenuDrawerContext } from "./T1Drawer";
 
 export interface IT1TreeItemProps {
   children?: ReactNode;
   nodeId: string;
   label: string;
+  link?: boolean | string;
   options?: Options;
   /** Additional menus or popovers for `options` items. */
   optionsExtras?: Options;
@@ -23,6 +25,7 @@ export interface OptionsAPI {
 export default function T1TreeItem(props: IT1TreeItemProps) {
   const {
     label,
+    link,
     options,
     optionsExtras,
     sx,
@@ -33,6 +36,7 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
   const [showOptions, setShowOptions] = useState(false);
   const rootRef = useRef<Element>(null);
   const optsBtnRef = useRef<HTMLButtonElement>(null);
+  const menuApi = useContext(MenuDrawerContext);
 
   const handleClickOptions = useCallback<MouseEventHandler>(e => {
     e.preventDefault();
@@ -42,7 +46,18 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
   
   const api = useMemo(() => ({
     close: () => {setShowOptions(false)},
-  }), [])
+  }), []);
+  
+  useEffect(() => {
+    menuApi.register({
+      nodeId: rest.nodeId,
+      link,
+    });
+    
+    return () => {
+      menuApi.unregister(rest.nodeId);
+    }
+  }, [link]);
 
   return (
     <TreeItem

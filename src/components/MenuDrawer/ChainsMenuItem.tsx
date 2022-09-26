@@ -14,7 +14,6 @@ export interface IChainsItemProps {
 export default function ChainsItem(props: IChainsItemProps) {
   const chainNames = useChainNames(true);
   const [showAddChain, setShowAddChain] = useState(false);
-  const [showDelChain, setShowDelChain] = useState<string | undefined>();
   
   const [menuEl, setMenuEl] = useState<HTMLUListElement | null>(null);
   
@@ -22,6 +21,7 @@ export default function ChainsItem(props: IChainsItemProps) {
     <T1MenuItem
       nodeId="chains"
       label="Chains"
+      link
       menuRef={setMenuEl}
       options={[
         <MenuItem key="add-chain" onClick={() => {setShowAddChain(true)}}>Add Chain</MenuItem>
