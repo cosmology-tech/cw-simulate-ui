@@ -6,6 +6,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { useNotification } from "../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../atoms/executeQueryTabState";
 import { Button, Grid, Typography } from "@mui/material";
+import { jsonErrorState } from "../atoms/jsonErrorState";
 
 interface IProps {
   response: JSON | undefined;
@@ -35,6 +36,7 @@ export const ExecuteQuery = ({
   const { MOCK_ENV, MOCK_INFO } = Config;
   const [payload, setPayload] = useState("");
   const executeQueryTab = useRecoilValue(executeQueryTabState);
+  const jsonError = useRecoilValue(jsonErrorState);
   const addState = (stateBefore: any, res: any) => {
     const stateObj: IState = {
       chainStateBefore: stateBefore,
@@ -61,7 +63,9 @@ export const ExecuteQuery = ({
         throw res.read_json().error;
       }
     } catch (err) {
-      setNotification("Something went wrong while executing.", { severity: "error" });
+      setNotification("Something went wrong while executing.", {
+        severity: "error",
+      });
     }
   };
   const query = () => {
@@ -71,7 +75,9 @@ export const ExecuteQuery = ({
       setResponse(JSON.parse(window.atob(res.read_json().ok)));
       setNotification("Query was successful!");
     } catch (err) {
-      setNotification("Something went wrong while querying.", { severity: "error" });
+      setNotification("Something went wrong while querying.", {
+        severity: "error",
+      });
     }
   };
   const onRunHandler = () => {
@@ -120,7 +126,7 @@ export const ExecuteQuery = ({
           sx={{ mt: 2 }}
           variant={"contained"}
           onClick={onRunHandler}
-          disabled={!payload.length}
+          disabled={!payload.length || jsonError.length > 0}
         >
           <Typography variant="button">Run</Typography>
         </Button>
