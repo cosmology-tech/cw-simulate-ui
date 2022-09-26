@@ -1,5 +1,5 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Box, IconButton, Menu, SxProps, Theme, Typography } from "@mui/material";
+import { Box, IconButton, Menu, styled, SxProps, Theme, Tooltip, Typography } from "@mui/material";
 import TreeItem from "@mui/lab/TreeItem";
 import { MouseEventHandler, useCallback, useState, useRef, ReactNode, useMemo, useEffect, useContext } from "react";
 import { MenuDrawerContext } from "./T1Drawer";
@@ -7,8 +7,10 @@ import { MenuDrawerContext } from "./T1Drawer";
 export interface IT1TreeItemProps {
   children?: ReactNode;
   nodeId: string;
-  label: string;
+  label: NonNullable<ReactNode>;
   link?: boolean | string;
+  /** If true, overflowing label text will be hidden behind ellipsis. */
+  textEllipsis?: boolean;
   options?: Options;
   /** Additional menus or popovers for `options` items. */
   optionsExtras?: Options;
@@ -26,6 +28,7 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
   const {
     label,
     link,
+    textEllipsis = false,
     options,
     optionsExtras,
     sx,
@@ -70,7 +73,7 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
           }}
           className="T1TreeItem-label"
         >
-          <Typography variant="body1">{label}</Typography>
+          <Label ellipsis={textEllipsis}>{label}</Label>
           {options && (
             <Box
               className="T1TreeItem-optionsButton"
@@ -121,5 +124,37 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
       ]}
       {...rest}
     />
+  )
+}
+
+interface ILabelProps {
+  children: NonNullable<ReactNode>;
+  ellipsis: boolean;
+}
+
+function Label(props: ILabelProps) {
+  const {
+    children,
+    ellipsis,
+  } = props;
+  
+  if (!ellipsis) {
+    return (
+      <Typography variant="body1">{children}</Typography>
+    )
+  }
+  return (
+    <Tooltip title={children} placement="right">
+      <Typography
+        variant="body1"
+        sx={{
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        }}
+      >
+        {children}
+      </Typography>
+    </Tooltip>
   )
 }

@@ -15,6 +15,7 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
     <T1MenuItem
       label={code.id}
       nodeId={code.id}
+      textEllipsis
     />
   )
 }
