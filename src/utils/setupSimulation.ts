@@ -1,14 +1,11 @@
 import { CWChain, CWContractCode, CWContractInstance, CWSimulateEnv, MsgInfo } from "@terran-one/cw-simulate";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { recoilPersist } from "recoil-persist";
 import { atom } from "recoil";
 import { BasicKVIterStorage, IStorage, IBackend, VMInstance } from '@terran-one/cosmwasm-vm-js';
 
-const { persistAtom } = recoilPersist({ key: "cwSimulateEnvState" });
 const cwSimulateEnvState = atom<CWSimulateEnv>({
   key: "CWSimulateEnvState",
-  default: <CWSimulateEnv>{},
-  effects_UNSTABLE: [persistAtom]
+  default: <CWSimulateEnv>{}
 });
 
 export interface ChainConfig {
