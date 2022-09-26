@@ -21,14 +21,9 @@ export function useCreateChainForSimulation() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
   return useCallback((chainConfig: ChainConfig): CWChain => {
-    if (!simulateEnv.chains) {
-      simulateEnv = new CWSimulateEnv();
-    }
-
     const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
     const chain = _simulateEnv_.createChain(chainConfig);
     setSimulateEnv(_simulateEnv_);
-
     return chain;
   }, [simulateEnv, setSimulateEnv]);
 };
@@ -130,7 +125,7 @@ function cloneBasicKVIterStorage(storage: IStorage) {
   if (storage instanceof BasicKVIterStorage)
     return new BasicKVIterStorage(storage.iterators);
 
-  throw new Error(`IStorage implementation ${typeof storage} not supported`)
+  throw new Error(`IStorage implementation ${typeof storage} not supported`);
 }
 
 function cloneVMInstance(vm: VMInstance, _backend_: IBackend) {
