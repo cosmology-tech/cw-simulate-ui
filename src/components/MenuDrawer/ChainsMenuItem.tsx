@@ -4,6 +4,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import simulationState from "../../atoms/simulationState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
+import ChainMenuItem from "./ChainMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
 export interface IChainsItemProps {
@@ -38,22 +39,7 @@ export default function ChainsItem(props: IChainsItemProps) {
       ]}
     >
       {chainNames.map(chain => (
-        <T1MenuItem
-          key={chain}
-          nodeId={`chains/${chain}`}
-          label={chain}
-          options={[
-            <MenuItem key="remove-chain" onClick={() => {setShowDelChain(chain)}}>Remove</MenuItem>
-          ]}
-          optionsExtras={({ close }) => [
-            <DeleteChainDialog
-              key="remove-chain"
-              chainId={chain}
-              open={showDelChain === chain}
-              onClose={() => {setShowDelChain(undefined)}}
-            />
-          ]}
-        />
+        <ChainMenuItem chainId={chain} />
       ))}
     </T1MenuItem>
   )
@@ -152,47 +138,6 @@ function AddChainPopover(props: IAddChainPopoverProps) {
         </Box>
       </Box>
     </Popover>
-  )
-}
-
-interface IDeleteChainDialogProps {
-  chainId: string;
-  open: boolean;
-  onClose(): void;
-}
-function DeleteChainDialog(props: IDeleteChainDialogProps) {
-  const {
-    chainId,
-    ...rest
-  } = props;
-  
-  const setSimulation = useSetRecoilState(simulationState);
-  
-  const deleteChain = useCallback(() => {
-    setSimulation(prev => ({
-      ...prev,
-      simulation: {
-        ...prev.simulation,
-        chains: [
-          ...prev.simulation.chains.filter(chain => chain.chainId !== chainId),
-        ],
-      },
-    }));
-    
-    rest.onClose();
-  }, []);
-  
-  return (
-    <Dialog {...rest}>
-      <DialogTitle>Confirm Chain Removal</DialogTitle>
-      <DialogContent>
-        Are you absolutely certain you wish to remove chain {chainId}?
-      </DialogContent>
-      <DialogActions>
-        <Button variant="outlined" onClick={() => {rest.onClose()}}>Cancel</Button>
-        <Button variant="contained" color="error" onClick={deleteChain}>Delete</Button>
-      </DialogActions>
-    </Dialog>
   )
 }
 
