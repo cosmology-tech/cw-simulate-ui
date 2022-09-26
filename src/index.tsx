@@ -17,7 +17,6 @@ const root = ReactDOM.createRoot(document.getElementById("root")!);
 // Check if value exists in localStorage. If exists, redirect to /simulation, else redirect to /home
 const isSimulationExist = localStorage.getItem("simulationState");
 
-// TODO: Populate window.CWEnv with the data from simulationState/local storage
 root.render(
   <React.StrictMode>
     <RecoilRoot>
