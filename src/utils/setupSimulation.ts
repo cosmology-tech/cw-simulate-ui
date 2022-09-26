@@ -2,6 +2,7 @@ import { CWChain, CWContractCode, CWContractInstance, CWSimulateEnv, MsgInfo } f
 import { useRecoilState, useRecoilValue } from "recoil";
 import { atom } from "recoil";
 import { BasicKVIterStorage, IStorage, IBackend, VMInstance } from '@terran-one/cosmwasm-vm-js';
+import { useCallback } from "react";
 
 const cwSimulateEnvState = atom<CWSimulateEnv>({
   key: "CWSimulateEnvState",
@@ -21,7 +22,7 @@ export interface ChainConfig {
 export function useCreateChainForSimulation() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
-  return (chainConfig: ChainConfig): CWChain => {
+  return useCallback((chainConfig: ChainConfig): CWChain => {
     if (!simulateEnv.chains) {
       simulateEnv = new CWSimulateEnv();
     }
@@ -31,7 +32,7 @@ export function useCreateChainForSimulation() {
     setSimulateEnv(env);
 
     return chain;
-  }
+  }, [simulateEnv, setSimulateEnv]);
 };
 
 /**
@@ -42,7 +43,7 @@ export function useCreateChainForSimulation() {
 export function useCreateContractInstance() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
-  return async function (chain: CWChain, wasmByteCode: Buffer): Promise<CWContractInstance> {
+  return useCallback(async (chain: CWChain, wasmByteCode: Buffer): Promise<CWContractInstance> => {
     const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
     const _chain_ = cloneChain(chain);
 
@@ -53,7 +54,7 @@ export function useCreateContractInstance() {
     setSimulateEnv(_simulateEnv_);
 
     return contract;
-  }
+  }, [simulateEnv, setSimulateEnv]);
 }
 
 export function useChains() {
@@ -64,7 +65,7 @@ export function useChains() {
 export function useInstantiate() {
   let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
-  return function(chainId: string, contract: CWContractInstance, info: MsgInfo, message: any) {
+  return useCallback((chainId: string, contract: CWContractInstance, info: MsgInfo, message: any) => {
     const _contract_ = cloneContractInstance(contract, simulateEnv.chains[chainId]);
     _contract_.instantiate(info, message);
 
@@ -72,7 +73,7 @@ export function useInstantiate() {
     _simulateEnv_.chains[chainId].contracts[_contract_.contractAddress] = _contract_;
 
     setSimulateEnv(_simulateEnv_);
-  }
+  }, [simulateEnv, setSimulateEnv]);
 }
 
 // CWSimulateEnv cloning helpers (deep-ish copy)
