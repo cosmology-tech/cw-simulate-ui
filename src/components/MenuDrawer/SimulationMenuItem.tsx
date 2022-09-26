@@ -1,24 +1,12 @@
-import React, { ComponentType, MouseEventHandler, ReactNode, useCallback } from "react";
+import React, { MouseEventHandler, useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import simulationState from "../../atoms/simulationState";
 import { downloadJSON } from "../../utils/fileUtils";
 import T1MenuItem from "./T1MenuItem";
 
-export interface ISimulationItemProps {
-  /** Component/element type to use as root item. Defaults to `T1MenuItem` */
-  component?: ComponentType<ISimulationItemComponentProps>;
-}
-
-export interface ISimulationItemComponentProps {
-  nodeId: string;
-  label: string;
-}
+export interface ISimulationItemProps {}
 
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
-  const {
-    component: Component = T1MenuItem,
-  } = props;
-  
   const simulation = useRecoilValue(simulationState);
   
   const handleDownloadSim = useCallback<MouseEventHandler>(
@@ -29,7 +17,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
     [simulation]
   );
   
-  return <Component nodeId="simulation" label="Simulation" />
+  return <T1MenuItem nodeId="simulation" label="Simulation" link />
 });
 
 export default SimulationMenuItem;
