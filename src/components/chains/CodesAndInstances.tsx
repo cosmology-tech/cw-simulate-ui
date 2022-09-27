@@ -13,7 +13,7 @@ import T1Grid from "../T1Grid";
 import { useRecoilState, useRecoilValue } from "recoil";
 import filteredCodesByChainId from "../../selectors/filteredCodesByChainId";
 import { useParams } from "react-router-dom";
-import simulationState from "../../atoms/simulationState";
+import simulationState, { cloneSimulation, Simulation } from "../../atoms/simulationState";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useChains, useCreateContractInstance, useInstantiate } from "../../utils/setupSimulation";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
@@ -22,14 +22,9 @@ import FileUpload from "../FileUpload";
 
 const CodesAndInstances = () => {
   const param = useParams();
-  const codesAndInstances = useRecoilValue(
-    filteredCodesByChainId(param.id as string)
-  );
-  const codes = codesAndInstances?.codes?.map((code) => code.id);
-  const instances = codesAndInstances?.codes
-    ?.flatMap((code) => code.instances)
-    ?.map((instance) => instance.id)
-    .filter((instance) => !!instance);
+  const codesAndInstances = useRecoilValue(filteredCodesByChainId(param.id as string));
+  const codes = codesAndInstances?.codes?.map(code => code.id);
+  const instances = codesAndInstances?.codes?.flatMap(code => code.instances)?.map(instance => instance.id).filter(instance => !!instance);
   const [simulation, setSimulation] = useRecoilState(simulationState);
   const instantiate = useInstantiate();
   const simulateEnvChains = useChains();
@@ -39,109 +34,58 @@ const CodesAndInstances = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const itemRef = useRef<any>();
-  const placeholder = {
-    count: 0,
-  };
-  const handleClickOpen = () => {
-    setOpenDialog(true);
-  };
 
-  const handleClickOpenUploadDialog = () => {
-    setOpenUploadDialog(true);
-  };
+  const placeholder = { count: 0 };
 
-  const handleClose = () => {
-    setOpenDialog(false);
-  };
-
-  const handleCloseUploadDialog = () => {
-    setOpenUploadDialog(false);
-  };
-
-  const handleInstantiate = () => {
+  const handleInstantiate = async () => {
     if (payload.length === 0) {
       setNotification("Payload cannot be empty", { severity: "error" });
       return;
     }
+
     const contractId = itemRef.current?.innerText;
-    const binary = codesAndInstances.codes
-      ?.find((code: any) => code.id === contractId)
-      ?.wasmBinaryB64.split("data:application/wasm;base64,")[1];
+    const binary = codesAndInstances.codes?.find((code: any) => code.id === contractId)?.wasmBinaryB64.split("data:application/wasm;base64,")[1];
     if (!binary) {
       setNotification("Failed to extract WASM bytecode", { severity: "error" });
       return;
     }
 
     const wasmBytes = base64ToArrayBuffer(binary);
-    const newInstantiateMsg =
-      payload.length === 0 ? placeholder : JSON.parse(payload);
+    const newInstantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
+
     for (const chainId in simulateEnvChains) {
       if (chainId === param.id) {
-        createContractInstance(
-          simulateEnvChains[chainId],
-          wasmBytes as Buffer
-        ).then((contract) => {
-          try {
-            instantiate(
-              chainId,
-              contract,
-              {
-                sender: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
-                funds: [],
-              },
-              newInstantiateMsg
-            );
-          } catch (e) {
-            setNotification(`Unable to instantiate with ${e}`, { severity: "error" });
-            console.error(e);
-          }
-        });
+        const contract = await createContractInstance(simulateEnvChains[chainId], wasmBytes as Buffer);
+        const info = {
+          sender: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
+          funds: [],
+        };
+
+        try {
+          instantiate(chainId, contract, info, newInstantiateMsg);
+        } catch (e) {
+          setNotification(`Unable to instantiate with ${e}`, { severity: "error" });
+          console.error(e);
+        }
       }
     }
 
     const contractInstances = simulateEnvChains[param.id as string].contracts;
     const allInstances: any[] = [];
+
     for (const key in contractInstances) {
       // Build instances array for the contract
       allInstances.push({
         id: contractInstances[key].contractAddress,
-        message:
-          contractInstances[key].executionHistory[0].request.instantiateMsg,
+        message: contractInstances[key].executionHistory[0].request.instantiateMsg,
       });
     }
-    setSimulation({
-      ...simulation,
-      simulation: {
-        ...simulation.simulation,
-        chains: simulation.simulation.chains.map((chain: any) => {
-          if (chain.chainId === param.id) {
-            return {
-              ...chain,
-              codes: chain.codes.map((code: any) => {
-                if (code.id === contractId) {
-                  return {
-                    ...code,
-                    instances: allInstances,
-                  };
-                }
-                return code;
-              }),
-            };
-          }
-          return chain;
-        }),
-      },
-    });
+
+    const _simulation_ = cloneSimulation(simulation, param.id!, contractId, allInstances);
+
+    setSimulation(_simulation_);
     setNotification("Contract instance created");
     setOpenDialog(false);
-  };
-
-  const setCodeMirrorPayload = (val: string) => {
-    setPayload(val);
-  };
-
-  const handleUpload = () => {
-    setOpenUploadDialog(false);
   };
 
   useEffect(() => {
@@ -155,7 +99,7 @@ const CodesAndInstances = () => {
           <Button
             variant="contained"
             sx={{ borderRadius: 2 }}
-            onClick={handleClickOpenUploadDialog}
+            onClick={() => setOpenUploadDialog(true)}
           >
             <Typography variant="button">Upload Code</Typography>
           </Button>
@@ -169,7 +113,7 @@ const CodesAndInstances = () => {
         rightButton={
           <Button
             variant="contained"
-            onClick={handleClickOpen}
+            onClick={() => setOpenDialog(true)}
             sx={{ borderRadius: 2 }}
           >
             <Typography variant="button">Instantiate</Typography>
@@ -178,7 +122,7 @@ const CodesAndInstances = () => {
         hasRightDeleteButton={true}
         useLinks={false}
       />
-      <Dialog open={openDialog} onClose={handleClose}>
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Enter Instantiate Message</DialogTitle>
         <DialogContent sx={{ height: "20vh" }}>
           <DialogContentText>
@@ -187,15 +131,15 @@ const CodesAndInstances = () => {
           <JsonCodeMirrorEditor
             jsonValue={""}
             placeholder={placeholder}
-            setPayload={setCodeMirrorPayload}
+            setPayload={(val: string) => setPayload(val)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
           <Button onClick={handleInstantiate}>Add</Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={openUploadDialog} onClose={handleCloseUploadDialog}>
+      <Dialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)}>
         <DialogTitle>Upload Code</DialogTitle>
         <DialogContent>
           <FileUpload
@@ -206,8 +150,8 @@ const CodesAndInstances = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseUploadDialog}>Cancel</Button>
-          <Button onClick={handleUpload}>Add</Button>
+          <Button onClick={() => setOpenUploadDialog(false)}>Cancel</Button>
+          <Button onClick={() => setOpenUploadDialog(false)}>Add</Button>
         </DialogActions>
       </Dialog>
     </>

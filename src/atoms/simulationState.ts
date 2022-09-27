@@ -34,9 +34,33 @@ export type Instance = {
   message: unknown;
 }
 
-const simulationState = atom<Simulation>({
+export function cloneSimulation(simulation: Simulation, chainId: string, contractId: any, allInstances: any[]) {
+  return {
+    ...simulation,
+    simulation: {
+      ...simulation.simulation,
+      chains: simulation.simulation.chains.map((chain: any) => {
+        if (chain.chainId === chainId) {
+          return {
+            ...chain,
+            codes: chain.codes.map((code: any) => {
+              if (code.id === contractId) {
+                return {
+                  ...code,
+                  instances: allInstances,
+                };
+              }
+              return code;
+            }),
+          };
+        }
+        return chain;
+      }),
+    },
+  };
+}
+
+export default atom<Simulation>({
   key: 'simulationState',
   default: {simulation: {chains: []}},
 });
-
-export default simulationState;
