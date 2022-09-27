@@ -5,13 +5,19 @@ import "../../index.css";
 const Home = () => {
   const [wasmBuffers, setWasmBuffers] = React.useState<ArrayBuffer[]>([]);
 
-  const handler = function(event: any) {
-    event.preventDefault();
-    event.returnValue = '';
-    return null;
-  };
+  React.useEffect(() => {
+    const handler = function(event: any) {
+      event.preventDefault();
+      event.returnValue = '';
+      return null;
+    };
 
-  window.addEventListener('beforeunload', handler);
+    window.addEventListener('beforeunload', handler);
+
+    return () => {
+      //window.removeEventListener('beforeunload', handler);
+    }
+  }, []);
 
   return (
     <WelcomeScreen
