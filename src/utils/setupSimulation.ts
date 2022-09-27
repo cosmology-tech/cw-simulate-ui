@@ -18,7 +18,7 @@ export interface ChainConfig {
  * Create a chain for a given chain config.
  */
 export function useCreateChainForSimulation() {
-  let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
+  const [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
   return useCallback((chainConfig: ChainConfig): CWChain => {
     const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
@@ -32,7 +32,7 @@ export function useCreateChainForSimulation() {
  * Create a contract instance for a given chain.
  */
 export function useCreateContractInstance() {
-  let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
+  const [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
   return useCallback(async (chain: CWChain, wasmByteCode: Buffer): Promise<CWContractInstance> => {
     const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
@@ -49,18 +49,10 @@ export function useCreateContractInstance() {
 }
 
 /**
- * Gets the chains defined in the current environment.
- */
-export function useChains() {
-  let simulateEnv = useRecoilValue(cwSimulateEnvState);
-  return simulateEnv.chains;
-}
-
-/**
  * Instantiates a contract.
  */
 export function useInstantiate() {
-  let [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
+  const [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
   return useCallback((chainId: string, contract: CWContractInstance, info: MsgInfo, message: any) => {
     const _contract_ = cloneContractInstance(contract, simulateEnv.chains[chainId]);
@@ -71,6 +63,52 @@ export function useInstantiate() {
 
     setSimulateEnv(_simulateEnv_);
   }, [simulateEnv, setSimulateEnv]);
+}
+
+/**
+ * Gets the chains defined in the current environment.
+ */
+export function useChains() {
+  const simulateEnv = useRecoilValue(cwSimulateEnvState);
+  return simulateEnv.chains;
+}
+
+/**
+ * Gets the chains defined in the current environment.
+ */
+export function useCodeIds(chainId: string) {
+  const simulateEnv = useRecoilValue(cwSimulateEnvState);
+  const codeMap = simulateEnv.chains[chainId].codes;
+  console.log(codeMap)
+
+  const codes: string[] = [];
+  for (const codeId in codeMap) {
+    codes.push(codeId);
+  }
+
+  return codes;
+}
+
+/**
+ * Gets the chains defined in the current environment.
+ */
+export function useInstanceAddresses(chainId: string) {
+  const simulateEnv = useRecoilValue(cwSimulateEnvState);
+  const instanceMap = simulateEnv.chains[chainId].contracts;
+  console.log(instanceMap)
+
+  const instances: string[] = [];
+  for (const instanceAddress in instanceMap) {
+    instances.push(instanceAddress);
+  }
+
+  return instances;
+}
+
+export function useWasmBytecode(chainId: string, codeId: number) {
+  const simulateEnv = useRecoilValue(cwSimulateEnvState);
+  const codeMap = simulateEnv.chains[chainId].codes;
+  return codeMap[codeId].wasmBytecode.toString('base64').split("data:application/wasm;base64,")[1];
 }
 
 // CWSimulateEnv cloning helpers (deep-ish copy)

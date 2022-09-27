@@ -10,22 +10,22 @@ import {
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import T1Grid from "../T1Grid";
-import { useRecoilState, useRecoilValue } from "recoil";
-import filteredCodesByChainId from "../../selectors/filteredCodesByChainId";
+import { useRecoilState } from "recoil";
 import { useParams } from "react-router-dom";
-import simulationState, { cloneSimulation, Simulation } from "../../atoms/simulationState";
+import simulationState, { cloneSimulation } from "../../atoms/simulationState";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { useChains, useCreateContractInstance, useInstantiate } from "../../utils/setupSimulation";
+import { useChains, useCreateContractInstance, useInstantiate, useCodeIds, useInstanceAddresses, useWasmBytecode } from "../../utils/setupSimulation";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import FileUpload from "../FileUpload";
 
 const CodesAndInstances = () => {
   const param = useParams();
-  const codesAndInstances = useRecoilValue(filteredCodesByChainId(param.id as string));
-  const codes = codesAndInstances?.codes?.map(code => code.id);
-  const instances = codesAndInstances?.codes?.flatMap(code => code.instances)?.map(instance => instance.id).filter(instance => !!instance);
+
   const [simulation, setSimulation] = useRecoilState(simulationState);
+  const codeIds = useCodeIds(param.id!);
+  const instanceAddresses = useInstanceAddresses(param.id!);
+
   const instantiate = useInstantiate();
   const simulateEnvChains = useChains();
   const createContractInstance = useCreateContractInstance();
@@ -43,8 +43,8 @@ const CodesAndInstances = () => {
       return;
     }
 
-    const contractId = itemRef.current?.innerText;
-    const binary = codesAndInstances.codes?.find((code: any) => code.id === contractId)?.wasmBinaryB64.split("data:application/wasm;base64,")[1];
+    const contractId = itemRef.current?.innerText as string;
+    const binary = useWasmBytecode(param.id!, parseInt(contractId));
     if (!binary) {
       setNotification("Failed to extract WASM bytecode", { severity: "error" });
       return;
@@ -108,8 +108,8 @@ const CodesAndInstances = () => {
       <T1Grid
         childRef={itemRef}
         handleDeleteItem={() => {}}
-        children={instances}
-        items={codes}
+        children={instanceAddresses}
+        items={codeIds}
         rightButton={
           <Button
             variant="contained"
