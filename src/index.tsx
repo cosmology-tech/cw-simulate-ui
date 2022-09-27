@@ -11,6 +11,7 @@ import SnackbarNotification from "./components/SnackbarNotification";
 import Chain from "./components/chains/Chain";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
+import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
@@ -21,6 +22,7 @@ root.render(
   <React.StrictMode>
     <RecoilRoot>
       <BrowserRouter>
+        <PageRefreshConfirmation />
         <SnackbarNotification />
         <Box sx={{ display: "flex", height: "100%" }}>
           <MenuDrawer />
