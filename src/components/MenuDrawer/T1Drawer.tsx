@@ -1,10 +1,10 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Box, Divider, Drawer, ListItemButton, styled } from "@mui/material";
 import TreeView from "@mui/lab/TreeView";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router";
 import Logo from "./Logo";
-import ChainsItem from "./ChainsMenuItem";
+import ChainsItem, { useChainNames } from "./ChainsMenuItem";
 import SimulationMenuItem from "./SimulationMenuItem";
 
 type MenuDrawerAPI = {
@@ -24,7 +24,7 @@ type MenuDrawerData = {
 
 export const MenuDrawerContext = React.createContext<MenuDrawerAPI>(null as any);
 
-const DrawerHeader = styled("div")(({ theme }) => ({
+const DrawerHeader = styled("div")(({theme}) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
@@ -41,10 +41,11 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
   const {
     width: drawerWidth,
   } = props;
-  
+
+  const chainNames = useChainNames(true);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const data = useRef<MenuDrawerData>({});
   const api = useMemo<MenuDrawerAPI>(() => ({
     register({nodeId, ...nodeData}) {
@@ -56,12 +57,20 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
       delete data.current[nodeId];
     },
   }), []);
-  
+
+  const buildDefaultExpanded = useCallback(() => {
+    const defaultExpanded = ["chains", "codes", "instances"];
+    for (const chain of chainNames) {
+      defaultExpanded.push(`chains/${chain}`);
+    }
+    return defaultExpanded;
+  }, [chainNames]);
+
   const handleFocusNode = useCallback((e: React.SyntheticEvent, nodeId: string) => {
     const nodeData = data.current[nodeId];
     if (!nodeData)
       throw new Error(`No data for node ID ${nodeId}`);
-    
+
     const link = extractNodeLink(nodeId, nodeData);
     if (link && location.pathname !== link)
       navigate(link);
@@ -82,13 +91,14 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
         open
       >
         <DrawerHeader>
-          <Logo LinkComponent={ListItemButton} />
+          <Logo LinkComponent={ListItemButton}/>
         </DrawerHeader>
-        <Divider />
+        <Divider/>
         <MenuDrawerContext.Provider value={api}>
           <TreeView
-            defaultExpandIcon={<SubtreeIcon />}
-            defaultCollapseIcon={<SubtreeIcon expanded />}
+            defaultExpandIcon={<SubtreeIcon/>}
+            defaultCollapseIcon={<SubtreeIcon expanded/>}
+            defaultExpanded={buildDefaultExpanded()}
             sx={{
               marginTop: 2,
               '& .MuiTreeItem-content': {
@@ -98,8 +108,8 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
             onNodeFocus={handleFocusNode}
             selected={location.pathname.substring(1)}
           >
-            <SimulationMenuItem />
-            <ChainsItem />
+            <SimulationMenuItem/>
+            <ChainsItem/>
           </TreeView>
         </MenuDrawerContext.Provider>
       </Drawer>
@@ -114,7 +124,7 @@ interface ISubtreeIconProps {
 }
 
 /** Subtree expand/collapse icon w/ built-in simple CSS animation */
-function SubtreeIcon({ expanded }: ISubtreeIconProps) {
+function SubtreeIcon({expanded}: ISubtreeIconProps) {
   return (
     <ChevronRightIcon
       sx={{

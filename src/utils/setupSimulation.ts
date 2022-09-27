@@ -1,13 +1,14 @@
-import { CWChain, CWContractCode, CWContractInstance, CWSimulateEnv, MsgInfo } from "@terran-one/cw-simulate";
+import {
+  CWChain,
+  CWContractCode,
+  CWContractInstance,
+  CWSimulateEnv,
+  MsgInfo
+} from "@terran-one/cw-simulate";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { atom } from "recoil";
-import { BasicKVIterStorage, IStorage, IBackend, VMInstance } from '@terran-one/cosmwasm-vm-js';
+import { BasicKVIterStorage, IBackend, IStorage, VMInstance } from '@terran-one/cosmwasm-vm-js';
 import { useCallback } from "react";
-
-const cwSimulateEnvState = atom<CWSimulateEnv>({
-  key: "CWSimulateEnvState",
-  default: <CWSimulateEnv>{}
-});
+import { cwSimulateEnvState } from "../atoms/cwSimulateEnvState";
 
 export interface ChainConfig {
   chainId: string;
@@ -26,7 +27,7 @@ export function useCreateChainForSimulation() {
     setSimulateEnv(_simulateEnv_);
     return chain;
   }, [simulateEnv, setSimulateEnv]);
-};
+}
 
 /**
  * Create a contract instance for a given chain.

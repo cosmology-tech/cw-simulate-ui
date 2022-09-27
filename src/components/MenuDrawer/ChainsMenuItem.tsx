@@ -1,4 +1,4 @@
-import { Box, Popover, MenuItem, Typography, Divider, Input, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Box, Button, Divider, Input, MenuItem, Popover, Typography } from "@mui/material";
 import { RefObject, useCallback, useMemo, useRef, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import simulationState from "../../atoms/simulationState";
@@ -8,15 +8,15 @@ import ChainMenuItem from "./ChainMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
 export interface IChainsItemProps {
-  
+
 }
 
 export default function ChainsItem(props: IChainsItemProps) {
   const chainNames = useChainNames(true);
   const [showAddChain, setShowAddChain] = useState(false);
-  
+
   const [menuEl, setMenuEl] = useState<HTMLUListElement | null>(null);
-  
+
   return (
     <T1MenuItem
       nodeId="chains"
@@ -38,8 +38,8 @@ export default function ChainsItem(props: IChainsItemProps) {
         />
       ]}
     >
-      {chainNames.map(chain => (
-        <ChainMenuItem chainId={chain} />
+      {chainNames.map((chain, index) => (
+        <ChainMenuItem chainId={chain} key={index}/>
       ))}
     </T1MenuItem>
   )
@@ -56,24 +56,24 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     menuRef: anchorRef,
     onClose,
   } = props;
-  
+
   const anchor = anchorRef
     ? ('current' in anchorRef ? anchorRef.current : anchorRef)
     : null;
-  
+
   const chainNames = useChainNames(false);
   const setSimulation = useSetRecoilState(simulationState);
   const setNotification = useNotification();
-  
+
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   const addChain = useCallback(() => {
     const chainName = inputRef.current?.value;
     if (!chainName || !isValidChainName(chainName)) {
       setNotification("Please specify a valid chain name.", { severity: "error" });
       return;
     }
-    
+
     if (chainNames.includes(chainName)) {
       setNotification("A chain with such a name already exists", { severity: "error" });
       return;
@@ -101,16 +101,16 @@ function AddChainPopover(props: IAddChainPopoverProps) {
         ],
       },
     }));
-    
+
     // CWEnv is currently being restructured
     // creatChainForSimulation(window.CWEnv, {
     //   chainId: chainName,
     //   bech32Prefix: "terra",
     // } as ChainConfig);
-    
+
     onClose();
   }, [chainNames]);
-  
+
   return (
     <Popover
       open={open}
@@ -147,7 +147,7 @@ function getDefaultChainName(chains: string[]) {
   return `untitled-${i}`;
 }
 
-function useChainNames(sorted = false) {
+export function useChainNames(sorted = false) {
   const names = useRecoilValue(filteredChainsFromSimulationState)
     .map(({ chainId }) => chainId);
   return useMemo(() => {

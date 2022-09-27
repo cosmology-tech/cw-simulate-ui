@@ -1,7 +1,16 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Box, IconButton, Menu, styled, SxProps, Theme, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, Menu, SxProps, Theme, Tooltip, Typography } from "@mui/material";
 import TreeItem from "@mui/lab/TreeItem";
-import { MouseEventHandler, useCallback, useState, useRef, ReactNode, useMemo, useEffect, useContext } from "react";
+import {
+  MouseEventHandler,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { MenuDrawerContext } from "./T1Drawer";
 
 export interface IT1TreeItemProps {
@@ -46,17 +55,17 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
     e.stopPropagation();
     setShowOptions(true);
   }, []);
-  
+
   const api = useMemo(() => ({
     close: () => {setShowOptions(false)},
   }), []);
-  
+
   useEffect(() => {
     menuApi.register({
       nodeId: rest.nodeId,
       link,
     });
-    
+
     return () => {
       menuApi.unregister(rest.nodeId);
     }
@@ -137,7 +146,7 @@ function Label(props: ILabelProps) {
     children,
     ellipsis,
   } = props;
-  
+
   if (!ellipsis) {
     return (
       <Typography variant="body1">{children}</Typography>
