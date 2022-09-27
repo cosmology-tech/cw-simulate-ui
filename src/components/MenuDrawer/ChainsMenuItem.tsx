@@ -1,9 +1,8 @@
-import { Box, Popover, MenuItem, Typography, Divider, Input, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import { RefObject, useCallback, useMemo, useRef, useState } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import simulationState from "../../atoms/simulationState";
+import { Box, Popover, MenuItem, Typography, Divider, Input, Button } from "@mui/material";
+import { RefObject, useCallback, useRef, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
+import { useCreateChainForSimulation } from "../../utils/setupSimulation";
+import { getDefaultChainName, isValidChainName, useChainNames } from "../../utils/simUtils";
 import ChainMenuItem from "./ChainMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
@@ -11,7 +10,7 @@ export interface IChainsItemProps {
 
 }
 
-export default function ChainsItem(props: IChainsItemProps) {
+export default function ChainsMenuItem(props: IChainsItemProps) {
   const chainNames = useChainNames(true);
   const [showAddChain, setShowAddChain] = useState(false);
 
@@ -62,9 +61,9 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     : null;
 
   const chainNames = useChainNames(false);
-  const setSimulation = useSetRecoilState(simulationState);
   const setNotification = useNotification();
-
+  const createChain = useCreateChainForSimulation();
+  
   const inputRef = useRef<HTMLInputElement>(null);
 
   const addChain = useCallback(() => {
@@ -78,36 +77,12 @@ function AddChainPopover(props: IAddChainPopoverProps) {
       setNotification("A chain with such a name already exists", { severity: "error" });
       return;
     }
-
-    setSimulation(prev => ({
-      ...prev,
-      simulation: {
-        ...prev.simulation,
-        chains: [
-          ...prev.simulation.chains,
-          {
-            chainId: chainName,
-            bech32Prefix: "terra",
-            accounts: [
-              {
-                id: "alice",
-                address: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
-                balance: 100000000,
-              },
-            ],
-            codes: [],
-            states: [],
-          },
-        ],
-      },
-    }));
-
-    // CWEnv is currently being restructured
-    // creatChainForSimulation(window.CWEnv, {
-    //   chainId: chainName,
-    //   bech32Prefix: "terra",
-    // } as ChainConfig);
-
+    
+    createChain({
+      chainId: chainName,
+      bech32Prefix: 'terra',
+    });
+    
     onClose();
   }, [chainNames]);
 
@@ -140,20 +115,3 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     </Popover>
   )
 }
-
-function getDefaultChainName(chains: string[]) {
-  let i = 1;
-  while (chains?.includes(`untitled-${i}`)) ++i;
-  return `untitled-${i}`;
-}
-
-function useChainNames(sorted = false) {
-  const names = useRecoilValue(filteredChainsFromSimulationState)
-    .map(({ chainId }) => chainId);
-  return useMemo(() => {
-    if (sorted) names.sort((lhs, rhs) => lhs.localeCompare(rhs));
-    return names;
-  }, [names]);
-}
-
-const isValidChainName = (name: string) => !!name.match(/^.+-\d+$/);

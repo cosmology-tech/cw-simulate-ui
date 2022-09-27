@@ -15,9 +15,6 @@ import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
-// Check if value exists in localStorage. If exists, redirect to /simulation, else redirect to /home
-const isSimulationExist = localStorage.getItem("simulationState");
-
 root.render(
   <React.StrictMode>
     <RecoilRoot>
@@ -42,11 +39,7 @@ root.render(
               <Route
                 index
                 element={
-                  isSimulationExist ? (
-                    <Navigate replace to="/simulation" />
-                  ) : (
-                    <Home />
-                  )
+                  <Home />
                 }
               />
               <Route path={"/simulation"} element={<Simulation />}>

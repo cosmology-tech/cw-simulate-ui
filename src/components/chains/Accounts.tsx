@@ -13,14 +13,12 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TableLayout from "./TableLayout";
-import { useParams } from "react-router-dom";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import filteredAccountsByChainId from "../../selectors/filteredAccountsByChainId";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import simulationState from "../../atoms/simulationState";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
+import simulationMetaState, { selectAccountsMeta } from "../../atoms/simulationMetaState";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
@@ -28,14 +26,17 @@ const DEFAULT_VALUE = JSON.stringify({
   "id": "bob"
 }, null, 2);
 
-const Accounts = () => {
-  const param = useParams();
+export interface IAccountsProps {
+  chainId: string;
+}
+
+const Accounts = ({chainId}: IAccountsProps) => {
   const [openDialog, setOpenDialog] = useState(false);
-  const [simulation, setSimulation] = useRecoilState(simulationState);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
 
-  const accounts = useRecoilValue(filteredAccountsByChainId(param.id as string)).accounts;
+  const setSimulationMeta = useSetRecoilState(simulationMetaState);
+  const accounts = Object.values(useRecoilValue(selectAccountsMeta(chainId)));
   const data = useMemo(() =>
       accounts.map(account => ({...account, balance: account.balance + ''})),
     [accounts]
@@ -69,41 +70,37 @@ const Accounts = () => {
     }
 
     // TODO: enforce bech32Prefix
-
-    setSimulation({
-      ...simulation,
-      simulation: {
-        ...simulation.simulation,
-        chains: simulation.simulation.chains.map((chain: any) => {
-          if (chain.chainId !== param.id)
-            return chain;
-          return {
-            ...chain,
-            accounts: [...(chain.accounts || []), JSON.parse(payload)],
-          };
-        }),
+    setSimulationMeta(prev => ({
+      ...prev,
+      [chainId]: {
+        ...prev[chainId],
+        accounts: {
+          ...prev[chainId].accounts,
+          [json.id]: {
+            id: json.id as string,
+            address: json.address as string,
+            balance: 100000000,
+          },
+        },
       },
-    });
+    }));
 
     setNotification("Account added successfully");
     setOpenDialog(false);
   }
 
   const handleDeleteAccount = (id: string) => {
-    setSimulation({
-      ...simulation,
-      simulation: {
-        ...simulation.simulation,
-        chains: simulation.simulation.chains.map(chain => {
-          if (chain.chainId !== param.id) return chain;
-          return {
-            ...chain,
-            accounts: chain.accounts.filter(acc => acc.id !== id),
-          };
-        }),
+    setSimulationMeta(prev => ({
+      ...prev,
+      [chainId]: {
+        ...prev[chainId],
+        accounts: Object.fromEntries(
+          Object.entries(prev[chainId].accounts).filter(
+            ([accountId, account]) => accountId !== id
+          )
+        ),
       },
-    });
-
+    }));
     setNotification("Account successfully removed");
   }
 
