@@ -1,17 +1,23 @@
 import { selectorFamily } from "recoil";
-import simulationState from "../atoms/simulationState";
+import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import { ChainConfig } from "../utils/setupSimulation";
 
 const filteredConfigsByChainId = selectorFamily({
   key: "filteredConfigsByChainId",
-  get: (chainId: string) => ({get}) => {
-    const simulation = get(simulationState);
-    // @ts-ignore
-    return simulation.simulation?.chains?.filter((chain) => chain.chainId === chainId).map((chain) => {
+  get: (chainId: string) => ({get}): ChainConfig => {
+    const simulation = get(cwSimulateEnvState);
+    if (!(chainId in simulation.chains)) {
       return {
-        chainId: chain.chainId,
-        bech32Prefix: chain.bech32Prefix
+        chainId: 'invalid-1',
+        bech32Prefix: 'invalid',
       };
-    })[0];
+    }
+    
+    const { bech32Prefix } = simulation.chains[chainId];
+    return {
+      chainId,
+      bech32Prefix,
+    };
   }
 });
 

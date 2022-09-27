@@ -1,6 +1,5 @@
-import { useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import filteredCodesByChainId from "../../selectors/filteredCodesByChainId";
+import { selectCodesMeta } from "../../atoms/simulationMetaState";
 import CodeMenuItem from "./CodeMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
@@ -12,29 +11,20 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
     chainId,
   } = props;
   
-  const codes = useCodes(chainId, true);
+  const codes = useRecoilValue(selectCodesMeta(chainId));
   
   return (
     <T1MenuItem
       label="Codes"
       nodeId={`${chainId}/codes`}
     >
-      {codes.map(code => (
+      {Object.values(codes).map(code => (
         <CodeMenuItem
-          key={code.id}
+          key={code.codeId}
           chainId={chainId}
           code={code}
         />
       ))}
     </T1MenuItem>
   )
-}
-
-function useCodes(chainId: string, sorted = false) {
-  const codes = useRecoilValue(filteredCodesByChainId(chainId)).codes;
-  return useMemo(() => {
-    return sorted
-      ? [...codes].sort((lhs, rhs) => lhs.id.localeCompare(rhs.id))
-      : codes;
-  }, [codes]);
 }

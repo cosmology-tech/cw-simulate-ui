@@ -1,24 +1,33 @@
 import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
-import simulationState from "../atoms/simulationState";
+import simulationMetaState from "../atoms/simulationMetaState";
 import { useNotification } from "../atoms/snackbarNotificationState";
-import { validateSimulationJSON } from "../utils/fileUtils";
-import { useParams } from "react-router-dom";
-import { Chain, Code } from "../atoms/simulationState";
+import { base64ToArrayBuffer } from "../utils/fileUtils";
+import { useCreateChainForSimulation, useStoreCode } from "../utils/setupSimulation";
+import { getDefaultChainName } from "../utils/simUtils";
+import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
 
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
 interface IProps {
   dropzoneText?: string;
   fileTypes: string[];
+  /** Optional chain ID. If none specified, creates a new untitled chain. */
+  chainId?: string;
 }
 
-const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
+const FileUpload = ({
+  dropzoneText,
+  fileTypes,
+  chainId,
+}: IProps) => {
   const setIsFileUploaded = useSetRecoilState(fileUploadedState);
-  const [simulation, setSimulation] = useRecoilState(simulationState);
-  const param = useParams();
+  const setSimulationMeta = useSetRecoilState(simulationMetaState);
+  const chains = useRecoilValue(filteredChainsFromSimulationState) ?? {};
+  const createChain = useCreateChainForSimulation();
+  const storeCode = useStoreCode();
   const snackbarProps: SnackbarProps = {
     anchorOrigin: {
       vertical: "top",
@@ -34,29 +43,53 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
     const file: File = files[0];
     fileTypes?.forEach((fileType: string) => {
         if (file.type === "application/wasm") {
+          let _chainId = chainId ?? '';
           const reader = new FileReader();
           reader.readAsDataURL(file);
-          const prevChains = [...simulation.simulation.chains] || [];
-          const prevChain = prevChains.find((chain: any) => chain.id === param.id);
-          const prevCodes = prevChain?.codes || [];
+          
+          if (!_chainId) {
+            _chainId = getDefaultChainName(Object.keys(chains));
+            createChain({
+              chainId: _chainId,
+              bech32Prefix: 'terra',
+            });
+          }
+          
           reader.onload = () => {
-            const fileBuffer = reader.result;
-            if (prevChains.length === 0) {
-              setSimulation({
-                simulation: {
-                  chains: [buildDefaultChain(prevCodes, file.name, fileBuffer!)],
-                },
-              });
-            } else {
-              setSimulation({
-                ...simulation,
-                simulation: {
-                  ...simulation.simulation,
-                  chains: buildChainsFromWasm(simulation.simulation.chains, param.id!, file.name, fileBuffer!)
-                }
-              });
+            const contents = reader.result;
+            if (!contents) {
+              setNotification("Failed to extract bytecode", { severity: "error" });
+              return;
             }
-
+            
+            let codeId: number;
+            try {
+              const buffer = Buffer.from(extractByteCode(contents));
+              codeId = storeCode(_chainId, file.name, buffer);
+            }
+            catch (ex: any) {
+              setNotification(`Failed to extract & store WASM bytecode: ${ex.message ?? ex}`, { severity: "error" });
+              console.error(ex);
+              return;
+            }
+            
+            setSimulationMeta(prev => {
+              const meta = prev[_chainId];
+              
+              return {
+                ...prev,
+                [_chainId]: {
+                  ...meta,
+                  codes: {
+                    ...meta.codes,
+                    [file.name]: {
+                      name: file.name,
+                      codeId,
+                    },
+                  },
+                },
+              };
+            });
             setIsFileUploaded(true);
           }
 
@@ -65,22 +98,24 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
           }
         }
 
-        if (file.type === "application/json") {
-          const reader = new FileReader();
-          reader.readAsText(file);
-          reader.onload = () => {
-            const json = JSON.parse(reader.result as string)
-            if (validateSimulationJSON(json)) {
-              setSimulation(json);
-              setIsFileUploaded(true);
-            } else {
-              // TODO: Add error message when JSON is invalid
-            }
-          };
+        else if (file.type === "application/json") {
+          setNotification("Simulation upload is currently not supported.", { severity: "error" });
+          // const reader = new FileReader();
+          // reader.readAsText(file);
+          // reader.onload = () => {
+          //   // TODO: confirmation prompt if simulation is already loaded b/c we're about to override that
+          //   const json = JSON.parse(reader.result as string)
+          //   if (validateSimulationJSON(json)) {
+          //     setSimulation(json);
+          //     setIsFileUploaded(true);
+          //   } else {
+          //     // TODO: Add error message when JSON is invalid
+          //   }
+          // };
 
-          reader.onerror = () => {
-            setNotification("Error reading simulation file", { severity: "error" });
-          }
+          // reader.onerror = () => {
+          //   setNotification("Error reading simulation file", { severity: "error" });
+          // }
         }
       }
     )
@@ -114,48 +149,6 @@ const FileUpload = ({dropzoneText, fileTypes}: IProps) => {
   );
 };
 
-function buildChainsFromWasm(chains: Chain[], chainId: string, fileName: string, fileBuffer: string | ArrayBuffer): Chain[] {
-  return chains.map((chain: any) => {
-    if (chain.chainId === chainId) {
-      return {
-        ...chain,
-        codes: [
-          ...chain.codes,
-          {
-            id: fileName,
-            wasmBinaryB64: fileBuffer.toString(),
-            instances: [],
-          }
-        ],
-      };
-    }
-    return chain;
-  });
-}
-
-function buildDefaultChain(existingCodes: Code[], fileName: string, fileBuffer: string | ArrayBuffer): Chain {
-  return {
-    chainId: 'terratest-1',
-    bech32Prefix: 'terratest',
-    accounts: [
-      {
-        id: 'alice',
-        address: 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6',
-        balance: 100000000,
-      },
-    ],
-    codes: [
-      ...existingCodes,
-      {
-        id: fileName,
-        wasmBinaryB64: fileBuffer.toString(),
-        instances: [],
-      },
-    ],
-    states: [],
-  };
-}
-
 function Fallback() {
   return (
     <Box sx={{display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 250}}>
@@ -165,3 +158,12 @@ function Fallback() {
 }
 
 export default FileUpload;
+
+function extractByteCode(contents: string | ArrayBuffer): ArrayBuffer {
+  if (typeof contents !== 'string')
+    return contents;
+  const prefix = 'data:application/wasm;base64,';
+  if (!contents.startsWith(prefix))
+    throw new Error(`Malformed WASM source file`);
+  return base64ToArrayBuffer(contents.substring(prefix.length));
+}

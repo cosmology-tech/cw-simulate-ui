@@ -11,7 +11,7 @@ function createData(key: any, value: any) {
 
 const State = () => {
   const param = useParams();
-  const states = useRecoilValue(filteredStatesByChainId(param.id as string)).states;
+  const states = useRecoilValue(filteredStatesByChainId(param.id as string));
   const stateRows = states !== undefined ? Object.entries(states).map(([key, value]) => createData(key, value)) : undefined;
   return (
     <>

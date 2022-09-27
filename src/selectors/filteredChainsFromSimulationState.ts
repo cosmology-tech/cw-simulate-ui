@@ -1,12 +1,11 @@
 import { selector } from "recoil";
-import simulationState from "../atoms/simulationState";
+import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
 
 const filteredChainsFromSimulationState = selector({
   key: "filteredChainsFromSimulationState",
   get: ({get}) => {
-    const simulation = get(simulationState);
-    // @ts-ignore
-    return simulation?.simulation?.chains;
+    const simulation = get(cwSimulateEnvState);
+    return simulation.chains ?? {};
   }
 });
 

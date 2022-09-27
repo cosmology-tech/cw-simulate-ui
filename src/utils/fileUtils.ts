@@ -2,7 +2,7 @@ import { Validator } from 'jsonschema';
 import * as validSimulationSchema from './validSimulationSchema.json';
 import * as validConfigSchema from './validConfigSchema.json';
 import * as validAccountSchema from './validAccountSchema.json';
-import { Account, Simulation } from '../atoms/simulationState';
+import type { ChainConfig } from './setupSimulation';
 
 /**
  * Read the upload wasm file and convert to ArrayBuffer
@@ -79,7 +79,7 @@ export const validateJSON = (json: any, jsonSchema: any): boolean => {
  * validate the simulation JSON with JSON schema
  * @param simulationJSON - simulation JSON
  */
-export const validateSimulationJSON = (simulationJSON: any): simulationJSON is Simulation => {
+export const validateSimulationJSON = (simulationJSON: any): boolean => {
   return validateJSON(simulationJSON, validSimulationSchema);
 }
 
@@ -87,10 +87,10 @@ export const validateSimulationJSON = (simulationJSON: any): simulationJSON is S
  * validate the config JSON with JSON schema
  * @param configJSON
  */
-export const validateConfigJSON = (configJSON: any): boolean => {
+export const validateConfigJSON = (configJSON: any): configJSON is ChainConfig => {
   return validateJSON(configJSON, validConfigSchema);
 }
 
-export const validateAccountJSON = (accountJSON: any): accountJSON is Account => {
+export const validateAccountJSON = (accountJSON: any): boolean => {
   return validateJSON(accountJSON, validAccountSchema);
 }

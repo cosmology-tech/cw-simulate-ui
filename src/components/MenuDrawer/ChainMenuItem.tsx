@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import { useCallback, useState } from "react";
 import { useSetRecoilState } from "recoil";
-import simulationState from "../../atoms/simulationState";
+import { useDeleteChainForSimulation } from "../../utils/setupSimulation";
 import CodesMenuItem from "./CodesMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
@@ -52,7 +52,7 @@ function DeleteChainDialog(props: IDeleteChainDialogProps) {
     ...rest
   } = props;
   
-  const deleteChain = useDeleteChain();
+  const deleteChain = useDeleteChainForSimulation();
   
   return (
     <Dialog {...rest}>
@@ -75,19 +75,4 @@ function DeleteChainDialog(props: IDeleteChainDialogProps) {
       </DialogActions>
     </Dialog>
   )
-}
-
-function useDeleteChain() {
-  const setSimulation = useSetRecoilState(simulationState);
-  return useCallback((chainId: string) => {
-    setSimulation(prev => ({
-      ...prev,
-      simulation: {
-        ...prev.simulation,
-        chains: [
-          ...prev.simulation.chains.filter(chain => chain.chainId !== chainId),
-        ],
-      },
-    }));
-  }, []);
 }
