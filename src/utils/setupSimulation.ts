@@ -64,7 +64,8 @@ export function useReconfigChainForSimulation() {
     let newChain: CWChain;
     setSimulateEnv(simulateEnv => {
       const clone = cloneSimulateEnv(simulateEnv);
-      newChain = clone.chains[newConfig.chainId] = new CWChain(newConfig.chainId, newConfig.bech32Prefix);
+      newChain = clone.chains[newConfig.chainId] = cloneChain(clone.chains[chainId]);
+      Object.assign(newChain, newConfig);
       delete clone.chains[chainId];
       return clone;
     });
