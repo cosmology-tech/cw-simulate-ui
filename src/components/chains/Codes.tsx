@@ -23,7 +23,7 @@ export interface ICodesAndInstancesProps {
   chainId: string;
 }
 
-const CodesAndInstances = ({
+const Codes = ({
   chainId,
 }: ICodesAndInstancesProps) => {
   const codes = useRecoilValue(selectCodesMetadata(chainId));
@@ -122,4 +122,4 @@ const CodesAndInstances = ({
   );
 };
 
-export default CodesAndInstances;
+export default Codes;

@@ -6,7 +6,7 @@ import { Grid, Typography } from "@mui/material";
 import * as React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Accounts from "./Accounts";
-import CodesAndInstances from "./CodesAndInstances";
+import Codes from "./Codes";
 import Config from "./Config";
 import State from "./State";
 import { useRecoilValue } from "recoil";
@@ -78,7 +78,7 @@ export default function Chain() {
             {value === "config" && <Config />}
             {value === "state" && <State />}
             {value === "accounts" && <Accounts chainId={chainId} />}
-            {value === "codes" && <CodesAndInstances chainId={chainId} />}
+            {value === "codes" && <Codes chainId={chainId} />}
           </Grid>
         </Grid>
       ) : (
