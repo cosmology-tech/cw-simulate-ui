@@ -10,6 +10,7 @@ import { useCallback, useState } from "react";
 import { useSetRecoilState } from "recoil";
 import { useDeleteChainForSimulation } from "../../utils/setupSimulation";
 import CodesMenuItem from "./CodesMenuItem";
+import InstancesMenuItem from "./InstancesMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
 export interface IChainMenuItemProps {
@@ -49,6 +50,7 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
       ]}
     >
       <CodesMenuItem chainId={chainId} />
+      <InstancesMenuItem chainId={chainId} />
     </T1MenuItem>
   );
 }
