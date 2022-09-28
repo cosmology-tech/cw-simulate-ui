@@ -34,7 +34,7 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
           </MenuItem>
         ]}
         optionsExtras={({ close }) => [
-          <ContractUploadModal chainId={chainId} openUploadDialog={openUploadDialog} setOpenUploadDialog={(isOpen: boolean) => openCloseDialog(isOpen, close)} />
+          <ContractUploadModal key={'contract-upload-modal-for-sidebar'} chainId={chainId} openUploadDialog={openUploadDialog} setOpenUploadDialog={(isOpen: boolean) => openCloseDialog(isOpen, close)} />
         ]}
       >
         {Object.values(codes).map((code) => (
