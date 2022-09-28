@@ -1,10 +1,10 @@
 import { CWChain, CWContractCode, CWContractInstance, CWSimulateEnv, MsgInfo } from "@terran-one/cw-simulate";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { BasicKVIterStorage, IStorage, IBackend, VMInstance } from '@terran-one/cosmwasm-vm-js';
 import { useCallback } from "react";
-import type { Code } from "../atoms/simulationMetaState";
+import type { Code } from "../atoms/simulationMetadataState";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
-import simulationMetaState from "../atoms/simulationMetaState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
 
 export interface ChainConfig {
   chainId: string;
@@ -16,87 +16,96 @@ export interface ChainConfig {
  */
 export function useCreateChainForSimulation() {
   const setSimulateEnv = useSetRecoilState(cwSimulateEnvState);
-  const setSimulationMeta = useSetRecoilState(simulationMetaState);
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
 
   return useCallback((chainConfig: ChainConfig) => {
     let chain: CWChain;
+
     setSimulateEnv(simulateEnv => {
       const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
       chain = _simulateEnv_.createChain(chainConfig);
       return _simulateEnv_;
     });
-    setSimulationMeta(prev => ({
+
+    setSimulationMetadata(prev => ({
       ...prev,
       [chainConfig.chainId]: {
         accounts: {},
         codes: {},
       },
     }));
+
     return chain!;
   }, []);
 };
 
 export function useDeleteChainForSimulation() {
   const setSimulateEnv = useSetRecoilState(cwSimulateEnvState);
-  const setSimulationMeta = useSetRecoilState(simulationMetaState);
-  
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
+
   return useCallback((chainId: string) => {
     setSimulateEnv(simulateEnv => {
-      const clone = cloneSimulateEnv(simulateEnv);
-      delete clone.chains[chainId];
-      return clone;
+      const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
+      delete _simulateEnv_.chains[chainId];
+      return _simulateEnv_;
     });
-    setSimulationMeta(prev => {
-      const clone = {...prev};
-      delete clone[chainId];
-      return clone;
+
+    setSimulationMetadata(simulationMetadata => {
+      const _simulationMetadata_ = {...simulationMetadata};
+      delete _simulationMetadata_[chainId];
+      return _simulationMetadata_;
     });
   }, []);
 }
 
 export function useReconfigChainForSimulation() {
   const setSimulateEnv = useSetRecoilState(cwSimulateEnvState);
-  const setSimulationMeta = useSetRecoilState(simulationMetaState);
-  
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
+
   return useCallback((chainId: string, newConfig: ChainConfig) => {
     // newChain being defined assumes chainId actually exists
     // whether or not this is true should be validated at callsite
     let newChain: CWChain;
+
     setSimulateEnv(simulateEnv => {
-      const clone = cloneSimulateEnv(simulateEnv);
-      newChain = clone.chains[newConfig.chainId] = cloneChain(clone.chains[chainId]);
+      const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
+      newChain = _simulateEnv_.chains[newConfig.chainId] = cloneChain(_simulateEnv_.chains[chainId]);
       Object.assign(newChain, newConfig);
-      delete clone.chains[chainId];
-      return clone;
+      delete _simulateEnv_.chains[chainId];
+      return _simulateEnv_;
     });
-    setSimulationMeta(prev => {
-      const clone = {...prev};
-      clone[newConfig.chainId] = clone[chainId];
-      delete clone[chainId];
-      return clone;
+
+    setSimulationMetadata(simulationMetadata => {
+      const _simulationMetadata_ = {...simulationMetadata};
+      _simulationMetadata_[newConfig.chainId] = _simulationMetadata_[chainId];
+      delete _simulationMetadata_[chainId];
+      return _simulationMetadata_;
     });
+
     return newChain!;
   }, []);
 }
 
 export function useStoreCode() {
   const setSimulateEnv = useSetRecoilState(cwSimulateEnvState);
-  const setSimulationMeta = useSetRecoilState(simulationMetaState);
-  
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
+
   return useCallback((chainId: string, codeName: string, wasmByteCode: Buffer) => {
     let codeId: number;
+
     setSimulateEnv(simulateEnv => {
       const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
       const _chain_ = _simulateEnv_.chains[chainId] = cloneChain(_simulateEnv_.chains[chainId]);
       codeId = _chain_.storeCode(wasmByteCode).codeId;
       return _simulateEnv_;
     });
-    setSimulationMeta(prev => ({
-      ...prev,
+
+    setSimulationMetadata(simulationMetadata => ({
+      ...simulationMetadata,
       [chainId]: {
-        ...prev[chainId],
+        ...simulationMetadata[chainId],
         codes: {
-          ...prev[chainId].codes,
+          ...simulationMetadata[chainId].codes,
           [codeName]: {
             name: codeName,
             codeId,
@@ -104,6 +113,7 @@ export function useStoreCode() {
         },
       },
     }));
+
     return codeId!;
   }, []);
 }

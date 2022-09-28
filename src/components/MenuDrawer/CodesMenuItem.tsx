@@ -1,5 +1,5 @@
 import { useRecoilValue } from "recoil";
-import { selectCodesMeta } from "../../atoms/simulationMetaState";
+import { selectCodesMeta } from "../../atoms/simulationMetadataState";
 import CodeMenuItem from "./CodeMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
@@ -10,9 +10,9 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
   const {
     chainId,
   } = props;
-  
+
   const codes = useRecoilValue(selectCodesMeta(chainId));
-  
+
   return (
     <T1MenuItem
       label="Codes"

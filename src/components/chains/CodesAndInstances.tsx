@@ -17,7 +17,7 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import FileUpload from "../FileUpload";
 import filteredInstancesFromChainId from "../../selectors/filteredInstancesFromChainId";
 import { MsgInfo } from "@terran-one/cw-simulate";
-import { selectCodesMeta } from "../../atoms/simulationMetaState";
+import { selectCodesMeta } from "../../atoms/simulationMetadataState";
 
 export interface ICodesAndInstancesProps {
   chainId: string;
@@ -42,7 +42,7 @@ const CodesAndInstances = ({
       setNotification("Payload cannot be empty", { severity: "error" });
       return;
     }
-    
+
     // TODO: I hate any...
     const contractName: string = itemRef.current?.innerText;
     const code = codes[contractName];
@@ -51,13 +51,13 @@ const CodesAndInstances = ({
       console.error(`No contract found with name ${contractName}`);
       return;
     }
-    
+
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
     const info: MsgInfo = {
       sender: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
       funds: [],
     };
-    
+
     try {
       createContractInstance(chainId, code, info, instantiateMsg);
     }
@@ -65,7 +65,7 @@ const CodesAndInstances = ({
       setNotification(`Unable to instantiate with error: ${e}`, { severity: "error" });
       console.error(e);
     }
-    
+
     setNotification("Contract instance created");
     setOpenDialog(false);
   };
