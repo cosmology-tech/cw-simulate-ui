@@ -19,6 +19,7 @@ import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import simulationMetadataState, { selectAccountsMetadata } from "../../atoms/simulationMetadataState";
+import { useParams } from "react-router-dom";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
@@ -26,11 +27,8 @@ const DEFAULT_VALUE = JSON.stringify({
   "id": "bob"
 }, null, 2);
 
-export interface IAccountsProps {
-  chainId: string;
-}
-
-const Accounts = ({chainId}: IAccountsProps) => {
+const Accounts = () => {
+  const chainId = useParams().chainId!
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
@@ -109,6 +107,7 @@ const Accounts = ({chainId}: IAccountsProps) => {
   }
   return (
     <>
+      <Typography variant="h4">{chainId}</Typography>
       <Dialog open={openDialog} onClose={handleClose}>
         <DialogTitle>Add New Account</DialogTitle>
         <DialogContent>

@@ -2,13 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
 import "./styles/styles.scss";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MenuDrawer, { DRAWER_WIDTH } from "./components/MenuDrawer";
 import Home from "./components/home/Home";
 import Simulation from "./components/simulation/Simulation";
 import Chains from "./components/chains/Chains";
 import SnackbarNotification from "./components/SnackbarNotification";
-import Chain from "./components/chains/Chain";
+import Config from "./components/chains/Config";
+import State from "./components/chains/State";
+import Accounts from "./components/chains/Accounts";
+import Codes from "./components/chains/Codes";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
@@ -45,9 +48,13 @@ root.render(
               <Route path={"/simulation"} element={<Simulation />}>
                 <Route path={":instanceId"} element={<Simulation />} />
               </Route>
-              <Route path={"/chains"} element={<Chains />}>
-                <Route path={":id"} element={<Chain />} />
-              </Route>
+
+              <Route path={"/chains"} element={<Chains />} />
+              <Route path={"/chains/:chainId/config"} element={<Config />} />
+              <Route path={"/chains/:chainId/state"} element={<State />} />
+              <Route path={"/chains/:chainId/accounts"} element={<Accounts />} />
+              <Route path={"/chains/:chainId/codes"} element={<Codes />} />
+
               <Route
                 path="*"
                 element={

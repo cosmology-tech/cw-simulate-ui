@@ -20,7 +20,7 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
     <T1MenuItem
       label="Instances"
       nodeId={`${chainId}/instances`}
-      link={`/chains/${chainId}#codes`}
+      link={`/chains/${chainId}/codes`}
     >
       {instances.map(instance => (
         <InstanceMenuItem

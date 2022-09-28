@@ -18,14 +18,10 @@ import filteredInstancesFromChainId from "../../selectors/filteredInstancesFromC
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { selectCodesMetadata } from "../../atoms/simulationMetadataState";
 import ContractUploadModal from "../ContractUploadModal";
+import { useParams } from "react-router-dom";
 
-export interface ICodesAndInstancesProps {
-  chainId: string;
-}
-
-const Codes = ({
-  chainId,
-}: ICodesAndInstancesProps) => {
+const Codes = () => {
+  const chainId = useParams().chainId!
   const codes = useRecoilValue(selectCodesMetadata(chainId));
   const instances = useRecoilValue(filteredInstancesFromChainId(chainId));
   const createContractInstance = useCreateContractInstance();
@@ -72,6 +68,7 @@ const Codes = ({
 
   return (
     <>
+      <Typography variant="h4">{chainId}</Typography>
       <Grid item xs={12} sx={{ display: "flex", justifyContent: "end" }}>
         <Grid item xs={4} sx={{ display: "flex", justifyContent: "end" }}>
           <Button

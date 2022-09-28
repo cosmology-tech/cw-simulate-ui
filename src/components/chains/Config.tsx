@@ -8,9 +8,13 @@ import { validateConfigJSON } from "../../utils/fileUtils";
 import { useReconfigChainForSimulation } from "../../utils/setupSimulation";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 
-const Config = () => {
-  const param = useParams();
-  const configValue = useRecoilValue(filteredConfigsByChainId(param.id!));
+interface IConfigProps {
+  chainId?: string|undefined
+}
+
+const Config = (props: IConfigProps) => {
+  const chainId = useParams().chainId ?? props.chainId!
+  const configValue = useRecoilValue(filteredConfigsByChainId(chainId));
   const jsonValue = JSON.stringify(configValue, null, 2);
   const [jsonPayload, setJsonPayload] = useState("");
   const reconfigChain = useReconfigChainForSimulation();
@@ -24,9 +28,9 @@ const Config = () => {
       setNotification("Invalid Config JSON", { severity: "error" });
       return;
     }
-    
+
     reconfigChain(configValue.chainId, json);
-    if (json.chainId !== param.id) {
+    if (json.chainId !== chainId) {
       navigate(`/chains/${json.chainId}`);
     }
     setNotification("Config updated successfully");
@@ -38,6 +42,7 @@ const Config = () => {
 
   return (
     <>
+      <Typography variant="h4">{chainId}</Typography>
       <Typography variant="h6">Configuration</Typography>
       <JsonCodeMirrorEditor jsonValue={jsonValue} setPayload={handleSetPayload}/>
       <Grid
