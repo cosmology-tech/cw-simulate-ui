@@ -20,7 +20,6 @@ export default function ChainsMenuItem(props: IChainsItemProps) {
     <T1MenuItem
       nodeId="chains"
       label="Chains"
-      link
       menuRef={setMenuEl}
       options={[
         <MenuItem key="add-chain" onClick={() => {setShowAddChain(true)}}>Add Chain</MenuItem>
@@ -63,7 +62,7 @@ function AddChainPopover(props: IAddChainPopoverProps) {
   const chainNames = useChainNames(false);
   const setNotification = useNotification();
   const createChain = useCreateChainForSimulation();
-  
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const addChain = useCallback(() => {
@@ -77,12 +76,12 @@ function AddChainPopover(props: IAddChainPopoverProps) {
       setNotification("A chain with such a name already exists", { severity: "error" });
       return;
     }
-    
+
     createChain({
       chainId: chainName,
       bech32Prefix: 'terra',
     });
-    
+
     onClose();
   }, [chainNames]);
 

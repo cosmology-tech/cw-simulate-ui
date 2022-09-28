@@ -18,7 +18,6 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
     <T1MenuItem
       label="Codes"
       nodeId={`${chainId}/codes`}
-      link={`/chains/${chainId}#codes`}
     >
       {Object.values(codes).map((code) => (
         <CodeMenuItem key={code.codeId} chainId={chainId} code={code} />
