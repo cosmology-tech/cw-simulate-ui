@@ -31,7 +31,7 @@ const Config = (props: IConfigProps) => {
 
     reconfigChain(configValue.chainId, json);
     if (json.chainId !== chainId) {
-      navigate(`/chains/${json.chainId}`);
+      navigate(`/chains/${json.chainId}/config`);
     }
     setNotification("Config updated successfully");
   };
