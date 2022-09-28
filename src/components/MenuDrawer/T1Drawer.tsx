@@ -44,8 +44,10 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
 
   const navigate = useNavigate();
   const location = useLocation();
-
+  
+  const [selected, setSelected] = useState('');
   const data = useRef<MenuDrawerData>({});
+  
   const api = useMemo<MenuDrawerAPI>(() => ({
     register({nodeId, ...nodeData}) {
       if (nodeId in data)
@@ -63,8 +65,10 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
       throw new Error(`No data for node ID ${nodeId}`);
 
     const link = extractNodeLink(nodeId, nodeData);
-    if (link && location.pathname !== link)
+    if (link && location.pathname !== link) {
+      setSelected(nodeId);
       navigate(link);
+    }
   }, [location]);
 
   return (
@@ -96,7 +100,7 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
               },
             }}
             onNodeFocus={handleFocusNode}
-            selected={location.pathname.substring(1)}
+            selected={selected}
           >
             <SimulationMenuItem />
             <ChainsItem />
