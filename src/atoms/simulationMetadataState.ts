@@ -33,15 +33,15 @@ const simulationMetadataState = atom<SimulationMetadata>({
 
 export default simulationMetadataState;
 
-export const selectCodesMeta = selectorFamily({
-  key: 'selectCodesMeta',
+export const selectCodesMetadata = selectorFamily({
+  key: 'selectCodesMetadata',
   get: (chainId: string) => ({get}) => {
     return get(simulationMetadataState)[chainId]?.codes;
   },
 });
 
-export const selectAccountsMeta = selectorFamily({
-  key: 'selectAccountsMeta',
+export const selectAccountsMetadata = selectorFamily({
+  key: 'selectAccountsMetadata',
   get: (chainId: string) => ({get}) => {
     return get(simulationMetadataState)[chainId]?.accounts;
   },

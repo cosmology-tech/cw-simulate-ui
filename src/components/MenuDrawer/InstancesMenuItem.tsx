@@ -9,9 +9,13 @@ export interface IInstancesMenuItemProps {
 
 export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
   const { chainId } = props;
-  
+
   const instances = useRecoilValue(filteredInstancesFromChainId(chainId));
-  
+
+  if (!instances.length) {
+    return <></>
+  }
+
   return (
     <T1MenuItem
       label="Instances"

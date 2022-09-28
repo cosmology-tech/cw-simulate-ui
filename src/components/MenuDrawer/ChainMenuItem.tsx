@@ -6,8 +6,7 @@ import {
   DialogTitle,
   MenuItem,
 } from "@mui/material";
-import { useCallback, useState } from "react";
-import { useSetRecoilState } from "recoil";
+import { useState } from "react";
 import { useDeleteChainForSimulation } from "../../utils/setupSimulation";
 import CodesMenuItem from "./CodesMenuItem";
 import InstancesMenuItem from "./InstancesMenuItem";
@@ -25,7 +24,6 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
     <T1MenuItem
       key={chainId}
       nodeId={`chains/${chainId}`}
-      link={`/chains/${chainId}#config`}
       label={chainId}
       options={[
         <MenuItem
@@ -49,6 +47,9 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
         />,
       ]}
     >
+      <T1MenuItem label="Config" nodeId={`${chainId}/config`} link={`/chains/${chainId}#config`} />
+      <T1MenuItem label="State" nodeId={`${chainId}/state`} link={`/chains/${chainId}#state`} />
+      <T1MenuItem label="Accounts" nodeId={`${chainId}/accounts`} link={`/chains/${chainId}#accounts`} />
       <CodesMenuItem chainId={chainId} />
       <InstancesMenuItem chainId={chainId} />
     </T1MenuItem>
