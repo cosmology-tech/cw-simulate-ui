@@ -16,15 +16,18 @@ import { useRecoilValue } from "recoil";
 import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
 
 export default function Chain() {
+  const openTab = window.location.hash.split("#")[1];
+  const currentActive = openTab && openTab.length > 0 ? openTab : "";
   const [value, setValue] = React.useState("config");
   const setNotification = useNotification();
   const params = useParams();
   const chainId = params.id!;
   const chains = useRecoilValue(filteredChainsFromSimulationState);
-  
+
   const navigate = useNavigate();
   const deleteChain = useDeleteChainForSimulation();
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    window.location.hash = `#${newValue}`;
     setValue(newValue);
   };
 
@@ -33,7 +36,11 @@ export default function Chain() {
     setNotification("Chain deleted successfully.");
     navigate("/chains");
   };
-  
+  React.useEffect(() => {
+    if (currentActive.length > 0) {
+      setValue(currentActive);
+    }
+  }, [currentActive]);
   return (
     <Box
       sx={{
@@ -45,9 +52,7 @@ export default function Chain() {
         justifyContent: "center",
       }}
     >
-      {chainId in chains
-      ?
-      (
+      {chainId in chains ? (
         <Grid container item xs={11} md={11} lg={10} alignItems="center">
           <Grid item xs={3} md={3} lg={4}>
             <Typography variant="h5">{chainId}</Typography>
@@ -66,7 +71,7 @@ export default function Chain() {
                   <Tab label="Config" value="config" />
                   <Tab label="State" value="state" />
                   <Tab label="Accounts" value="accounts" />
-                  <Tab label="Codes And Instances" value="codesAndInstances" />
+                  <Tab label="Codes And Instances" value="codes" />
                 </TabList>
               </Box>
             </TabContext>
@@ -92,11 +97,13 @@ export default function Chain() {
             {value === "config" && <Config />}
             {value === "state" && <State />}
             {value === "accounts" && <Accounts chainId={chainId} />}
-            {value === "codesAndInstances" && <CodesAndInstances chainId={chainId} />}
+            {value === "codes" && <CodesAndInstances chainId={chainId} />}
           </Grid>
         </Grid>
       ) : (
-        <Typography variant="body2" sx={{ fontStyle: 'italic' }}>Chain not found.</Typography>
+        <Typography variant="body2" sx={{ fontStyle: "italic" }}>
+          Chain not found.
+        </Typography>
       )}
     </Box>
   );
