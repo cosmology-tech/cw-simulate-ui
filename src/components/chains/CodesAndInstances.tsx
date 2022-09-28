@@ -14,10 +14,10 @@ import { useRecoilValue } from "recoil";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useCreateContractInstance } from "../../utils/setupSimulation";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import FileUpload from "../FileUpload";
 import filteredInstancesFromChainId from "../../selectors/filteredInstancesFromChainId";
 import { MsgInfo } from "@terran-one/cw-simulate";
-import { selectCodesMeta } from "../../atoms/simulationMetadataState";
+import { selectCodesMetadata } from "../../atoms/simulationMetadataState";
+import ContractUploadModal from "../ContractUploadModal";
 
 export interface ICodesAndInstancesProps {
   chainId: string;
@@ -26,7 +26,7 @@ export interface ICodesAndInstancesProps {
 const CodesAndInstances = ({
   chainId,
 }: ICodesAndInstancesProps) => {
-  const codes = useRecoilValue(selectCodesMeta(chainId));
+  const codes = useRecoilValue(selectCodesMetadata(chainId));
   const instances = useRecoilValue(filteredInstancesFromChainId(chainId));
   const createContractInstance = useCreateContractInstance();
   const [payload, setPayload] = useState<string>("");
@@ -117,22 +117,7 @@ const CodesAndInstances = ({
           <Button onClick={handleInstantiate}>Add</Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={openUploadDialog} onClose={() => setOpenUploadDialog(false)}>
-        <DialogTitle>Upload Code</DialogTitle>
-        <DialogContent>
-          <FileUpload
-            dropzoneText={
-              "Click to upload a contract binary or Drag & drop a file here"
-            }
-            fileTypes={["application/wasm"]}
-            chainId={chainId}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenUploadDialog(false)}>Cancel</Button>
-          <Button onClick={() => setOpenUploadDialog(false)}>Add</Button>
-        </DialogActions>
-      </Dialog>
+      <ContractUploadModal chainId={chainId} openUploadDialog={openUploadDialog} setOpenUploadDialog={setOpenUploadDialog} />
     </>
   );
 };

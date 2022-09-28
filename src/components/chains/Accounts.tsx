@@ -18,7 +18,7 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import simulationMetadataState, { selectAccountsMeta } from "../../atoms/simulationMetadataState";
+import simulationMetadataState, { selectAccountsMetadata } from "../../atoms/simulationMetadataState";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
@@ -36,7 +36,7 @@ const Accounts = ({chainId}: IAccountsProps) => {
   const setNotification = useNotification();
 
   const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
-  const accounts = Object.values(useRecoilValue(selectAccountsMeta(chainId)));
+  const accounts = Object.values(useRecoilValue(selectAccountsMetadata(chainId)));
   const data = useMemo(() =>
       accounts.map(account => ({...account, balance: account.balance + ''})),
     [accounts]
