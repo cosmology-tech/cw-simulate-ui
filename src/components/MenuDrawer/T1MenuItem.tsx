@@ -4,7 +4,7 @@ import TreeItem from "@mui/lab/TreeItem";
 import { MouseEventHandler, useCallback, useState, useRef, ReactNode, useMemo, useEffect, useContext } from "react";
 import { MenuDrawerContext } from "./T1Drawer";
 
-export interface IT1TreeItemProps {
+export interface IT1MenuItemProps {
   children?: ReactNode;
   nodeId: string;
   label: NonNullable<ReactNode>;
@@ -24,7 +24,7 @@ export interface OptionsAPI {
   close(): void;
 }
 
-export default function T1TreeItem(props: IT1TreeItemProps) {
+export default function T1MenuItem(props: IT1MenuItemProps) {
   const {
     label,
     link,
@@ -71,12 +71,12 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
             position: 'relative',
             py: 0.5,
           }}
-          className="T1TreeItem-label"
+          className="T1MenuItem-label"
         >
           <Label ellipsis={textEllipsis}>{label}</Label>
           {options && (
             <Box
-              className="T1TreeItem-optionsButton"
+              className="T1MenuItem-optionsButton"
               sx={{
                 position: 'absolute',
                 top: '50%',
@@ -116,7 +116,7 @@ export default function T1TreeItem(props: IT1TreeItemProps) {
       }
       sx={[
         {
-          '& > .MuiTreeItem-content:hover .T1TreeItem-optionsButton': {
+          '& > .MuiTreeItem-content:hover .T1MenuItem-optionsButton': {
             opacity: 1,
           },
         },
