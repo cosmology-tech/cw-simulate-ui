@@ -10,11 +10,12 @@ function createData(key: any, value: any) {
 }
 
 const State = () => {
-  const param = useParams();
-  const states = useRecoilValue(filteredStatesByChainId(param.id as string));
+  const chainId = useParams().chainId!
+  const states = useRecoilValue(filteredStatesByChainId(chainId as string));
   const stateRows = states !== undefined ? Object.entries(states).map(([key, value]) => createData(key, value)) : undefined;
   return (
     <>
+      <Typography variant="h4">{chainId}</Typography>
       {stateRows !== undefined ? (
         <>
           <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>

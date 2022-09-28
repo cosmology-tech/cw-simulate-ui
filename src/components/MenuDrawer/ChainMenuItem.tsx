@@ -7,6 +7,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDeleteChainForSimulation } from "../../utils/setupSimulation";
 import CodesMenuItem from "./CodesMenuItem";
 import InstancesMenuItem from "./InstancesMenuItem";
@@ -19,6 +20,7 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
   const { chainId } = props;
 
   const [showDelChain, setShowDelChain] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <T1MenuItem
@@ -43,13 +45,14 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
           onClose={() => {
             setShowDelChain(false);
             close();
+            navigate('/chains');
           }}
         />,
       ]}
     >
-      <T1MenuItem label="Config" nodeId={`${chainId}/config`} link={`/chains/${chainId}#config`} />
-      <T1MenuItem label="State" nodeId={`${chainId}/state`} link={`/chains/${chainId}#state`} />
-      <T1MenuItem label="Accounts" nodeId={`${chainId}/accounts`} link={`/chains/${chainId}#accounts`} />
+      <T1MenuItem label="Config" nodeId={`chains/${chainId}/config`} link={`/chains/${chainId}/config`} />
+      <T1MenuItem label="State" nodeId={`chains/${chainId}/state`} link={`/chains/${chainId}/state`} />
+      <T1MenuItem label="Accounts" nodeId={`chains/${chainId}/accounts`} link={`/chains/${chainId}/accounts`} />
       <CodesMenuItem chainId={chainId} />
       <InstancesMenuItem chainId={chainId} />
     </T1MenuItem>

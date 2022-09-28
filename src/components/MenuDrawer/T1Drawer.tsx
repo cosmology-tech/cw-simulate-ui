@@ -41,10 +41,10 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
   const {
     width: drawerWidth,
   } = props;
-  
+
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const data = useRef<MenuDrawerData>({});
   const api = useMemo<MenuDrawerAPI>(() => ({
     register({nodeId, ...nodeData}) {
@@ -56,12 +56,12 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
       delete data.current[nodeId];
     },
   }), []);
-  
+
   const handleFocusNode = useCallback((e: React.SyntheticEvent, nodeId: string) => {
     const nodeData = data.current[nodeId];
     if (!nodeData)
       throw new Error(`No data for node ID ${nodeId}`);
-    
+
     const link = extractNodeLink(nodeId, nodeData);
     if (link && location.pathname !== link)
       navigate(link);
