@@ -39,6 +39,7 @@ export const OutputCard = ({ response, placeholder }: IProps) => {
         padding: 2,
         border: `1px solid ${GREY_6}`,
         height: "100%",
+        textAlign: "left",
       }}
     >
       {response !== undefined ? (

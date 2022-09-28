@@ -7,6 +7,7 @@ import {
   Grid,
   Paper,
   Slide,
+  StepConnector,
   StepContent,
   StepLabel,
   Typography,
@@ -15,6 +16,8 @@ import {
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { JSONTree } from "react-json-tree";
 import { executionHistory } from "../../data/dummy";
+import { useRecoilState } from "recoil";
+import { blockState } from "../../atoms/blockState";
 // import { executionHistory } from "../../data/test";
 
 const steps = [
@@ -58,113 +61,140 @@ export default function StateStepper() {
   const [activeStep, setActiveStep] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef();
-  const handleStep = (step: number) => () => {
-    setActiveStep(step);
+  const [stepState, setStepState] = useRecoilState(blockState);
+
+  const handleStateView = (state: { dict: { [x: string]: string } }) => {
+    setStepState(JSON.parse(window.atob(state.dict["c3RhdGU="])));
   };
-  // const { request, response } = executionHistory[0];
+
+  const handleStep =
+    (step: number, state: { dict: { [x: string]: string } }) => () => {
+      setActiveStep(step);
+      handleStateView(state);
+    };
+
   return (
     <Stepper nonLinear activeStep={activeStep} orientation="vertical">
-      {executionHistory.map((historyObj: {request: any, response: any}, index) => {
-        const { request, response } = historyObj;
-        const label = Object.keys(request)[2];
-        return (
-          <Step key={`${label}${index}`} onClick={handleStep(index)}>
-            <StepLabel ref={containerRef}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                {activeStep === index && isOpen ? (
-                  <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
-                ) : (
-                  <ArrowRightIcon onClick={() => setIsOpen(true)} />
-                )}
-                {label}
-              </div>
-            </StepLabel>
-            <StepContent>
-              {activeStep === index && isOpen && (
-                <Slide
-                  direction="down"
-                  in={true}
-                  container={containerRef.current}
-                >
-                  <Paper
-                    elevation={3}
-                    sx={{
-                      height: "30vh",
-                      overflow: "scroll",
-                      textAlign: "left",
-                      display: "flex",
-                      flexDirection: "column",
-                      borderTop: "1px solid rgb(0, 0, 0, 0.12)",
-                    }}
+      {executionHistory.map(
+        (historyObj: { request: any; response: any; state: any }, index) => {
+          const { request, response, state } = historyObj;
+          const label = Object.keys(request)[2];
+
+          return (
+            <Step key={`${label}${index}`} onClick={handleStep(index, state)}>
+              <StepLabel ref={containerRef}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  {activeStep === index && isOpen ? (
+                    <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
+                  ) : (
+                    <ArrowRightIcon
+                      onClick={() => {
+                        handleStateView(state);
+                        setIsOpen(true);
+                      }}
+                    />
+                  )}
+                  {label}
+                </div>
+              </StepLabel>
+
+              <StepContent>
+                {activeStep === index && isOpen && (
+                  <Slide
+                    direction="down"
+                    in={true}
+                    container={containerRef.current}
                   >
-                    <Grid
-                      item
-                      xs={12}
+                    <Paper
+                      elevation={3}
                       sx={{
+                        height: "30vh",
+                        overflow: "scroll",
+                        textAlign: "left",
                         display: "flex",
                         flexDirection: "column",
-                        position: "relative",
-                        overflow: "scroll",
-                        mb: 1,
+                        borderTop: "1px solid rgb(0, 0, 0, 0.12)",
                       }}
                     >
-                      <div style={{ position: "sticky", top: 0 }}>
-                        <Typography
-                          variant="caption"
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            position: "sticky",
+                      <Grid
+                        item
+                        xs={12}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          position: "relative",
+                          overflow: "scroll",
+                          mb: 1,
+                        }}
+                      >
+                        <div style={{ position: "sticky", top: 0 }}>
+                          <Typography
+                            variant="caption"
+                            sx={{
+                              display: "flex",
+                              justifyContent: "center",
+                              position: "sticky",
+                            }}
+                          >
+                            Request
+                          </Typography>
+                          <Divider orientation="horizontal" />
+                        </div>
+                        <div
+                          style={{
+                            overflow: "scroll",
+                            marginLeft: "1rem",
                           }}
                         >
-                          Request
-                        </Typography>
-                        <Divider orientation="horizontal" />
-                      </div>
-                      <div style={{ overflow: "scroll" }}>
-                        <JSONTree
-                          data={request}
-                          theme={theme}
-                          invertTheme={false}
-                        />
-                      </div>
-                    </Grid>
-                    <Divider orientation="vertical" flexItem />
-                    <Grid
-                      item
-                      xs={12}
-                      sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        overflow: "scroll",
-                        position: "relative",
-                      }}
-                    >
-                      <div style={{ position: "sticky", top: 0 }}>
-                        <Divider orientation="horizontal" />
-                        <Typography
-                          variant="caption"
-                          sx={{ display: "flex", justifyContent: "center" }}
+                          <JSONTree
+                            data={request}
+                            theme={theme}
+                            invertTheme={false}
+                          />
+                        </div>
+                      </Grid>
+                      <Divider orientation="vertical" flexItem />
+                      <Grid
+                        item
+                        xs={12}
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          overflow: "scroll",
+                          position: "relative",
+                        }}
+                      >
+                        <div style={{ position: "sticky", top: 0 }}>
+                          <Divider orientation="horizontal" />
+                          <Typography
+                            variant="caption"
+                            sx={{ display: "flex", justifyContent: "center" }}
+                          >
+                            Response
+                          </Typography>
+                          <Divider orientation="horizontal" />
+                        </div>
+                        <div
+                          style={{
+                            overflow: "scroll",
+                            marginLeft: "1rem",
+                          }}
                         >
-                          Response
-                        </Typography>
-                        <Divider orientation="horizontal" />
-                      </div>
-                      <div style={{ overflow: "scroll" }}>
-                        <JSONTree
-                          data={response}
-                          theme={theme}
-                          invertTheme={false}
-                        />
-                      </div>
-                    </Grid>
-                  </Paper>
-                </Slide>
-              )}
-            </StepContent>
-          </Step>
-        );
-      })}
+                          <JSONTree
+                            data={response}
+                            theme={theme}
+                            invertTheme={false}
+                          />
+                        </div>
+                      </Grid>
+                    </Paper>
+                  </Slide>
+                )}
+              </StepContent>
+            </Step>
+          );
+        }
+      )}
     </Stepper>
   );
 }
