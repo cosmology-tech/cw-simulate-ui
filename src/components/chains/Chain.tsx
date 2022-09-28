@@ -5,7 +5,7 @@ import TabList from "@mui/lab/TabList";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Grid, IconButton, Typography } from "@mui/material";
 import * as React from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import Accounts from "./Accounts";
 import CodesAndInstances from "./CodesAndInstances";
@@ -16,7 +16,8 @@ import { useRecoilValue } from "recoil";
 import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
 
 export default function Chain() {
-  const openTab = window.location.hash.split("#")[1];
+  const location = useLocation();
+  const openTab = location.hash.split("#")[1];
   const currentActive = openTab && openTab.length > 0 ? openTab : "";
   const [value, setValue] = React.useState("config");
   const setNotification = useNotification();
@@ -27,7 +28,7 @@ export default function Chain() {
   const navigate = useNavigate();
   const deleteChain = useDeleteChainForSimulation();
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    window.location.hash = `#${newValue}`;
+    navigate(`#${newValue}`);
     setValue(newValue);
   };
 
