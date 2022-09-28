@@ -63,10 +63,16 @@ export default function StateStepper() {
   const containerRef = React.useRef();
   const [stepState, setStepState] = useRecoilState(blockState);
 
-  const handleStep = (step: number) => () => {
-    setActiveStep(step);
+  const handleStateView = (state: { dict: { [x: string]: string } }) => {
+    setStepState(JSON.parse(window.atob(state.dict["c3RhdGU="])));
   };
-  // const { request, response } = executionHistory[0];
+
+  const handleStep =
+    (step: number, state: { dict: { [x: string]: string } }) => () => {
+      setActiveStep(step);
+      handleStateView(state);
+    };
+
   return (
     <Stepper nonLinear activeStep={activeStep} orientation="vertical">
       {executionHistory.map(
@@ -75,7 +81,7 @@ export default function StateStepper() {
           const label = Object.keys(request)[2];
 
           return (
-            <Step key={`${label}${index}`} onClick={handleStep(index)}>
+            <Step key={`${label}${index}`} onClick={handleStep(index, state)}>
               <StepLabel ref={containerRef}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   {activeStep === index && isOpen ? (
@@ -83,9 +89,7 @@ export default function StateStepper() {
                   ) : (
                     <ArrowRightIcon
                       onClick={() => {
-                        setStepState(
-                          JSON.parse(window.atob(state.dict["c3RhdGU="]))
-                        );
+                        handleStateView(state);
                         setIsOpen(true);
                       }}
                     />
