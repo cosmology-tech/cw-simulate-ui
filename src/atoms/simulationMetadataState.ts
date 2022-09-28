@@ -1,6 +1,6 @@
 import { atom, selectorFamily } from "recoil";
 
-interface SimulationMeta {
+interface SimulationMetadata {
   [chainId: string]: {
     codes: Codes;
     accounts: Accounts;
@@ -26,23 +26,23 @@ export interface Code {
   codeId: number;
 }
 
-const simulationMetaState = atom<SimulationMeta>({
-  key: 'simulationMetaState',
+const simulationMetadataState = atom<SimulationMetadata>({
+  key: 'simulationMetadataState',
   default: {},
 });
 
-export default simulationMetaState;
+export default simulationMetadataState;
 
 export const selectCodesMeta = selectorFamily({
   key: 'selectCodesMeta',
   get: (chainId: string) => ({get}) => {
-    return get(simulationMetaState)[chainId]?.codes;
+    return get(simulationMetadataState)[chainId]?.codes;
   },
 });
 
 export const selectAccountsMeta = selectorFamily({
   key: 'selectAccountsMeta',
   get: (chainId: string) => ({get}) => {
-    return get(simulationMetaState)[chainId]?.accounts;
+    return get(simulationMetadataState)[chainId]?.accounts;
   },
 });

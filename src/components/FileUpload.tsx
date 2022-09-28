@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
-import simulationMetaState from "../atoms/simulationMetaState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
 import { useNotification } from "../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../utils/fileUtils";
 import { useCreateChainForSimulation, useStoreCode } from "../utils/setupSimulation";
@@ -24,7 +24,7 @@ const FileUpload = ({
   chainId,
 }: IProps) => {
   const setIsFileUploaded = useSetRecoilState(fileUploadedState);
-  const setSimulationMeta = useSetRecoilState(simulationMetaState);
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
   const chains = useRecoilValue(filteredChainsFromSimulationState) ?? {};
   const createChain = useCreateChainForSimulation();
   const storeCode = useStoreCode();
@@ -34,7 +34,7 @@ const FileUpload = ({
       horizontal: "center",
     },
   };
-  
+
   const text = dropzoneText || "Click to upload a simulation file or contract binary or Drag & drop a file here";
   const setNotification = useNotification();
 
@@ -46,7 +46,7 @@ const FileUpload = ({
           let _chainId = chainId ?? '';
           const reader = new FileReader();
           reader.readAsDataURL(file);
-          
+
           if (!_chainId) {
             _chainId = getDefaultChainName(Object.keys(chains));
             createChain({
@@ -54,14 +54,14 @@ const FileUpload = ({
               bech32Prefix: 'terra',
             });
           }
-          
+
           reader.onload = () => {
             const contents = reader.result;
             if (!contents) {
               setNotification("Failed to extract bytecode", { severity: "error" });
               return;
             }
-            
+
             let codeId: number;
             try {
               const buffer = Buffer.from(extractByteCode(contents));
@@ -72,10 +72,10 @@ const FileUpload = ({
               console.error(ex);
               return;
             }
-            
-            setSimulationMeta(prev => {
+
+            setSimulationMetadata(prev => {
               const meta = prev[_chainId];
-              
+
               return {
                 ...prev,
                 [_chainId]: {

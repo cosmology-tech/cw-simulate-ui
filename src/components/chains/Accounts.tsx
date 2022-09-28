@@ -18,7 +18,7 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import simulationMetaState, { selectAccountsMeta } from "../../atoms/simulationMetaState";
+import simulationMetadataState, { selectAccountsMeta } from "../../atoms/simulationMetadataState";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
@@ -35,7 +35,7 @@ const Accounts = ({chainId}: IAccountsProps) => {
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
 
-  const setSimulationMeta = useSetRecoilState(simulationMetaState);
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
   const accounts = Object.values(useRecoilValue(selectAccountsMeta(chainId)));
   const data = useMemo(() =>
       accounts.map(account => ({...account, balance: account.balance + ''})),
@@ -70,7 +70,7 @@ const Accounts = ({chainId}: IAccountsProps) => {
     }
 
     // TODO: enforce bech32Prefix
-    setSimulationMeta(prev => ({
+    setSimulationMetadata(prev => ({
       ...prev,
       [chainId]: {
         ...prev[chainId],
@@ -90,7 +90,7 @@ const Accounts = ({chainId}: IAccountsProps) => {
   }
 
   const handleDeleteAccount = (id: string) => {
-    setSimulationMeta(prev => ({
+    setSimulationMetadata(prev => ({
       ...prev,
       [chainId]: {
         ...prev[chainId],
