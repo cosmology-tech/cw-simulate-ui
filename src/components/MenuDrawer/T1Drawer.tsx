@@ -1,10 +1,10 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { Box, Divider, Drawer, ListItemButton, styled } from "@mui/material";
+import { Box, Divider, Drawer, ListItemButton, styled, SxProps, Theme } from "@mui/material";
 import TreeView from "@mui/lab/TreeView";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import Logo from "./Logo";
-import ChainsItem from "./ChainsMenuItem";
+import ChainsMenuItem from "./ChainsMenuItem";
 import SimulationMenuItem from "./SimulationMenuItem";
 
 type MenuDrawerAPI = {
@@ -42,6 +42,50 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
     width: drawerWidth,
   } = props;
 
+  return (
+    <Box component="nav">
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: drawerWidth,
+          },
+        }}
+        variant="permanent"
+        open
+      >
+        <DrawerHeader>
+          <Logo LinkComponent={ListItemButton} />
+        </DrawerHeader>
+        <Divider />
+        <HierarchyMenu
+          sx={{
+            marginTop: 2,
+            '& .MuiTreeItem-content': {
+              py: 1,
+            },
+          }}
+        >
+          <SimulationMenuItem />
+          <ChainsMenuItem />
+        </HierarchyMenu>
+      </Drawer>
+    </Box>
+  );
+});
+
+export default T1Drawer;
+
+interface IHierarchyMenuProps {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+}
+
+function HierarchyMenu(props: IHierarchyMenuProps) {
+  const { children, sx } = props;
+  
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -70,48 +114,21 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
       navigate(link);
     }
   }, [location]);
-
+  
   return (
-    <Box component="nav">
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
-            width: drawerWidth,
-          },
-        }}
-        variant="permanent"
-        open
+    <MenuDrawerContext.Provider value={api}>
+      <TreeView
+        defaultExpandIcon={<SubtreeIcon />}
+        defaultCollapseIcon={<SubtreeIcon expanded />}
+        sx={sx}
+        onNodeFocus={handleFocusNode}
+        selected={selected}
       >
-        <DrawerHeader>
-          <Logo LinkComponent={ListItemButton} />
-        </DrawerHeader>
-        <Divider />
-        <MenuDrawerContext.Provider value={api}>
-          <TreeView
-            defaultExpandIcon={<SubtreeIcon />}
-            defaultCollapseIcon={<SubtreeIcon expanded />}
-            sx={{
-              marginTop: 2,
-              '& .MuiTreeItem-content': {
-                py: 1,
-              },
-            }}
-            onNodeFocus={handleFocusNode}
-            selected={selected}
-          >
-            <SimulationMenuItem />
-            <ChainsItem />
-          </TreeView>
-        </MenuDrawerContext.Provider>
-      </Drawer>
-    </Box>
-  );
-});
-
-export default T1Drawer;
+        {children}
+      </TreeView>
+    </MenuDrawerContext.Provider>
+  )
+}
 
 interface ISubtreeIconProps {
   expanded?: boolean;
