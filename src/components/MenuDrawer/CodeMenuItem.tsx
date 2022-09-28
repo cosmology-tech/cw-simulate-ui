@@ -1,4 +1,4 @@
-import type { Code } from "../../atoms/simulationMetaState";
+import type { Code } from "../../atoms/simulationMetadataState";
 import T1MenuItem from "./T1MenuItem";
 
 export interface ICodeMenuItemProps {
@@ -10,7 +10,7 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
     chainId,
     code,
   } = props;
-  
+
   return (
     <T1MenuItem
       label={code.name}
