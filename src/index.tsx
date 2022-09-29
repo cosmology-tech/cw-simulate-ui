@@ -49,11 +49,13 @@ root.render(
                 <Route path={":instanceId"} element={<Simulation />} />
               </Route>
 
-              <Route path={"/chains"} element={<Chains />} />
-              <Route path={"/chains/:chainId/config"} element={<Config />} />
-              <Route path={"/chains/:chainId/state"} element={<State />} />
-              <Route path={"/chains/:chainId/accounts"} element={<Accounts />} />
-              <Route path={"/chains/:chainId/codes"} element={<Codes />} />
+              {/* <Chains /> ensures the :chainId exists. Do not remove. */}
+              <Route path="/chains" element={<Chains />}>
+                <Route path=":chainId/config" element={<Config />} />
+                <Route path=":chainId/state" element={<State />} />
+                <Route path=":chainId/accounts" element={<Accounts />} />
+                <Route path=":chainId/codes" element={<Codes />} />
+              </Route>
 
               <Route
                 path="*"

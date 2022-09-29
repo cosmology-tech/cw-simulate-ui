@@ -114,7 +114,11 @@ const Codes = () => {
           <Button onClick={handleInstantiate}>Add</Button>
         </DialogActions>
       </Dialog>
-      <ContractUploadModal chainId={chainId} openUploadDialog={openUploadDialog} setOpenUploadDialog={setOpenUploadDialog} />
+      <ContractUploadModal
+        chainId={chainId}
+        open={openUploadDialog}
+        onClose={() => {setOpenUploadDialog(false)}}
+      />
     </>
   );
 };

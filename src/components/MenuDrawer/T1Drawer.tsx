@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router";
 import Logo from "./Logo";
 import ChainsMenuItem from "./ChainsMenuItem";
 import SimulationMenuItem from "./SimulationMenuItem";
+import { DEFAULT_CHAIN } from "../../configs/variables";
 
 type MenuDrawerAPI = {
   register(data: MenuDrawerRegisterOptions): void;
@@ -89,7 +90,7 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
   const navigate = useNavigate();
   const location = useLocation();
   
-  const [expanded, setExpanded] = useState(['chains']);
+  const [expanded, setExpanded] = useState(['chains', `chains/${DEFAULT_CHAIN}`, `${DEFAULT_CHAIN}/codes`]);
   const [selected, setSelected] = useState('');
   const data = useRef<MenuDrawerData>({});
   

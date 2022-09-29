@@ -5,6 +5,9 @@ const filteredInstancesFromChainId = selectorFamily({
   key: "filteredInstancesFromChainId",
   get: (chainId: string) => ({get}) => {
     const simulation = get(cwSimulateEnvState);
+    if (!(chainId in simulation.chains))
+      return [];
+    
     const chain = simulation.chains[chainId];
     return Object.values(chain.contracts);
   }

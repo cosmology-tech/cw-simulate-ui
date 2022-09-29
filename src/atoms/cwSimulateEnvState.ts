@@ -1,9 +1,10 @@
 import { CWSimulateEnv } from "@terran-one/cw-simulate";
 import { atom } from "recoil";
 
-const cwSimulateEnvState = atom<CWSimulateEnv>({
+const cwSimulateEnvState = atom({
   key: "CWSimulateEnvState",
-  default: <CWSimulateEnv>{}
+  // dummy empty simulation environment
+  default: new CWSimulateEnv(),
 });
 
 export default cwSimulateEnvState;
