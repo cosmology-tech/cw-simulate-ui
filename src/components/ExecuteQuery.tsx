@@ -9,46 +9,14 @@ import { Button, Grid, Typography } from "@mui/material";
 import { jsonErrorState } from "../atoms/jsonErrorState";
 
 interface IProps {
-  response: JSON | undefined;
   setResponse: (val: JSON | undefined) => void;
-  allStates: IState[];
-  setAllStates: (val: IState[]) => void;
-  currentState: number;
-  setCurrentState: (val: number) => void;
 }
 
-export interface IState {
-  chainStateBefore: string;
-  payload: string;
-  currentTab: string;
-  chainStateAfter: string;
-  res: JSON | undefined;
-}
-
-export const ExecuteQuery = ({
-  setResponse,
-  response,
-  setAllStates,
-  allStates,
-  setCurrentState,
-  currentState,
-}: IProps) => {
+export const ExecuteQuery = ({ setResponse }: IProps) => {
   const { MOCK_ENV, MOCK_INFO } = Config;
   const [payload, setPayload] = useState("");
   const executeQueryTab = useRecoilValue(executeQueryTabState);
   const jsonError = useRecoilValue(jsonErrorState);
-  const addState = (stateBefore: any, res: any) => {
-    const stateObj: IState = {
-      chainStateBefore: stateBefore,
-      payload: payload,
-      currentTab: executeQueryTab,
-      chainStateAfter: window.VM?.backend?.storage.dict["c3RhdGU="],
-      res: res.read_json(),
-    };
-    setAllStates([...allStates, stateObj]);
-    setCurrentState(allStates.length);
-  };
-
   const setNotification = useNotification();
 
   const execute = () => {
@@ -57,7 +25,6 @@ export const ExecuteQuery = ({
       const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
       setResponse(res.read_json());
       if (!(res.read_json().error && res.read_json().error.length > 0)) {
-        addState(stateBefore, res);
         setNotification("Execution was successful!");
       } else {
         throw res.read_json().error;
@@ -87,11 +54,6 @@ export const ExecuteQuery = ({
       query();
     }
   };
-  React.useEffect(() => {
-    if (currentState === allStates.length - 1) {
-      setPayload("");
-    }
-  }, [executeQueryTab]);
 
   const handleSetPayload = (val: string) => {
     setPayload(val);
