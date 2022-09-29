@@ -58,7 +58,7 @@ export function useDeleteChainForSimulation() {
   }, []);
 }
 
-export function useReconfigChainForSimulation() {
+export function useReconfigureChainForSimulation() {
   const setSimulateEnv = useSetRecoilState(cwSimulateEnvState);
   const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
 
@@ -69,16 +69,23 @@ export function useReconfigChainForSimulation() {
 
     setSimulateEnv(simulateEnv => {
       const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
+
       newChain = _simulateEnv_.chains[newConfig.chainId] = cloneChain(_simulateEnv_.chains[chainId]);
       Object.assign(newChain, newConfig);
-      delete _simulateEnv_.chains[chainId];
+
+      if (newConfig.chainId !== chainId)
+        delete _simulateEnv_.chains[chainId];
+
       return _simulateEnv_;
     });
 
     setSimulationMetadata(simulationMetadata => {
       const _simulationMetadata_ = {...simulationMetadata};
       _simulationMetadata_[newConfig.chainId] = _simulationMetadata_[chainId];
-      delete _simulationMetadata_[chainId];
+
+      if (newConfig.chainId !== chainId)
+        delete _simulationMetadata_[chainId];
+
       return _simulationMetadata_;
     });
 
