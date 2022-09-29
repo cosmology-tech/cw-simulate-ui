@@ -1,3 +1,5 @@
+export const DEFAULT_CHAIN = 'terratest-1';
+
 //WIDTH RATIOS
 export const DESKTOP_PX = "1440px";
 export const TABLET_PX = "768px";

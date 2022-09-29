@@ -1,11 +1,12 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { Box, Divider, Drawer, ListItemButton, styled } from "@mui/material";
+import { Box, Divider, Drawer, ListItemButton, styled, SxProps, Theme } from "@mui/material";
 import TreeView from "@mui/lab/TreeView";
-import React, { useCallback, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import Logo from "./Logo";
-import ChainsItem from "./ChainsMenuItem";
+import ChainsMenuItem from "./ChainsMenuItem";
 import SimulationMenuItem from "./SimulationMenuItem";
+import { DEFAULT_CHAIN } from "../../configs/variables";
 
 type MenuDrawerAPI = {
   register(data: MenuDrawerRegisterOptions): void;
@@ -42,31 +43,6 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
     width: drawerWidth,
   } = props;
 
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const data = useRef<MenuDrawerData>({});
-  const api = useMemo<MenuDrawerAPI>(() => ({
-    register({nodeId, ...nodeData}) {
-      if (nodeId in data)
-        throw new Error(`Duplicate node ID ${nodeId}`);
-      data.current[nodeId] = nodeData;
-    },
-    unregister(nodeId) {
-      delete data.current[nodeId];
-    },
-  }), []);
-
-  const handleFocusNode = useCallback((e: React.SyntheticEvent, nodeId: string) => {
-    const nodeData = data.current[nodeId];
-    if (!nodeData)
-      throw new Error(`No data for node ID ${nodeId}`);
-
-    const link = extractNodeLink(nodeId, nodeData);
-    if (link && location.pathname !== link)
-      navigate(link);
-  }, [location]);
-
   return (
     <Box component="nav">
       <Drawer
@@ -85,29 +61,82 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
           <Logo LinkComponent={ListItemButton} />
         </DrawerHeader>
         <Divider />
-        <MenuDrawerContext.Provider value={api}>
-          <TreeView
-            defaultExpandIcon={<SubtreeIcon />}
-            defaultCollapseIcon={<SubtreeIcon expanded />}
-            sx={{
-              marginTop: 2,
-              '& .MuiTreeItem-content': {
-                py: 1,
-              },
-            }}
-            onNodeFocus={handleFocusNode}
-            selected={location.pathname.substring(1)}
-          >
-            <SimulationMenuItem />
-            <ChainsItem />
-          </TreeView>
-        </MenuDrawerContext.Provider>
+        <HierarchyMenu
+          sx={{
+            marginTop: 2,
+            '& .MuiTreeItem-content': {
+              py: 1,
+            },
+          }}
+        >
+          <SimulationMenuItem />
+          <ChainsMenuItem />
+        </HierarchyMenu>
       </Drawer>
     </Box>
   );
 });
 
 export default T1Drawer;
+
+interface IHierarchyMenuProps {
+  children?: ReactNode;
+  sx?: SxProps<Theme>;
+}
+
+function HierarchyMenu(props: IHierarchyMenuProps) {
+  const { children, sx } = props;
+  
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const [expanded, setExpanded] = useState(['chains', `chains/${DEFAULT_CHAIN}`, `${DEFAULT_CHAIN}/codes`]);
+  const [selected, setSelected] = useState('');
+  const data = useRef<MenuDrawerData>({});
+  
+  const api = useMemo<MenuDrawerAPI>(() => ({
+    register({nodeId, ...nodeData}) {
+      if (nodeId in data)
+        throw new Error(`Duplicate node ID ${nodeId}`);
+      data.current[nodeId] = nodeData;
+      setExpanded(prev => [...prev, nodeId]);
+    },
+    unregister(nodeId) {
+      delete data.current[nodeId];
+      setExpanded(prev => prev.filter(curr => curr !== nodeId));
+    },
+  }), []);
+
+  const handleFocusNode = useCallback((e: React.SyntheticEvent, nodeId: string) => {
+    const nodeData = data.current[nodeId];
+    if (!nodeData)
+      throw new Error(`No data for node ID ${nodeId}`);
+
+    const link = extractNodeLink(nodeId, nodeData);
+    if (link && location.pathname !== link) {
+      setSelected(nodeId);
+      navigate(link);
+    }
+  }, [location]);
+  
+  return (
+    <MenuDrawerContext.Provider value={api}>
+      <TreeView
+        defaultExpandIcon={<SubtreeIcon />}
+        defaultCollapseIcon={<SubtreeIcon expanded />}
+        sx={sx}
+        onNodeFocus={handleFocusNode}
+        onNodeToggle={(e, nodeIds) => {
+          setExpanded(nodeIds);
+        }}
+        expanded={expanded}
+        selected={selected}
+      >
+        {children}
+      </TreeView>
+    </MenuDrawerContext.Provider>
+  )
+}
 
 interface ISubtreeIconProps {
   expanded?: boolean;

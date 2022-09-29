@@ -36,7 +36,7 @@ export default simulationMetadataState;
 export const selectCodesMetadata = selectorFamily({
   key: 'selectCodesMetadata',
   get: (chainId: string) => ({get}) => {
-    return get(simulationMetadataState)[chainId]?.codes;
+    return get(simulationMetadataState)[chainId]?.codes ?? {};
   },
 });
 

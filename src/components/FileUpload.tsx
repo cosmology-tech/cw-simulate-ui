@@ -1,33 +1,30 @@
 import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
-import simulationMetadataState from "../atoms/simulationMetadataState";
 import { useNotification } from "../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../utils/fileUtils";
-import { useCreateChainForSimulation, useStoreCode } from "../utils/setupSimulation";
-import { getDefaultChainName } from "../utils/simUtils";
-import filteredChainsFromSimulationState from "../selectors/filteredChainsFromSimulationState";
+import { Defined } from "../utils/typeUtils";
 
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
 interface IProps {
   dropzoneText?: string;
-  fileTypes: string[];
-  /** Optional chain ID. If none specified, creates a new untitled chain. */
-  chainId?: string;
+  /** Variant of the FileUploader. Defaults to 'both'. */
+  variant?: 'simulation' | 'contract' | 'both';
+  /** Callback which receives the uploaded file's name + contents buffer. */
+  onAccept(filename: string, buffer: Buffer): void;
+  /** Callback for when user removes uploaded file. */
+  onClear(): void;
 }
 
 const FileUpload = ({
   dropzoneText,
-  fileTypes,
-  chainId,
+  variant = 'both',
+  onAccept,
+  onClear,
 }: IProps) => {
   const setIsFileUploaded = useSetRecoilState(fileUploadedState);
-  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
-  const chains = useRecoilValue(filteredChainsFromSimulationState) ?? {};
-  const createChain = useCreateChainForSimulation();
-  const storeCode = useStoreCode();
   const snackbarProps: SnackbarProps = {
     anchorOrigin: {
       vertical: "top",
@@ -41,108 +38,73 @@ const FileUpload = ({
   const handleOnFileDrop = (files: File[]) => {
     // Only allow one file to be uploaded
     const file: File = files[0];
-    fileTypes?.forEach((fileType: string) => {
-        if (file.type === "application/wasm") {
-          let _chainId = chainId ?? '';
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
+    if (file.type === "application/wasm") {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
 
-          if (!_chainId) {
-            _chainId = getDefaultChainName(Object.keys(chains));
-            createChain({
-              chainId: _chainId,
-              bech32Prefix: 'terra',
-            });
-          }
-
-          reader.onload = () => {
-            const contents = reader.result;
-            if (!contents) {
-              setNotification("Failed to extract bytecode", { severity: "error" });
-              return;
-            }
-
-            let codeId: number;
-            try {
-              const buffer = Buffer.from(extractByteCode(contents));
-              codeId = storeCode(_chainId, file.name, buffer);
-            }
-            catch (ex: any) {
-              setNotification(`Failed to extract & store WASM bytecode: ${ex.message ?? ex}`, { severity: "error" });
-              console.error(ex);
-              return;
-            }
-
-            setSimulationMetadata(prev => {
-              const meta = prev[_chainId];
-
-              return {
-                ...prev,
-                [_chainId]: {
-                  ...meta,
-                  codes: {
-                    ...meta.codes,
-                    [file.name]: {
-                      name: file.name,
-                      codeId,
-                    },
-                  },
-                },
-              };
-            });
-            setIsFileUploaded(true);
-          }
-
-          reader.onerror = () => {
-            setNotification("Error reading WASM binary file", { severity: "error" });
-          }
+      reader.onload = () => {
+        const contents = reader.result;
+        if (!contents) {
+          setNotification("Failed to extract bytecode", { severity: "error" });
+          return;
         }
 
-        else if (file.type === "application/json") {
-          setNotification("Simulation upload is currently not supported.", { severity: "error" });
-          // const reader = new FileReader();
-          // reader.readAsText(file);
-          // reader.onload = () => {
-          //   // TODO: confirmation prompt if simulation is already loaded b/c we're about to override that
-          //   const json = JSON.parse(reader.result as string)
-          //   if (validateSimulationJSON(json)) {
-          //     setSimulation(json);
-          //     setIsFileUploaded(true);
-          //   } else {
-          //     // TODO: Add error message when JSON is invalid
-          //   }
-          // };
-
-          // reader.onerror = () => {
-          //   setNotification("Error reading simulation file", { severity: "error" });
-          // }
+        try {
+          const buffer = Buffer.from(extractByteCode(contents));
+          onAccept(file.name, buffer);
         }
+        catch (ex: any) {
+          setNotification(`Failed to extract & store WASM bytecode: ${ex.message ?? ex}`, { severity: "error" });
+          console.error(ex);
+          return;
+        }
+        
+        setIsFileUploaded(true);
       }
-    )
-    ;
+
+      reader.onerror = () => {
+        setNotification("Error reading WASM binary file", { severity: "error" });
+      }
+    }
+
+    else if (file.type === "application/json") {
+      setNotification("Simulation upload is currently not supported.", { severity: "error" });
+      // const reader = new FileReader();
+      // reader.readAsText(file);
+      // reader.onload = () => {
+      //   // TODO: confirmation prompt if simulation is already loaded b/c we're about to override that
+      //   const json = JSON.parse(reader.result as string)
+      //   if (validateSimulationJSON(json)) {
+      //     setSimulation(json);
+      //     setIsFileUploaded(true);
+      //   } else {
+      //     // TODO: Add error message when JSON is invalid
+      //   }
+      // };
+
+      // reader.onerror = () => {
+      //   setNotification("Error reading simulation file", { severity: "error" });
+      // }
+    }
   };
 
   const handleOnFileChange = (files: File[]) => {
     if (files.length === 0) {
       setIsFileUploaded(false);
+      onClear();
     }
-  };
-
-  const handleOnFileDelete = (file: File) => {
-    // TODO: clear local storage and CWEnv
   };
 
   return (
     <Suspense fallback={<Fallback/>}>
       <DropzoneArea
         dropzoneClass="dropzone"
-        acceptedFiles={fileTypes}
+        acceptedFiles={getFileTypesByVariant(variant)}
         showFileNames={true}
         dropzoneText={text}
         onDrop={handleOnFileDrop}
-        onDelete={handleOnFileDelete}
-        alertSnackbarProps={snackbarProps}
         onChange={handleOnFileChange}
+        alertSnackbarProps={snackbarProps}
         filesLimit={1}
       />
     </Suspense>
@@ -158,6 +120,14 @@ function Fallback() {
 }
 
 export default FileUpload;
+
+function getFileTypesByVariant(variant: Defined<IProps['variant']>) {
+  switch (variant) {
+    case 'both': return ['application/wasm', 'application/json'];
+    case 'simulation': return ['application/json'];
+    case 'contract': return ['application/wasm'];
+  }
+}
 
 function extractByteCode(contents: string | ArrayBuffer): ArrayBuffer {
   if (typeof contents !== 'string')

@@ -3,12 +3,14 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import NotesIcon from "@mui/icons-material/Notes";
 import { Button, Grid, Paper, styled, Typography } from "@mui/material";
-import React, { HTMLAttributeAnchorTarget, PropsWithChildren } from "react";
+import React, { HTMLAttributeAnchorTarget, PropsWithChildren, useCallback, useState } from "react";
 import { To } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
+import { useNotification } from "../../atoms/snackbarNotificationState";
+import { DEFAULT_CHAIN } from "../../configs/variables";
 import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
-import { useCreateChainForSimulation } from "../../utils/setupSimulation";
+import { useCreateChainForSimulation, useStoreCode } from "../../utils/setupSimulation";
 import FileUpload from "../FileUpload";
 import T1Link from "../T1Link";
 
@@ -26,17 +28,32 @@ interface IProps {
 }
 
 export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
-  const isFileUploaded = useRecoilValue(fileUploadedState);
-  const chains = useRecoilValue(filteredChainsFromSimulationState);
+  const [file, setFile] = useState<{ filename: string, buffer: Buffer } | undefined>(undefined);
+  
+  const setNotification = useNotification();
   const createChainForSimulation = useCreateChainForSimulation();
-  const onCreateNewEnvironment = () => {
-    chains && Object.values(chains).forEach(chain => {
-      createChainForSimulation({
-        chainId: chain.chainId,
-        bech32Prefix: chain.bech32Prefix
-      });
+  const storeCode = useStoreCode();
+  
+  const onCreateNewEnvironment = useCallback(() => {
+    if (!file) {
+      setNotification("Internal error. Please check logs.", { severity: "error" });
+      return;
+    }
+    
+    createChainForSimulation({
+      chainId: DEFAULT_CHAIN,
+      bech32Prefix: 'terra',
     });
-  };
+    storeCode(DEFAULT_CHAIN, file.filename, file.buffer);
+  }, [file]);
+  
+  const onAcceptFile = useCallback((filename: string, buffer: Buffer) => {
+    setFile({ filename, buffer });
+  }, []);
+  
+  const onClearFile = useCallback(() => {
+    setFile(undefined);
+  }, []);
 
   return (
     <Grid
@@ -98,7 +115,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           sx={{marginTop: 4, marginBottom: 4, width: "60%"}}
         >
           <Item sx={{border: "1px solid #eae5e5"}}>
-            <FileUpload fileTypes={["application/wasm", "application/json"]}/>
+            <FileUpload onAccept={onAcceptFile} onClear={onClearFile} />
           </Item>
         </Grid>
         <Grid
@@ -108,12 +125,12 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           lg={6}
           sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
         >
-          <T1Link to={"/chains"} sx={{textDecoration: "none"}} disabled={!isFileUploaded}>
+          <T1Link to={"/chains"} sx={{textDecoration: "none"}} disabled={!file}>
             <Button
               variant="contained"
               sx={{borderRadius: "10px"}}
               onClick={onCreateNewEnvironment}
-              disabled={!isFileUploaded}
+              disabled={!file}
             >
               New Simulation Environment
             </Button>

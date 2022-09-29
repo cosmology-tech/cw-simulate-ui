@@ -8,15 +8,17 @@ import { useRecoilValue } from "recoil";
 import React from "react";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
 import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
-import Config from "./Config";
+import { Outlet, useParams } from "react-router-dom";
 
 const Chains = () => {
+  const params = useParams();
+  const chainId = params.chainId!;
   const chains = useRecoilValue(filteredChainsFromSimulationState);
-
-  if (Object.keys(chains).length) {
-    return <Config chainId={Object.keys(chains)[0]} />
+  
+  if (chainId in chains) {
+    return <Outlet />
   }
-
+  
   return (
     <Box
       sx={{

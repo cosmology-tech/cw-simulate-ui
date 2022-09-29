@@ -15,10 +15,6 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
   const codes = useRecoilValue(selectCodesMetadata(chainId));
 
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
-  const openCloseDialog = (isOpen: boolean, close: () => void ) => {
-    setOpenUploadDialog(isOpen);
-    if (!isOpen) close();
-  };
 
   return (
     <>
@@ -34,7 +30,15 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
           </MenuItem>
         ]}
         optionsExtras={({ close }) => [
-          <ContractUploadModal key={'contract-upload-modal-for-sidebar'} chainId={chainId} openUploadDialog={openUploadDialog} setOpenUploadDialog={(isOpen: boolean) => openCloseDialog(isOpen, close)} />
+          <ContractUploadModal
+            key="contract-upload-modal-for-sidebar"
+            chainId={chainId}
+            open={openUploadDialog}
+            onClose={() => {
+              setOpenUploadDialog(false);
+              close();
+            }}
+          />
         ]}
       >
         {Object.values(codes).map((code) => (
