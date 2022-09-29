@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import ContractUploadModal from "../ContractUploadModal";
+import UploadModal from "../UploadModal";
 
 export interface ISimulationItemProps {
 }
@@ -51,9 +51,11 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
           }}
           setSimulationEnv={setSimulationEnv}
         />,
-        // TODO: Change ContractUploadModal to UploadModal which takes a type prop of fileTypes, dropzoneText, and uploadHandler
-        <ContractUploadModal
+        <UploadModal
           key={'simulation-upload-modal'}
+          dropzoneText={"Click to upload a simulation file & drop a file here"}
+          dropTitle={"Upload Simulation"}
+          variant='simulation'
           chainId={"chainId"}
           open={openUploadDialog}
           onClose={(isOpen: boolean) => openCloseDialog(isOpen, close)}/>

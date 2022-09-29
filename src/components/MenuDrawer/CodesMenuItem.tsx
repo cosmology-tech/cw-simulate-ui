@@ -2,7 +2,7 @@ import { MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { selectCodesMetadata } from "../../atoms/simulationMetadataState";
-import ContractUploadModal from "../ContractUploadModal";
+import UploadModal from "../UploadModal";
 import CodeMenuItem from "./CodeMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
@@ -30,7 +30,7 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
           </MenuItem>
         ]}
         optionsExtras={({ close }) => [
-          <ContractUploadModal
+          <UploadModal
             key="contract-upload-modal-for-sidebar"
             chainId={chainId}
             open={openUploadDialog}

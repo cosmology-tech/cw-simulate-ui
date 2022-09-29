@@ -10,8 +10,6 @@ import Chains from "./components/chains/Chains";
 import SnackbarNotification from "./components/SnackbarNotification";
 import Config from "./components/chains/Config";
 import State from "./components/chains/State";
-import Accounts from "./components/chains/Accounts";
-import Codes from "./components/chains/Codes";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
