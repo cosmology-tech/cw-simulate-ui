@@ -17,10 +17,10 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
     <T1MenuItem
       label={code.name}
       nodeId={`${chainId}/codes/${code.name}`}
+      link={`/simulation/${code.codeId}`}
       textEllipsis
       options={[
-        <MenuItem
-          key="instantiate">Instantiate</MenuItem>,
+        <MenuItem key="instantiate">Instantiate</MenuItem>,
       ]}
       // TODO: Add dialog for instantiate message
     />
