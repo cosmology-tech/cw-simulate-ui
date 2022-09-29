@@ -53,7 +53,8 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
         />,
         // TODO: Change ContractUploadModal to UploadModal which takes a type prop of fileTypes, dropzoneText, and uploadHandler
         <ContractUploadModal
-          key={'simulation-upload-modal'} chainId={"chainId"}
+          key={'simulation-upload-modal'}
+          chainId={"chainId"}
           open={openUploadDialog}
           onClose={(isOpen: boolean) => openCloseDialog(isOpen, close)}/>
       ]}/>
