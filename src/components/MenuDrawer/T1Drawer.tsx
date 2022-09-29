@@ -1,7 +1,7 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Box, Divider, Drawer, ListItemButton, styled, SxProps, Theme } from "@mui/material";
 import TreeView from "@mui/lab/TreeView";
-import React, { ReactNode, useCallback, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import Logo from "./Logo";
 import ChainsMenuItem from "./ChainsMenuItem";
@@ -86,31 +86,36 @@ interface IHierarchyMenuProps {
 
 function HierarchyMenu(props: IHierarchyMenuProps) {
   const { children, sx } = props;
-  
+
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [expanded, setExpanded] = useState(['chains', `chains/${DEFAULT_CHAIN}`, `${DEFAULT_CHAIN}/codes`]);
   const [selected, setSelected] = useState('');
   const data = useRef<MenuDrawerData>({});
-  
+
   const api = useMemo<MenuDrawerAPI>(() => ({
     register({nodeId, ...nodeData}) {
       if (nodeId in data)
         throw new Error(`Duplicate node ID ${nodeId}`);
       data.current[nodeId] = nodeData;
+      
+      // MUI quirk due to un/mount of subtrees
+      const link = extractNodeLink(nodeId, nodeData);
+      if (link && link === `${location.pathname}${location.hash}`)
+        setSelected(nodeId);
       setExpanded(prev => [...prev, nodeId]);
     },
     unregister(nodeId) {
       delete data.current[nodeId];
       setExpanded(prev => prev.filter(curr => curr !== nodeId));
     },
-  }), []);
+  }), [location]);
 
   const handleFocusNode = useCallback((e: React.SyntheticEvent, nodeId: string) => {
     const nodeData = data.current[nodeId];
-    if (!nodeData)
-      throw new Error(`No data for node ID ${nodeId}`);
+    // MUI quirk: onNodeFocus is called twice, not sure why, seems like a bug...
+    if (!nodeData) return;
 
     const link = extractNodeLink(nodeId, nodeData);
     if (link && location.pathname !== link) {
@@ -119,6 +124,14 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
     }
   }, [location]);
   
+  useEffect(() => {
+    for (const nodeId in data.current) {
+      const link = extractNodeLink(nodeId, data.current[nodeId]);
+      if (link && link === `${location.pathname}${location.hash}`)
+        setSelected(nodeId);
+    }
+  }, [location]);
+
   return (
     <MenuDrawerContext.Provider value={api}>
       <TreeView
@@ -126,7 +139,7 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
         defaultCollapseIcon={<SubtreeIcon expanded />}
         sx={sx}
         onNodeFocus={handleFocusNode}
-        onNodeToggle={(e, nodeIds) => {
+        onNodeToggle={(_, nodeIds) => {
           setExpanded(nodeIds);
         }}
         expanded={expanded}

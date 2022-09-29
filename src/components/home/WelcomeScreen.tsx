@@ -21,10 +21,10 @@ const Item = styled(Paper)(({theme}) => ({
 
 export const WelcomeScreen = () => {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
-
   const setNotification = useNotification();
   const createChainForSimulation = useCreateChainForSimulation();
   const storeCode = useStoreCode();
+
   const onCreateNewEnvironment = useCallback(() => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -117,7 +117,8 @@ export const WelcomeScreen = () => {
           lg={6}
           sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
         >
-          <T1Link to={"/chains"} sx={{textDecoration: "none"}} disabled={!file}>
+          <T1Link to={`/chains/${DEFAULT_CHAIN}/config`} sx={{textDecoration: "none"}}
+                  disabled={!file}>
             <Button
               variant="contained"
               sx={{borderRadius: "10px"}}
