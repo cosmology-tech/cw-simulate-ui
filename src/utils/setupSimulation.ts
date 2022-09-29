@@ -37,7 +37,7 @@ export function useCreateChainForSimulation() {
 
     return chain!;
   }, []);
-};
+}
 
 export function useDeleteChainForSimulation() {
   const setSimulateEnv = useSetRecoilState(cwSimulateEnvState);
