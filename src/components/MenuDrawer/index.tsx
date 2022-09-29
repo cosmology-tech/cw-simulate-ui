@@ -6,7 +6,7 @@ import { useLocation } from "react-router-dom";
 import T1AppBar from "./T1AppBar";
 import T1Drawer from "./T1Drawer";
 
-export const DRAWER_WIDTH = 180;
+export const DRAWER_WIDTH = 250;
 
 export default function MenuDrawer() {
   const location = useLocation();
