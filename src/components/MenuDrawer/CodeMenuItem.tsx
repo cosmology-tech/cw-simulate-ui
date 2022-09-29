@@ -79,10 +79,10 @@ interface IDeleteCodeDialogProps {
 }
 
 function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
-  const {...rest} = props;
+  const {chainId, open, onClose} = props;
 
   return (
-    <Dialog {...rest}>
+    <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Confirm Delete Code</DialogTitle>
       <DialogContent>
         Are you absolutely certain you wish to delete code?
@@ -91,7 +91,7 @@ function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
         <Button
           variant="outlined"
           onClick={() => {
-            rest.onClose();
+            onClose();
           }}
         >
           Cancel
@@ -100,7 +100,7 @@ function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
-            rest.onClose();
+            onClose();
           }}
         >
           Delete
@@ -149,7 +149,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     }
 
     setNotification("Contract instance created");
-    onClose(true);
+    onClose(false);
   }, [payload, onClose]);
   return (
     <Dialog open={open} onClose={() => onClose(false)}>
