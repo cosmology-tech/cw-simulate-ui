@@ -12,18 +12,18 @@ interface IContractUploadModalProps {
 
 export default function ContractUploadModal(props: IContractUploadModalProps) {
   const { chainId, open, onClose } = props;
-  
+
   const [file, setFile] = useState<{filename: string, buffer: Buffer} | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
-  
+
   const handleAdd = useCallback(() => {
     if (!file) {
       setNotification("Internal error. Please check logs.", { severity: "error" });
       console.error('no file uploaded');
       return;
     }
-    
+
     storeCode(chainId, file.filename, file.buffer)
     onClose(true);
   }, [file, onClose]);
@@ -35,7 +35,7 @@ export default function ContractUploadModal(props: IContractUploadModalProps) {
         <FileUpload
           dropzoneText={"Click to upload a contract binary or Drag & drop a file here"}
           variant='contract'
-          onAccept={(filename, buffer) => {
+          onAccept={(filename: string, buffer: Buffer) => {
             setFile({ filename, buffer });
           }}
           onClear={() => {
