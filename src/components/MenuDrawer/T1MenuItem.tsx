@@ -165,9 +165,10 @@ function Label(props: ILabelProps) {
           whiteSpace: 'nowrap',
           overflow: 'hidden',
           textOverflow: 'ellipsis',
+          paddingRight: 5
         }}
       >
-        {children.toString().length > 12 ? children.toString().substring(0, 12) + '...' : children}
+        {children}
       </Typography>
     </Tooltip>
   )
