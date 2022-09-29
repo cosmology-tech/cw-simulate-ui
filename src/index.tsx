@@ -54,7 +54,8 @@ root.render(
               <Route path="/chains" element={<Chains />}>
                 <Route path=":chainId/config" element={<Config />} />
                 <Route path=":chainId/state" element={<State />} />
-                <Route path=":chainId/accounts" element={<Accounts />} />
+                {/* TODO: Commented out accounts for now until we have accounts in the cw-simulate */}
+                {/*<Route path=":chainId/accounts" element={<Accounts />} />*/}
                 <Route path=":chainId/codes" element={<Codes />} />
               </Route>
 

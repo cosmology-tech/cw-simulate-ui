@@ -52,7 +52,8 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
     >
       <T1MenuItem label="Config" nodeId={`chains/${chainId}/config`} link={`/chains/${chainId}/config`} />
       <T1MenuItem label="State" nodeId={`chains/${chainId}/state`} link={`/chains/${chainId}/state`} />
-      <T1MenuItem label="Accounts" nodeId={`chains/${chainId}/accounts`} link={`/chains/${chainId}/accounts`} />
+      {/* TODO: Commented out accounts for now until we have accounts in the cw-simulate*/}
+      {/*<T1MenuItem label="Accounts" nodeId={`chains/${chainId}/accounts`} link={`/chains/${chainId}/accounts`} />*/}
       <CodesMenuItem chainId={chainId} />
       <InstancesMenuItem chainId={chainId} />
     </T1MenuItem>
