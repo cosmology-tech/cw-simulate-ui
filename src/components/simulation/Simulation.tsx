@@ -2,7 +2,6 @@ import { Box, Divider, Grid, Paper, styled } from "@mui/material";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ExecuteQuery } from "../ExecuteQuery";
 import { responseState } from "../../atoms/responseState";
-import { allStatesAtom } from "../../atoms/allStatesAtom";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { StateRenderer } from "../StateRenderer";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
@@ -17,7 +16,6 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 const Simulation = () => {
   const [response, setResponse] = useRecoilState(responseState);
-  const [allStates, setAllStates] = useRecoilState(allStatesAtom);
   const [currentState, setCurrentState] = useRecoilState(currentStateNumber);
   const isFileUploaded = useRecoilValue(fileUploadedState);
   return (
@@ -45,14 +43,7 @@ const Simulation = () => {
               xs={12}
               sx={{ paddingLeft: "0px !important", m: 2, height: "50%" }}
             >
-              <ExecuteQuery
-                response={response}
-                setResponse={setResponse}
-                setAllStates={setAllStates}
-                allStates={allStates}
-                setCurrentState={setCurrentState}
-                currentState={currentState}
-              />
+              <ExecuteQuery setResponse={setResponse} />
             </Grid>
             <Divider flexItem />
             <Grid
@@ -66,7 +57,6 @@ const Simulation = () => {
             >
               <StateRenderer
                 isFileUploaded={isFileUploaded}
-                allStates={allStates}
                 currentState={currentState}
               />
             </Grid>
