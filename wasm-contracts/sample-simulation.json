@@ -136502,5 +136502,16 @@
       },
       "contracts": {}
     }
+  },
+  "simulationMetadata": {
+    "terratest-1": {
+      "accounts": {},
+      "codes": {
+        "hello_world-aarch64.wasm": {
+          "name": "hello_world-aarch64.wasm",
+          "codeId": 1
+        }
+      }
+    }
   }
 }
