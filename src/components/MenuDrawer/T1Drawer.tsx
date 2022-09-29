@@ -7,6 +7,8 @@ import Logo from "./Logo";
 import ChainsMenuItem from "./ChainsMenuItem";
 import SimulationMenuItem from "./SimulationMenuItem";
 import { DEFAULT_CHAIN } from "../../configs/variables";
+import { useRecoilState } from "recoil";
+import { selectedMenuItemState } from "../../atoms/selectedMenuItemState";
 
 type MenuDrawerAPI = {
   register(data: MenuDrawerRegisterOptions): void;
@@ -86,14 +88,14 @@ interface IHierarchyMenuProps {
 
 function HierarchyMenu(props: IHierarchyMenuProps) {
   const { children, sx } = props;
-  
+
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [expanded, setExpanded] = useState(['chains', `chains/${DEFAULT_CHAIN}`, `${DEFAULT_CHAIN}/codes`]);
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useRecoilState(selectedMenuItemState);
   const data = useRef<MenuDrawerData>({});
-  
+
   const api = useMemo<MenuDrawerAPI>(() => ({
     register({nodeId, ...nodeData}) {
       if (nodeId in data)
@@ -118,7 +120,7 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
       navigate(link);
     }
   }, [location]);
-  
+
   return (
     <MenuDrawerContext.Provider value={api}>
       <TreeView
@@ -126,7 +128,7 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
         defaultCollapseIcon={<SubtreeIcon expanded />}
         sx={sx}
         onNodeFocus={handleFocusNode}
-        onNodeToggle={(e, nodeIds) => {
+        onNodeToggle={(_, nodeIds) => {
           setExpanded(nodeIds);
         }}
         expanded={expanded}

@@ -5,11 +5,10 @@ import NotesIcon from "@mui/icons-material/Notes";
 import { Button, Grid, Paper, styled, Typography } from "@mui/material";
 import React, { HTMLAttributeAnchorTarget, PropsWithChildren, useCallback, useState } from "react";
 import { To } from "react-router-dom";
-import { useRecoilValue } from "recoil";
-import { fileUploadedState } from "../../atoms/fileUploadedState";
+import { useSetRecoilState } from "recoil";
+import { selectedMenuItemState } from "../../atoms/selectedMenuItemState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN } from "../../configs/variables";
-import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
 import { useCreateChainForSimulation, useStoreCode } from "../../utils/setupSimulation";
 import FileUpload from "../FileUpload";
 import T1Link from "../T1Link";
@@ -29,28 +28,30 @@ interface IProps {
 
 export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
   const [file, setFile] = useState<{ filename: string, buffer: Buffer } | undefined>(undefined);
-  
+
   const setNotification = useNotification();
   const createChainForSimulation = useCreateChainForSimulation();
   const storeCode = useStoreCode();
-  
+  const setSelectedMenuItem = useSetRecoilState(selectedMenuItemState)
+
   const onCreateNewEnvironment = useCallback(() => {
     if (!file) {
       setNotification("Internal error. Please check logs.", { severity: "error" });
       return;
     }
-    
+
     createChainForSimulation({
       chainId: DEFAULT_CHAIN,
       bech32Prefix: 'terra',
     });
     storeCode(DEFAULT_CHAIN, file.filename, file.buffer);
+    setSelectedMenuItem(`chains/${DEFAULT_CHAIN}/config`);
   }, [file]);
-  
+
   const onAcceptFile = useCallback((filename: string, buffer: Buffer) => {
     setFile({ filename, buffer });
   }, []);
-  
+
   const onClearFile = useCallback(() => {
     setFile(undefined);
   }, []);
@@ -125,7 +126,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           lg={6}
           sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
         >
-          <T1Link to={"/chains"} sx={{textDecoration: "none"}} disabled={!file}>
+          <T1Link to={`/chains/${DEFAULT_CHAIN}/config`} sx={{textDecoration: "none"}} disabled={!file}>
             <Button
               variant="contained"
               sx={{borderRadius: "10px"}}

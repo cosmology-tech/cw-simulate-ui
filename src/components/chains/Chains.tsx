@@ -14,11 +14,11 @@ const Chains = () => {
   const params = useParams();
   const chainId = params.chainId!;
   const chains = useRecoilValue(filteredChainsFromSimulationState);
-  
+
   if (chainId in chains) {
     return <Outlet />
   }
-  
+
   return (
     <Box
       sx={{
@@ -60,7 +60,7 @@ const Chains = () => {
           <Stack sx={{ textAlign: "center", alignItems: "center" }}>
             <ScreenSearchDesktopOutlined sx={{ fontSize: "100px" }} />
             <Typography variant="h6">
-              No chain found. Please add a chain.
+              No chain selected.
             </Typography>
           </Stack>
         </Grid>
