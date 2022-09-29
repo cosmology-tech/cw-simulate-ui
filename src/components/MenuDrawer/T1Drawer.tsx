@@ -89,6 +89,7 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
   const navigate = useNavigate();
   const location = useLocation();
   
+  const [expanded, setExpanded] = useState(['chains']);
   const [selected, setSelected] = useState('');
   const data = useRef<MenuDrawerData>({});
   
@@ -97,9 +98,11 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
       if (nodeId in data)
         throw new Error(`Duplicate node ID ${nodeId}`);
       data.current[nodeId] = nodeData;
+      setExpanded(prev => [...prev, nodeId]);
     },
     unregister(nodeId) {
       delete data.current[nodeId];
+      setExpanded(prev => prev.filter(curr => curr !== nodeId));
     },
   }), []);
 
@@ -122,6 +125,10 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
         defaultCollapseIcon={<SubtreeIcon expanded />}
         sx={sx}
         onNodeFocus={handleFocusNode}
+        onNodeToggle={(e, nodeIds) => {
+          setExpanded(nodeIds);
+        }}
+        expanded={expanded}
         selected={selected}
       >
         {children}
