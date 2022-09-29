@@ -11,12 +11,11 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
     chainId,
     instance,
   } = props;
-
   return (
     <T1MenuItem
       label={instance.contractAddress}
       nodeId={`${chainId}/instances/${instance.contractAddress}`}
-      link={`/chains/${chainId}/codes`}
+      link={`/chains/${chainId}/instances/${instance.contractAddress}`}
       textEllipsis
     />
   )

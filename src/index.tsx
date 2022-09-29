@@ -45,6 +45,7 @@ root.render(
                   <Home />
                 }
               />
+
               <Route path={"/simulation"} element={<Simulation />}>
                 <Route path={":instanceId"} element={<Simulation />} />
               </Route>

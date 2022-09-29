@@ -59,7 +59,6 @@ export const downloadJSON = (content: string, fileName: string, contentType = 'a
   a.href = URL.createObjectURL(file);
   a.download = fileName;
   a.click();
-  document.body.removeChild(a);
   URL.revokeObjectURL(a.href);
 }
 
