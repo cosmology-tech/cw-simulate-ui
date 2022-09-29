@@ -5,7 +5,6 @@ import NotesIcon from "@mui/icons-material/Notes";
 import { Button, Grid, Paper, styled, Typography } from "@mui/material";
 import React, { HTMLAttributeAnchorTarget, PropsWithChildren, useCallback, useState } from "react";
 import { To } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN } from "../../configs/variables";
 import { useCreateChainForSimulation, useStoreCode } from "../../utils/setupSimulation";
@@ -20,33 +19,28 @@ const Item = styled(Paper)(({theme}) => ({
   color: theme.palette.text.secondary,
 }));
 
-interface IProps {
-  setWasmBuffers: (fileBuffer: ArrayBuffer[]) => void;
-  wasmBuffers: ArrayBuffer[];
-}
-
-export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
-  const [file, setFile] = useState<{ filename: string, buffer: Buffer } | undefined>(undefined);
-
+export const WelcomeScreen = () => {
+  const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
   const setNotification = useNotification();
   const createChainForSimulation = useCreateChainForSimulation();
   const storeCode = useStoreCode();
 
   const onCreateNewEnvironment = useCallback(() => {
     if (!file) {
-      setNotification("Internal error. Please check logs.", { severity: "error" });
+      setNotification("Internal error. Please check logs.", {severity: "error"});
       return;
     }
-
-    createChainForSimulation({
-      chainId: DEFAULT_CHAIN,
-      bech32Prefix: 'terra',
-    });
-    storeCode(DEFAULT_CHAIN, file.filename, file.buffer);
+    if (file.filename.endsWith(".wasm")) {
+      createChainForSimulation({
+        chainId: DEFAULT_CHAIN,
+        bech32Prefix: 'terra',
+      });
+      storeCode(DEFAULT_CHAIN, file.filename, file.fileContent as Buffer);
+    }
   }, [file]);
 
-  const onAcceptFile = useCallback((filename: string, buffer: Buffer) => {
-    setFile({ filename, buffer });
+  const onAcceptFile = useCallback((filename: string, fileContent: Buffer | JSON) => {
+    setFile({filename, fileContent});
   }, []);
 
   const onClearFile = useCallback(() => {
@@ -113,7 +107,7 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           sx={{marginTop: 4, marginBottom: 4, width: "60%"}}
         >
           <Item sx={{border: "1px solid #eae5e5"}}>
-            <FileUpload onAccept={onAcceptFile} onClear={onClearFile} />
+            <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
           </Item>
         </Grid>
         <Grid
@@ -123,7 +117,8 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
           lg={6}
           sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
         >
-          <T1Link to={`/chains/${DEFAULT_CHAIN}/config`} sx={{textDecoration: "none"}} disabled={!file}>
+          <T1Link to={`/chains/${DEFAULT_CHAIN}/config`} sx={{textDecoration: "none"}}
+                  disabled={!file}>
             <Button
               variant="contained"
               sx={{borderRadius: "10px"}}

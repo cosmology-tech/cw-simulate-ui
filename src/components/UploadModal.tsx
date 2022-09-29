@@ -1,25 +1,29 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useCallback, useState } from "react";
 import { useNotification } from "../atoms/snackbarNotificationState";
 import { useStoreCode } from "../utils/setupSimulation";
 import FileUpload from "./FileUpload";
 
-interface IContractUploadModalProps {
+interface IUploadModalProps {
+  dropzoneText?: string;
+  variant?: 'simulation' | 'contract' | 'both';
+  dropTitle?: string;
   chainId: string;
   open: boolean;
+
   onClose(success: boolean): void;
 }
 
-export default function ContractUploadModal(props: IContractUploadModalProps) {
-  const { chainId, open, onClose } = props;
+export default function UploadModal(props: IUploadModalProps) {
+  const {dropzoneText, variant, dropTitle, chainId, open, onClose} = props;
 
-  const [file, setFile] = useState<{filename: string, buffer: Buffer} | undefined>();
+  const [file, setFile] = useState<{ filename: string, buffer: Buffer } | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
 
   const handleAdd = useCallback(() => {
     if (!file) {
-      setNotification("Internal error. Please check logs.", { severity: "error" });
+      setNotification("Internal error. Please check logs.", {severity: "error"});
       console.error('no file uploaded');
       return;
     }
@@ -30,13 +34,13 @@ export default function ContractUploadModal(props: IContractUploadModalProps) {
 
   return (
     <Dialog open={open} onClose={() => onClose(false)}>
-      <DialogTitle>Upload Code</DialogTitle>
+      <DialogTitle>{dropTitle ?? 'Upload Code'}</DialogTitle>
       <DialogContent>
         <FileUpload
-          dropzoneText={"Click to upload a contract binary or Drag & drop a file here"}
-          variant='contract'
+          dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
+          variant={variant ?? 'contract'}
           onAccept={(filename: string, buffer: Buffer) => {
-            setFile({ filename, buffer });
+            setFile({filename, buffer});
           }}
           onClear={() => {
             setFile(undefined);
