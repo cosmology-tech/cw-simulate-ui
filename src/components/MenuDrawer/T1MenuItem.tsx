@@ -17,7 +17,6 @@ export interface IT1MenuItemProps {
   icon?: ReactNode;
   sx?: SxProps<Theme>;
   menuRef?: React.Ref<HTMLUListElement>;
-  handleOnItemClick?: MouseEventHandler<HTMLLIElement>;
 }
 
 type Options = ReactNode | ((api: OptionsAPI) => ReactNode)
@@ -34,7 +33,6 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
     optionsExtras,
     sx,
     menuRef,
-    handleOnItemClick,
     ...rest
   } = props;
 
@@ -66,7 +64,6 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
 
   return (
     <TreeItem
-      onClick={handleOnItemClick}
       ref={rootRef}
       label={
         <Box
