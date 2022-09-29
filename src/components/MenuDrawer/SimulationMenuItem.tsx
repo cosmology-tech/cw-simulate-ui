@@ -4,7 +4,6 @@ import { downloadJSON } from "../../utils/fileUtils";
 import { useRecoilState } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
-import { CWSimulateEnv } from "@terran-one/cw-simulate";
 import { useNavigate } from "react-router-dom";
 
 export interface ISimulationItemProps {
@@ -19,34 +18,44 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
     e.stopPropagation();
     downloadJSON(JSON.stringify(simulationEnv, null, 2), "simulation.json");
   }, []);
-  return <T1MenuItem nodeId="simulation"
-                     label="Simulation"
-                     options={[
-                       <MenuItem key="download" onClick={handleOnItemClick}>Download</MenuItem>,
-                       <MenuItem key="upload" onClick={handleOnItemClick}>Upload</MenuItem>,
-                       <MenuItem key="clear"
-                                 onClick={() => setSimulationEnv({} as CWSimulateEnv)}>Clear</MenuItem>,
-                     ]}
-                     optionsExtras={({close}) => [
-                       <ClearSimulationDialog
-                         key="clear-simulation"
-                         open={showClearSimulation}
-                         onClose={() => {
-                           setShowClearSimulation(false);
-                           close();
-                           navigate('/');
-                         }}
-                       />,
-                     ]}/>
+  return (
+    <T1MenuItem
+      nodeId="simulation"
+      label="Simulation"
+      options={[
+        <MenuItem key="download-simulation"
+                  onClick={handleOnItemClick}>Download</MenuItem>,
+        <MenuItem key="upload-simulation"
+                  onClick={handleOnItemClick}>Upload</MenuItem>,
+        <MenuItem key="clear-simulation"
+                  onClick={() => {
+                    setShowClearSimulation(true);
+                  }}>Clear</MenuItem>,
+      ]}
+      optionsExtras={({close}) => [
+        <ClearSimulationDialog
+          key="clear-simulation"
+          open={showClearSimulation}
+          onClose={() => {
+            setShowClearSimulation(false);
+            close();
+            navigate('/');
+          }}
+          setSimulationEnv={setSimulationEnv}
+        />,
+      ]}/>
+  )
 });
 
 interface IClearSimulationDialogProps {
+  setSimulationEnv: (env: any) => void;
   open: boolean;
+
   onClose(): void;
 }
 
 function ClearSimulationDialog(props: IClearSimulationDialogProps) {
-  const {...rest} = props;
+  const {setSimulationEnv, ...rest} = props;
 
   return (
     <Dialog {...rest}>
@@ -67,6 +76,7 @@ function ClearSimulationDialog(props: IClearSimulationDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
+            setSimulationEnv({});
             rest.onClose();
           }}
         >
