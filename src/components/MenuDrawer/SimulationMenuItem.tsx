@@ -1,24 +1,27 @@
 import React, { MouseEvent, useState } from "react";
 import T1MenuItem from "./T1MenuItem";
 import { downloadJSON } from "../../utils/fileUtils";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UploadModal from "../UploadModal";
+import simulationMetadataState from "../../atoms/simulationMetadataState";
 
 export interface ISimulationItemProps {
 }
 
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
   const [simulationEnv, setSimulationEnv] = useRecoilState(cwSimulateEnvState);
+  const simulationMetadata = useRecoilValue(simulationMetadataState);
   const [showClearSimulation, setShowClearSimulation] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const navigate = useNavigate();
   const handleOnItemClick = React.useCallback((e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    downloadJSON(JSON.stringify(simulationEnv, null, 2), "simulation.json");
+    const json = {...simulationEnv, 'simulationMetadata': simulationMetadata};
+    downloadJSON(JSON.stringify(json, null, 2), "simulation.json");
   }, []);
 
   const openCloseDialog = (isOpen: boolean, close: () => void) => {

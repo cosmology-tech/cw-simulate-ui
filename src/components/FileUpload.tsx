@@ -3,8 +3,9 @@ import { Box, CircularProgress, SnackbarProps } from "@mui/material";
 import { useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../atoms/fileUploadedState";
 import { useNotification } from "../atoms/snackbarNotificationState";
-import { base64ToArrayBuffer, validateSimulationJSON } from "../utils/fileUtils";
+import { base64ToArrayBuffer } from "../utils/fileUtils";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
 
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
@@ -28,6 +29,7 @@ const FileUpload = ({
 }: IProps) => {
   const setIsFileUploaded = useSetRecoilState(fileUploadedState);
   const setSimulationEnv = useSetRecoilState(cwSimulateEnvState);
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
   const snackbarProps: SnackbarProps = {
     anchorOrigin: {
       vertical: "top",
@@ -84,10 +86,11 @@ const FileUpload = ({
         setIsFileUploaded(true);
         onAccept(file.name, json);
         setSimulationEnv(json);
+        setSimulationMetadata(json.simulationMetadata);
       };
 
       reader.onerror = () => {
-        setNotification("Error reading simulation file", { severity: "error" });
+        setNotification("Error reading simulation file", {severity: "error"});
       }
     }
   };
