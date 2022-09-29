@@ -6,7 +6,6 @@ import { Button, Grid, Paper, styled, Typography } from "@mui/material";
 import React, { HTMLAttributeAnchorTarget, PropsWithChildren, useCallback, useState } from "react";
 import { To } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
-import { selectedMenuItemState } from "../../atoms/selectedMenuItemState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN } from "../../configs/variables";
 import { useCreateChainForSimulation, useStoreCode } from "../../utils/setupSimulation";
@@ -32,7 +31,6 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
   const setNotification = useNotification();
   const createChainForSimulation = useCreateChainForSimulation();
   const storeCode = useStoreCode();
-  const setSelectedMenuItem = useSetRecoilState(selectedMenuItemState)
 
   const onCreateNewEnvironment = useCallback(() => {
     if (!file) {
@@ -45,7 +43,6 @@ export const WelcomeScreen = ({setWasmBuffers, wasmBuffers}: IProps) => {
       bech32Prefix: 'terra',
     });
     storeCode(DEFAULT_CHAIN, file.filename, file.buffer);
-    setSelectedMenuItem(`chains/${DEFAULT_CHAIN}/config`);
   }, [file]);
 
   const onAcceptFile = useCallback((filename: string, buffer: Buffer) => {

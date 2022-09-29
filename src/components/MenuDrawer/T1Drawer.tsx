@@ -1,14 +1,12 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Box, Divider, Drawer, ListItemButton, styled, SxProps, Theme } from "@mui/material";
 import TreeView from "@mui/lab/TreeView";
-import React, { ReactNode, useCallback, useMemo, useRef, useState } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import Logo from "./Logo";
 import ChainsMenuItem from "./ChainsMenuItem";
 import SimulationMenuItem from "./SimulationMenuItem";
 import { DEFAULT_CHAIN } from "../../configs/variables";
-import { useRecoilState } from "recoil";
-import { selectedMenuItemState } from "../../atoms/selectedMenuItemState";
 
 type MenuDrawerAPI = {
   register(data: MenuDrawerRegisterOptions): void;
@@ -93,7 +91,7 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
   const location = useLocation();
 
   const [expanded, setExpanded] = useState(['chains', `chains/${DEFAULT_CHAIN}`, `${DEFAULT_CHAIN}/codes`]);
-  const [selected, setSelected] = useRecoilState(selectedMenuItemState);
+  const [selected, setSelected] = useState('');
   const data = useRef<MenuDrawerData>({});
 
   const api = useMemo<MenuDrawerAPI>(() => ({
@@ -101,23 +99,36 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
       if (nodeId in data)
         throw new Error(`Duplicate node ID ${nodeId}`);
       data.current[nodeId] = nodeData;
+      
+      // MUI quirk due to un/mount of subtrees
+      const link = extractNodeLink(nodeId, nodeData);
+      if (link && link === `${location.pathname}${location.hash}`)
+        setSelected(nodeId);
       setExpanded(prev => [...prev, nodeId]);
     },
     unregister(nodeId) {
       delete data.current[nodeId];
       setExpanded(prev => prev.filter(curr => curr !== nodeId));
     },
-  }), []);
+  }), [location]);
 
   const handleFocusNode = useCallback((e: React.SyntheticEvent, nodeId: string) => {
     const nodeData = data.current[nodeId];
-    if (!nodeData)
-      throw new Error(`No data for node ID ${nodeId}`);
+    // MUI quirk: onNodeFocus is called twice, not sure why, seems like a bug...
+    if (!nodeData) return;
 
     const link = extractNodeLink(nodeId, nodeData);
     if (link && location.pathname !== link) {
       setSelected(nodeId);
       navigate(link);
+    }
+  }, [location]);
+  
+  useEffect(() => {
+    for (const nodeId in data.current) {
+      const link = extractNodeLink(nodeId, data.current[nodeId]);
+      if (link && link === `${location.pathname}${location.hash}`)
+        setSelected(nodeId);
     }
   }, [location]);
 
