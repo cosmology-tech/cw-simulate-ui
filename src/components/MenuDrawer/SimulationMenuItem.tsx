@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import ContractUploadModal from "../ContractUploadModal";
 
 export interface ISimulationItemProps {
 }
@@ -12,12 +13,19 @@ export interface ISimulationItemProps {
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
   const [simulationEnv, setSimulationEnv] = useRecoilState(cwSimulateEnvState);
   const [showClearSimulation, setShowClearSimulation] = useState(false);
+  const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const navigate = useNavigate();
   const handleOnItemClick = React.useCallback((e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     downloadJSON(JSON.stringify(simulationEnv, null, 2), "simulation.json");
   }, []);
+
+  const openCloseDialog = (isOpen: boolean, close: () => void) => {
+    setOpenUploadDialog(isOpen);
+    if (!isOpen) close();
+  };
+
   return (
     <T1MenuItem
       nodeId="simulation"
@@ -26,7 +34,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
         <MenuItem key="download-simulation"
                   onClick={handleOnItemClick}>Download</MenuItem>,
         <MenuItem key="upload-simulation"
-                  onClick={handleOnItemClick}>Upload</MenuItem>,
+                  onClick={() => setOpenUploadDialog(true)}>Upload</MenuItem>,
         <MenuItem key="clear-simulation"
                   onClick={() => {
                     setShowClearSimulation(true);
@@ -39,10 +47,15 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
           onClose={() => {
             setShowClearSimulation(false);
             close();
-            navigate('/');
+            navigate('/chains');
           }}
           setSimulationEnv={setSimulationEnv}
         />,
+        // TODO: Change ContractUploadModal to UploadModal which takes a type prop of fileTypes, dropzoneText, and uploadHandler
+        <ContractUploadModal
+          key={'simulation-upload-modal'} chainId={"chainId"}
+          openUploadDialog={openUploadDialog}
+          setOpenUploadDialog={(isOpen: boolean) => openCloseDialog(isOpen, close)}/>
       ]}/>
   )
 });
