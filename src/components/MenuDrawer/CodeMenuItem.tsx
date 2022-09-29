@@ -1,10 +1,12 @@
 import type { Code } from "../../atoms/simulationMetadataState";
 import T1MenuItem from "./T1MenuItem";
+import { MenuItem } from "@mui/material";
 
 export interface ICodeMenuItemProps {
   chainId: string;
   code: Code;
 }
+
 export default function CodeMenuItem(props: ICodeMenuItemProps) {
   const {
     chainId,
@@ -17,6 +19,11 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
       nodeId={`${chainId}/codes/${code.name}`}
       link={`/chains/${chainId}/codes`}
       textEllipsis
+      options={[
+        <MenuItem
+          key="instantiate">Instantiate</MenuItem>,
+      ]}
+      // TODO: Add dialog for instantiate message
     />
   )
 }

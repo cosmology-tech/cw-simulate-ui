@@ -1,7 +1,16 @@
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Box, IconButton, Menu, styled, SxProps, Theme, Tooltip, Typography } from "@mui/material";
+import { Box, IconButton, Menu, SxProps, Theme, Tooltip, Typography } from "@mui/material";
 import TreeItem from "@mui/lab/TreeItem";
-import { MouseEventHandler, useCallback, useState, useRef, ReactNode, useMemo, useEffect, useContext } from "react";
+import {
+  MouseEventHandler,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { MenuDrawerContext } from "./T1Drawer";
 
 export interface IT1MenuItemProps {
@@ -20,6 +29,7 @@ export interface IT1MenuItemProps {
 }
 
 type Options = ReactNode | ((api: OptionsAPI) => ReactNode)
+
 export interface OptionsAPI {
   close(): void;
 }
@@ -48,7 +58,9 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
   }, []);
 
   const api = useMemo(() => ({
-    close: () => {setShowOptions(false)},
+    close: () => {
+      setShowOptions(false)
+    },
   }), []);
 
   useEffect(() => {
@@ -86,10 +98,12 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
                 transition: 'opacity .2s ease-out',
                 transform: 'translateY(-50%)',
               }}
-              onClick={e => { e.stopPropagation() }}
+              onClick={e => {
+                e.stopPropagation()
+              }}
             >
               <IconButton ref={optsBtnRef} onClick={handleClickOptions}>
-                <MoreVertIcon />
+                <MoreVertIcon/>
               </IconButton>
               <Menu
                 open={showOptions}
@@ -153,7 +167,7 @@ function Label(props: ILabelProps) {
           textOverflow: 'ellipsis',
         }}
       >
-        {children}
+        {children.toString().length > 12 ? children.toString().substring(0, 12) + '...' : children}
       </Typography>
     </Tooltip>
   )
