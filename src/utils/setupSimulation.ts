@@ -6,11 +6,12 @@ import {
   MsgInfo
 } from "@terran-one/cw-simulate";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { BasicKVIterStorage, IBackend, IStorage, VMInstance } from '@terran-one/cosmwasm-vm-js';
+import { BasicKVIterStorage, IBackend, IStorage, Iter, VMInstance } from '@terran-one/cosmwasm-vm-js';
 import { useCallback } from "react";
 import type { Code } from "../atoms/simulationMetadataState";
 import simulationMetadataState from "../atoms/simulationMetadataState";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import Immutable from "immutable";
 
 export interface ChainConfig {
   chainId: string;
@@ -212,8 +213,22 @@ function cloneCWContractCode(code: CWContractCode) {
 }
 
 function cloneBasicKVIterStorage(storage: IStorage) {
-  if (storage instanceof BasicKVIterStorage)
-    return new BasicKVIterStorage(storage.iterators);
+  if (storage instanceof BasicKVIterStorage) {
+      const _iterators_ = new Map<number, Iter>();
+      for (const key of storage.iterators.keys()) {
+        const iter =  storage.iterators.get(key)!;
+        _iterators_.set(key, { data: [...iter.data], position: iter.position });
+      }
+
+      let _dict_ = Immutable.Map<string, string>();
+      for (const key of storage.dict.keys()) {
+        _dict_ = _dict_.set(key, storage.dict.get(key)!);
+      }
+
+      const iterStorage = new BasicKVIterStorage(_iterators_);
+      iterStorage.dict = _dict_;
+      return iterStorage;
+  }
 
   throw new Error(`IStorage implementation ${typeof storage} not supported`);
 }
