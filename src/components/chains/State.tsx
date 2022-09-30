@@ -4,19 +4,36 @@ import { useParams } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import SearchBar from "./SearchBar";
 import TableLayout from "./TableLayout";
+import { useMemo } from "react";
 
-function createData(key: any, value: any) {
-  return {key, value};
+type Row = {
+  contract: string;
+  key: string;
+  value: string;
 }
 
 const State = () => {
   const chainId = useParams().chainId!
   const states = useRecoilValue(filteredStatesByChainId(chainId as string));
-  const stateRows = states !== undefined ? Object.entries(states).map(([key, value]) => createData(key, value)) : undefined;
+  
+  const data = useMemo(() => {
+    const rows: Row[] = [];
+    for (const address in states) {
+      for (const key in states[address]) {
+        rows.push({
+          contract: address,
+          key,
+          value: states[address][key],
+        });
+      }
+    }
+    return rows;
+  }, [states]);
+  
   return (
     <>
       <Typography variant="h4">{chainId}</Typography>
-      {stateRows !== undefined ? (
+      {data.length ? (
         <>
           <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>
             <Grid item xs={4}>
@@ -25,8 +42,9 @@ const State = () => {
           </Grid>
           <Grid item xs={12} sx={{mt: 4}}>
             <TableLayout
-              rows={stateRows}
+              rows={data}
               columns={{
+                contract: 'Contract Address',
                 key: 'Key',
                 value: 'Value',
               }}
