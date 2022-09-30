@@ -1,6 +1,6 @@
 import { atom, selectorFamily } from "recoil";
 
-interface SimulationMetadata {
+export interface SimulationMetadata {
   [chainId: string]: {
     codes: Codes;
     accounts: Accounts;

@@ -6,9 +6,13 @@ import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UploadModal from "../UploadModal";
-import simulationMetadataState from "../../atoms/simulationMetadataState";
+import simulationMetadataState, { SimulationMetadata } from "../../atoms/simulationMetadataState";
 
 export interface ISimulationItemProps {
+}
+
+export interface ISimulationJSON {
+  simulationMetadata: SimulationMetadata;
 }
 
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
@@ -23,11 +27,6 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
     const json = {...simulationEnv, 'simulationMetadata': simulationMetadata};
     downloadJSON(JSON.stringify(json, null, 2), "simulation.json");
   }, []);
-
-  const openCloseDialog = (isOpen: boolean, close: () => void) => {
-    setOpenUploadDialog(isOpen);
-    if (!isOpen) close();
-  };
 
   return (
     <T1MenuItem
@@ -61,7 +60,10 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
           variant='simulation'
           chainId={"chainId"}
           open={openUploadDialog}
-          onClose={(isOpen: boolean) => openCloseDialog(isOpen, close)}/>
+          onClose={() => {
+            setOpenUploadDialog(false);
+            close();
+          }}/>
       ]}/>
   )
 });

@@ -1,4 +1,4 @@
-import SnackbarNotification from "../components/SnackbarNotification";
+import SnackbarNotification from "../components/notification/SnackbarNotification";
 import { RecoilRoot } from "recoil";
 import { ComponentMeta } from "@storybook/react";
 

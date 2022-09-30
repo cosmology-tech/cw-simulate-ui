@@ -3,12 +3,17 @@ import { useCallback, useState } from "react";
 import { useNotification } from "../atoms/snackbarNotificationState";
 import { useStoreCode } from "../utils/setupSimulation";
 import FileUpload from "./FileUpload";
+import { useSetRecoilState } from "recoil";
+import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
+import { ISimulationJSON } from "./drawer/SimulationMenuItem";
+import { CWSimulateEnv } from "@terran-one/cw-simulate";
 
 interface IUploadModalProps {
   dropzoneText?: string;
   variant?: 'simulation' | 'contract' | 'both';
   dropTitle?: string;
-  chainId: string;
+  chainId?: string;
   open: boolean;
 
   onClose(success: boolean): void;
@@ -16,8 +21,9 @@ interface IUploadModalProps {
 
 export default function UploadModal(props: IUploadModalProps) {
   const {dropzoneText, variant, dropTitle, chainId, open, onClose} = props;
-
-  const [file, setFile] = useState<{ filename: string, buffer: Buffer } | undefined>();
+  const setSimulationEnv = useSetRecoilState(cwSimulateEnvState);
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
+  const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
 
@@ -28,7 +34,15 @@ export default function UploadModal(props: IUploadModalProps) {
       return;
     }
 
-    storeCode(chainId, file.filename, file.buffer)
+    if (variant === 'contract') {
+      if (chainId != null) {
+        storeCode(chainId, file.filename, file.fileContent as Buffer);
+      }
+    } else if (variant === 'simulation') {
+      const json = file.fileContent as unknown as ISimulationJSON;
+      setSimulationEnv(file.fileContent as unknown as CWSimulateEnv);
+      setSimulationMetadata(json.simulationMetadata);
+    }
     onClose(true);
   }, [file, onClose]);
 
@@ -39,8 +53,8 @@ export default function UploadModal(props: IUploadModalProps) {
         <FileUpload
           dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
           variant={variant ?? 'contract'}
-          onAccept={(filename: string, buffer: Buffer) => {
-            setFile({filename, buffer});
+          onAccept={(filename: string, fileContent: Buffer | JSON) => {
+            setFile({filename, fileContent});
           }}
           onClear={() => {
             setFile(undefined);
@@ -49,7 +63,7 @@ export default function UploadModal(props: IUploadModalProps) {
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(false)}>Cancel</Button>
-        <Button onClick={handleAdd} disabled={!file}>
+        <Button onClick={handleAdd} disabled={!file} variant="contained">
           Add
         </Button>
       </DialogActions>
