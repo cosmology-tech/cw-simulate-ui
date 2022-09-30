@@ -3,6 +3,7 @@ import T1MenuItem from "./T1MenuItem";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDeleteInstanceForSimulation } from "../../utils/setupSimulation";
 
 export interface IInstanceMenuItemProps {
   chainId: string;
@@ -31,12 +32,15 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
       ]}
       optionsExtras={({close}) => [
         <DeleteInstanceDialog
+          chain={chainId}
+          address={instance.contractAddress}
           key="delete-instance"
           onClose={() => {
             setShowDeleteInstance(false);
             close();
             navigate('/chains');
-          }} open={showDeleteInstance}/>,
+          }}
+          open={showDeleteInstance} />,
       ]}
     />
   )
@@ -44,12 +48,15 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
 
 interface IDeleteInstanceDialogProps {
   open: boolean;
+  chain: string;
+  address: string;
 
   onClose(): void;
 }
 
 function DeleteInstanceDialog(props: IDeleteInstanceDialogProps) {
   const {...rest} = props;
+  const deleteInstance = useDeleteInstanceForSimulation();
 
   return (
     <Dialog {...rest}>
@@ -70,7 +77,7 @@ function DeleteInstanceDialog(props: IDeleteInstanceDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
-            // TODO: Delete instance from simulation
+            deleteInstance(rest.chain, rest.address);
             rest.onClose();
           }}
         >

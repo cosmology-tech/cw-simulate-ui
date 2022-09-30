@@ -64,6 +64,20 @@ export function useDeleteChainForSimulation() {
   }, []);
 }
 
+export function useDeleteInstanceForSimulation() {
+  const setSimulateEnv = useSetRecoilState(cwSimulateEnvState);
+
+  return useCallback((chainId: string, contractAddress: string) => {
+    setSimulateEnv(simulateEnv => {
+      const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
+      const _chain_ = cloneChain(_simulateEnv_.chains[chainId]);
+      _simulateEnv_.chains[chainId] = _chain_;
+      delete _chain_.contracts[contractAddress];
+      return _simulateEnv_;
+    });
+  }, []);
+}
+
 export function useReconfigureChainForSimulation() {
   const setSimulateEnv = useSetRecoilState(cwSimulateEnvState);
   const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
