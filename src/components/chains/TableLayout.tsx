@@ -58,7 +58,7 @@ export interface ITableLayoutRowMenuProps<T extends DataSet> {
 }
 
 type DataSet = {
-  [key: string]: string;
+  [key: PropertyKey]: string;
 };
 
 /** Mapping from keys of T to display values/labels. */
