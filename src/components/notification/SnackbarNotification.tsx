@@ -1,6 +1,6 @@
 import { Alert, Snackbar } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { snackbarNotificationState } from "../atoms/snackbarNotificationState";
+import { snackbarNotificationState } from "../../atoms/snackbarNotificationState";
 import { AlertColor } from "@mui/material/Alert/Alert";
 
 const SnackbarNotification = () => {

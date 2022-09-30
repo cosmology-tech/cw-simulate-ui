@@ -10,6 +10,11 @@ import { DEFAULT_CHAIN } from "../../configs/variables";
 import { useCreateChainForSimulation, useStoreCode } from "../../utils/setupSimulation";
 import FileUpload from "../FileUpload";
 import T1Link from "../T1Link";
+import { useSetRecoilState } from "recoil";
+import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
+import simulationMetadataState from "../../atoms/simulationMetadataState";
+import { ISimulationJSON } from "../drawer/SimulationMenuItem";
+import { CWSimulateEnv } from "@terran-one/cw-simulate";
 
 const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -24,6 +29,8 @@ export const WelcomeScreen = () => {
   const setNotification = useNotification();
   const createChainForSimulation = useCreateChainForSimulation();
   const storeCode = useStoreCode();
+  const setSimulationEnv = useSetRecoilState(cwSimulateEnvState);
+  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
 
   const onCreateNewEnvironment = useCallback(() => {
     if (!file) {
@@ -36,6 +43,10 @@ export const WelcomeScreen = () => {
         bech32Prefix: 'terra',
       });
       storeCode(DEFAULT_CHAIN, file.filename, file.fileContent as Buffer);
+    } else if (file.filename.endsWith(".json")) {
+      const json = file.fileContent as unknown as ISimulationJSON;
+      setSimulationEnv(file.fileContent as unknown as CWSimulateEnv);
+      setSimulationMetadata(json.simulationMetadata);
     }
   }, [file]);
 
