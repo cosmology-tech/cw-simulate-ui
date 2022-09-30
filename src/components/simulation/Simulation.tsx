@@ -50,7 +50,11 @@ const Simulation = () => {
               xs={12}
               sx={{ paddingLeft: "0px !important", m: 2, height: "50%" }}
             >
-              <ExecuteQuery setResponse={setResponse} />
+              <ExecuteQuery
+                setResponse={setResponse}
+                chainId={chainId}
+                contractAddress={contractAddress}
+              />
             </Grid>
             <Divider flexItem />
             <Grid

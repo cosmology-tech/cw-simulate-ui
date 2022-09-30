@@ -164,6 +164,39 @@ export function useExecutionHistory() {
   }, [simulateEnv]);
 }
 
+/**
+ * Perform execute on a given contract instance.
+ */
+
+export function useExecute() {
+  const [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
+
+  return useCallback((chainId: string, contractAddress: string,info: MsgInfo, executeMsg: any):any => {
+    const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
+    const _chain_ = cloneChain(_simulateEnv_.chains[chainId]);
+    const _contract_ = cloneContractInstance(_chain_.contracts[contractAddress], _chain_);
+    const response =   _contract_.execute(info,executeMsg);
+    _simulateEnv_.chains[_chain_.chainId] = _chain_;
+    setSimulateEnv(_simulateEnv_);
+    return response;
+  }, [simulateEnv]);
+}
+
+/**
+ * Perform query on a given contract instance.
+ */
+
+export function useQuery() {
+  const simulateEnv = useRecoilValue(cwSimulateEnvState);
+
+  return useCallback((chainId: string, contractAddress: string, queryMsg: any): any => {
+    const chain = simulateEnv.chains[chainId];
+    const contract = chain.contracts[contractAddress];
+    const response = contract.query(queryMsg);
+    return response;
+  }, [simulateEnv]);
+}
+
 // CWSimulateEnv cloning helpers (deep-ish copy)
 
 function cloneSimulateEnv(simulateEnv: CWSimulateEnv): CWSimulateEnv {
