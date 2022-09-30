@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
 import { validateConfigJSON } from "../../utils/fileUtils";
-import { useReconfigChainForSimulation } from "../../utils/setupSimulation";
+import { useReconfigureChainForSimulation } from "../../utils/setupSimulation";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 
 interface IConfigProps {
@@ -17,7 +17,7 @@ const Config = (props: IConfigProps) => {
   const configValue = useRecoilValue(filteredConfigsByChainId(chainId));
   const jsonValue = JSON.stringify(configValue, null, 2);
   const [jsonPayload, setJsonPayload] = useState("");
-  const reconfigChain = useReconfigChainForSimulation();
+  const reconfigChain = useReconfigureChainForSimulation();
   const setNotification = useNotification();
   const navigate = useNavigate();
 
