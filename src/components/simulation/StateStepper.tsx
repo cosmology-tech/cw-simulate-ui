@@ -68,8 +68,8 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   const executionHistory = executeHistory(chainId, contractAddress);
   const [stepState, setStepState] = useRecoilState(blockState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
-    // TODO: Rewrite
-    // setStepState(JSON.parse(window.atob(state.dict["c3RhdGU="])));
+    // @ts-ignore
+    setStepState(JSON.parse(window.atob(state.dict._root.entries[0][1])));
   };
 
   const handleStep =
