@@ -14,7 +14,7 @@
     "@mui/x-data-grid": "^5.17.2",
     "@mui/x-data-grid-generator": "^5.17.2",
     "@terran-one/cosmwasm-vm-js": "^0.1.17",
-    "@terran-one/cw-simulate": "^1.0.9",
+    "@terran-one/cw-simulate": "^1.0.12",
     "@types/jsonschema": "^1.1.1",
     "@uiw/react-codemirror": "^4.11.6",
     "jsonschema": "^1.4.1",
