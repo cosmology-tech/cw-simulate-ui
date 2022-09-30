@@ -38,6 +38,7 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
               setOpenUploadDialog(false);
               close();
             }}
+            variant={'contract'}
           />
         ]}
       >
