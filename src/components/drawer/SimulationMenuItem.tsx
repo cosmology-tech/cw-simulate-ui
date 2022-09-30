@@ -5,11 +5,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD:src/components/drawer/SimulationMenuItem.tsx
 import UploadModal from "../upload/UploadModal";
-=======
-import UploadModal from "../UploadModal";
->>>>>>> c1fc6505596e981a12c33ddc1ff47c7d1ad6f0fc:src/components/MenuDrawer/SimulationMenuItem.tsx
 import simulationMetadataState, { SimulationMetadata } from "../../atoms/simulationMetadataState";
 
 export interface ISimulationItemProps {

@@ -1,15 +1,9 @@
 import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
 import { useSetRecoilState } from "recoil";
-<<<<<<< HEAD:src/components/upload/FileUpload.tsx
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
-=======
-import { fileUploadedState } from "../atoms/fileUploadedState";
-import { useNotification } from "../atoms/snackbarNotificationState";
-import { base64ToArrayBuffer } from "../utils/fileUtils";
->>>>>>> c1fc6505596e981a12c33ddc1ff47c7d1ad6f0fc:src/components/FileUpload.tsx
 
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
