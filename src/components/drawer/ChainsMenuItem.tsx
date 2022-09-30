@@ -1,4 +1,4 @@
-import { Box, Popover, MenuItem, Typography, Divider, Input, Button } from "@mui/material";
+import { Box, Button, Divider, Input, MenuItem, Popover, Typography } from "@mui/material";
 import { RefObject, useCallback, useRef, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useCreateChainForSimulation } from "../../utils/setupSimulation";

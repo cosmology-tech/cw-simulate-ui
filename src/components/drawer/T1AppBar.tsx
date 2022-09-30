@@ -1,6 +1,13 @@
 import HelpIcon from "@mui/icons-material/Help";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import { AppBar as MuiAppBar, AppBarProps as MuiAppBarProps, IconButton, Link, styled, Toolbar } from "@mui/material";
+import {
+  AppBar as MuiAppBar,
+  AppBarProps as MuiAppBarProps,
+  IconButton,
+  Link,
+  styled,
+  Toolbar
+} from "@mui/material";
 import React from "react";
 import { useLocation } from "react-router";
 import { ORANGE_3, WHITE } from "../../configs/variables";

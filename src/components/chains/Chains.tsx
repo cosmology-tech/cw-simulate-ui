@@ -1,9 +1,4 @@
-import {
-  Box,
-  Grid,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, Stack, Typography, } from "@mui/material";
 import { useRecoilValue } from "recoil";
 import React from "react";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";

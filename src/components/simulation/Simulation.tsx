@@ -1,9 +1,9 @@
 import { Box, Divider, Grid, Paper, styled } from "@mui/material";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { ExecuteQuery } from "../ExecuteQuery";
+import { ExecuteQuery } from "./ExecuteQuery";
 import { responseState } from "../../atoms/responseState";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
-import { StateRenderer } from "../StateRenderer";
+import { StateRenderer } from "./StateRenderer";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import StateStepper from "./StateStepper";
 

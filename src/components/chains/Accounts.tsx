@@ -18,7 +18,9 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import simulationMetadataState, { selectAccountsMetadata } from "../../atoms/simulationMetadataState";
+import simulationMetadataState, {
+  selectAccountsMetadata
+} from "../../atoms/simulationMetadataState";
 import { useParams } from "react-router-dom";
 
 const DEFAULT_VALUE = JSON.stringify({

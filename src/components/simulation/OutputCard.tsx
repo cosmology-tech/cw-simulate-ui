@@ -1,7 +1,7 @@
 import React from "react";
 import { JSONTree } from "react-json-tree";
 import { Box, Typography } from "@mui/material";
-import { GREY_3, GREY_6 } from "../configs/variables";
+import { GREY_3, GREY_6 } from "../../configs/variables";
 
 interface IProps {
   response: JSON | undefined | any;

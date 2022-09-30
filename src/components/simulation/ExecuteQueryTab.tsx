@@ -1,6 +1,6 @@
 import React from "react";
 import { useRecoilState } from "recoil";
-import { executeQueryTabState } from "../atoms/executeQueryTabState";
+import { executeQueryTabState } from "../../atoms/executeQueryTabState";
 import { TabContext, TabList } from "@mui/lab";
 import { Box, Tab } from "@mui/material";
 

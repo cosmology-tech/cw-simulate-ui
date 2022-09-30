@@ -1,5 +1,5 @@
 import { RecoilRoot } from "recoil";
-import DiffSwitch from "../components/DiffSwitch";
+import DiffSwitch from "../components/simulation/DiffSwitch";
 
 export default {
   title: "DiffSwitch",

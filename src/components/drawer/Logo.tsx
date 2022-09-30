@@ -1,6 +1,6 @@
 import { SxProps, Theme } from "@mui/material";
 import React from "react";
-import { WHITE, ORANGE_3 } from "../../configs/variables";
+import { ORANGE_3, WHITE } from "../../configs/variables";
 
 interface ILogoProps {
   LinkComponent: React.ComponentType<

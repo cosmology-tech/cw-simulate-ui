@@ -2,7 +2,7 @@ import { MenuItem } from "@mui/material";
 import { useState } from "react";
 import { useRecoilValue } from "recoil";
 import { selectCodesMetadata } from "../../atoms/simulationMetadataState";
-import UploadModal from "../UploadModal";
+import UploadModal from "../upload/UploadModal";
 import CodeMenuItem from "./CodeMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
