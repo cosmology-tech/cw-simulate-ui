@@ -139,14 +139,10 @@ export function useCreateContractInstance() {
   const [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
   return useCallback(async (chainId: string, code: Code, info: MsgInfo, instantiateMsg: any): Promise<CWContractInstance> => {
-    console.log('0.', simulateEnv.chains[chainId]);
     const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
     const _chain_ = cloneChain(_simulateEnv_.chains[chainId]);
-    console.log('1.', _chain_);
     const contract = await _chain_.instantiateContract(code.codeId);
-    console.log('2.', _chain_);
     contract.instantiate(info, instantiateMsg);
-    console.log('3.', _chain_);
 
     _simulateEnv_.chains[_chain_.chainId] = _chain_;
     setSimulateEnv(_simulateEnv_);
