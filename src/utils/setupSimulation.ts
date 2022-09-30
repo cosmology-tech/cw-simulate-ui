@@ -6,11 +6,12 @@ import {
   MsgInfo
 } from "@terran-one/cw-simulate";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { BasicKVIterStorage, IBackend, IStorage, VMInstance } from '@terran-one/cosmwasm-vm-js';
+import { BasicKVIterStorage, IBackend, IStorage, Iter, VMInstance } from '@terran-one/cosmwasm-vm-js';
 import { useCallback } from "react";
 import type { Code } from "../atoms/simulationMetadataState";
 import simulationMetadataState from "../atoms/simulationMetadataState";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import Immutable from "immutable";
 
 export interface ChainConfig {
   chainId: string;
@@ -138,10 +139,14 @@ export function useCreateContractInstance() {
   const [simulateEnv, setSimulateEnv] = useRecoilState(cwSimulateEnvState);
 
   return useCallback(async (chainId: string, code: Code, info: MsgInfo, instantiateMsg: any): Promise<CWContractInstance> => {
+    console.log('0.', simulateEnv.chains[chainId]);
     const _simulateEnv_ = cloneSimulateEnv(simulateEnv);
     const _chain_ = cloneChain(_simulateEnv_.chains[chainId]);
+    console.log('1.', _chain_);
     const contract = await _chain_.instantiateContract(code.codeId);
+    console.log('2.', _chain_);
     contract.instantiate(info, instantiateMsg);
+    console.log('3.', _chain_);
 
     _simulateEnv_.chains[_chain_.chainId] = _chain_;
     setSimulateEnv(_simulateEnv_);
@@ -212,8 +217,22 @@ function cloneCWContractCode(code: CWContractCode) {
 }
 
 function cloneBasicKVIterStorage(storage: IStorage) {
-  if (storage instanceof BasicKVIterStorage)
-    return new BasicKVIterStorage(storage.iterators);
+  if (storage instanceof BasicKVIterStorage) {
+      const _iterators_ = new Map<number, Iter>();
+      for (const key of storage.iterators.keys()) {
+        const iter =  storage.iterators.get(key)!;
+        _iterators_.set(key, { data: [...iter.data], position: iter.position });
+      }
+
+      let _dict_ = Immutable.Map<string, string>();
+      for (const key of storage.dict.keys()) {
+        _dict_ = _dict_.set(key, storage.dict.get(key)!);
+      }
+
+      const iterStorage = new BasicKVIterStorage(_iterators_);
+      iterStorage.dict = _dict_;
+      return iterStorage;
+  }
 
   throw new Error(`IStorage implementation ${typeof storage} not supported`);
 }
