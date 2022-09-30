@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { Config } from "../configs/config";
+import { Config } from "../../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
-import { JsonCodeMirrorEditor } from "./JsonCodeMirrorEditor";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { useNotification } from "../atoms/snackbarNotificationState";
-import { executeQueryTabState } from "../atoms/executeQueryTabState";
+import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
+import { useRecoilValue } from "recoil";
+import { useNotification } from "../../atoms/snackbarNotificationState";
+import { executeQueryTabState } from "../../atoms/executeQueryTabState";
 import { Button, Grid, Typography } from "@mui/material";
-import { jsonErrorState } from "../atoms/jsonErrorState";
+import { jsonErrorState } from "../../atoms/jsonErrorState";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
 }
 
-export const ExecuteQuery = ({ setResponse }: IProps) => {
-  const { MOCK_ENV, MOCK_INFO } = Config;
+export const ExecuteQuery = ({setResponse}: IProps) => {
+  const {MOCK_ENV, MOCK_INFO} = Config;
   const [payload, setPayload] = useState("");
   const executeQueryTab = useRecoilValue(executeQueryTabState);
   const jsonError = useRecoilValue(jsonErrorState);
@@ -21,14 +21,8 @@ export const ExecuteQuery = ({ setResponse }: IProps) => {
 
   const execute = () => {
     try {
-      const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
-      const res = window.VM.execute(MOCK_ENV, MOCK_INFO, JSON.parse(payload));
-      setResponse(res.read_json());
-      if (!(res.read_json().error && res.read_json().error.length > 0)) {
-        setNotification("Execution was successful!");
-      } else {
-        throw res.read_json().error;
-      }
+      console.log("Executing query");
+      setNotification("Execute was successful!");
     } catch (err) {
       setNotification("Something went wrong while executing.", {
         severity: "error",
@@ -37,9 +31,6 @@ export const ExecuteQuery = ({ setResponse }: IProps) => {
   };
   const query = () => {
     try {
-      const stateBefore = window.VM?.backend?.storage.dict["c3RhdGU="];
-      const res = window.VM.query(MOCK_ENV, JSON.parse(payload));
-      setResponse(JSON.parse(window.atob(res.read_json().ok)));
       setNotification("Query was successful!");
     } catch (err) {
       setNotification("Something went wrong while querying.", {
@@ -60,9 +51,9 @@ export const ExecuteQuery = ({ setResponse }: IProps) => {
   };
 
   return (
-    <Grid item xs={12} sx={{ height: "100%", overflow: "scroll" }}>
+    <Grid item xs={12} sx={{height: "100%", overflow: "scroll"}}>
       <Grid item xs={12}>
-        <ExecuteQueryTab />
+        <ExecuteQueryTab/>
       </Grid>
       <Grid
         item
@@ -75,17 +66,17 @@ export const ExecuteQuery = ({ setResponse }: IProps) => {
           mt: 2,
         }}
       >
-        <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload} />
+        <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload}/>
         {/* <OutputRenderer response={response}/> */}
       </Grid>
       <Grid
         item
         xs={2}
-        sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}
+        sx={{mt: 2, display: "flex", justifyContent: "flex-start"}}
       >
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{ mt: 2 }}
+          sx={{mt: 2}}
           variant={"contained"}
           onClick={onRunHandler}
           disabled={!payload.length || jsonError.length > 0}

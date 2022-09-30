@@ -5,8 +5,8 @@ import { OutputCard } from "./OutputCard";
 import { Grid } from "@mui/material";
 import { OutputRenderer } from "./OutputRenderer";
 import { useRecoilValue } from "recoil";
-import { responseState } from "../atoms/responseState";
-import { blockState } from "../atoms/blockState";
+import { responseState } from "../../atoms/responseState";
+import { blockState } from "../../atoms/blockState";
 
 interface IProps {
   isFileUploaded: boolean;

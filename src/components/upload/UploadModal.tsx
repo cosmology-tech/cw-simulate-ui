@@ -1,12 +1,12 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useCallback, useState } from "react";
-import { useNotification } from "../atoms/snackbarNotificationState";
-import { useStoreCode } from "../utils/setupSimulation";
+import { useNotification } from "../../atoms/snackbarNotificationState";
+import { useStoreCode } from "../../utils/setupSimulation";
 import FileUpload from "./FileUpload";
 import { useSetRecoilState } from "recoil";
-import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
-import simulationMetadataState from "../atoms/simulationMetadataState";
-import { ISimulationJSON } from "./drawer/SimulationMenuItem";
+import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
+import simulationMetadataState from "../../atoms/simulationMetadataState";
+import { ISimulationJSON } from "../drawer/SimulationMenuItem";
 import { CWSimulateEnv } from "@terran-one/cw-simulate";
 
 interface IUploadModalProps {

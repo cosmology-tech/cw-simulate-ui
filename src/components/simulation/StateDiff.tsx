@@ -1,7 +1,7 @@
 import React from "react";
 import ReactJsonViewCompare from "react-json-view-compare";
 import { Box } from "@mui/material";
-import { GREY_6 } from "../configs/variables";
+import { GREY_6 } from "../../configs/variables";
 
 interface IProps {
   beforeStateJSON: JSON | undefined | any;

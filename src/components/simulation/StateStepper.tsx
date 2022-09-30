@@ -2,17 +2,7 @@ import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import {
-  Divider,
-  Grid,
-  Paper,
-  Slide,
-  StepConnector,
-  StepContent,
-  StepLabel,
-  Typography,
-  Zoom,
-} from "@mui/material";
+import { Divider, Grid, Paper, Slide, StepContent, StepLabel, Typography, } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { JSONTree } from "react-json-tree";
 import { executionHistory } from "../../data/dummy";
