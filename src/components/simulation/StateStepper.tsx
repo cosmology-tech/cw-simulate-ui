@@ -2,12 +2,21 @@ import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { Divider, Grid, Paper, Slide, StepContent, StepLabel, Typography, } from "@mui/material";
+import {
+  Divider,
+  Grid,
+  Paper,
+  Slide,
+  StepContent,
+  StepLabel,
+  Typography,
+} from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { JSONTree } from "react-json-tree";
 import { executionHistory } from "../../data/dummy";
 import { useRecoilState } from "recoil";
 import { blockState } from "../../atoms/blockState";
+import { useExecutionHistory } from "../../utils/setupSimulation";
 // import { executionHistory } from "../../data/test";
 
 const steps = [
@@ -47,14 +56,20 @@ const theme = {
   base0F: "#deaf8f",
 };
 
-export default function StateStepper() {
+interface IProps {
+  chainId: string;
+  contractAddress: string;
+}
+export default function StateStepper({ chainId, contractAddress }: IProps) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef();
+  const executeHistory = useExecutionHistory();
+  const executionHistory = executeHistory(chainId, contractAddress);
   const [stepState, setStepState] = useRecoilState(blockState);
-
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
-    setStepState(JSON.parse(window.atob(state.dict["c3RhdGU="])));
+    // TODO: Rewrite
+    // setStepState(JSON.parse(window.atob(state.dict["c3RhdGU="])));
   };
 
   const handleStep =
@@ -66,7 +81,10 @@ export default function StateStepper() {
   return (
     <Stepper nonLinear activeStep={activeStep} orientation="vertical">
       {executionHistory.map(
-        (historyObj: { request: any; response: any; state: any }, index) => {
+        (
+          historyObj: { request: any; response: any; state: any },
+          index: number
+        ) => {
           const { request, response, state } = historyObj;
           const label = Object.keys(request)[2];
 
