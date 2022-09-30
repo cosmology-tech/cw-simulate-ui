@@ -5,7 +5,7 @@ import {
   CWSimulateEnv,
   MsgInfo
 } from "@terran-one/cw-simulate";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { BasicKVIterStorage, IBackend, IStorage, VMInstance } from '@terran-one/cosmwasm-vm-js';
 import { useCallback } from "react";
 import type { Code } from "../atoms/simulationMetadataState";
@@ -147,6 +147,19 @@ export function useCreateContractInstance() {
     setSimulateEnv(_simulateEnv_);
 
     return contract;
+  }, [simulateEnv]);
+}
+
+// Fetch execution History for a particular contract.
+
+export function useExecutionHistory() {
+  const simulateEnv = useRecoilValue(cwSimulateEnvState);
+
+  return useCallback((chainId: string, contractAddress: string): any => {
+    const chain = simulateEnv.chains[chainId];
+    const contract = chain.contracts[contractAddress];
+    const response = contract.executionHistory;
+    return response;
   }, [simulateEnv]);
 }
 
