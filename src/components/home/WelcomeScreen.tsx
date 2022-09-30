@@ -8,8 +8,13 @@ import { To } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN } from "../../configs/variables";
 import { useCreateChainForSimulation, useStoreCode } from "../../utils/setupSimulation";
+<<<<<<< HEAD
 import FileUpload from "../upload/FileUpload";
 import T1Link from "../grid/T1Link";
+=======
+import FileUpload from "../FileUpload";
+import T1Link from "../T1Link";
+>>>>>>> c1fc6505596e981a12c33ddc1ff47c7d1ad6f0fc
 import { useSetRecoilState } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";

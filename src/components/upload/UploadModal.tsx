@@ -4,9 +4,15 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useStoreCode } from "../../utils/setupSimulation";
 import FileUpload from "./FileUpload";
 import { useSetRecoilState } from "recoil";
+<<<<<<< HEAD:src/components/upload/UploadModal.tsx
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { ISimulationJSON } from "../drawer/SimulationMenuItem";
+=======
+import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
+import { ISimulationJSON } from "./drawer/SimulationMenuItem";
+>>>>>>> c1fc6505596e981a12c33ddc1ff47c7d1ad6f0fc:src/components/UploadModal.tsx
 import { CWSimulateEnv } from "@terran-one/cw-simulate";
 
 interface IUploadModalProps {
