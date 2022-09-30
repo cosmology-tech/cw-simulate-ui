@@ -15,6 +15,7 @@ import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useCreateContractInstance } from "../../utils/setupSimulation";
+import { SENDER_ADDRESS } from "../../configs/variables";
 
 export interface ICodeMenuItemProps {
   chainId: string;
@@ -84,7 +85,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
 
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
     const info: MsgInfo = {
-      sender: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
+      sender: SENDER_ADDRESS,
       funds: [],
     };
 

@@ -9,6 +9,7 @@ import { Button, Grid, Typography } from "@mui/material";
 import { jsonErrorState } from "../../atoms/jsonErrorState";
 import { useExecute, useQuery } from "../../utils/setupSimulation";
 import { MsgInfo } from "@terran-one/cw-simulate";
+import { SENDER_ADDRESS } from "../../configs/variables";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
@@ -21,7 +22,6 @@ export const ExecuteQuery = ({
   chainId,
   contractAddress,
 }: IProps) => {
-  const { MOCK_ENV, MOCK_INFO } = Config;
   const [payload, setPayload] = useState("");
   const executeQueryTab = useRecoilValue(executeQueryTabState);
   const jsonError = useRecoilValue(jsonErrorState);
@@ -29,7 +29,7 @@ export const ExecuteQuery = ({
   const execute = useExecute();
   const query = useQuery();
   const info: MsgInfo = {
-    sender: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6",
+    sender: SENDER_ADDRESS,
     funds: [],
   };
 
