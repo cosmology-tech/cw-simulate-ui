@@ -6,17 +6,21 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } f
 import { useNavigate } from "react-router-dom";
 import UploadModal from "../upload/UploadModal";
 import simulationMetadataState, { SimulationMetadata } from "../../atoms/simulationMetadataState";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
+import { CWChain } from "@terran-one/cw-simulate";
 
 export interface ISimulationItemProps {
 }
 
 export interface ISimulationJSON {
   simulationMetadata: SimulationMetadata;
+  chains: {
+    [key: string]: CWChain;
+  };
 }
 
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
-  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const simulationMetadata = useAtomValue(simulationMetadataState);
   const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const [showClearSimulation, setShowClearSimulation] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);

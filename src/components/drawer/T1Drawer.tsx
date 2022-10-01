@@ -25,7 +25,7 @@ type MenuDrawerData = {
 
 export const MenuDrawerContext = React.createContext<MenuDrawerAPI>(null as any);
 
-const DrawerHeader = styled("div")(({ theme }) => ({
+const DrawerHeader = styled("div")(({theme}) => ({
   display: "flex",
   alignItems: "center",
   padding: theme.spacing(0, 1),
@@ -58,9 +58,9 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
         open
       >
         <DrawerHeader>
-          <Logo LinkComponent={ListItemButton} />
+          <Logo LinkComponent={ListItemButton}/>
         </DrawerHeader>
-        <Divider />
+        <Divider/>
         <HierarchyMenu
           sx={{
             marginTop: 2,
@@ -69,8 +69,8 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
             },
           }}
         >
-          <SimulationMenuItem />
-          <ChainsMenuItem />
+          <SimulationMenuItem/>
+          <ChainsMenuItem/>
         </HierarchyMenu>
       </Drawer>
     </Box>
@@ -85,7 +85,7 @@ interface IHierarchyMenuProps {
 }
 
 function HierarchyMenu(props: IHierarchyMenuProps) {
-  const { children, sx } = props;
+  const {children, sx} = props;
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -99,7 +99,7 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
       if (nodeId in data)
         throw new Error(`Duplicate node ID ${nodeId}`);
       data.current[nodeId] = nodeData;
-      
+
       // MUI quirk due to un/mount of subtrees
       const link = extractNodeLink(nodeId, nodeData);
       if (link && link === `${location.pathname}${location.hash}`)
@@ -123,7 +123,7 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
       navigate(link);
     }
   }, [location]);
-  
+
   useEffect(() => {
     for (const nodeId in data.current) {
       const link = extractNodeLink(nodeId, data.current[nodeId]);
@@ -135,8 +135,8 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
   return (
     <MenuDrawerContext.Provider value={api}>
       <TreeView
-        defaultExpandIcon={<SubtreeIcon />}
-        defaultCollapseIcon={<SubtreeIcon expanded />}
+        defaultExpandIcon={<SubtreeIcon/>}
+        defaultCollapseIcon={<SubtreeIcon expanded/>}
         sx={sx}
         onNodeFocus={handleFocusNode}
         onNodeToggle={(_, nodeIds) => {
@@ -156,7 +156,7 @@ interface ISubtreeIconProps {
 }
 
 /** Subtree expand/collapse icon w/ built-in simple CSS animation */
-function SubtreeIcon({ expanded }: ISubtreeIconProps) {
+function SubtreeIcon({expanded}: ISubtreeIconProps) {
   return (
     <ChevronRightIcon
       sx={{

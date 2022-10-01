@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Input, MenuItem, Popover, Typography } from "@mui/material";
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { RefObject, useCallback, useRef, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useCreateChainForSimulation } from "../../utils/setupSimulation";
 import { getDefaultChainName, isValidChainName, useChainNames } from "../../utils/simUtils";
@@ -87,7 +87,7 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     });
 
     onClose();
-  }, [chainNames]);
+  }, [chainNames, createChain, onClose, setNotification]);
 
   return (
     <Popover

@@ -16,8 +16,9 @@ import T1MenuItem from "./T1MenuItem";
 export interface IChainMenuItemProps {
   chainId: string;
 }
+
 export default function ChainMenuItem(props: IChainMenuItemProps) {
-  const { chainId } = props;
+  const {chainId} = props;
 
   const [showDelChain, setShowDelChain] = useState(false);
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
           Remove
         </MenuItem>,
       ]}
-      optionsExtras={({ close }) => [
+      optionsExtras={({close}) => [
         <DeleteChainDialog
           key="remove-chain"
           chainId={chainId}
@@ -50,12 +51,14 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
         />,
       ]}
     >
-      <T1MenuItem label="Config" nodeId={`chains/${chainId}/config`} link={`/chains/${chainId}/config`} />
-      <T1MenuItem label="State" nodeId={`chains/${chainId}/state`} link={`/chains/${chainId}/state`} />
+      <T1MenuItem label="Config" nodeId={`chains/${chainId}/config`}
+                  link={`/chains/${chainId}/config`}/>
+      <T1MenuItem label="State" nodeId={`chains/${chainId}/state`}
+                  link={`/chains/${chainId}/state`}/>
       {/* TODO: Commented out accounts for now until we have accounts in the cw-simulate*/}
       {/*<T1MenuItem label="Accounts" nodeId={`chains/${chainId}/accounts`} link={`/chains/${chainId}/accounts`} />*/}
-      <CodesMenuItem chainId={chainId} />
-      <InstancesMenuItem chainId={chainId} />
+      <CodesMenuItem chainId={chainId}/>
+      <InstancesMenuItem chainId={chainId}/>
     </T1MenuItem>
   );
 }
@@ -63,10 +66,12 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
 interface IDeleteChainDialogProps {
   chainId: string;
   open: boolean;
+
   onClose(): void;
 }
+
 function DeleteChainDialog(props: IDeleteChainDialogProps) {
-  const { chainId, ...rest } = props;
+  const {chainId, ...rest} = props;
 
   const deleteChain = useDeleteChainForSimulation();
 

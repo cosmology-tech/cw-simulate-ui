@@ -60,7 +60,7 @@ html,
 body,
 #app,
 #root,
-#app>div {
+#app > div {
   height: 100vh
 }
 

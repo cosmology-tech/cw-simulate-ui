@@ -35,5 +35,5 @@ export const useNotification = () => {
       message,
       open: true,
     }));
-  }, []);
+  }, [setNotification]);
 };

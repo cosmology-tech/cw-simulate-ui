@@ -12,7 +12,7 @@ export function useChainNames(sorted: boolean = false) {
     const names = Object.values(chains).map(({chainId}) => chainId);
     if (sorted) names.sort((lhs, rhs) => lhs.localeCompare(rhs));
     return names;
-  }, [chains]);
+  }, [chains, sorted]);
 }
 
 /**

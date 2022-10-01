@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 const PageRefreshConfirmation = () => {
   useEffect(() => {
-    const handler = function(event: any) {
+    const handler = function (event: any) {
       event.preventDefault();
       event.returnValue = '';
       return null;

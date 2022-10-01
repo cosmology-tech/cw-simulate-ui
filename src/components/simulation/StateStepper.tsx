@@ -9,22 +9,6 @@ import { blockState } from "../../atoms/blockState";
 import { useExecutionHistory } from "../../utils/setupSimulation";
 import { useAtom } from "jotai";
 
-const steps = [
-  "Instantiate",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-  "Execute",
-];
-
 const theme = {
   scheme: "chalk",
   author: "chris kempson (http://chriskempson.com)",
@@ -57,7 +41,7 @@ export default function StateStepper({chainId, contractAddress}: IProps) {
   const containerRef = React.useRef();
   const executeHistory = useExecutionHistory();
   const executionHistory = executeHistory(chainId, contractAddress);
-  const [stepState, setStepState] = useAtom(blockState);
+  const [, setStepState] = useAtom(blockState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     // @ts-ignore
     setStepState(JSON.parse(window.atob(state.dict._root.entries[0][1])));

@@ -1,5 +1,4 @@
-import React, { useCallback, useState } from "react";
-import { Config } from "../../configs/config";
+import React, { useState } from "react";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
@@ -74,9 +73,9 @@ export const ExecuteQuery = ({
   };
 
   return (
-    <Grid item xs={12} sx={{ height: "100%", overflow: "scroll" }}>
+    <Grid item xs={12} sx={{height: "100%", overflow: "scroll"}}>
       <Grid item xs={12}>
-        <ExecuteQueryTab />
+        <ExecuteQueryTab/>
       </Grid>
       <Grid
         item
@@ -89,17 +88,17 @@ export const ExecuteQuery = ({
           mt: 2,
         }}
       >
-        <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload} />
+        <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload}/>
         {/* <OutputRenderer response={response}/> */}
       </Grid>
       <Grid
         item
         xs={2}
-        sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}
+        sx={{mt: 2, display: "flex", justifyContent: "flex-start"}}
       >
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{ mt: 2 }}
+          sx={{mt: 2}}
           variant={"contained"}
           onClick={onRunHandler}
           disabled={!payload.length || jsonError.length > 0}

@@ -15,7 +15,7 @@ interface IProps {
   useLinks?: boolean | undefined;
 }
 
-const Item = styled(Paper)(({ theme }) => ({
+const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -64,7 +64,7 @@ const T1Grid = ({
       >
         {items?.map((item, i) => {
           const itemText =
-            <Typography variant="h6" sx={{ paddingLeft: 3 }} ref={childRef}>
+            <Typography variant="h6" sx={{paddingLeft: 3}} ref={childRef}>
               {item}
             </Typography>;
 
@@ -72,23 +72,23 @@ const T1Grid = ({
             <div key={i} style={{width: '100%'}}>
               <Grid item xs={12} md={12} lg={12}>
                 <Item key={item + "item"}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
+                  <div style={{display: "flex", alignItems: "center"}}>
                     {useLinks === undefined || useLinks
                       ?
-                        <T1Link to={item} sx={{ flexGrow: 1 }}>
-                          {itemText}
-                        </T1Link>
+                      <T1Link to={item} sx={{flexGrow: 1}}>
+                        {itemText}
+                      </T1Link>
                       :
-                        <div style={{ flexGrow: 1 }}>
-                          {itemText}
-                        </div>}
+                      <div style={{flexGrow: 1}}>
+                        {itemText}
+                      </div>}
                     {rightButton}
                     {hasRightDeleteButton && (
                       <IconButton
                         aria-label="delete"
                         onClick={handleDeleteItem}
                       >
-                        <DeleteForeverIcon />
+                        <DeleteForeverIcon/>
                       </IconButton>
                     )}
                   </div>
@@ -110,7 +110,7 @@ const T1Grid = ({
                       xs={11}
                       md={10}
                       lg={11}
-                      sx={{ width: "100%" }}
+                      sx={{width: "100%"}}
                       key={instance + "item"}
                     >
                       <Item
@@ -137,7 +137,7 @@ const T1Grid = ({
                           onClick={handleDeleteItem}
                           key={instance + "icon"}
                         >
-                          <DeleteForeverIcon key={instance + "deleteIcon"} />
+                          <DeleteForeverIcon key={instance + "deleteIcon"}/>
                         </IconButton>
                       </Item>
                     </Grid>

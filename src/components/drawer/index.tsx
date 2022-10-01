@@ -11,9 +11,9 @@ export default function MenuDrawer() {
 
   return (
     <>
-      <CssBaseline />
-      <T1AppBar />
-      {location.pathname !== "/" && <T1Drawer width={DRAWER_WIDTH} />}
+      <CssBaseline/>
+      <T1AppBar/>
+      {location.pathname !== "/" && <T1Drawer width={DRAWER_WIDTH}/>}
     </>
   );
 }

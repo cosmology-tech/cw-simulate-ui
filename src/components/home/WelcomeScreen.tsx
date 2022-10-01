@@ -29,8 +29,8 @@ export const WelcomeScreen = () => {
   const setNotification = useNotification();
   const createChainForSimulation = useCreateChainForSimulation();
   const storeCode = useStoreCode();
-  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   const onCreateNewEnvironment = useCallback(() => {
     if (!file) {
@@ -48,7 +48,7 @@ export const WelcomeScreen = () => {
       setSimulateEnv(file.fileContent as unknown as CWSimulateEnv);
       setSimulationMetadata(json.simulationMetadata);
     }
-  }, [file]);
+  }, [file, createChainForSimulation, storeCode, setNotification, setSimulationMetadata, setSimulateEnv]);
 
   const onAcceptFile = useCallback((filename: string, fileContent: Buffer | JSON) => {
     setFile({filename, fileContent});

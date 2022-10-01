@@ -1,5 +1,5 @@
 name: Deploy
-on: 
+on:
   push:
     branches:
       - main
@@ -10,34 +10,34 @@ jobs:
       contents: read
       deployments: write
     steps:
-    - uses: actions/checkout@v2
-    - name: Wait for CF Pages
-      id: cf-pages
-      uses: WalshyDev/cf-pages-await@v1
-      with:
-        apiToken: ${{ secrets.CF_API_TOKEN }}
-        accountId: ${{ secrets.CF_ACCOUNT_ID }} 
-        project: cw-debug-ui
-        commitHash: ${{ github.sha }}
-    - name: Notify on success
-      if: ${{ steps.cf-pages.outputs.success == 'true' }}
-      uses: slackapi/slack-github-action@v1.22.0
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-      with:
-        payload: |
-          {
-            "text": ":ship: CF Pages Deployment ${{ steps.cf-pages.outputs.id }} was succesful."
-          }
-    - name: Notify on failure
-      if: ${{ steps.cf-pages.outputs.success == 'false' }}
-      uses: slackapi/slack-github-action@v1.22.0
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
-      with:
-        payload: |
-          {
-            "text": ":boom: CF Pages Deployment ${{ steps.cf-pages.outputs.id }} failed."
-          }
+      - uses: actions/checkout@v2
+      - name: Wait for CF Pages
+        id: cf-pages
+        uses: WalshyDev/cf-pages-await@v1
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          accountId: ${{ secrets.CF_ACCOUNT_ID }}
+          project: cw-debug-ui
+          commitHash: ${{ github.sha }}
+      - name: Notify on success
+        if: ${{ steps.cf-pages.outputs.success == 'true' }}
+        uses: slackapi/slack-github-action@v1.22.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: |
+            {
+              "text": ":ship: CF Pages Deployment ${{ steps.cf-pages.outputs.id }} was succesful."
+            }
+      - name: Notify on failure
+        if: ${{ steps.cf-pages.outputs.success == 'false' }}
+        uses: slackapi/slack-github-action@v1.22.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: |
+            {
+              "text": ":boom: CF Pages Deployment ${{ steps.cf-pages.outputs.id }} failed."
+            }

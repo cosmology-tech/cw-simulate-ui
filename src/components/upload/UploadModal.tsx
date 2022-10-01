@@ -21,8 +21,8 @@ interface IUploadModalProps {
 
 export default function UploadModal(props: IUploadModalProps) {
   const {dropzoneText, variant, dropTitle, chainId, open, onClose} = props;
-  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
@@ -44,7 +44,7 @@ export default function UploadModal(props: IUploadModalProps) {
       setSimulationMetadata(json.simulationMetadata);
     }
     onClose(true);
-  }, [file, onClose]);
+  }, [file, onClose, setNotification, setSimulateEnv, setSimulationMetadata, storeCode, variant, chainId]);
 
   return (
     <Dialog open={open} onClose={() => onClose(false)}>

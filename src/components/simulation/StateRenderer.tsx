@@ -13,7 +13,7 @@ interface IProps {
   currentState: number;
 }
 
-export const StateRenderer = ({ isFileUploaded, currentState }: IProps) => {
+export const StateRenderer = ({isFileUploaded, currentState}: IProps) => {
   const [currentTab, setCurrentTab] = React.useState("state");
   const [isChecked, setIsChecked] = React.useState(false);
   const response = useAtomValue(responseState);
@@ -21,7 +21,7 @@ export const StateRenderer = ({ isFileUploaded, currentState }: IProps) => {
   // TODO: Check current active state and executionHistory length.
   const isStateTraversed = false;
   return (
-    <Grid item xs={12} sx={{ height: "100%" }}>
+    <Grid item xs={12} sx={{height: "100%"}}>
       <Grid item xs={12}>
         <StateMemoryTab
           currentTab={currentTab}
@@ -31,7 +31,7 @@ export const StateRenderer = ({ isFileUploaded, currentState }: IProps) => {
           isStateTraversed={isStateTraversed}
         />
       </Grid>
-      <Grid item xs={12} sx={{ height: "80%" }}>
+      <Grid item xs={12} sx={{height: "80%"}}>
         {currentTab === "state" ? (
           isStateTraversed ? (
             <BeforeAfterState
@@ -45,7 +45,7 @@ export const StateRenderer = ({ isFileUploaded, currentState }: IProps) => {
             />
           )
         ) : (
-          <OutputRenderer response={response} />
+          <OutputRenderer response={response}/>
         )}
       </Grid>
     </Grid>

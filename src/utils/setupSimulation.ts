@@ -26,7 +26,7 @@ export function useCreateChainForSimulation() {
     setSimulationMetadata(simulationMetadata);
 
     return simulateEnv.chains;
-  }, [simulateEnv, simulationMetadata]);
+  }, [simulateEnv, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
 }
 
 export function useDeleteChainForSimulation() {
@@ -40,7 +40,7 @@ export function useDeleteChainForSimulation() {
     delete simulationMetadata[chainId];
     setSimulationMetadata(simulationMetadata);
 
-  }, [simulateEnv, simulationMetadata]);
+  }, [simulateEnv, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
 }
 
 export function useReconfigureChainForSimulation() {
@@ -60,7 +60,7 @@ export function useReconfigureChainForSimulation() {
     setSimulationMetadata(simulationMetadata);
 
     return simulateEnv.chains[chainId];
-  }, [simulateEnv, simulationMetadata]);
+  }, [simulateEnv, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
 }
 
 export function useStoreCode() {
@@ -78,7 +78,7 @@ export function useStoreCode() {
     };
     setSimulationMetadata(simulationMetadata);
     return codeId;
-  }, [simulateEnv, simulationMetadata]);
+  }, [simulateEnv, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
 }
 
 /**
@@ -92,7 +92,7 @@ export function useCreateContractInstance() {
     contract.instantiate(info, instantiateMsg);
     setSimulateEnv(simulateEnv);
     return contract;
-  }, [simulateEnv]);
+  }, [simulateEnv, setSimulateEnv]);
 }
 
 
@@ -119,7 +119,7 @@ export function useExecute() {
     const response = simulateEnv.chains[chainId].contracts[contractAddress].execute(info, executeMsg);
     setSimulateEnv(simulateEnv);
     return response;
-  }, [simulateEnv]);
+  }, [simulateEnv, setSimulateEnv]);
 }
 
 /**
@@ -133,5 +133,5 @@ export function useQuery() {
     const response = simulateEnv.chains[chainId].contracts[contractAddress].query(queryMsg);
     setSimulateEnv(simulateEnv);
     return response;
-  }, [simulateEnv]);
+  }, [simulateEnv, setSimulateEnv]);
 }

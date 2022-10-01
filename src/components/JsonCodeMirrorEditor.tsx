@@ -46,7 +46,7 @@ export const JsonCodeMirrorEditor = ({
           extensions={[json()]}
           onChange={(val: string) => {
             setPayload(val);
-            if (val.length == 0) {
+            if (val.length === 0) {
               setJsonError("");
               return;
             }
