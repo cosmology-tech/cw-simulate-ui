@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Input, MenuItem, Popover, Typography } from "@mui/material";
-import { RefObject, useCallback, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useCreateChainForSimulation } from "../../utils/setupSimulation";
 import { getDefaultChainName, isValidChainName, useChainNames } from "../../utils/simUtils";
@@ -22,9 +22,11 @@ export default function ChainsMenuItem(props: IChainsItemProps) {
       label="Chains"
       menuRef={setMenuEl}
       options={[
-        <MenuItem key="add-chain" onClick={() => {setShowAddChain(true)}}>Add Chain</MenuItem>
+        <MenuItem key="add-chain" onClick={() => {
+          setShowAddChain(true)
+        }}>Add Chain</MenuItem>
       ]}
-      optionsExtras={({ close }) => [
+      optionsExtras={({close}) => [
         <AddChainPopover
           key="add-chain"
           open={showAddChain}
@@ -37,7 +39,7 @@ export default function ChainsMenuItem(props: IChainsItemProps) {
       ]}
     >
       {chainNames.map((chain, i) => (
-        <ChainMenuItem chainId={chain} key={`chain${i}`} />
+        <ChainMenuItem chainId={chain} key={`chain${i}`}/>
       ))}
     </T1MenuItem>
   )
@@ -46,8 +48,10 @@ export default function ChainsMenuItem(props: IChainsItemProps) {
 interface IAddChainPopoverProps {
   open: boolean;
   menuRef: HTMLUListElement | RefObject<HTMLUListElement> | null;
+
   onClose(): void;
 }
+
 function AddChainPopover(props: IAddChainPopoverProps) {
   const {
     open,
@@ -68,12 +72,12 @@ function AddChainPopover(props: IAddChainPopoverProps) {
   const addChain = useCallback(() => {
     const chainName = inputRef.current?.value;
     if (!chainName || !isValidChainName(chainName)) {
-      setNotification("Please specify a valid chain name.", { severity: "error" });
+      setNotification("Please specify a valid chain name.", {severity: "error"});
       return;
     }
 
     if (chainNames.includes(chainName)) {
-      setNotification("A chain with such a name already exists", { severity: "error" });
+      setNotification("A chain with such a name already exists", {severity: "error"});
       return;
     }
 
@@ -89,25 +93,25 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     <Popover
       open={open}
       anchorEl={anchor}
-      anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
-      transformOrigin={{ horizontal: 'left', vertical: 'top' }}
+      anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+      transformOrigin={{horizontal: 'left', vertical: 'top'}}
       onClose={onClose}
-      sx={{ ml: 0.5 }}
+      sx={{ml: 0.5}}
     >
-      <Box sx={{ display: 'flex', flexDirection: 'column', p: 1, maxWidth: 460 }}>
-        <Typography variant="h6" sx={{ textAlign: 'center' }}>
+      <Box sx={{display: 'flex', flexDirection: 'column', p: 1, maxWidth: 460}}>
+        <Typography variant="h6" sx={{textAlign: 'center'}}>
           Add a new Chain
         </Typography>
-        <Divider />
+        <Divider/>
         <Typography variant="overline">
           Enter a valid chain name, e.g. "phoenix-1" or "osmosis-1":
         </Typography>
         <Input
           inputRef={inputRef}
           defaultValue={getDefaultChainName(chainNames)}
-          sx={{ mb: 1 }}
+          sx={{mb: 1}}
         />
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Box sx={{display: 'flex', justifyContent: 'flex-end'}}>
           <Button onClick={addChain}>Submit</Button>
         </Box>
       </Box>

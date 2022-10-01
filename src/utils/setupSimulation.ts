@@ -26,7 +26,7 @@ export function useCreateChainForSimulation() {
     setSimulationMetadata(simulationMetadata);
 
     return simulateEnv.chains;
-  }, []);
+  }, [simulateEnv, simulationMetadata]);
 }
 
 export function useDeleteChainForSimulation() {

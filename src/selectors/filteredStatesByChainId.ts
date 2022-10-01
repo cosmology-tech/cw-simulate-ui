@@ -12,7 +12,6 @@ const filteredStatesByChainId = atomFamily((chainId: string) => {
   return atom(get => {
     const simulation = get(cwSimulateEnvState);
     if (!(chainId in simulation.chains)) return {};
-
     const states: States = {};
 
     const decoder = new TextDecoder();

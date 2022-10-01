@@ -1,6 +1,7 @@
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
-import { focusAtom } from "jotai/optics";
+import { selectAtom } from "jotai/utils";
+import deepEquals from "fast-deep-equal";
 
-const filteredChainsFromSimulationState = focusAtom(cwSimulateEnvState, (optic) => optic.prop("chains") ?? {});
-
+const filteredChainsFromSimulationState =
+  selectAtom(cwSimulateEnvState, (simulateEnv) => simulateEnv.chains ?? {}, deepEquals);
 export default filteredChainsFromSimulationState;
