@@ -4,8 +4,8 @@ import { json } from "@codemirror/lang-json";
 import { Grid, Typography } from "@mui/material";
 import { GREY_6 } from "../configs/variables";
 import { validateJSON } from "../utils/fileUtils";
-import { useRecoilState } from "recoil";
 import { jsonErrorState } from "../atoms/jsonErrorState";
+import { useAtom } from "jotai";
 
 interface IJsonCodeMirrorEditorProps {
   jsonValue: string;
@@ -21,7 +21,7 @@ export const JsonCodeMirrorEditor = ({
   const defaultPlaceholder = placeholder || {
     json: "Enter your json here",
   };
-  const [jsonError, setJsonError] = useRecoilState(jsonErrorState);
+  const [jsonError, setJsonError] = useAtom(jsonErrorState);
   return (
     <Grid
       item

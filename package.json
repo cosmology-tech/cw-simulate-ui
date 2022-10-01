@@ -27,7 +27,6 @@
     "react-mui-dropzone": "^4.0.6",
     "react-object-table-viewer": "^1.0.7",
     "react-router-dom": "^6.3.0",
-    "recoil": "^0.7.5",
     "sass": "^1.54.8",
     "save": "^2.5.0",
     "typescript": "^4.7.4",

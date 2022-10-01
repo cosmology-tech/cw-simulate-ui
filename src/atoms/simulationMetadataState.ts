@@ -34,18 +34,7 @@ export default simulationMetadataState;
 export const selectCodesMetadata = atomFamily((chainId: string) => {
   return atom(get => get(simulationMetadataState)[chainId]?.codes);
 });
-// export const selectCodesMetadata = atomFamily({
-//   get: (chainId: string) => ({get}) => {
-//     return get(simulationMetadataState)[chainId]?.codes ?? {};
-//   },
-// });
 
 export const selectAccountsMetadata = atomFamily((chainId: string) => {
   return atom(get => get(simulationMetadataState)[chainId]?.accounts);
 });
-// export const selectAccountsMetadata = selectorFamily({
-//   key: 'selectAccountsMetadata',
-//   get: (chainId: string) => ({get}) => {
-//     return get(simulationMetadataState)[chainId]?.accounts;
-//   },
-// });

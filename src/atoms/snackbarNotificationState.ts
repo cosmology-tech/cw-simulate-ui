@@ -1,8 +1,8 @@
-import { atom, useSetRecoilState } from "recoil";
 import type { AlertProps } from "@mui/material/Alert";
 import type { SnackbarProps } from "@mui/material/Snackbar";
 import type { Defined } from "../utils/typeUtils";
 import { useCallback } from "react";
+import { atom, useAtom } from "jotai";
 
 interface SnackbarNotificationState {
   severity: Severity;
@@ -17,19 +17,16 @@ export type Severity = Defined<AlertProps['severity']>;
 export type SnackbarNotificationOptions = Partial<Pick<SnackbarNotificationState, "severity" | "vertical" | "horizontal">>;
 
 export const snackbarNotificationState = atom<SnackbarNotificationState>({
-  key: 'snackbarNotificationState',
-  default: {
-    open: false,
-    message: '',
-    severity: 'success',
-    vertical: 'top',
-    horizontal: 'center',
-  },
+  open: false,
+  message: '',
+  severity: 'success',
+  vertical: 'top',
+  horizontal: 'center',
 });
 
 export const useNotification = () => {
-  const setNotification = useSetRecoilState(snackbarNotificationState);
-  const fn = useCallback((message: string, options: SnackbarNotificationOptions = {}) => {
+  const [, setNotification] = useAtom(snackbarNotificationState);
+  return useCallback((message: string, options: SnackbarNotificationOptions = {}) => {
     setNotification(() => ({
       horizontal: 'center',
       vertical: 'top',
@@ -39,16 +36,4 @@ export const useNotification = () => {
       open: true,
     }));
   }, []);
-  return fn;
-};
-
-/** @deprecated */
-export const showNotification = (setNotification: any, message = "", severity: Severity = 'success') => {
-  setNotification({
-    open: true,
-    message,
-    severity,
-    vertical: 'top',
-    horizontal: 'center',
-  });
 };

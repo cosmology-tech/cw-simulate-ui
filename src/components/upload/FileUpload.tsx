@@ -1,9 +1,9 @@
 import React, { Suspense } from "react";
 import { Box, CircularProgress, SnackbarProps } from "@mui/material";
-import { useSetRecoilState } from "recoil";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
+import { useAtom } from "jotai";
 
 const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
 
@@ -25,7 +25,7 @@ const FileUpload = ({
   onAccept,
   onClear,
 }: IProps) => {
-  const setIsFileUploaded = useSetRecoilState(fileUploadedState);
+  const [, setIsFileUploaded] = useAtom(fileUploadedState);
   const snackbarProps: SnackbarProps = {
     anchorOrigin: {
       vertical: "top",

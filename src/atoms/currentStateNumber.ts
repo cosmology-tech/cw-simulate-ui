@@ -1,6 +1,3 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 
-export const currentStateNumber = atom<number>({
-  key: 'currentState',
-  default: 0,
-});
+export const currentStateNumber = atom<number>(0);

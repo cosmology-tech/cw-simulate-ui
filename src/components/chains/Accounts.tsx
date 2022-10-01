@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TableLayout from "./TableLayout";
-import { useRecoilValue, useSetRecoilState } from "recoil";
 import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
@@ -59,17 +58,17 @@ const Accounts = () => {
     const json = JSON.parse(payload);
 
     if (payload.length === 0 || !validateAccountJSON(json)) {
-      setNotification("Invalid Account JSON", { severity: "error" });
+      setNotification("Invalid Account JSON", {severity: "error"});
       return;
     }
 
     if (accounts.find(acc => acc.id === json.id)) {
-      setNotification("An account with this ID already exists", { severity: "error" });
+      setNotification("An account with this ID already exists", {severity: "error"});
       return;
     }
 
     if (accounts.find(acc => acc.address === json.address)) {
-      setNotification("An account with this address already exists", { severity: "error" });
+      setNotification("An account with this address already exists", {severity: "error"});
       return;
     }
 

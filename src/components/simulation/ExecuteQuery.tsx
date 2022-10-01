@@ -2,7 +2,6 @@ import React, { useCallback, useState } from "react";
 import { Config } from "../../configs/config";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { useRecoilValue } from "recoil";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../../atoms/executeQueryTabState";
 import { Button, Grid, Typography } from "@mui/material";
@@ -10,6 +9,7 @@ import { jsonErrorState } from "../../atoms/jsonErrorState";
 import { useExecute, useQuery } from "../../utils/setupSimulation";
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { SENDER_ADDRESS } from "../../configs/variables";
+import { useAtomValue } from "jotai";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
@@ -23,8 +23,8 @@ export const ExecuteQuery = ({
   contractAddress,
 }: IProps) => {
   const [payload, setPayload] = useState("");
-  const executeQueryTab = useRecoilValue(executeQueryTabState);
-  const jsonError = useRecoilValue(jsonErrorState);
+  const executeQueryTab = useAtomValue(executeQueryTabState);
+  const jsonError = useAtomValue(jsonErrorState);
   const setNotification = useNotification();
   const execute = useExecute();
   const query = useQuery();

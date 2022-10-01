@@ -1,6 +1,3 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 
-export const payloadState = atom({
-  key: 'payloadState',
-  default: "",
-});
+export const payloadState = atom<string>('');

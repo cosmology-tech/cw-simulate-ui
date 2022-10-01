@@ -4,9 +4,9 @@ import StateMemoryTab from "./StateMemoryTab";
 import { OutputCard } from "./OutputCard";
 import { Grid } from "@mui/material";
 import { OutputRenderer } from "./OutputRenderer";
-import { useRecoilValue } from "recoil";
 import { responseState } from "../../atoms/responseState";
 import { blockState } from "../../atoms/blockState";
+import { useAtomValue } from "jotai";
 
 interface IProps {
   isFileUploaded: boolean;
@@ -16,8 +16,8 @@ interface IProps {
 export const StateRenderer = ({ isFileUploaded, currentState }: IProps) => {
   const [currentTab, setCurrentTab] = React.useState("state");
   const [isChecked, setIsChecked] = React.useState(false);
-  const response = useRecoilValue(responseState);
-  const currentJSON = useRecoilValue(blockState);
+  const response = useAtomValue(responseState);
+  const currentJSON = useAtomValue(blockState);
   // TODO: Check current active state and executionHistory length.
   const isStateTraversed = false;
   return (
