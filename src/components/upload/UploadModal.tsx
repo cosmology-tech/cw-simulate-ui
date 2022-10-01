@@ -3,11 +3,11 @@ import { useCallback, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useStoreCode } from "../../utils/setupSimulation";
 import FileUpload from "./FileUpload";
-import { useSetRecoilState } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { ISimulationJSON } from "../drawer/SimulationMenuItem";
 import { CWSimulateEnv } from "@terran-one/cw-simulate";
+import { useAtom } from "jotai";
 
 interface IUploadModalProps {
   dropzoneText?: string;
@@ -21,8 +21,8 @@ interface IUploadModalProps {
 
 export default function UploadModal(props: IUploadModalProps) {
   const {dropzoneText, variant, dropTitle, chainId, open, onClose} = props;
-  const setSimulationEnv = useSetRecoilState(cwSimulateEnvState);
-  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
@@ -40,7 +40,7 @@ export default function UploadModal(props: IUploadModalProps) {
       }
     } else if (variant === 'simulation') {
       const json = file.fileContent as unknown as ISimulationJSON;
-      setSimulationEnv(file.fileContent as unknown as CWSimulateEnv);
+      setSimulateEnv(file.fileContent as unknown as CWSimulateEnv);
       setSimulationMetadata(json.simulationMetadata);
     }
     onClose(true);

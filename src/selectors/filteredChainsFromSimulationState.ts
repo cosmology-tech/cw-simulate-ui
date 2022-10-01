@@ -1,12 +1,6 @@
-import { selector } from "recoil";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import { focusAtom } from "jotai/optics";
 
-const filteredChainsFromSimulationState = selector({
-  key: "filteredChainsFromSimulationState",
-  get: ({get}) => {
-    const simulation = get(cwSimulateEnvState);
-    return simulation.chains ?? {};
-  }
-});
+const filteredChainsFromSimulationState = focusAtom(cwSimulateEnvState, (optic) => optic.prop("chains") ?? {});
 
 export default filteredChainsFromSimulationState;

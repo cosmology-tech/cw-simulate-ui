@@ -63,11 +63,11 @@ export const JsonCodeMirrorEditor = ({
             }
           }}
           placeholder={JSON.stringify(defaultPlaceholder, null, 2)}
-          style={{ border: "none", height: "100%" }}
+          style={{border: "none", height: "100%"}}
         />
       </Grid>
       {jsonError && (
-        <Grid item sx={{ mt: 1 }}>
+        <Grid item sx={{mt: 1}}>
           <Typography variant="subtitle2" color="red">
             Invalid JSON
           </Typography>

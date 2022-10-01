@@ -1,16 +1,16 @@
-import { useRecoilValue } from "recoil";
 import filteredInstancesFromChainId from "../../selectors/filteredInstancesFromChainId";
 import InstanceMenuItem from "./InstanceMenuItem";
 import T1MenuItem from "./T1MenuItem";
+import { useAtomValue } from "jotai";
 
 export interface IInstancesMenuItemProps {
   chainId: string;
 }
 
 export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
-  const { chainId } = props;
+  const {chainId} = props;
 
-  const instances = useRecoilValue(filteredInstancesFromChainId(chainId));
+  const instances = useAtomValue(filteredInstancesFromChainId(chainId));
 
   if (!instances.length) {
     return <></>

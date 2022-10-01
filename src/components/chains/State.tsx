@@ -1,10 +1,10 @@
-import { useRecoilValue } from "recoil";
 import filteredStatesByChainId from "../../selectors/filteredStatesByChainId";
 import { useParams } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import SearchBar from "./SearchBar";
 import TableLayout from "./TableLayout";
 import { useMemo } from "react";
+import { useAtomValue } from "jotai";
 
 type Row = {
   contract: string;
@@ -14,8 +14,8 @@ type Row = {
 
 const State = () => {
   const chainId = useParams().chainId!
-  const states = useRecoilValue(filteredStatesByChainId(chainId as string));
-  
+  const states = useAtomValue(filteredStatesByChainId(chainId as string));
+
   const data = useMemo(() => {
     const rows: Row[] = [];
     for (const address in states) {
@@ -29,7 +29,7 @@ const State = () => {
     }
     return rows;
   }, [states]);
-  
+
   return (
     <>
       <Typography variant="h4">{chainId}</Typography>

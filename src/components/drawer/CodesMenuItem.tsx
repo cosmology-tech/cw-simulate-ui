@@ -1,18 +1,18 @@
 import { MenuItem } from "@mui/material";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
 import { selectCodesMetadata } from "../../atoms/simulationMetadataState";
 import UploadModal from "../upload/UploadModal";
 import CodeMenuItem from "./CodeMenuItem";
 import T1MenuItem from "./T1MenuItem";
+import { useAtomValue } from "jotai";
 
 interface ICodesMenuItemProps {
   chainId: string;
 }
 
 export default function CodesMenuItem(props: ICodesMenuItemProps) {
-  const { chainId } = props;
-  const codes = useRecoilValue(selectCodesMetadata(chainId));
+  const {chainId} = props;
+  const codes = useAtomValue(selectCodesMetadata(chainId));
 
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
 
@@ -29,7 +29,7 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
             Upload new contract
           </MenuItem>
         ]}
-        optionsExtras={({ close }) => [
+        optionsExtras={({close}) => [
           <UploadModal
             key="contract-upload-modal-for-sidebar"
             chainId={chainId}
@@ -43,7 +43,7 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
         ]}
       >
         {Object.values(codes).map((code) => (
-          <CodeMenuItem key={code.codeId} chainId={chainId} code={code} />
+          <CodeMenuItem key={code.codeId} chainId={chainId} code={code}/>
         ))}
       </T1MenuItem>
     </>

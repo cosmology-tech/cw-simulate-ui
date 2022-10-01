@@ -1,12 +1,12 @@
 import React, { MouseEvent, useState } from "react";
 import T1MenuItem from "./T1MenuItem";
 import { downloadJSON } from "../../utils/fileUtils";
-import { useRecoilState, useRecoilValue } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import UploadModal from "../upload/UploadModal";
 import simulationMetadataState, { SimulationMetadata } from "../../atoms/simulationMetadataState";
+import { useAtom } from "jotai";
 
 export interface ISimulationItemProps {
 }
@@ -16,15 +16,15 @@ export interface ISimulationJSON {
 }
 
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
-  const [simulationEnv, setSimulationEnv] = useRecoilState(cwSimulateEnvState);
-  const simulationMetadata = useRecoilValue(simulationMetadataState);
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const [showClearSimulation, setShowClearSimulation] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const navigate = useNavigate();
   const handleOnItemClick = React.useCallback((e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const json = {...simulationEnv, 'simulationMetadata': simulationMetadata};
+    const json = {...simulateEnv, 'simulationMetadata': simulationMetadata};
     downloadJSON(JSON.stringify(json, null, 2), "simulation.json");
   }, []);
 
@@ -51,7 +51,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
             close();
             navigate('/chains');
           }}
-          setSimulationEnv={setSimulationEnv}
+          simulateEnv={setSimulateEnv}
         />,
         <UploadModal
           key={'simulation-upload-modal'}
@@ -69,14 +69,14 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
 });
 
 interface IClearSimulationDialogProps {
-  setSimulationEnv: (env: any) => void;
+  simulateEnv: (env: any) => void;
   open: boolean;
 
   onClose(): void;
 }
 
 function ClearSimulationDialog(props: IClearSimulationDialogProps) {
-  const {setSimulationEnv, ...rest} = props;
+  const {simulateEnv, ...rest} = props;
 
   return (
     <Dialog {...rest}>
@@ -97,7 +97,7 @@ function ClearSimulationDialog(props: IClearSimulationDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
-            setSimulationEnv({});
+            simulateEnv({});
             rest.onClose();
           }}
         >

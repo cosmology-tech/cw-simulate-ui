@@ -1,17 +1,16 @@
 import { Box, Grid, Stack, Typography, } from "@mui/material";
-import { useRecoilValue } from "recoil";
 import React from "react";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
 import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
 import { Outlet, useParams } from "react-router-dom";
+import { useAtomValue } from "jotai";
 
 const Chains = () => {
   const params = useParams();
   const chainId = params.chainId!;
-  const chains = useRecoilValue(filteredChainsFromSimulationState);
-
+  const chains = useAtomValue(filteredChainsFromSimulationState);
   if (chainId in chains) {
-    return <Outlet />
+    return <Outlet/>
   }
 
   return (
@@ -52,8 +51,8 @@ const Chains = () => {
             alignItems: "center",
           }}
         >
-          <Stack sx={{ textAlign: "center", alignItems: "center" }}>
-            <ScreenSearchDesktopOutlined sx={{ fontSize: "100px" }} />
+          <Stack sx={{textAlign: "center", alignItems: "center"}}>
+            <ScreenSearchDesktopOutlined sx={{fontSize: "100px"}}/>
             <Typography variant="h6">
               No chain selected.
             </Typography>

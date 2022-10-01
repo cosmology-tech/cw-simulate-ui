@@ -59,7 +59,7 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     ? ('current' in anchorRef ? anchorRef.current : anchorRef)
     : null;
 
-  const chainNames = useChainNames(false);
+  const chainNames = useChainNames();
   const setNotification = useNotification();
   const createChain = useCreateChainForSimulation();
 
