@@ -16,6 +16,8 @@ import { MsgInfo } from "@terran-one/cw-simulate";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useCreateContractInstance } from "../../utils/setupSimulation";
 import { SENDER_ADDRESS } from "../../configs/variables";
+import { useAtom, useAtomValue } from "jotai";
+import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 
 export interface ICodeMenuItemProps {
   chainId: string;
@@ -75,7 +77,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const contractName = code.name;
   const setNotification = useNotification();
   const createContractInstance = useCreateContractInstance();
-
+  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const handleInstantiate = useCallback(async () => {
     if (!code) {
       setNotification("Internal error. Please check logs.", {severity: "error"});

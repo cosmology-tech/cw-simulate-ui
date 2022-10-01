@@ -95,8 +95,10 @@ export function useCreateContractInstance() {
   }, [simulateEnv]);
 }
 
-// Fetch execution History for a particular contract.
 
+/**
+ * Fetch execution History for a particular contract.
+ */
 export function useExecutionHistory() {
   const simulateEnv = useAtomValue(cwSimulateEnvState);
   return useCallback((chainId: string, contractAddress: string): any => {

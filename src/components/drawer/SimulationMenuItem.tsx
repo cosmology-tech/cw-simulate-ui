@@ -34,13 +34,18 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
       label="Simulation"
       options={[
         <MenuItem key="download-simulation"
-                  onClick={handleOnItemClick}>Download</MenuItem>,
+                  onClick={handleOnItemClick}
+                  disabled={Object.keys(simulateEnv).length === 0}
+        >
+          Download
+        </MenuItem>,
         <MenuItem key="upload-simulation"
                   onClick={() => setOpenUploadDialog(true)}>Upload</MenuItem>,
         <MenuItem key="clear-simulation"
                   onClick={() => {
                     setShowClearSimulation(true);
-                  }}>Clear</MenuItem>,
+                  }}
+                  disabled={Object.keys(simulateEnv).length === 0}>Clear</MenuItem>,
       ]}
       optionsExtras={({close}) => [
         <ClearSimulationDialog

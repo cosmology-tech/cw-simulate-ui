@@ -11,7 +11,6 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
   const {chainId} = props;
 
   const instances = useAtomValue(filteredInstancesFromChainId(chainId));
-
   if (!instances.length) {
     return <></>
   }

@@ -11,6 +11,6 @@ const filteredInstancesFromChainId = atomFamily((chainId: string) => {
     const chain = simulation.chains[chainId];
     return Object.values(chain.contracts);
   });
-})
+});
 
 export default filteredInstancesFromChainId;
