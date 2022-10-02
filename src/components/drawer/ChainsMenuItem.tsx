@@ -1,8 +1,10 @@
 import { Box, Button, Divider, Input, MenuItem, Popover, Typography } from "@mui/material";
+import { useAtomValue } from "jotai";
 import { RefObject, useCallback, useRef, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
+import filteredChainNamesFromSimulationState from "../../selectors/filteredChainNamesFromSimulation";
 import { useCreateChainForSimulation } from "../../utils/setupSimulation";
-import { getDefaultChainName, isValidChainName, useChainNames } from "../../utils/simUtils";
+import { getDefaultChainName, isValidChainName } from "../../utils/simUtils";
 import ChainMenuItem from "./ChainMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
@@ -11,8 +13,9 @@ export interface IChainsItemProps {
 }
 
 export default function ChainsMenuItem(props: IChainsItemProps) {
-  const chainNames = useChainNames(true);
+  const chainNames = useAtomValue(filteredChainNamesFromSimulationState);
   const [showAddChain, setShowAddChain] = useState(false);
+  console.log(chainNames);
 
   const [menuEl, setMenuEl] = useState<HTMLUListElement | null>(null);
 
@@ -63,7 +66,7 @@ function AddChainPopover(props: IAddChainPopoverProps) {
     ? ('current' in anchorRef ? anchorRef.current : anchorRef)
     : null;
 
-  const chainNames = useChainNames();
+  const chainNames = useAtomValue(filteredChainNamesFromSimulationState);
   const setNotification = useNotification();
   const createChain = useCreateChainForSimulation();
 

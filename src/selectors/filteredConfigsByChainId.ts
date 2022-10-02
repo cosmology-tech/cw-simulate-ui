@@ -4,15 +4,15 @@ import { atom } from "jotai";
 
 const filteredConfigsByChainId = atomFamily((chainId: string) => {
   return atom(get => {
-    const simulation = get(cwSimulateEnvState);
-    if (!(chainId in simulation.chains)) {
+    const {env} = get(cwSimulateEnvState);
+    if (!(chainId in env.chains)) {
       return {
         chainId: 'invalid-1',
         bech32Prefix: 'invalid',
       };
     }
 
-    const {bech32Prefix} = simulation.chains[chainId];
+    const {bech32Prefix} = env.chains[chainId];
     return {
       chainId,
       bech32Prefix,

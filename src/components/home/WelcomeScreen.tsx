@@ -45,7 +45,7 @@ export const WelcomeScreen = () => {
       storeCode(DEFAULT_CHAIN, file.filename, file.fileContent as Buffer);
     } else if (file.filename.endsWith(".json")) {
       const json = file.fileContent as unknown as ISimulationJSON;
-      setSimulateEnv(file.fileContent as unknown as CWSimulateEnv);
+      setSimulateEnv({env: file.fileContent as unknown as CWSimulateEnv});
       setSimulationMetadata(json.simulationMetadata);
     }
   }, [file, createChainForSimulation, storeCode, setNotification, setSimulationMetadata, setSimulateEnv]);

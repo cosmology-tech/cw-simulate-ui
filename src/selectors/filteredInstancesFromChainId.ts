@@ -4,11 +4,11 @@ import { atom } from "jotai";
 
 const filteredInstancesFromChainId = atomFamily((chainId: string) => {
   return atom(get => {
-    const simulation = get(cwSimulateEnvState);
-    if (!(chainId in simulation.chains))
+    const {env} = get(cwSimulateEnvState);
+    if (!(chainId in env.chains))
       return [];
 
-    const chain = simulation.chains[chainId];
+    const chain = env.chains[chainId];
     return Object.values(chain.contracts);
   });
 });

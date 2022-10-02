@@ -10,12 +10,12 @@ interface States {
 
 const filteredStatesByChainId = atomFamily((chainId: string) => {
   return atom(get => {
-    const simulation = get(cwSimulateEnvState);
-    if (!(chainId in simulation.chains)) return {};
+    const {env} = get(cwSimulateEnvState);
+    if (!(chainId in env.chains)) return {};
     const states: States = {};
 
     const decoder = new TextDecoder();
-    const chain = simulation.chains[chainId];
+    const chain = env.chains[chainId];
     for (const address in chain.contracts) {
       const contract = chain.contracts[address];
       states[address] = {};

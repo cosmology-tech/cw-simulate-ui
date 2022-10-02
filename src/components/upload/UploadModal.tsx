@@ -40,7 +40,7 @@ export default function UploadModal(props: IUploadModalProps) {
       }
     } else if (variant === 'simulation') {
       const json = file.fileContent as unknown as ISimulationJSON;
-      setSimulateEnv(file.fileContent as unknown as CWSimulateEnv);
+      setSimulateEnv({env: file.fileContent as unknown as CWSimulateEnv});
       setSimulationMetadata(json.simulationMetadata);
     }
     onClose(true);

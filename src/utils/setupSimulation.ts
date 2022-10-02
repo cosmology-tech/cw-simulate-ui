@@ -15,62 +15,60 @@ export interface ChainConfig {
  */
 export function useCreateChainForSimulation() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
   return useCallback((chainConfig: ChainConfig) => {
-    simulateEnv.createChain(chainConfig);
-    setSimulateEnv(simulateEnv);
+    const chain = env.createChain(chainConfig);
+    setSimulateEnv({env});
     simulationMetadata[chainConfig.chainId] = {
       accounts: {},
       codes: {},
     };
     setSimulationMetadata(simulationMetadata);
 
-    return simulateEnv.chains;
-  }, [simulateEnv, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
+    return chain;
+  }, [env, simulationMetadata]);
 }
 
 export function useDeleteChainForSimulation() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback((chainId: string) => {
-    delete simulateEnv.chains[chainId];
-    setSimulateEnv(simulateEnv);
+    delete env.chains[chainId];
+    setSimulateEnv({env});
 
     delete simulationMetadata[chainId];
     setSimulationMetadata(simulationMetadata);
 
-  }, [simulateEnv, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
+  }, [env, simulationMetadata]);
 }
 
 export function useReconfigureChainForSimulation() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback((chainId: string, newConfig: ChainConfig) => {
-    simulateEnv.chains[newConfig.chainId] = simulateEnv.chains[chainId];
+    env.chains[newConfig.chainId] = env.chains[chainId];
     if (newConfig.chainId !== chainId) {
-      delete simulateEnv.chains[chainId];
+      delete env.chains[chainId];
     }
-    setSimulateEnv(simulateEnv);
+    setSimulateEnv({env});
 
     simulationMetadata[newConfig.chainId] = simulationMetadata[chainId];
     if (newConfig.chainId !== chainId)
       delete simulationMetadata[chainId];
     setSimulationMetadata(simulationMetadata);
-
-    return simulateEnv.chains[chainId];
-  }, [simulateEnv, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
+  }, [env, simulationMetadata]);
 }
 
 export function useStoreCode() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback((chainId: string, codeName: string, wasmByteCode: Buffer) => {
-    const chain: CWChain = simulateEnv.chains[chainId];
+    const chain: CWChain = env.chains[chainId];
     const codeId = chain.storeCode(wasmByteCode).codeId;
-    setSimulateEnv(simulateEnv);
+    setSimulateEnv({env});
 
     simulationMetadata[chainId].codes[codeName] = {
       name: codeName,
@@ -78,21 +76,21 @@ export function useStoreCode() {
     };
     setSimulationMetadata(simulationMetadata);
     return codeId;
-  }, [simulateEnv, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
+  }, [env, simulationMetadata]);
 }
 
 /**
  * Create a contract instance for a given chain.
  */
 export function useCreateContractInstance() {
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback(async (chainId: string, code: Code, info: MsgInfo, instantiateMsg: any): Promise<CWContractInstance> => {
-    const contract = await simulateEnv.chains[chainId].instantiateContract(code.codeId);
+    const contract = await env.chains[chainId].instantiateContract(code.codeId);
     contract.instantiate(info, instantiateMsg);
-    setSimulateEnv(simulateEnv);
+    setSimulateEnv({env});
     return contract;
-  }, [simulateEnv, setSimulateEnv]);
+  }, [env]);
 }
 
 
@@ -100,12 +98,12 @@ export function useCreateContractInstance() {
  * Fetch execution History for a particular contract.
  */
 export function useExecutionHistory() {
-  const simulateEnv = useAtomValue(cwSimulateEnvState);
+  const {env} = useAtomValue(cwSimulateEnvState);
   return useCallback((chainId: string, contractAddress: string): any => {
-    const chain = simulateEnv.chains[chainId];
+    const chain = env.chains[chainId];
     const contract = chain.contracts[contractAddress];
     return contract.executionHistory;
-  }, [simulateEnv]);
+  }, [env]);
 }
 
 /**
@@ -113,13 +111,13 @@ export function useExecutionHistory() {
  */
 
 export function useExecute() {
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback((chainId: string, contractAddress: string, info: MsgInfo, executeMsg: any): any => {
-    const response = simulateEnv.chains[chainId].contracts[contractAddress].execute(info, executeMsg);
-    setSimulateEnv(simulateEnv);
+    const response = env.chains[chainId].contracts[contractAddress].execute(info, executeMsg);
+    setSimulateEnv({env});
     return response;
-  }, [simulateEnv, setSimulateEnv]);
+  }, [env]);
 }
 
 /**
@@ -127,11 +125,11 @@ export function useExecute() {
  */
 
 export function useQuery() {
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback((chainId: string, contractAddress: string, queryMsg: any): any => {
-    const response = simulateEnv.chains[chainId].contracts[contractAddress].query(queryMsg);
-    setSimulateEnv(simulateEnv);
+    const response = env.chains[chainId].contracts[contractAddress].query(queryMsg);
+    setSimulateEnv({env});
     return response;
-  }, [simulateEnv, setSimulateEnv]);
+  }, [env, setSimulateEnv]);
 }
