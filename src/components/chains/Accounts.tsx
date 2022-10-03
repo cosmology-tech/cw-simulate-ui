@@ -31,7 +31,7 @@ const DEFAULT_VALUE = JSON.stringify({
 }, null, 2);
 
 const Accounts = () => {
-  const chainId = useParams().chainId!
+  const chainId = useParams().chainId!;
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
