@@ -305,7 +305,6 @@ export const useSetupSimulationJSON = () => {
                 codeId: newCodeId,
                 name: codeName
               };
-              console.log(code, codeId, codeName, instantiateMsg);
               await instantiateContract(chainId, newCode, info, instantiateMsg);
             }
 
