@@ -46,7 +46,7 @@ export default function StateStepper({chainId, contractAddress}: IProps) {
   const [, setStepState] = useAtom(blockState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     // @ts-ignore
-    setStepState(JSON.parse(window.atob(state.dict._root.entries[0][1])));
+    setStepState(JSON.parse(window.atob(state?.dict._root.entries[0][1])));
   };
 
   const handleStep =
@@ -58,7 +58,7 @@ export default function StateStepper({chainId, contractAddress}: IProps) {
   }, [currentState, contractAddress]);
 
   React.useEffect(() => {
-    handleStateView(executionHistory[activeStep].state);
+    handleStateView(executionHistory[activeStep]?.state);
   }, [activeStep]);
   return (
     <Stepper nonLinear activeStep={activeStep} orientation="vertical">

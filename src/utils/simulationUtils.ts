@@ -273,6 +273,7 @@ export const useSetupSimulationJSON = () => {
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const createChain = useCreateChainForSimulation();
   const storeCode = useStoreCode();
+  const instantiateContract = useCreateContractInstance();
   return useCallback(async (simulation: ISimulationJSON) => {
     for (const [chainId, chain] of Object.entries(simulation.chains)) {
       const newChain = createChain({
@@ -281,24 +282,44 @@ export const useSetupSimulationJSON = () => {
       });
 
       for (const [codeId, code] of Object.entries(chain.codes)) {
-        const codeName = convertCodeIdToCodeName(codeId, simulationMetadata[chainId].codes) || "untitled.wasm";
-        storeCode(chainId, codeName, code.wasmBytecode);
+        const codeName = convertCodeIdToCodeName(codeId, simulationMetadata[chainId].codes) || `untitled-${codeId}.wasm`;
+        const newCodeId = storeCode(chainId, codeName, code.wasmBytecode);
 
         for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
           for (const execution of instance.executionHistory) {
-            console.log(execution, codeId, code.wasmBytecode);
-            debugger;
-            const newInstance = await newChain.instantiateContract(parseInt(codeId));
-            debugger;
             // @ts-ignore
             if (execution.request.instantiateMsg) {
               const info: MsgInfo = {
                 sender: execution.request.info.sender,
                 funds: execution.request.info.funds,
               };
+
+              // TODO: Not 100% working. Need to fix.
+              env.chains[chainId].contracts = {
+                [contractAddress]: new CWContractInstance(newChain, contractAddress, code)
+              };
+              setSimulateEnv({env});
               // @ts-ignore
               const instantiateMsg = execution.request.instantiateMsg;
-              newInstance.instantiate(info, instantiateMsg);
+              const newCode = {
+                codeId: newCodeId,
+                name: codeName
+              };
+              console.log(code, codeId, codeName, instantiateMsg);
+              await instantiateContract(chainId, newCode, info, instantiateMsg);
+            }
+
+            // @ts-ignore
+            if (execution.request.executeMsg) {
+              // @ts-ignore
+              const executeMsg = execution.request.executeMsg;
+              // @ts-ignore
+              const info: MsgInfo = {
+                sender: execution.request.info.sender,
+                funds: execution.request.info.funds,
+              };
+              env.chains[chainId].contracts[contractAddress].execute(info, executeMsg);
+              setSimulateEnv({env});
             }
           }
         }
