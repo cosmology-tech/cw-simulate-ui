@@ -15,7 +15,7 @@ interface Accounts {
 export interface Account {
   id: string;
   address: string;
-  balance: number | bigint;
+  balance: string;
 }
 
 export interface Codes {

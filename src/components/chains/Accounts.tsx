@@ -17,11 +17,9 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import simulationMetadataState, {
-  selectAccountsMetadata
-} from "../../atoms/simulationMetadataState";
+import simulationMetadataState, { selectAccountsMetadata } from "../../atoms/simulationMetadataState";
 import { useParams } from "react-router-dom";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 
 const DEFAULT_VALUE = JSON.stringify({
@@ -37,9 +35,10 @@ const Accounts = () => {
   const setNotification = useNotification();
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
-  const accounts = Object.values(selectAccountsMetadata(chainId));
-  const data = useMemo(() =>
-      accounts.map(account => ({...account, balance: account.balance + ''})),
+  const accounts = Object.values(useAtomValue(selectAccountsMetadata(chainId)));
+
+  const data = useMemo(
+    () => accounts.map(account => ({...account, balance: account.balance ?? ''})),
     [accounts]
   );
 
