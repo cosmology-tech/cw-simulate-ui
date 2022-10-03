@@ -170,7 +170,7 @@ export function useCreateAccount() {
 }
 
 /**
- * Delete a contract given a chain id and contract address.
+ * Delete an account on a chain.
  */
  export function useDeleteAccount() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
