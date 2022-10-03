@@ -17,11 +17,11 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { selectAccountsMetadata } from "../../atoms/simulationMetadataState";
+import { Account, selectAccountsMetadata } from "../../atoms/simulationMetadataState";
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
-import { Coin } from "@terran-one/cw-simulate";
+import { Coin, CWSimulateEnv } from "@terran-one/cw-simulate";
 import { useCreateAccount, useDeleteAccount } from "../../utils/simulationUtils";
 
 const DEFAULT_VALUE = JSON.stringify({
@@ -43,8 +43,12 @@ const Accounts = () => {
   const createAccount = useCreateAccount();
   const deleteAccount = useDeleteAccount();
 
+  const getBalances = (env: CWSimulateEnv, chainId: string, account: Account): Coin[] => {
+    return Object.values(env.chains[chainId].accounts[account.address]?.balances ?? {});
+  }
+
   const data = useMemo(
-    () => accounts.map(account => ({...account, balances: Object.values(env.chains[chainId].accounts[account.address]?.balances ?? {}).map((c: Coin) => `${c.amount}${c.denom}`)?.join(', ')})),
+    () => accounts.map(account => ({...account, balances: getBalances(env, chainId, account).map((c: Coin) => `${c.amount}${c.denom}`)?.join(', ')})),
     [accounts]
   );
 
