@@ -4,7 +4,7 @@ import DiffSwitch from "./DiffSwitch";
 
 interface IProps {
   currentTab: string;
-  setCurrentTab: (val: string) => void;
+  setCurrentTab: (val: "response" | "state") => void;
   setIsChecked: (val: boolean) => void;
   isChecked: boolean;
   isStateTraversed: boolean;
@@ -18,7 +18,7 @@ const StateResponseTab = ({
   isStateTraversed,
 }: IProps) => {
   const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue);
+    setCurrentTab(newValue === "response" ? "response" : "state");
   };
   return (
     <div
