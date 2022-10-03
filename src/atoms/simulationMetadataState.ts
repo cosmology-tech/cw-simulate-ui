@@ -18,7 +18,7 @@ export interface Account {
   balance: number | bigint;
 }
 
-interface Codes {
+export interface Codes {
   [codeName: string]: Code;
 }
 

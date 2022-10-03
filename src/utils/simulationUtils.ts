@@ -1,9 +1,10 @@
-import { CWChain, CWContractInstance, MsgInfo } from "@terran-one/cw-simulate";
+import { CWChain, CWContractInstance, CWSimulateEnv, MsgInfo } from "@terran-one/cw-simulate";
 import { useCallback } from "react";
-import type { Code } from "../atoms/simulationMetadataState";
+import type { Code, Codes } from "../atoms/simulationMetadataState";
 import simulationMetadataState from "../atoms/simulationMetadataState";
 import { useAtom, useAtomValue } from "jotai";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import { ISimulationJSON } from "../components/drawer/SimulationMenuItem";
 
 export interface ChainConfig {
   chainId: string;
@@ -212,3 +213,37 @@ export function getDefaultChainName(chains: string[]) {
  */
 export const isValidChainName = (name: string) => !!name.match(/^.+-\d+$/);
 
+/**
+ * Convert code id to code name.
+ * @param codeId
+ * @param codes
+ */
+export const convertCodeIdToCodeName = (codeId: string, codes: Codes) => {
+  const code = Object.values(codes).find((code) => code.codeId.toString() === codeId);
+  return code?.name;
+}
+
+/**
+ * Setup simulation given a simulation JSON.
+ */
+export const useSetupSimulationJSON = () => {
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const createChain = useCreateChainForSimulation();
+  const storeCode = useStoreCode();
+  return useCallback(async (simulation: ISimulationJSON) => {
+    Object.entries(simulation.chains).forEach(([chainId, chain]) => {
+      createChain({
+        chainId,
+        bech32Prefix: chain.bech32Prefix,
+      });
+      Object.entries(chain.codes).forEach(([codeId, code]) => {
+        const codeName = convertCodeIdToCodeName(codeId, simulationMetadata[chainId].codes) || "untitled.wasm";
+        storeCode(chainId, codeName, code.wasmBytecode);
+      });
+    });
+    // TODO: instantiate contracts
+    setSimulateEnv({env: simulation as unknown as CWSimulateEnv});
+    setSimulationMetadata(simulation.simulationMetadata);
+  }, [simulationMetadata, env]);
+}
