@@ -21,14 +21,14 @@ export interface ISimulationJSON {
 
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
   const simulationMetadata = useAtomValue(simulationMetadataState);
-  const simulateEnv = useAtomValue(cwSimulateEnvState);
+  const {env} = useAtomValue(cwSimulateEnvState);
   const [showClearSimulation, setShowClearSimulation] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const navigate = useNavigate();
   const handleOnItemClick = React.useCallback((e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const json = {...simulateEnv, 'simulationMetadata': simulationMetadata};
+    const json = {...env, 'simulationMetadata': simulationMetadata};
     downloadJSON(JSON.stringify(json, null, 2), "simulation.json");
   }, []);
 
@@ -39,7 +39,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
       options={[
         <MenuItem key="download-simulation"
                   onClick={handleOnItemClick}
-                  disabled={Object.keys(simulateEnv).length === 0}
+                  disabled={Object.keys(env.chains).length === 0}
         >
           Download
         </MenuItem>,
@@ -49,7 +49,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
                   onClick={() => {
                     setShowClearSimulation(true);
                   }}
-                  disabled={Object.keys(simulateEnv).length === 0}>Clear</MenuItem>,
+                  disabled={Object.keys(env.chains).length === 0}>Clear</MenuItem>,
       ]}
       optionsExtras={({close}) => [
         <ClearSimulationDialog

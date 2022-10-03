@@ -35,10 +35,8 @@ const Accounts = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
-
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
-
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const accounts = Object.values(selectAccountsMetadata(chainId));
   const data = useMemo(() =>
       accounts.map(account => ({...account, balance: account.balance + ''})),
