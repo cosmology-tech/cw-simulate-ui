@@ -26,6 +26,7 @@ export interface IT1MenuItemProps {
   icon?: ReactNode;
   sx?: SxProps<Theme>;
   menuRef?: React.Ref<HTMLUListElement>;
+  tooltip?: string;
 }
 
 type Options = ReactNode | ((api: OptionsAPI) => ReactNode)
@@ -43,6 +44,7 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
     optionsExtras,
     sx,
     menuRef,
+    tooltip,
     ...rest
   } = props;
 
@@ -85,7 +87,7 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
           }}
           className="T1MenuItem-label"
         >
-          <Label ellipsis={textEllipsis}>{label}</Label>
+          <Label ellipsis={textEllipsis} tooltip={tooltip}>{label}</Label>
           {options && (
             <Box
               className="T1MenuItem-optionsButton"
@@ -144,12 +146,14 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
 interface ILabelProps {
   children: NonNullable<ReactNode>;
   ellipsis: boolean;
+  tooltip?: string | undefined;
 }
 
 function Label(props: ILabelProps) {
   const {
     children,
     ellipsis,
+    tooltip,
   } = props;
 
   if (!ellipsis) {
@@ -158,7 +162,7 @@ function Label(props: ILabelProps) {
     )
   }
   return (
-    <Tooltip title={children} placement="right">
+    <Tooltip title={tooltip === undefined ? children : tooltip} placement="right">
       <Typography
         variant="body1"
         sx={{

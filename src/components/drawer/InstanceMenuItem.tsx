@@ -3,7 +3,12 @@ import T1MenuItem from "./T1MenuItem";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
-import { useDeleteInstanceForSimulation } from "../../utils/simulationUtils";
+import {
+  convertCodeIdToCodeName,
+  useDeleteInstanceForSimulation
+} from "../../utils/simulationUtils";
+import { useAtomValue } from "jotai";
+import { selectCodesMetadata } from "../../atoms/simulationMetadataState";
 
 export interface IInstanceMenuItemProps {
   chainId: string;
@@ -16,6 +21,8 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
     instance,
   } = props;
   const [showDeleteInstance, setShowDeleteInstance] = useState(false);
+  const codes = useAtomValue(selectCodesMetadata(chainId));
+  const codeName = convertCodeIdToCodeName(instance.contractCode.codeId.toString(), codes);
   const navigate = useNavigate();
   return (
     <T1MenuItem
@@ -23,6 +30,7 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
       nodeId={`${chainId}/instances/${instance.contractAddress}`}
       link={`/chains/${chainId}/instances/${instance.contractAddress}`}
       textEllipsis
+      tooltip={`${codeName} ${instance.contractAddress}`}
       options={[
         <MenuItem
           key="delete-instance"

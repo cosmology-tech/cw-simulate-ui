@@ -162,7 +162,7 @@ export function useCreateAccount() {
     chain.accounts[address] = account;
     setSimulateEnv({env});
 
-    simulationMetadata[chainId].accounts[address] = { id, address };
+    simulationMetadata[chainId].accounts[address] = {id, address};
     setSimulationMetadata(simulationMetadata);
 
     return account;
@@ -172,7 +172,7 @@ export function useCreateAccount() {
 /**
  * Delete an account on a chain.
  */
- export function useDeleteAccount() {
+export function useDeleteAccount() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
@@ -260,7 +260,7 @@ export const isValidChainName = (name: string) => !!name.match(/^.+-\d+$/);
  * @param codeId
  * @param codes
  */
-export const convertCodeIdToCodeName = (codeId: string, codes: Codes) => {
+export const convertCodeIdToCodeName = (codeId: string, codes: Codes = {}) => {
   const code = Object.values(codes).find((code) => code.codeId.toString() === codeId);
   return code?.name;
 }
@@ -274,16 +274,36 @@ export const useSetupSimulationJSON = () => {
   const createChain = useCreateChainForSimulation();
   const storeCode = useStoreCode();
   return useCallback(async (simulation: ISimulationJSON) => {
-    Object.entries(simulation.chains).forEach(([chainId, chain]) => {
-      createChain({
+    for (const [chainId, chain] of Object.entries(simulation.chains)) {
+      const newChain = createChain({
         chainId,
         bech32Prefix: chain.bech32Prefix,
       });
-      Object.entries(chain.codes).forEach(([codeId, code]) => {
+
+      for (const [codeId, code] of Object.entries(chain.codes)) {
         const codeName = convertCodeIdToCodeName(codeId, simulationMetadata[chainId].codes) || "untitled.wasm";
         storeCode(chainId, codeName, code.wasmBytecode);
-      });
-    });
+
+        for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
+          for (const execution of instance.executionHistory) {
+            console.log(execution, codeId, code.wasmBytecode);
+            debugger;
+            const newInstance = await newChain.instantiateContract(parseInt(codeId));
+            debugger;
+            // @ts-ignore
+            if (execution.request.instantiateMsg) {
+              const info: MsgInfo = {
+                sender: execution.request.info.sender,
+                funds: execution.request.info.funds,
+              };
+              // @ts-ignore
+              const instantiateMsg = execution.request.instantiateMsg;
+              newInstance.instantiate(info, instantiateMsg);
+            }
+          }
+        }
+      }
+    }
     // TODO: Iterate through execution history and execute all messages.
     setSimulateEnv({env});
     setSimulationMetadata(simulation.simulationMetadata);

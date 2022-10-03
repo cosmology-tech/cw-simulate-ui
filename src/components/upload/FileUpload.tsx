@@ -107,6 +107,7 @@ const FileUpload = ({
         onChange={handleOnFileChange}
         alertSnackbarProps={snackbarProps}
         filesLimit={1}
+        maxFileSize={10000000}
       />
     </Suspense>
   );
