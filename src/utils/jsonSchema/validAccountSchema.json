@@ -12,20 +12,31 @@
         "address": {
           "type": "string"
         },
-        "balance": {
-          "oneOf": [
-            {
-              "type": "integer"
-            },
-            {
-              "type": "string"
+        "balances": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "denom": {
+                "type": "string"
+              },
+              "amount": {
+                "oneOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              }
             }
-          ]
+          }
         }
       },
       "required": [
         "address",
-        "balance",
+        "balances",
         "id"
       ],
       "title": "Account"
