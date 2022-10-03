@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
 import { validateConfigJSON } from "../../utils/fileUtils";
-import { useReconfigureChainForSimulation } from "../../utils/setupSimulation";
+import { useReconfigureChainForSimulation } from "../../utils/simulationUtils";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useAtomValue } from "jotai";
 

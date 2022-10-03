@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useCallback, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useStoreCode } from "../../utils/setupSimulation";
+import { useStoreCode } from "../../utils/simulationUtils";
 import FileUpload from "./FileUpload";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";

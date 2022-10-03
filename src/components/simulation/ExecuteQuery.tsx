@@ -5,7 +5,7 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../../atoms/executeQueryTabState";
 import { Button, Grid, Typography } from "@mui/material";
 import { jsonErrorState } from "../../atoms/jsonErrorState";
-import { useExecute, useQuery } from "../../utils/setupSimulation";
+import { useExecute, useQuery } from "../../utils/simulationUtils";
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { SENDER_ADDRESS } from "../../configs/variables";
 import { useAtomValue } from "jotai";

@@ -7,7 +7,7 @@ import React, { HTMLAttributeAnchorTarget, PropsWithChildren, useCallback, useSt
 import { To } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN } from "../../configs/variables";
-import { useCreateChainForSimulation, useStoreCode } from "../../utils/setupSimulation";
+import { useCreateChainForSimulation, useStoreCode } from "../../utils/simulationUtils";
 import FileUpload from "../upload/FileUpload";
 import T1Link from "../grid/T1Link";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";

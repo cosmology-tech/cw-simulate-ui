@@ -2,7 +2,7 @@ import { Validator } from 'jsonschema';
 import * as validSimulationSchema from './jsonSchema/validSimulationSchema.json';
 import * as validConfigSchema from './jsonSchema/validConfigSchema.json';
 import * as validAccountSchema from './jsonSchema/validAccountSchema.json';
-import type { ChainConfig } from './setupSimulation';
+import type { ChainConfig } from './simulationUtils';
 
 /**
  * Read the upload wasm file and convert to ArrayBuffer

@@ -29,6 +29,9 @@ export function useCreateChainForSimulation() {
   }, [env, simulationMetadata]);
 }
 
+/**
+ * Delete a chain given a chain id.
+ */
 export function useDeleteChainForSimulation() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
@@ -43,6 +46,61 @@ export function useDeleteChainForSimulation() {
   }, [env, simulationMetadata]);
 }
 
+/**
+ * Delete a contract given a chain id and contract address.
+ */
+export function useDeleteCodeForSimulation() {
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
+
+  return useCallback((chainId: string, codeId: number) => {
+    const chain = env.chains[chainId];
+    delete chain.codes[codeId];
+    setSimulateEnv({env});
+
+    console.log(simulationMetadata[chainId]);
+    delete simulationMetadata[chainId].codes[codeId];
+    setSimulationMetadata(simulationMetadata);
+  }, [env, simulationMetadata]);
+}
+
+/**
+ * Delete an instance given a chain id and an address.
+ */
+export function useDeleteInstanceForSimulation() {
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
+
+  return useCallback((chainId: string, address: string) => {
+    const chain = env.chains[chainId];
+    delete chain.contracts[address];
+    setSimulateEnv({env});
+
+    delete simulationMetadata[chainId].codes[address];
+    setSimulationMetadata(simulationMetadata);
+  }, [env, simulationMetadata]);
+}
+
+/**
+ * Delete all instances given a chain id.
+ */
+export function useDeleteAllInstancesForSimulation() {
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
+
+  return useCallback((chainId: string) => {
+    const chain = env.chains[chainId];
+    chain.contracts = {};
+    setSimulateEnv({env});
+
+    simulationMetadata[chainId].codes = {};
+    setSimulationMetadata(simulationMetadata);
+  }, [env, simulationMetadata]);
+}
+
+/**
+ * Update a chain given a chain id and a new chain config.
+ */
 export function useReconfigureChainForSimulation() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
@@ -61,6 +119,9 @@ export function useReconfigureChainForSimulation() {
   }, [env, simulationMetadata]);
 }
 
+/**
+ * Store a WASM code in the simulation environment.
+ */
 export function useStoreCode() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
@@ -92,7 +153,6 @@ export function useCreateContractInstance() {
     return contract;
   }, [env]);
 }
-
 
 /**
  * Fetch execution History for a particular contract.
@@ -133,3 +193,19 @@ export function useQuery() {
     return response;
   }, [env, setSimulateEnv]);
 }
+
+/**
+ * Get the first default chain name by pattern `untitled-${i}` which doesn't exist in `chains` yet.
+ */
+export function getDefaultChainName(chains: string[]) {
+  let i = 1;
+  while (chains?.includes(`untitled-${i}`)) ++i;
+  return `untitled-${i}`;
+}
+
+/**
+ * Validate a chain name.
+ * @param name
+ */
+export const isValidChainName = (name: string) => !!name.match(/^.+-\d+$/);
+

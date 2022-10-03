@@ -12,6 +12,7 @@ import State from "./components/chains/State";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
+import Accounts from "./components/chains/Accounts";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
@@ -47,7 +48,7 @@ root.render(
               <Route path=":chainId/config" element={<Config/>}/>
               <Route path=":chainId/state" element={<State/>}/>
               {/* TODO: Commented out accounts for now until we have accounts in the cw-simulate */}
-              {/*<Route path=":chainId/accounts" element={<Accounts />} />*/}
+              <Route path=":chainId/accounts" element={<Accounts/>}/>
               <Route path=":chainId/instances/:instanceAddress" element={<Simulation/>}/>
             </Route>
 

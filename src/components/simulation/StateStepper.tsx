@@ -6,7 +6,7 @@ import { Divider, Grid, Paper, Slide, StepContent, StepLabel, Typography, } from
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { JSONTree } from "react-json-tree";
 import { blockState } from "../../atoms/blockState";
-import { useExecutionHistory } from "../../utils/setupSimulation";
+import { useExecutionHistory } from "../../utils/simulationUtils";
 import { useAtom } from "jotai";
 
 const theme = {

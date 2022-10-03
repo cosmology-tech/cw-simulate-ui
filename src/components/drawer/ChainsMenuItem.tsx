@@ -2,9 +2,13 @@ import { Box, Button, Divider, Input, MenuItem, Popover, Typography } from "@mui
 import { useAtomValue } from "jotai";
 import { RefObject, useCallback, useRef, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import filteredChainNamesFromSimulationState from "../../selectors/filteredChainNamesFromSimulation";
-import { useCreateChainForSimulation } from "../../utils/setupSimulation";
-import { getDefaultChainName, isValidChainName } from "../../utils/simUtils";
+import filteredChainNamesFromSimulationState
+  from "../../selectors/filteredChainNamesFromSimulation";
+import {
+  getDefaultChainName,
+  isValidChainName,
+  useCreateChainForSimulation
+} from "../../utils/simulationUtils";
 import ChainMenuItem from "./ChainMenuItem";
 import T1MenuItem from "./T1MenuItem";
 
@@ -15,8 +19,6 @@ export interface IChainsItemProps {
 export default function ChainsMenuItem(props: IChainsItemProps) {
   const chainNames = useAtomValue(filteredChainNamesFromSimulationState);
   const [showAddChain, setShowAddChain] = useState(false);
-  console.log(chainNames);
-
   const [menuEl, setMenuEl] = useState<HTMLUListElement | null>(null);
 
   return (
