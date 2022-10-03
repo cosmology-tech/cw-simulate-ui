@@ -243,7 +243,7 @@ export const useSetupSimulationJSON = () => {
       });
     });
     // TODO: instantiate contracts
-    setSimulateEnv({env: simulation as unknown as CWSimulateEnv});
+    setSimulateEnv({env});
     setSimulationMetadata(simulation.simulationMetadata);
   }, [simulationMetadata, env]);
 }

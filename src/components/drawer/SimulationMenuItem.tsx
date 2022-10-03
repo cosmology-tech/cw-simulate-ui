@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import UploadModal from "../upload/UploadModal";
 import simulationMetadataState, { SimulationMetadata } from "../../atoms/simulationMetadataState";
 import { useAtom, useAtomValue } from "jotai";
-import { CWChain } from "@terran-one/cw-simulate";
+import { CWChain, CWSimulateEnv } from "@terran-one/cw-simulate";
 
 export interface ISimulationItemProps {
 }
@@ -21,14 +21,14 @@ export interface ISimulationJSON {
 
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
   const simulationMetadata = useAtomValue(simulationMetadataState);
-  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const {env} = useAtomValue(cwSimulateEnvState);
   const [showClearSimulation, setShowClearSimulation] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const navigate = useNavigate();
   const handleOnItemClick = React.useCallback((e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const json = {...simulateEnv, 'simulationMetadata': simulationMetadata};
+    const json = {...env, 'simulationMetadata': simulationMetadata};
     downloadJSON(JSON.stringify(json, null, 2), "simulation.json");
   }, []);
 
@@ -39,7 +39,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
       options={[
         <MenuItem key="download-simulation"
                   onClick={handleOnItemClick}
-                  disabled={Object.keys(simulateEnv).length === 0}
+                  disabled={Object.keys(env.chains).length === 0}
         >
           Download
         </MenuItem>,
@@ -49,7 +49,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
                   onClick={() => {
                     setShowClearSimulation(true);
                   }}
-                  disabled={Object.keys(simulateEnv).length === 0}>Clear</MenuItem>,
+                  disabled={Object.keys(env.chains).length === 0}>Clear</MenuItem>,
       ]}
       optionsExtras={({close}) => [
         <ClearSimulationDialog
@@ -60,7 +60,6 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
             close();
             navigate('/chains');
           }}
-          simulateEnv={setSimulateEnv}
         />,
         <UploadModal
           key={'simulation-upload-modal'}
@@ -78,15 +77,14 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
 });
 
 interface IClearSimulationDialogProps {
-  simulateEnv: (env: any) => void;
   open: boolean;
 
   onClose(): void;
 }
 
 function ClearSimulationDialog(props: IClearSimulationDialogProps) {
-  const {simulateEnv, ...rest} = props;
-
+  const {...rest} = props;
+  const [, setSimulateEnv] = useAtom(cwSimulateEnvState);
   return (
     <Dialog {...rest}>
       <DialogTitle>Confirm Clear Simulation</DialogTitle>
@@ -106,7 +104,7 @@ function ClearSimulationDialog(props: IClearSimulationDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
-            simulateEnv({});
+            setSimulateEnv({env: new CWSimulateEnv()});
             rest.onClose();
           }}
         >

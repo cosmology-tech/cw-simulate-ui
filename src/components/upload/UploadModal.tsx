@@ -1,12 +1,11 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { useCallback, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useStoreCode } from "../../utils/simulationUtils";
+import { useSetupSimulationJSON, useStoreCode } from "../../utils/simulationUtils";
 import FileUpload from "./FileUpload";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { ISimulationJSON } from "../drawer/SimulationMenuItem";
-import { CWSimulateEnv } from "@terran-one/cw-simulate";
 import { useAtom } from "jotai";
 
 interface IUploadModalProps {
@@ -26,8 +25,8 @@ export default function UploadModal(props: IUploadModalProps) {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
-
-  const handleAdd = useCallback(() => {
+  const setupSimulation = useSetupSimulationJSON();
+  const handleAdd = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
       console.error('no file uploaded');
@@ -40,8 +39,7 @@ export default function UploadModal(props: IUploadModalProps) {
       }
     } else if (variant === 'simulation') {
       const json = file.fileContent as unknown as ISimulationJSON;
-      setSimulateEnv({env: file.fileContent as unknown as CWSimulateEnv});
-      setSimulationMetadata(json.simulationMetadata);
+      await setupSimulation(json);
     }
     onClose(true);
   }, [file, onClose, setNotification, setSimulateEnv, setSimulationMetadata, storeCode, variant, chainId]);
