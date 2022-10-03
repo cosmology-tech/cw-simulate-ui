@@ -4,7 +4,12 @@ import { selectAtom } from "jotai/utils";
 const filteredChainsFromSimulationState =
   selectAtom(
     cwSimulateEnvState,
-    ({env}) => env.chains,
+    ({env}) => {
+      if (!env) {
+        return [];
+      }
+      return env.chains
+    },
     () => false,
   );
 export default filteredChainsFromSimulationState;
