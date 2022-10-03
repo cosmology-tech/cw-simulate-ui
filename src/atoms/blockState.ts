@@ -1,6 +1,3 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 
-export const blockState = atom<JSON | undefined>({
-  key: 'blockState',
-  default: undefined,
-});
+export const blockState = atom<JSON | undefined>(undefined);

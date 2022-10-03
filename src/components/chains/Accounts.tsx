@@ -13,7 +13,6 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TableLayout from "./TableLayout";
-import { useRecoilValue, useSetRecoilState } from "recoil";
 import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
@@ -22,6 +21,8 @@ import simulationMetadataState, {
   selectAccountsMetadata
 } from "../../atoms/simulationMetadataState";
 import { useParams } from "react-router-dom";
+import { useAtom } from "jotai";
+import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
@@ -35,8 +36,10 @@ const Accounts = () => {
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
 
-  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
-  const accounts = Object.values(useRecoilValue(selectAccountsMetadata(chainId)));
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
+
+  const accounts = Object.values(selectAccountsMetadata(chainId));
   const data = useMemo(() =>
       accounts.map(account => ({...account, balance: account.balance + ''})),
     [accounts]
@@ -55,17 +58,17 @@ const Accounts = () => {
     const json = JSON.parse(payload);
 
     if (payload.length === 0 || !validateAccountJSON(json)) {
-      setNotification("Invalid Account JSON", { severity: "error" });
+      setNotification("Invalid Account JSON", {severity: "error"});
       return;
     }
 
     if (accounts.find(acc => acc.id === json.id)) {
-      setNotification("An account with this ID already exists", { severity: "error" });
+      setNotification("An account with this ID already exists", {severity: "error"});
       return;
     }
 
     if (accounts.find(acc => acc.address === json.address)) {
-      setNotification("An account with this address already exists", { severity: "error" });
+      setNotification("An account with this address already exists", {severity: "error"});
       return;
     }
 

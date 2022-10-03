@@ -1,6 +1,4 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 
-export const jsonErrorState = atom({
-  key: 'jsonErrorState',
-  default: '',
-});
+
+export const jsonErrorState = atom<string>('');

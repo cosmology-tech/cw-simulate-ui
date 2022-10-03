@@ -1,12 +1,10 @@
-import { selector } from "recoil";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import { selectAtom } from "jotai/utils";
 
-const filteredChainsFromSimulationState = selector({
-  key: "filteredChainsFromSimulationState",
-  get: ({get}) => {
-    const simulation = get(cwSimulateEnvState);
-    return simulation.chains ?? {};
-  }
-});
-
+const filteredChainsFromSimulationState =
+  selectAtom(
+    cwSimulateEnvState,
+    ({env}) => env.chains,
+    () => false,
+  );
 export default filteredChainsFromSimulationState;

@@ -1,5 +1,4 @@
 import { Box, Divider, Grid, Paper, styled } from "@mui/material";
-import { useRecoilState, useRecoilValue } from "recoil";
 import { ExecuteQuery } from "./ExecuteQuery";
 import { responseState } from "../../atoms/responseState";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
@@ -7,8 +6,9 @@ import { StateRenderer } from "./StateRenderer";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import StateStepper from "./StateStepper";
 import { useLocation } from "react-router-dom";
+import { useAtom, useAtomValue } from "jotai";
 
-const Item = styled(Paper)(({ theme }) => ({
+const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
@@ -16,18 +16,18 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 const Simulation = () => {
-  const [response, setResponse] = useRecoilState(responseState);
-  const [currentState, setCurrentState] = useRecoilState(currentStateNumber);
-  const isFileUploaded = useRecoilValue(fileUploadedState);
+  const [, setResponse] = useAtom(responseState);
+  const currentState = useAtomValue(currentStateNumber);
+  const isFileUploaded = useAtomValue(fileUploadedState);
   const location = useLocation().pathname.split("/");
   const chainId = location[2];
   const contractAddress = location[4];
   return (
-    <Box sx={{ flexGrow: 1, height: "100%" }}>
-      <Grid container spacing={2} sx={{ height: "100%" }}>
-        <Grid item xs={4} sx={{ height: "100%" }}>
-          <Item sx={{ height: "100%", overflow: "scroll" }}>
-            <Grid item xs={12} sx={{ height: "100%", p: 1 }}>
+    <Box sx={{flexGrow: 1, height: "100%"}}>
+      <Grid container spacing={2} sx={{height: "100%"}}>
+        <Grid item xs={4} sx={{height: "100%"}}>
+          <Item sx={{height: "100%", overflow: "scroll"}}>
+            <Grid item xs={12} sx={{height: "100%", p: 1}}>
               <StateStepper
                 chainId={chainId}
                 contractAddress={contractAddress}
@@ -35,7 +35,7 @@ const Simulation = () => {
             </Grid>
           </Item>
         </Grid>
-        <Grid item xs={8} sx={{ height: "100%" }}>
+        <Grid item xs={8} sx={{height: "100%"}}>
           <Item
             sx={{
               display: "flex",
@@ -48,7 +48,7 @@ const Simulation = () => {
             <Grid
               item
               xs={12}
-              sx={{ paddingLeft: "0px !important", m: 2, height: "50%" }}
+              sx={{paddingLeft: "0px !important", m: 2, height: "50%"}}
             >
               <ExecuteQuery
                 setResponse={setResponse}
@@ -56,7 +56,7 @@ const Simulation = () => {
                 contractAddress={contractAddress}
               />
             </Grid>
-            <Divider flexItem />
+            <Divider flexItem/>
             <Grid
               item
               xs={12}

@@ -8,16 +8,17 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useDeleteChainForSimulation } from "../../utils/setupSimulation";
 import CodesMenuItem from "./CodesMenuItem";
 import InstancesMenuItem from "./InstancesMenuItem";
 import T1MenuItem from "./T1MenuItem";
+import { useDeleteChainForSimulation } from "../../utils/simulationUtils";
 
 export interface IChainMenuItemProps {
   chainId: string;
 }
+
 export default function ChainMenuItem(props: IChainMenuItemProps) {
-  const { chainId } = props;
+  const {chainId} = props;
 
   const [showDelChain, setShowDelChain] = useState(false);
   const navigate = useNavigate();
@@ -29,17 +30,17 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
       label={chainId}
       options={[
         <MenuItem
-          key="remove-chain"
+          key="delete-chain"
           onClick={() => {
             setShowDelChain(true);
           }}
         >
-          Remove
+          Delete
         </MenuItem>,
       ]}
-      optionsExtras={({ close }) => [
+      optionsExtras={({close}) => [
         <DeleteChainDialog
-          key="remove-chain"
+          key="delete-chain"
           chainId={chainId}
           open={showDelChain}
           onClose={() => {
@@ -50,12 +51,17 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
         />,
       ]}
     >
-      <T1MenuItem label="Config" nodeId={`chains/${chainId}/config`} link={`/chains/${chainId}/config`} />
-      <T1MenuItem label="State" nodeId={`chains/${chainId}/state`} link={`/chains/${chainId}/state`} />
-      {/* TODO: Commented out accounts for now until we have accounts in the cw-simulate*/}
-      {/*<T1MenuItem label="Accounts" nodeId={`chains/${chainId}/accounts`} link={`/chains/${chainId}/accounts`} />*/}
-      <CodesMenuItem chainId={chainId} />
-      <InstancesMenuItem chainId={chainId} />
+      <T1MenuItem label="Config"
+                  nodeId={`chains/${chainId}/config`}
+                  link={`/chains/${chainId}/config`}/>
+      <T1MenuItem label="State"
+                  nodeId={`chains/${chainId}/state`}
+                  link={`/chains/${chainId}/state`}/>
+      <T1MenuItem label="Accounts"
+                  nodeId={`chains/${chainId}/accounts`}
+                  link={`/chains/${chainId}/accounts`}/>
+      <CodesMenuItem chainId={chainId}/>
+      <InstancesMenuItem chainId={chainId}/>
     </T1MenuItem>
   );
 }
@@ -63,18 +69,18 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
 interface IDeleteChainDialogProps {
   chainId: string;
   open: boolean;
+
   onClose(): void;
 }
+
 function DeleteChainDialog(props: IDeleteChainDialogProps) {
-  const { chainId, ...rest } = props;
-
+  const {chainId, ...rest} = props;
   const deleteChain = useDeleteChainForSimulation();
-
   return (
     <Dialog {...rest}>
-      <DialogTitle>Confirm Chain Removal</DialogTitle>
+      <DialogTitle>Confirm Delete Chain</DialogTitle>
       <DialogContent>
-        Are you absolutely certain you wish to remove chain {chainId}?
+        Are you absolutely certain you wish to delete chain {chainId}?
       </DialogContent>
       <DialogActions>
         <Button

@@ -1,6 +1,3 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 
-export const executeQueryTabState = atom({
-  key: 'executeQueryTabState',
-  default: 'execute',
-});
+export const executeQueryTabState = atom<string>('execute');

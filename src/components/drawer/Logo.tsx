@@ -3,20 +3,18 @@ import React from "react";
 import { ORANGE_3, WHITE } from "../../configs/variables";
 
 interface ILogoProps {
-  LinkComponent: React.ComponentType<
-    React.PropsWithChildren<{
-      href: string;
-      sx: SxProps<Theme>;
-    }>
-  >;
+  LinkComponent: React.ComponentType<React.PropsWithChildren<{
+    href: string;
+    sx: SxProps<Theme>;
+  }>>;
   white?: boolean;
 }
 
 const Logo = React.memo((props: ILogoProps) => {
-  const { LinkComponent, white } = props;
+  const {LinkComponent, white} = props;
 
   return (
-    <LinkComponent href="/" sx={{ borderRadius: 5 }}>
+    <LinkComponent href="/" sx={{borderRadius: 5}}>
       <img
         src={white ? "/T1_White.png" : "/T1.png"}
         height={25}

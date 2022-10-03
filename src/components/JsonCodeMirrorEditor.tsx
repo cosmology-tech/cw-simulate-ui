@@ -4,8 +4,8 @@ import { json } from "@codemirror/lang-json";
 import { Grid, Typography } from "@mui/material";
 import { GREY_6 } from "../configs/variables";
 import { validateJSON } from "../utils/fileUtils";
-import { useRecoilState } from "recoil";
 import { jsonErrorState } from "../atoms/jsonErrorState";
+import { useAtom } from "jotai";
 
 interface IJsonCodeMirrorEditorProps {
   jsonValue: string;
@@ -21,7 +21,7 @@ export const JsonCodeMirrorEditor = ({
   const defaultPlaceholder = placeholder || {
     json: "Enter your json here",
   };
-  const [jsonError, setJsonError] = useRecoilState(jsonErrorState);
+  const [jsonError, setJsonError] = useAtom(jsonErrorState);
   return (
     <Grid
       item
@@ -46,7 +46,7 @@ export const JsonCodeMirrorEditor = ({
           extensions={[json()]}
           onChange={(val: string) => {
             setPayload(val);
-            if (val.length == 0) {
+            if (val.length === 0) {
               setJsonError("");
               return;
             }
@@ -63,11 +63,11 @@ export const JsonCodeMirrorEditor = ({
             }
           }}
           placeholder={JSON.stringify(defaultPlaceholder, null, 2)}
-          style={{ border: "none", height: "100%" }}
+          style={{border: "none", height: "100%"}}
         />
       </Grid>
       {jsonError && (
-        <Grid item sx={{ mt: 1 }}>
+        <Grid item sx={{mt: 1}}>
           <Typography variant="subtitle2" color="red">
             Invalid JSON
           </Typography>

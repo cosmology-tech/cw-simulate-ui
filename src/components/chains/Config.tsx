@@ -1,20 +1,20 @@
 import { Button, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
 import { validateConfigJSON } from "../../utils/fileUtils";
-import { useReconfigureChainForSimulation } from "../../utils/setupSimulation";
+import { useReconfigureChainForSimulation } from "../../utils/simulationUtils";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
+import { useAtomValue } from "jotai";
 
 interface IConfigProps {
-  chainId?: string|undefined
+  chainId?: string | undefined
 }
 
 const Config = (props: IConfigProps) => {
   const chainId = useParams().chainId ?? props.chainId!
-  const configValue = useRecoilValue(filteredConfigsByChainId(chainId));
+  const configValue = useAtomValue(filteredConfigsByChainId(chainId));
   const jsonValue = JSON.stringify(configValue, null, 2);
   const [jsonPayload, setJsonPayload] = useState("");
   const reconfigChain = useReconfigureChainForSimulation();
@@ -25,7 +25,7 @@ const Config = (props: IConfigProps) => {
     e.preventDefault();
     const json = jsonPayload !== "" ? JSON.parse(jsonPayload) : JSON.parse(jsonValue);
     if (!validateConfigJSON(json)) {
-      setNotification("Invalid Config JSON", { severity: "error" });
+      setNotification("Invalid Config JSON", {severity: "error"});
       return;
     }
 

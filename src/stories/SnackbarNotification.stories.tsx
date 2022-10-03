@@ -1,11 +1,9 @@
 import SnackbarNotification from "../components/notification/SnackbarNotification";
-import { RecoilRoot } from "recoil";
 import { ComponentMeta } from "@storybook/react";
 
 export default {
   title: "SnackbarNotification",
   component: SnackbarNotification,
-  decorators: [(storyFn: any) => <RecoilRoot>{storyFn()}</RecoilRoot>],
   argTypes: {
     open: {
       control: {

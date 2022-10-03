@@ -19,35 +19,36 @@ interface AppBarProps extends MuiAppBarProps {
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme }) => ({
+})<AppBarProps>(({theme}) => ({
   zIndex: theme.zIndex.drawer - 1,
 }));
 
-interface IT1AppBarProps {}
+interface IT1AppBarProps {
+}
 
 const T1AppBar = React.memo((props: IT1AppBarProps) => {
   const location = useLocation();
 
   return (
-    <AppBar position="fixed" sx={{ backgroundColor: ORANGE_3 }}>
-      <Toolbar sx={{ justifyContent: "space-between" }}>
+    <AppBar position="fixed" sx={{backgroundColor: ORANGE_3}}>
+      <Toolbar sx={{justifyContent: "space-between"}}>
         <div>
           {location.pathname === "/" && (
-            <Logo LinkComponent={IconButton} white />
+            <Logo LinkComponent={IconButton} white/>
           )}
         </div>
         <div>
-          <IconButton sx={{ borderRadius: 5 }}>
+          <IconButton sx={{borderRadius: 5}}>
             <Link href={"documentation"} underline={"none"}>
-              <HelpIcon sx={{ color: WHITE }} />
+              <HelpIcon sx={{color: WHITE}}/>
             </Link>
           </IconButton>
-          <IconButton sx={{ borderRadius: 5 }}>
+          <IconButton sx={{borderRadius: 5}}>
             <Link
               href={"https://github.com/Terran-One/cw-debug-ui"}
               underline={"none"}
             >
-              <GitHubIcon sx={{ color: WHITE }} />
+              <GitHubIcon sx={{color: WHITE}}/>
             </Link>
           </IconButton>
         </div>

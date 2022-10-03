@@ -1,6 +1,3 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 
-export const fileUploadedState = atom({
-  key: 'fileUploadedState',
-  default: false,
-});
+export const fileUploadedState = atom<boolean>(false);

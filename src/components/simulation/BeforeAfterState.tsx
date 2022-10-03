@@ -7,7 +7,7 @@ interface IProps {
   isChecked: boolean;
 }
 
-export const BeforeAfterState = ({ currentState, isChecked }: IProps) => {
+export const BeforeAfterState = ({currentState, isChecked}: IProps) => {
   const beforeStateJSON = {};
   const afterStateJSON = {};
   return (

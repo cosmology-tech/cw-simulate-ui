@@ -1,6 +1,3 @@
-import { atom } from "recoil";
+import { atom } from "jotai";
 
-export const responseState = atom<JSON | undefined>({
-  key: 'responseState',
-  default: undefined,
-});
+export const responseState = atom<JSON | undefined>(undefined);

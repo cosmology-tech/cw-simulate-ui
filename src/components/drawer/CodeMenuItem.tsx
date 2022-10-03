@@ -10,12 +10,12 @@ import {
   MenuItem
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useCreateContractInstance } from "../../utils/setupSimulation";
+import { useCreateContractInstance, useDeleteCodeForSimulation } from "../../utils/simulationUtils";
 import { SENDER_ADDRESS } from "../../configs/variables";
+import { useNavigate } from "react-router-dom";
 
 export interface ICodeMenuItemProps {
   chainId: string;
@@ -25,6 +25,7 @@ export interface ICodeMenuItemProps {
 export default function CodeMenuItem(props: ICodeMenuItemProps) {
   const navigate = useNavigate();
   const [showInstantiateDialog, setShowInstantiateDialog] = useState(false);
+  const [showDeleteCodeDialog, setShowDeleteCodeDialog] = useState(false);
   const {
     chainId,
     code,
@@ -44,8 +45,22 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
         <MenuItem
           key="instantiate"
           onClick={() => setShowInstantiateDialog(true)}>Instantiate</MenuItem>,
+        <MenuItem
+          key="delete"
+          onClick={() => setShowDeleteCodeDialog(true)}>Delete</MenuItem>,
       ]}
       optionsExtras={({close}) => [
+        <DeleteCodeDialog
+          chainId={chainId}
+          code={code}
+          key="delete-code-dialog"
+          open={showDeleteCodeDialog}
+          onClose={() => {
+            setShowDeleteCodeDialog(false);
+            close();
+            navigate('/chains');
+          }}
+        />,
         <InstantiateDialog
           code={code}
           chainId={chainId}
@@ -56,6 +71,47 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
       ]}
     />
   )
+}
+
+interface IDeleteCodeDialogProps {
+  chainId: string;
+  code: Code;
+  open: boolean;
+
+  onClose(): void;
+}
+
+function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
+  const {chainId, code, open, onClose} = props;
+  const deleteCode = useDeleteCodeForSimulation();
+  return (
+    <Dialog open={open} onClose={() => onClose()}>
+      <DialogTitle>Confirm Delete Code</DialogTitle>
+      <DialogContent>
+        Are you absolutely certain you wish to delete code {code.name}?
+      </DialogContent>
+      <DialogActions>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            onClose();
+          }}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => {
+            deleteCode(chainId, code.codeId);
+            onClose();
+          }}
+        >
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 interface IInstantiateDialogProps {
@@ -75,7 +131,6 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const contractName = code.name;
   const setNotification = useNotification();
   const createContractInstance = useCreateContractInstance();
-
   const handleInstantiate = useCallback(async () => {
     if (!code) {
       setNotification("Internal error. Please check logs.", {severity: "error"});

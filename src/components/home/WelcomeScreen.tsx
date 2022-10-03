@@ -7,14 +7,17 @@ import React, { HTMLAttributeAnchorTarget, PropsWithChildren, useCallback, useSt
 import { To } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN } from "../../configs/variables";
-import { useCreateChainForSimulation, useStoreCode } from "../../utils/setupSimulation";
+import {
+  useCreateChainForSimulation,
+  useSetupSimulationJSON,
+  useStoreCode
+} from "../../utils/simulationUtils";
 import FileUpload from "../upload/FileUpload";
 import T1Link from "../grid/T1Link";
-import { useSetRecoilState } from "recoil";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { ISimulationJSON } from "../drawer/SimulationMenuItem";
-import { CWSimulateEnv } from "@terran-one/cw-simulate";
+import { useAtom } from "jotai";
 
 const Item = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -29,10 +32,11 @@ export const WelcomeScreen = () => {
   const setNotification = useNotification();
   const createChainForSimulation = useCreateChainForSimulation();
   const storeCode = useStoreCode();
-  const setSimulationEnv = useSetRecoilState(cwSimulateEnvState);
-  const setSimulationMetadata = useSetRecoilState(simulationMetadataState);
+  const [, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [, setSimulateEnv] = useAtom(cwSimulateEnvState);
+  const setupSimulation = useSetupSimulationJSON();
 
-  const onCreateNewEnvironment = useCallback(() => {
+  const onCreateNewEnvironment = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
       return;
@@ -45,10 +49,9 @@ export const WelcomeScreen = () => {
       storeCode(DEFAULT_CHAIN, file.filename, file.fileContent as Buffer);
     } else if (file.filename.endsWith(".json")) {
       const json = file.fileContent as unknown as ISimulationJSON;
-      setSimulationEnv(file.fileContent as unknown as CWSimulateEnv);
-      setSimulationMetadata(json.simulationMetadata);
+      await setupSimulation(json);
     }
-  }, [file]);
+  }, [file, createChainForSimulation, storeCode, setNotification, setSimulationMetadata, setSimulateEnv]);
 
   const onAcceptFile = useCallback((filename: string, fileContent: Buffer | JSON) => {
     setFile({filename, fileContent});

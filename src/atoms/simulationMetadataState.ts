@@ -1,4 +1,5 @@
-import { atom, selectorFamily } from "recoil";
+import { atom } from "jotai";
+import { atomFamily, atomWithStorage } from "jotai/utils";
 
 export interface SimulationMetadata {
   [chainId: string]: {
@@ -17,7 +18,7 @@ export interface Account {
   balance: number | bigint;
 }
 
-interface Codes {
+export interface Codes {
   [codeName: string]: Code;
 }
 
@@ -26,23 +27,14 @@ export interface Code {
   codeId: number;
 }
 
-const simulationMetadataState = atom<SimulationMetadata>({
-  key: 'simulationMetadataState',
-  default: {},
-});
+const simulationMetadataState = atomWithStorage<SimulationMetadata>('simulationMetadata', {});
 
 export default simulationMetadataState;
 
-export const selectCodesMetadata = selectorFamily({
-  key: 'selectCodesMetadata',
-  get: (chainId: string) => ({get}) => {
-    return get(simulationMetadataState)[chainId]?.codes ?? {};
-  },
+export const selectCodesMetadata = atomFamily((chainId: string) => {
+  return atom(get => get(simulationMetadataState)[chainId]?.codes);
 });
 
-export const selectAccountsMetadata = selectorFamily({
-  key: 'selectAccountsMetadata',
-  get: (chainId: string) => ({get}) => {
-    return get(simulationMetadataState)[chainId]?.accounts;
-  },
+export const selectAccountsMetadata = atomFamily((chainId: string) => {
+  return atom(get => get(simulationMetadataState)[chainId]?.accounts);
 });
