@@ -1,10 +1,11 @@
-import { CWChain, CWContractInstance, MsgInfo } from "@terran-one/cw-simulate";
+import { Coin, CWChain, CWContractInstance, MsgInfo } from "@terran-one/cw-simulate";
 import { useCallback } from "react";
 import type { Code, Codes } from "../atoms/simulationMetadataState";
 import simulationMetadataState from "../atoms/simulationMetadataState";
 import { useAtom, useAtomValue } from "jotai";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
 import { ISimulationJSON } from "../components/drawer/SimulationMenuItem";
+import { CWAccount } from "@terran-one/cw-simulate/dist/account";
 
 export interface ChainConfig {
   chainId: string;
@@ -141,6 +142,47 @@ export function useStoreCode() {
     };
     setSimulationMetadata(simulationMetadata);
     return codeId;
+  }, [env, simulationMetadata]);
+}
+
+/**
+ * Store an account in the simulation environment.
+ */
+export function useCreateAccount() {
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
+
+  return useCallback((id: string, chainId: string, address: string, balances: Coin[]) => {
+    const chain: CWChain = env.chains[chainId];
+
+    const balanceMap: { [denom: string]: Coin } = {};
+    for (const balance of balances) balanceMap[balance.denom] = balance;
+
+    const account = new CWAccount(address, balanceMap);
+    chain.accounts[address] = account;
+    setSimulateEnv({env});
+
+    simulationMetadata[chainId].accounts[address] = { id, address };
+    setSimulationMetadata(simulationMetadata);
+
+    return account;
+  }, [env, simulationMetadata]);
+}
+
+/**
+ * Delete an account on a chain.
+ */
+ export function useDeleteAccount() {
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
+
+  return useCallback((chainId: string, address: string) => {
+    const chain = env.chains[chainId];
+    delete chain.accounts[address];
+    setSimulateEnv({env});
+
+    delete simulationMetadata[chainId].accounts[address];
+    setSimulationMetadata(simulationMetadata);
   }, [env, simulationMetadata]);
 }
 

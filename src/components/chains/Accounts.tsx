@@ -17,17 +17,20 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import simulationMetadataState, {
-  selectAccountsMetadata
-} from "../../atoms/simulationMetadataState";
+import { Account, selectAccountsMetadata } from "../../atoms/simulationMetadataState";
 import { useParams } from "react-router-dom";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
+import { Coin, CWSimulateEnv } from "@terran-one/cw-simulate";
+import { useCreateAccount, useDeleteAccount } from "../../utils/simulationUtils";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
-  "balance": 100000000,
-  "id": "bob"
+  "id": "bob",
+  "balances": [
+    { "denom": "uluna", "amount": "1000" },
+    { "denom": "uust", "amount": "10000" },
+  ]
 }, null, 2);
 
 const Accounts = () => {
@@ -35,11 +38,17 @@ const Accounts = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
-  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
-  const accounts = Object.values(selectAccountsMetadata(chainId));
-  const data = useMemo(() =>
-      accounts.map(account => ({...account, balance: account.balance + ''})),
+  const {env} = useAtomValue(cwSimulateEnvState);
+  const accounts = Object.values(useAtomValue(selectAccountsMetadata(chainId)));
+  const createAccount = useCreateAccount();
+  const deleteAccount = useDeleteAccount();
+
+  const getBalances = (env: CWSimulateEnv, chainId: string, account: Account): Coin[] => {
+    return Object.values(env.chains[chainId].accounts[account.address]?.balances ?? {});
+  }
+
+  const data = useMemo(
+    () => accounts.map(account => ({...account, balances: getBalances(env, chainId, account).map((c: Coin) => `${c.amount}${c.denom}`)?.join(', ')})),
     [accounts]
   );
 
@@ -71,37 +80,14 @@ const Accounts = () => {
     }
 
     // TODO: enforce bech32Prefix
-    setSimulationMetadata(prev => ({
-      ...prev,
-      [chainId]: {
-        ...prev[chainId],
-        accounts: {
-          ...prev[chainId].accounts,
-          [json.id]: {
-            id: json.id as string,
-            address: json.address as string,
-            balance: 100000000,
-          },
-        },
-      },
-    }));
+    createAccount(json.id as string, chainId, json.address as string, json.balances as Coin[]);
 
     setNotification("Account added successfully");
     setOpenDialog(false);
   }
 
-  const handleDeleteAccount = (id: string) => {
-    setSimulationMetadata(prev => ({
-      ...prev,
-      [chainId]: {
-        ...prev[chainId],
-        accounts: Object.fromEntries(
-          Object.entries(prev[chainId].accounts).filter(
-            ([accountId, account]) => accountId !== id
-          )
-        ),
-      },
-    }));
+  const handleDeleteAccount = (address: string) => {
+    deleteAccount(chainId, address);
     setNotification("Account successfully removed");
   }
 
@@ -138,11 +124,11 @@ const Accounts = () => {
           columns={{
             id: 'ID',
             address: 'Account Address',
-            balance: 'Balance',
+            balances: 'Balances',
           }}
           RowMenu={props => (
             <>
-              <MenuItem onClick={() => handleDeleteAccount(props.row.id)}>
+              <MenuItem onClick={() => handleDeleteAccount(props.row.address)}>
                 <ListItemIcon>
                   <DeleteIcon fontSize="small"/>
                 </ListItemIcon>
