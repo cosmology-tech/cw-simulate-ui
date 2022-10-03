@@ -4,13 +4,13 @@ import DiffSwitch from "./DiffSwitch";
 
 interface IProps {
   currentTab: string;
-  setCurrentTab: (val: string) => void;
+  setCurrentTab: (val: "response" | "state") => void;
   setIsChecked: (val: boolean) => void;
   isChecked: boolean;
   isStateTraversed: boolean;
 }
 
-const StateMemoryTab = ({
+const StateResponseTab = ({
   currentTab,
   setCurrentTab,
   isChecked,
@@ -18,7 +18,7 @@ const StateMemoryTab = ({
   isStateTraversed,
 }: IProps) => {
   const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue);
+    setCurrentTab(newValue === "response" ? "response" : "state");
   };
   return (
     <div
@@ -29,24 +29,24 @@ const StateMemoryTab = ({
         alignItems: "center",
       }}
     >
-      <div style={{display: "flex"}}>
+      <div style={{ display: "flex" }}>
         <Tabs
           value={currentTab}
           onChange={onChangeHandler}
           aria-label="State/Response"
         >
-          <Tab value="state" label="State"/>
-          <Tab value="response" label="Response"/>
+          <Tab value="state" label="State" />
+          <Tab value="response" label="Response" />
           {/* <Tab value="memory" label="Memory" /> */}
         </Tabs>
       </div>
       {isStateTraversed && (
         <div>
-          <DiffSwitch isChecked={isChecked} setIsChecked={setIsChecked}/>
+          <DiffSwitch isChecked={isChecked} setIsChecked={setIsChecked} />
         </div>
       )}
     </div>
   );
 };
 
-export default StateMemoryTab;
+export default StateResponseTab;

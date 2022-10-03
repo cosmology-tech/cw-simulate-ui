@@ -9,6 +9,9 @@ import { useExecute, useQuery } from "../../utils/simulationUtils";
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { SENDER_ADDRESS } from "../../configs/variables";
 import { useAtomValue } from "jotai";
+import { stateResponseTabState } from "../../atoms/stateResponseTabState";
+import { useAtom } from "jotai";
+import { currentStateNumber } from "../../atoms/currentStateNumber";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
@@ -23,6 +26,10 @@ export const ExecuteQuery = ({
 }: IProps) => {
   const [payload, setPayload] = useState("");
   const executeQueryTab = useAtomValue(executeQueryTabState);
+  const [currentState, setCurrentState] = useAtom(currentStateNumber);
+  const [stateResponseTab, setStateResponseTab] = useAtom(
+    stateResponseTabState
+  );
   const jsonError = useAtomValue(jsonErrorState);
   const setNotification = useNotification();
   const execute = useExecute();
@@ -42,6 +49,7 @@ export const ExecuteQuery = ({
       );
       setResponse(res);
       setNotification("Execute was successful!");
+      setCurrentState(currentState + 1);
     } catch (err) {
       setNotification("Something went wrong while executing.", {
         severity: "error",
@@ -66,16 +74,21 @@ export const ExecuteQuery = ({
     } else {
       handleQuery();
     }
+    setStateResponseTab("response");
   };
 
   const handleSetPayload = (val: string) => {
     setPayload(val);
   };
 
+  React.useEffect(() => {
+    setPayload("");
+  }, [executeQueryTab]);
+
   return (
-    <Grid item xs={12} sx={{height: "100%", overflow: "scroll"}}>
+    <Grid item xs={12} sx={{ height: "100%", overflow: "scroll" }}>
       <Grid item xs={12}>
-        <ExecuteQueryTab/>
+        <ExecuteQueryTab />
       </Grid>
       <Grid
         item
@@ -88,17 +101,19 @@ export const ExecuteQuery = ({
           mt: 2,
         }}
       >
-        <JsonCodeMirrorEditor jsonValue={""} setPayload={handleSetPayload}/>
-        {/* <OutputRenderer response={response}/> */}
+        <JsonCodeMirrorEditor
+          jsonValue={payload}
+          setPayload={handleSetPayload}
+        />
       </Grid>
       <Grid
         item
         xs={2}
-        sx={{mt: 2, display: "flex", justifyContent: "flex-start"}}
+        sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}
       >
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
           variant={"contained"}
           onClick={onRunHandler}
           disabled={!payload.length || jsonError.length > 0}

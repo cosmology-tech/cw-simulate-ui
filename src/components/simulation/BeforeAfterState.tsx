@@ -3,11 +3,10 @@ import { OutputCard } from "./OutputCard";
 import { StateDiff } from "./StateDiff";
 
 interface IProps {
-  currentState: number;
   isChecked: boolean;
 }
 
-export const BeforeAfterState = ({currentState, isChecked}: IProps) => {
+export const BeforeAfterState = ({ isChecked }: IProps) => {
   const beforeStateJSON = {};
   const afterStateJSON = {};
   return (
