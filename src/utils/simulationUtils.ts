@@ -1,4 +1,4 @@
-import { CWChain, CWContractInstance, CWSimulateEnv, MsgInfo } from "@terran-one/cw-simulate";
+import { CWChain, CWContractInstance, MsgInfo } from "@terran-one/cw-simulate";
 import { useCallback } from "react";
 import type { Code, Codes } from "../atoms/simulationMetadataState";
 import simulationMetadataState from "../atoms/simulationMetadataState";
@@ -242,7 +242,7 @@ export const useSetupSimulationJSON = () => {
         storeCode(chainId, codeName, code.wasmBytecode);
       });
     });
-    // TODO: instantiate contracts
+    // TODO: Iterate through execution history and execute all messages.
     setSimulateEnv({env});
     setSimulationMetadata(simulation.simulationMetadata);
   }, [simulationMetadata, env]);
