@@ -62,7 +62,7 @@ function DeleteInstanceDialog(props: IDeleteInstanceDialogProps) {
     <Dialog {...rest}>
       <DialogTitle>Confirm Delete Instance</DialogTitle>
       <DialogContent>
-        Are you absolutely certain you wish to delete instance?
+        Are you absolutely certain you wish to delete instance {instanceAddress}?
       </DialogContent>
       <DialogActions>
         <Button

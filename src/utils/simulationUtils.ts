@@ -58,8 +58,13 @@ export function useDeleteCodeForSimulation() {
     delete chain.codes[codeId];
     setSimulateEnv({env});
 
-    console.log(simulationMetadata[chainId]);
-    delete simulationMetadata[chainId].codes[codeId];
+    console.log(simulationMetadata);
+
+    Object.values(simulationMetadata[chainId].codes).forEach((code) => {
+      if (code.codeId === codeId) {
+        delete simulationMetadata[chainId].codes[code.name];
+      }
+    });
     setSimulationMetadata(simulationMetadata);
   }, [env, simulationMetadata]);
 }

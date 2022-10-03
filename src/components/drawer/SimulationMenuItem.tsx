@@ -22,7 +22,6 @@ export interface ISimulationJSON {
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
   const simulationMetadata = useAtomValue(simulationMetadataState);
   const [simulateEnv, setSimulateEnv] = useAtom(cwSimulateEnvState);
-  console.log(simulateEnv);
   const [showClearSimulation, setShowClearSimulation] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const navigate = useNavigate();

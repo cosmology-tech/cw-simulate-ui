@@ -52,7 +52,7 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
       optionsExtras={({close}) => [
         <DeleteCodeDialog
           chainId={chainId}
-          codeId={code.codeId}
+          code={code}
           key="delete-code-dialog"
           open={showDeleteCodeDialog}
           onClose={() => {
@@ -75,20 +75,20 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
 
 interface IDeleteCodeDialogProps {
   chainId: string;
-  codeId: number;
+  code: Code;
   open: boolean;
 
   onClose(): void;
 }
 
 function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
-  const {chainId, codeId, open, onClose} = props;
+  const {chainId, code, open, onClose} = props;
   const deleteCode = useDeleteCodeForSimulation();
   return (
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Confirm Delete Code</DialogTitle>
       <DialogContent>
-        Are you absolutely certain you wish to delete code?
+        Are you absolutely certain you wish to delete code {code.name}?
       </DialogContent>
       <DialogActions>
         <Button
@@ -103,7 +103,7 @@ function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
-            deleteCode(chainId, codeId);
+            deleteCode(chainId, code.codeId);
             onClose();
           }}
         >
