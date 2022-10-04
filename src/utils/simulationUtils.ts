@@ -6,10 +6,22 @@ import { useAtom, useAtomValue } from "jotai";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
 import { ISimulationJSON } from "../components/drawer/SimulationMenuItem";
 import { CWAccount } from "@terran-one/cw-simulate/dist/account";
+import { Env } from "@terran-one/cw-simulate/dist/contract";
 
 export interface ChainConfig {
   chainId: string;
   bech32Prefix: string;
+}
+
+export interface ExecutionRequest {
+  env: Env;
+  info: MsgInfo;
+  instantiateMsg?: any;
+  executeMsg?: any;
+}
+
+export interface ExecutionHistory {
+  request: ExecutionRequest;
 }
 
 /**
@@ -193,10 +205,14 @@ export function useCreateContractInstance() {
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback(async (chainId: string, code: Code, info: MsgInfo, instantiateMsg: any): Promise<CWContractInstance> => {
-    const contract = await env.chains[chainId].instantiateContract(code.codeId);
-    contract.instantiate(info, instantiateMsg);
-    setSimulateEnv({env});
-    return contract;
+    try {
+      const contract = await env.chains[chainId].instantiateContract(code.codeId);
+      contract.instantiate(info, instantiateMsg);
+      setSimulateEnv({env});
+      return contract;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }, [env]);
 }
 
@@ -273,7 +289,7 @@ export const useSetupSimulationJSON = () => {
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const createChain = useCreateChainForSimulation();
   const storeCode = useStoreCode();
-  const instantiateContract = useCreateContractInstance();
+  const createContractInstance = useCreateContractInstance();
   return useCallback(async (simulation: ISimulationJSON) => {
     for (const [chainId, chain] of Object.entries(simulation.chains)) {
       const newChain = createChain({
@@ -282,10 +298,20 @@ export const useSetupSimulationJSON = () => {
       });
 
       for (const [codeId, code] of Object.entries(chain.codes)) {
-        const codeName = convertCodeIdToCodeName(codeId, simulationMetadata[chainId].codes) || `untitled-${codeId}.wasm`;
-        const newCodeId = storeCode(chainId, codeName, code.wasmBytecode);
-
+        const codeName = convertCodeIdToCodeName(codeId, simulation.simulationMetadata[chainId].codes) || `untitled-${codeId}.wasm`;
+        storeCode(chainId, codeName, code.wasmBytecode as Buffer);
+        const newCode = {
+          "codeId": parseInt(codeId),
+          "name": codeName
+        } as Code;
         for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
+          env.chains[chainId].contracts = {
+            [contractAddress]: new CWContractInstance(newChain, contractAddress, code)
+          };
+          const vm = env.chains[chainId].contracts[contractAddress].vm;
+          console.log(env.chains[chainId].contracts[contractAddress].contractCode.wasmBytecode);
+          console.log("Why is this not working?", vm);
+          await vm.build(code.wasmBytecode);
           for (const execution of instance.executionHistory) {
             // @ts-ignore
             if (execution.request.instantiateMsg) {
@@ -294,18 +320,9 @@ export const useSetupSimulationJSON = () => {
                 funds: execution.request.info.funds,
               };
 
-              // TODO: Not 100% working. Need to fix.
-              env.chains[chainId].contracts = {
-                [contractAddress]: new CWContractInstance(newChain, contractAddress, code)
-              };
-              setSimulateEnv({env});
               // @ts-ignore
               const instantiateMsg = execution.request.instantiateMsg;
-              const newCode = {
-                codeId: newCodeId,
-                name: codeName
-              };
-              await instantiateContract(chainId, newCode, info, instantiateMsg);
+              await createContractInstance(chainId, newCode, info, instantiateMsg);
             }
 
             // @ts-ignore
@@ -318,7 +335,6 @@ export const useSetupSimulationJSON = () => {
                 funds: execution.request.info.funds,
               };
               env.chains[chainId].contracts[contractAddress].execute(info, executeMsg);
-              setSimulateEnv({env});
             }
           }
         }

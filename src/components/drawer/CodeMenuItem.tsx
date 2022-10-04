@@ -145,10 +145,11 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     };
 
     try {
+      debugger;
       await createContractInstance(chainId, code, info, instantiateMsg);
-    } catch (e) {
-      setNotification(`Unable to instantiate with error: ${e}`, {severity: "error"});
-      console.error(e);
+    } catch (e: any) {
+      setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
+      onClose(false);
     }
 
     setNotification("Contract instance created");

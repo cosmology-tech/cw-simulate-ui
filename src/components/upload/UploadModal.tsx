@@ -38,8 +38,13 @@ export default function UploadModal(props: IUploadModalProps) {
         storeCode(chainId, file.filename, file.fileContent as Buffer);
       }
     } else if (variant === 'simulation') {
-      const json = file.fileContent as unknown as ISimulationJSON;
-      await setupSimulation(json);
+      try {
+        const json = file.fileContent as unknown as ISimulationJSON;
+        await setupSimulation(json);
+      } catch (e: any) {
+        setNotification(e.message, {severity: "error"});
+        onClose(true);
+      }
     }
     onClose(true);
   }, [file, onClose, setNotification, setSimulateEnv, setSimulationMetadata, storeCode, variant, chainId]);
