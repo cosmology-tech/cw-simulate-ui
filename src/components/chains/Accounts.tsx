@@ -28,8 +28,8 @@ const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
   "id": "bob",
   "balances": [
-    { "denom": "uluna", "amount": "1000" },
-    { "denom": "uust", "amount": "10000" },
+    {"denom": "uluna", "amount": "1000"},
+    {"denom": "uust", "amount": "10000"},
   ]
 }, null, 2);
 
@@ -48,7 +48,10 @@ const Accounts = () => {
   }
 
   const data = useMemo(
-    () => accounts.map(account => ({...account, balances: getBalances(env, chainId, account).map((c: Coin) => `${c.amount}${c.denom}`)?.join(', ')})),
+    () => accounts.map(account => ({
+      ...account,
+      balances: getBalances(env, chainId, account).map((c: Coin) => `${c.amount}${c.denom}`)?.join(', ')
+    })),
     [accounts]
   );
 

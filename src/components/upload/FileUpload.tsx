@@ -107,6 +107,7 @@ const FileUpload = ({
         onChange={handleOnFileChange}
         alertSnackbarProps={snackbarProps}
         filesLimit={1}
+        maxFileSize={50000000} // 50MB max file size ~ 10 contracts
       />
     </Suspense>
   );

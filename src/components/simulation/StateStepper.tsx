@@ -2,15 +2,7 @@ import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import {
-  Divider,
-  Grid,
-  Paper,
-  Slide,
-  StepContent,
-  StepLabel,
-  Typography,
-} from "@mui/material";
+import { Divider, Grid, Paper, Slide, StepContent, StepLabel, Typography, } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { JSONTree } from "react-json-tree";
 import { blockState } from "../../atoms/blockState";
@@ -44,7 +36,7 @@ interface IProps {
   contractAddress: string;
 }
 
-export default function StateStepper({ chainId, contractAddress }: IProps) {
+export default function StateStepper({chainId, contractAddress}: IProps) {
   const executeHistory = useExecutionHistory();
   const executionHistory = executeHistory(chainId, contractAddress);
   const [currentState, _] = useAtom(currentStateNumber);
@@ -54,7 +46,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   const [, setStepState] = useAtom(blockState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     // @ts-ignore
-    setStepState(JSON.parse(window.atob(state.dict._root.entries[0][1])));
+    setStepState(JSON.parse(window.atob(state?.dict._root.entries[0][1])));
   };
 
   const handleStep =
@@ -66,7 +58,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   }, [currentState, contractAddress]);
 
   React.useEffect(() => {
-    handleStateView(executionHistory[activeStep].state);
+    handleStateView(executionHistory[activeStep]?.state);
   }, [activeStep]);
   return (
     <Stepper nonLinear activeStep={activeStep} orientation="vertical">
@@ -75,15 +67,15 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
           historyObj: { request: any; response: any; state: any },
           index: number
         ) => {
-          const { request, response, state } = historyObj;
+          const {request, response, state} = historyObj;
           const label = Object.keys(request)[2];
 
           return (
             <Step key={`${label}${index}`} onClick={handleStep(index, state)}>
               <StepLabel ref={containerRef}>
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <div style={{display: "flex", alignItems: "center"}}>
                   {activeStep === index && isOpen ? (
-                    <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
+                    <ArrowDropDownIcon onClick={() => setIsOpen(false)}/>
                   ) : (
                     <ArrowRightIcon
                       onClick={() => {
@@ -125,7 +117,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                           mb: 1,
                         }}
                       >
-                        <div style={{ position: "sticky", top: 0 }}>
+                        <div style={{position: "sticky", top: 0}}>
                           <Typography
                             variant="caption"
                             sx={{
@@ -136,7 +128,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                           >
                             Request
                           </Typography>
-                          <Divider orientation="horizontal" />
+                          <Divider orientation="horizontal"/>
                         </div>
                         <div
                           style={{
@@ -151,7 +143,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                           />
                         </div>
                       </Grid>
-                      <Divider orientation="vertical" flexItem />
+                      <Divider orientation="vertical" flexItem/>
                       <Grid
                         item
                         xs={12}
@@ -162,15 +154,15 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                           position: "relative",
                         }}
                       >
-                        <div style={{ position: "sticky", top: 0 }}>
-                          <Divider orientation="horizontal" />
+                        <div style={{position: "sticky", top: 0}}>
+                          <Divider orientation="horizontal"/>
                           <Typography
                             variant="caption"
-                            sx={{ display: "flex", justifyContent: "center" }}
+                            sx={{display: "flex", justifyContent: "center"}}
                           >
                             Response
                           </Typography>
-                          <Divider orientation="horizontal" />
+                          <Divider orientation="horizontal"/>
                         </div>
                         <div
                           style={{

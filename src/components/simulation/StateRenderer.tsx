@@ -6,15 +6,14 @@ import { Grid } from "@mui/material";
 import { OutputRenderer } from "./OutputRenderer";
 import { responseState } from "../../atoms/responseState";
 import { blockState } from "../../atoms/blockState";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { stateResponseTabState } from "../../atoms/stateResponseTabState";
-import { useAtom } from "jotai";
 
 interface IProps {
   isFileUploaded: boolean;
 }
 
-export const StateRenderer = ({ isFileUploaded }: IProps) => {
+export const StateRenderer = ({isFileUploaded}: IProps) => {
   const [currentTab, setCurrentTab] = useAtom(stateResponseTabState);
   const [isChecked, setIsChecked] = React.useState(false);
   const response = useAtomValue(responseState);
@@ -22,7 +21,7 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
   // TODO: Check current active state and executionHistory length.
   const isStateTraversed = false;
   return (
-    <Grid item xs={12} sx={{ height: "100%" }}>
+    <Grid item xs={12} sx={{height: "100%"}}>
       <Grid item xs={12}>
         <StateResponseTab
           currentTab={currentTab}
@@ -32,10 +31,10 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
           isStateTraversed={isStateTraversed}
         />
       </Grid>
-      <Grid item xs={12} sx={{ height: "80%" }}>
+      <Grid item xs={12} sx={{height: "80%"}}>
         {currentTab === "state" ? (
           isStateTraversed ? (
-            <BeforeAfterState isChecked={isChecked} />
+            <BeforeAfterState isChecked={isChecked}/>
           ) : (
             <OutputCard
               response={currentJSON}
@@ -43,7 +42,7 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
             />
           )
         ) : (
-          <OutputRenderer response={response} />
+          <OutputRenderer response={response}/>
         )}
       </Grid>
     </Grid>

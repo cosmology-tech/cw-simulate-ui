@@ -8,9 +8,8 @@ import { jsonErrorState } from "../../atoms/jsonErrorState";
 import { useExecute, useQuery } from "../../utils/simulationUtils";
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { SENDER_ADDRESS } from "../../configs/variables";
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { stateResponseTabState } from "../../atoms/stateResponseTabState";
-import { useAtom } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 
 interface IProps {
@@ -86,9 +85,9 @@ export const ExecuteQuery = ({
   }, [executeQueryTab]);
 
   return (
-    <Grid item xs={12} sx={{ height: "100%", overflow: "scroll" }}>
+    <Grid item xs={12} sx={{height: "100%", overflow: "scroll"}}>
       <Grid item xs={12}>
-        <ExecuteQueryTab />
+        <ExecuteQueryTab/>
       </Grid>
       <Grid
         item
@@ -109,11 +108,11 @@ export const ExecuteQuery = ({
       <Grid
         item
         xs={2}
-        sx={{ mt: 2, display: "flex", justifyContent: "flex-start" }}
+        sx={{mt: 2, display: "flex", justifyContent: "flex-start"}}
       >
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{ mt: 2 }}
+          sx={{mt: 2}}
           variant={"contained"}
           onClick={onRunHandler}
           disabled={!payload.length || jsonError.length > 0}
