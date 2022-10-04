@@ -18,14 +18,7 @@ import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { ISimulationJSON } from "../drawer/SimulationMenuItem";
 import { useAtom } from "jotai";
-
-const Item = styled(Paper)(({theme}) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
+import Item from "../upload/item";
 
 export const WelcomeScreen = () => {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);

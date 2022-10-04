@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useCallback, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useSetupSimulationJSON, useStoreCode } from "../../utils/simulationUtils";
@@ -7,6 +7,7 @@ import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { ISimulationJSON } from "../drawer/SimulationMenuItem";
 import { useAtom } from "jotai";
+import Item from "./item";
 
 interface IUploadModalProps {
   dropzoneText?: string;
@@ -48,16 +49,26 @@ export default function UploadModal(props: IUploadModalProps) {
     <Dialog open={open} onClose={() => onClose(false)}>
       <DialogTitle>{dropTitle ?? 'Upload Code'}</DialogTitle>
       <DialogContent>
-        <FileUpload
-          dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
-          variant={variant ?? 'contract'}
-          onAccept={(filename: string, fileContent: Buffer | JSON) => {
-            setFile({filename, fileContent});
-          }}
-          onClear={() => {
-            setFile(undefined);
-          }}
-        />
+        <Grid
+          item
+          xs={11}
+          lg={7}
+          md={8}
+          sx={{marginTop: 4, marginBottom: 4, width: "100%"}}
+        >
+          <Item sx={{border: "1px solid #eae5e5", padding: 0}}>
+            <FileUpload
+              dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
+              variant={variant ?? 'contract'}
+              onAccept={(filename: string, fileContent: Buffer | JSON) => {
+                setFile({filename, fileContent});
+              }}
+              onClear={() => {
+                setFile(undefined);
+              }}
+            />
+          </Item>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(false)}>Cancel</Button>
