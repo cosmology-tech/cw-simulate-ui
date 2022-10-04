@@ -120,7 +120,7 @@ export const WelcomeScreen = () => {
           md={8}
           sx={{marginTop: 4, marginBottom: 4, width: "60%"}}
         >
-          <Item sx={{border: "1px solid #eae5e5"}}>
+          <Item sx={{border: "1px solid #eae5e5", padding: 0}}>
             <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
           </Item>
         </Grid>

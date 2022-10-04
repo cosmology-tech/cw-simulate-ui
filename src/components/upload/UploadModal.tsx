@@ -10,7 +10,7 @@ import { useAtom } from "jotai";
 
 interface IUploadModalProps {
   dropzoneText?: string;
-  variant?: 'simulation' | 'contract' | 'both';
+  variant: 'simulation' | 'contract' | 'both';
   dropTitle?: string;
   chainId?: string;
   open: boolean;
