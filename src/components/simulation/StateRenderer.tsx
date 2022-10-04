@@ -1,5 +1,4 @@
 import React from "react";
-import { BeforeAfterState } from "./BeforeAfterState";
 import StateResponseTab from "./StateResponseTab";
 import { OutputCard } from "./OutputCard";
 import { Grid } from "@mui/material";
@@ -33,14 +32,10 @@ export const StateRenderer = ({isFileUploaded}: IProps) => {
       </Grid>
       <Grid item xs={12} sx={{height: "80%"}}>
         {currentTab === "state" ? (
-          isStateTraversed ? (
-            <BeforeAfterState isChecked={isChecked}/>
-          ) : (
-            <OutputCard
-              response={currentJSON}
-              placeholder="Your state will appear here."
-            />
-          )
+          <OutputCard
+            response={currentJSON}
+            placeholder="Your state will appear here."
+          />
         ) : (
           <OutputRenderer response={response}/>
         )}
