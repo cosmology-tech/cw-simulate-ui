@@ -1,6 +1,5 @@
 import { Coin, CWChain, CWContractInstance, MsgInfo } from "@terran-one/cw-simulate";
 import { CWAccount } from "@terran-one/cw-simulate/dist/account";
-import { Env } from "@terran-one/cw-simulate/dist/contract";
 import { useAtom, useAtomValue } from "jotai";
 import { useCallback } from "react";
 import type { Code, Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
@@ -18,17 +17,6 @@ export type SimulationJSON = AsJSON<{
 export interface ChainConfig {
   chainId: string;
   bech32Prefix: string;
-}
-
-export interface ExecutionRequest {
-  env: Env;
-  info: MsgInfo;
-  instantiateMsg?: any;
-  executeMsg?: any;
-}
-
-export interface ExecutionHistory {
-  request: ExecutionRequest;
 }
 
 /**
@@ -315,7 +303,7 @@ export const useSetupSimulationJSON = () => {
         for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
           if (instance.executionHistory) {
             for (const execution of instance.executionHistory) {
-              if (execution.request.instantiateMsg) {
+              if ('instantiateMsg' in execution.request && execution.request.instantiateMsg) {
                 const info: MsgInfo = {
                   sender: execution.request.info.sender,
                   funds: execution.request.info.funds,
@@ -325,7 +313,7 @@ export const useSetupSimulationJSON = () => {
                 await createContractInstance(chainId, newCode, info, instantiateMsg);
               }
 
-              if (execution.request.executeMsg) {
+              if ('executeMsg' in execution.request && execution.request.executeMsg) {
                 const executeMsg = execution.request.executeMsg;
                 const info: MsgInfo = {
                   sender: execution.request.info.sender,

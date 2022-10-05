@@ -13,7 +13,7 @@
     "@mui/styles": "^5.10.7",
     "@mui/x-data-grid": "^5.17.5",
     "@mui/x-data-grid-generator": "^5.17.5",
-    "@terran-one/cw-simulate": "^1.1.1",
+    "@terran-one/cw-simulate": "^1.1.2",
     "@uiw/react-codemirror": "^4.12.3",
     "jotai": "^1.8.4",
     "jsonschema": "^1.4.1",
