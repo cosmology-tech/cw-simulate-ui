@@ -224,7 +224,7 @@ export function useExecutionHistory() {
   return useCallback((chainId: string, contractAddress: string): any => {
     const chain = env.chains[chainId];
     const contract = chain.contracts[contractAddress];
-    return contract.executionHistory;
+    return contract?.executionHistory;
   }, [env]);
 }
 
@@ -307,29 +307,31 @@ export const useSetupSimulationJSON = () => {
           "name": codeName
         } as Code;
         for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
-          for (const execution of instance.executionHistory) {
-            // @ts-ignore
-            if (execution.request.instantiateMsg) {
-              const info: MsgInfo = {
-                sender: execution.request.info.sender,
-                funds: execution.request.info.funds,
-              };
+          if (instance.executionHistory) {
+            for (const execution of instance.executionHistory) {
+              // @ts-ignore
+              if (execution.request.instantiateMsg) {
+                const info: MsgInfo = {
+                  sender: execution.request.info.sender,
+                  funds: execution.request.info.funds,
+                };
+
+                // @ts-ignore
+                const instantiateMsg = execution.request.instantiateMsg;
+                await createContractInstance(chainId, newCode, info, instantiateMsg);
+              }
 
               // @ts-ignore
-              const instantiateMsg = execution.request.instantiateMsg;
-              await createContractInstance(chainId, newCode, info, instantiateMsg);
-            }
-
-            // @ts-ignore
-            if (execution.request.executeMsg) {
-              // @ts-ignore
-              const executeMsg = execution.request.executeMsg;
-              // @ts-ignore
-              const info: MsgInfo = {
-                sender: execution.request.info.sender,
-                funds: execution.request.info.funds,
-              };
-              execute(chainId, contractAddress, info, executeMsg);
+              if (execution.request.executeMsg) {
+                // @ts-ignore
+                const executeMsg = execution.request.executeMsg;
+                // @ts-ignore
+                const info: MsgInfo = {
+                  sender: execution.request.info.sender,
+                  funds: execution.request.info.funds,
+                };
+                execute(chainId, contractAddress, info, executeMsg);
+              }
             }
           }
         }

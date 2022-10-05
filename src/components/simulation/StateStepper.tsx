@@ -66,7 +66,7 @@ export default function StateStepper({chainId, contractAddress}: IProps) {
   }, [activeStep]);
   return (
     <Stepper nonLinear activeStep={activeStep} orientation="vertical">
-      {executionHistory.map(
+      {executionHistory?.map(
         (
           historyObj: { request: any; response: any; state: any },
           index: number

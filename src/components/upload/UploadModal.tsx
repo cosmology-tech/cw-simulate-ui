@@ -39,7 +39,7 @@ export default function UploadModal(props: IUploadModalProps) {
       }
     } else if (variant === 'simulation') {
       try {
-        const json = file.fileContent as unknown as ISimulationJSON;
+        const json = file.fileContent as any as ISimulationJSON;
         await setupSimulation(json);
       } catch (e: any) {
         setNotification(e.message, {severity: "error"});
