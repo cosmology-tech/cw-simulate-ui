@@ -1,22 +1,15 @@
-import React, { MouseEvent, useState } from "react";
-import T1MenuItem from "./T1MenuItem";
-import { downloadJSON } from "../../utils/fileUtils";
-import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import UploadModal from "../upload/UploadModal";
-import simulationMetadataState, { SimulationMetadata } from "../../atoms/simulationMetadataState";
+import { CWSimulateEnv } from "@terran-one/cw-simulate";
 import { useAtom, useAtomValue } from "jotai";
-import { CWChain, CWSimulateEnv } from "@terran-one/cw-simulate";
+import React, { MouseEvent, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
+import simulationMetadataState from "../../atoms/simulationMetadataState";
+import { downloadJSON } from "../../utils/fileUtils";
+import UploadModal from "../upload/UploadModal";
+import T1MenuItem from "./T1MenuItem";
 
 export interface ISimulationItemProps {
-}
-
-export interface ISimulationJSON {
-  simulationMetadata: SimulationMetadata;
-  chains: {
-    [key: string]: CWChain;
-  };
 }
 
 const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {

@@ -8,6 +8,7 @@ import { To } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN } from "../../configs/variables";
 import {
+  SimulationJSON,
   useCreateChainForSimulation,
   useSetupSimulationJSON,
   useStoreCode
@@ -16,7 +17,6 @@ import FileUpload from "../upload/FileUpload";
 import T1Link from "../grid/T1Link";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
-import { ISimulationJSON } from "../drawer/SimulationMenuItem";
 import { useAtom } from "jotai";
 
 const Item = styled(Paper)(({theme}) => ({
@@ -48,7 +48,7 @@ export const WelcomeScreen = () => {
       });
       storeCode(DEFAULT_CHAIN, file.filename, file.fileContent as Buffer);
     } else if (file.filename.endsWith(".json")) {
-      const json = file.fileContent as unknown as ISimulationJSON;
+      const json = file.fileContent as unknown as SimulationJSON;
       await setupSimulation(json);
     }
   }, [file, createChainForSimulation, storeCode, setNotification, setSimulationMetadata, setSimulateEnv]);
