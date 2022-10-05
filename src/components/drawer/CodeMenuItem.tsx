@@ -13,7 +13,11 @@ import React, { useCallback, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useCreateContractInstance, useDeleteCodeForSimulation } from "../../utils/simulationUtils";
+import {
+  useCreateContractInstance,
+  useDeleteAllInstancesForSimulation,
+  useDeleteCodeForSimulation
+} from "../../utils/simulationUtils";
 import { SENDER_ADDRESS } from "../../configs/variables";
 import { useNavigate } from "react-router-dom";
 
@@ -84,6 +88,7 @@ interface IDeleteCodeDialogProps {
 function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
   const {chainId, code, open, onClose} = props;
   const deleteCode = useDeleteCodeForSimulation();
+  const deleteAllInstances = useDeleteAllInstancesForSimulation();
   return (
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Confirm Delete Code</DialogTitle>
@@ -104,6 +109,7 @@ function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
           color="error"
           onClick={() => {
             deleteCode(chainId, code.codeId);
+            deleteAllInstances(chainId, code.codeId);
             onClose();
           }}
         >

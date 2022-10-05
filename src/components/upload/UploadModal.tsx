@@ -1,8 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
-import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
-import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
-import simulationMetadataState from "../../atoms/simulationMetadataState";
 import Item from "./item";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { SimulationJSON, useSetupSimulationJSON, useStoreCode } from "../../utils/simulationUtils";
@@ -20,8 +17,6 @@ interface IUploadModalProps {
 
 export default function UploadModal(props: IUploadModalProps) {
   const {dropzoneText, variant, dropTitle, chainId, open, onClose} = props;
-  const [, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
@@ -48,7 +43,7 @@ export default function UploadModal(props: IUploadModalProps) {
       }
     }
     onClose(true);
-  }, [file, onClose, setNotification, setSimulateEnv, setSimulationMetadata, storeCode, variant, chainId]);
+  }, [file, storeCode, variant, chainId]);
 
   return (
     <Dialog open={open} onClose={() => onClose(false)}>

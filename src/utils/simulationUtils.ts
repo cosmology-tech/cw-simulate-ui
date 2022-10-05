@@ -47,11 +47,9 @@ export function useDeleteChainForSimulation() {
 
   return useCallback((chainId: string) => {
     delete env.chains[chainId];
-    setSimulateEnv({env});
-
     delete simulationMetadata[chainId];
+    setSimulateEnv({env});
     setSimulationMetadata(simulationMetadata);
-
   }, [env, simulationMetadata]);
 }
 
@@ -65,13 +63,12 @@ export function useDeleteCodeForSimulation() {
   return useCallback((chainId: string, codeId: number) => {
     const chain = env.chains[chainId];
     delete chain.codes[codeId];
-    setSimulateEnv({env});
-
     Object.values(simulationMetadata[chainId].codes).forEach((code) => {
       if (code.codeId === codeId) {
         delete simulationMetadata[chainId].codes[code.name];
       }
     });
+    setSimulateEnv({env});
     setSimulationMetadata(simulationMetadata);
   }, [env, simulationMetadata]);
 }
@@ -86,9 +83,8 @@ export function useDeleteInstanceForSimulation() {
   return useCallback((chainId: string, address: string) => {
     const chain = env.chains[chainId];
     delete chain.contracts[address];
-    setSimulateEnv({env});
-
     delete simulationMetadata[chainId].codes[address];
+    setSimulateEnv({env});
     setSimulationMetadata(simulationMetadata);
   }, [env, simulationMetadata]);
 }
@@ -100,9 +96,18 @@ export function useDeleteAllInstancesForSimulation() {
   const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
-  return useCallback((chainId: string) => {
+  return useCallback((chainId: string, codeId?: number) => {
     const chain = env.chains[chainId];
-    chain.contracts = {};
+
+    if (codeId) {
+      Object.entries(chain.contracts).forEach(([address, contract]) => {
+        if (contract.contractCode.codeId === codeId) {
+          delete chain.contracts[address];
+        }
+      });
+    } else {
+      chain.contracts = {};
+    }
     setSimulateEnv({env});
 
     simulationMetadata[chainId].codes = {};
@@ -141,15 +146,14 @@ export function useStoreCode() {
   return useCallback((chainId: string, codeName: string, wasmByteCode: Buffer) => {
     const chain: CWChain = env.chains[chainId];
     const codeId = chain.storeCode(wasmByteCode).codeId;
-    setSimulateEnv({env});
-
     simulationMetadata[chainId].codes[codeName] = {
       name: codeName,
       codeId,
     };
+    setSimulateEnv({env});
     setSimulationMetadata(simulationMetadata);
     return codeId;
-  }, [env, simulationMetadata]);
+  }, [env, simulationMetadata, setSimulationMetadata, setSimulateEnv]);
 }
 
 /**
