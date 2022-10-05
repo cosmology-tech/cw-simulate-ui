@@ -285,7 +285,6 @@ export const useSetupSimulationJSON = () => {
   const createChain = useCreateChainForSimulation();
   const storeCode = useStoreCode();
   const createContractInstance = useCreateContractInstance();
-  const execute = useExecute();
   return useCallback(async (simulation: SimulationJSON) => {
     for (const [chainId, chain] of Object.entries(simulation.chains)) {
       createChain({
@@ -302,6 +301,7 @@ export const useSetupSimulationJSON = () => {
         };
         for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
           if (instance.executionHistory) {
+            let newInstance: CWContractInstance;
             for (const execution of instance.executionHistory) {
               if ('instantiateMsg' in execution.request && execution.request.instantiateMsg) {
                 const info: MsgInfo = {
@@ -310,7 +310,9 @@ export const useSetupSimulationJSON = () => {
                 };
 
                 const instantiateMsg = execution.request.instantiateMsg;
-                await createContractInstance(chainId, newCode, info, instantiateMsg);
+                // Delete the previous instance if it exists.
+                delete env.chains[chainId].contracts[contractAddress];
+                newInstance = await createContractInstance(chainId, newCode, info, instantiateMsg);
               }
 
               if ('executeMsg' in execution.request && execution.request.executeMsg) {
@@ -319,7 +321,7 @@ export const useSetupSimulationJSON = () => {
                   sender: execution.request.info.sender,
                   funds: execution.request.info.funds,
                 };
-                execute(chainId, contractAddress, info, executeMsg);
+                newInstance!.execute(info, executeMsg);
               }
             }
           }
