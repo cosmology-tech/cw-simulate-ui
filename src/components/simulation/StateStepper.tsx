@@ -2,15 +2,7 @@ import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import {
-  Divider,
-  Grid,
-  Paper,
-  Slide,
-  StepContent,
-  StepLabel,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, Grid, Paper, Slide, StepContent, StepLabel, Typography, } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { JSONTree } from "react-json-tree";
 import { blockState } from "../../atoms/blockState";
@@ -97,7 +89,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
               }}
             >
               <StepLabel ref={containerRef}>
-                <div style={{ display: "flex", alignItems: "center" }}>
+                <Grid container alignItems="center">
                   {activeStep === index && isOpen ? (
                     <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
                   ) : (
@@ -109,7 +101,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                     />
                   )}
                   {label}
-                </div>
+                </Grid>
               </StepLabel>
 
               <StepContent>
@@ -123,7 +115,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                       elevation={3}
                       sx={{
                         height: "30vh",
-                        overflow: "scroll",
+                        overflow: "auto",
                         textAlign: "left",
                         display: "flex",
                         flexDirection: "column",
@@ -132,16 +124,16 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                     >
                       <Grid
                         item
+                        container
+                        direction="column"
                         xs={12}
                         sx={{
-                          display: "flex",
-                          flexDirection: "column",
                           position: "relative",
-                          overflow: "scroll",
+                          overflow: "auto",
                           mb: 1,
                         }}
                       >
-                        <div style={{ position: "sticky", top: 0 }}>
+                        <Box sx={{position: "sticky", top: 0}}>
                           <Typography
                             variant="caption"
                             sx={{
@@ -152,11 +144,11 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                           >
                             Request
                           </Typography>
-                          <Divider orientation="horizontal" />
-                        </div>
-                        <div
-                          style={{
-                            overflow: "scroll",
+                          <Divider orientation="horizontal"/>
+                        </Box>
+                        <Box
+                          sx={{
+                            overflow: "auto",
                             marginLeft: "1rem",
                           }}
                         >
@@ -165,7 +157,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                             theme={theme}
                             invertTheme={false}
                           />
-                        </div>
+                        </Box>
                       </Grid>
                       <Divider orientation="vertical" flexItem />
                       <Grid
@@ -174,23 +166,23 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                         sx={{
                           display: "flex",
                           flexDirection: "column",
-                          overflow: "scroll",
+                          overflow: "auto",
                           position: "relative",
                         }}
                       >
-                        <div style={{ position: "sticky", top: 0 }}>
-                          <Divider orientation="horizontal" />
+                        <Box sx={{position: "sticky", top: 0}}>
+                          <Divider orientation="horizontal"/>
                           <Typography
                             variant="caption"
                             sx={{ display: "flex", justifyContent: "center" }}
                           >
                             Response
                           </Typography>
-                          <Divider orientation="horizontal" />
-                        </div>
-                        <div
-                          style={{
-                            overflow: "scroll",
+                          <Divider orientation="horizontal"/>
+                        </Box>
+                        <Box
+                          sx={{
+                            overflow: "auto",
                             marginLeft: "1rem",
                           }}
                         >
@@ -199,7 +191,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                             theme={theme}
                             invertTheme={false}
                           />
-                        </div>
+                        </Box>
                       </Grid>
                     </Paper>
                   </Slide>
