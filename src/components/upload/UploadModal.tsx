@@ -1,12 +1,11 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
-import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useSetupSimulationJSON, useStoreCode } from "../../utils/simulationUtils";
-import FileUpload from "./FileUpload";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
-import { ISimulationJSON } from "../drawer/SimulationMenuItem";
-import { useAtom } from "jotai";
+import { useNotification } from "../../atoms/snackbarNotificationState";
+import { SimulationJSON, useSetupSimulationJSON, useStoreCode } from "../../utils/simulationUtils";
+import FileUpload from "./FileUpload";
 
 interface IUploadModalProps {
   dropzoneText?: string;
@@ -39,10 +38,11 @@ export default function UploadModal(props: IUploadModalProps) {
       }
     } else if (variant === 'simulation') {
       try {
-        const json = file.fileContent as any as ISimulationJSON;
+        const json = file.fileContent as any as SimulationJSON;
         await setupSimulation(json);
       } catch (e: any) {
         setNotification(e.message, {severity: "error"});
+        console.error(e);
         onClose(true);
       }
     }

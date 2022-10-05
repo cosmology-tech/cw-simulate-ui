@@ -1,12 +1,19 @@
 import { Coin, CWChain, CWContractInstance, MsgInfo } from "@terran-one/cw-simulate";
-import { useCallback } from "react";
-import type { Code, Codes } from "../atoms/simulationMetadataState";
-import simulationMetadataState from "../atoms/simulationMetadataState";
-import { useAtom, useAtomValue } from "jotai";
-import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
-import { ISimulationJSON } from "../components/drawer/SimulationMenuItem";
 import { CWAccount } from "@terran-one/cw-simulate/dist/account";
 import { Env } from "@terran-one/cw-simulate/dist/contract";
+import { useAtom, useAtomValue } from "jotai";
+import { useCallback } from "react";
+import type { Code, Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
+import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import { AsJSON } from "./typeUtils";
+
+export type SimulationJSON = AsJSON<{
+  simulationMetadata: SimulationMetadata;
+  chains: {
+    [key: string]: CWChain;
+  };
+}>
 
 export interface ChainConfig {
   chainId: string;
@@ -291,7 +298,7 @@ export const useSetupSimulationJSON = () => {
   const storeCode = useStoreCode();
   const createContractInstance = useCreateContractInstance();
   const execute = useExecute();
-  return useCallback(async (simulation: ISimulationJSON) => {
+  return useCallback(async (simulation: SimulationJSON) => {
     for (const [chainId, chain] of Object.entries(simulation.chains)) {
       createChain({
         chainId,
@@ -300,32 +307,26 @@ export const useSetupSimulationJSON = () => {
 
       for (const [codeId, code] of Object.entries(chain.codes)) {
         const codeName = convertCodeIdToCodeName(codeId, simulation.simulationMetadata[chainId].codes) || `untitled-${codeId}.wasm`;
-        // @ts-ignore
-        storeCode(chainId, codeName, Buffer.from((code.wasmBytecode as any).data));
-        const newCode = {
+        storeCode(chainId, codeName, Buffer.from(code.wasmBytecode.data));
+        const newCode: Code = {
           "codeId": parseInt(codeId),
           "name": codeName
-        } as Code;
+        };
         for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
           if (instance.executionHistory) {
             for (const execution of instance.executionHistory) {
-              // @ts-ignore
               if (execution.request.instantiateMsg) {
                 const info: MsgInfo = {
                   sender: execution.request.info.sender,
                   funds: execution.request.info.funds,
                 };
 
-                // @ts-ignore
                 const instantiateMsg = execution.request.instantiateMsg;
                 await createContractInstance(chainId, newCode, info, instantiateMsg);
               }
 
-              // @ts-ignore
               if (execution.request.executeMsg) {
-                // @ts-ignore
                 const executeMsg = execution.request.executeMsg;
-                // @ts-ignore
                 const info: MsgInfo = {
                   sender: execution.request.info.sender,
                   funds: execution.request.info.funds,
