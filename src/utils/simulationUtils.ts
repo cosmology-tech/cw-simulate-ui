@@ -290,28 +290,23 @@ export const useSetupSimulationJSON = () => {
   const createChain = useCreateChainForSimulation();
   const storeCode = useStoreCode();
   const createContractInstance = useCreateContractInstance();
+  const execute = useExecute();
   return useCallback(async (simulation: ISimulationJSON) => {
     for (const [chainId, chain] of Object.entries(simulation.chains)) {
-      const newChain = createChain({
+      createChain({
         chainId,
         bech32Prefix: chain.bech32Prefix,
       });
 
       for (const [codeId, code] of Object.entries(chain.codes)) {
         const codeName = convertCodeIdToCodeName(codeId, simulation.simulationMetadata[chainId].codes) || `untitled-${codeId}.wasm`;
-        storeCode(chainId, codeName, code.wasmBytecode as Buffer);
+        // @ts-ignore
+        storeCode(chainId, codeName, Buffer.from((code.wasmBytecode as any).data));
         const newCode = {
           "codeId": parseInt(codeId),
           "name": codeName
         } as Code;
         for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
-          env.chains[chainId].contracts = {
-            [contractAddress]: new CWContractInstance(newChain, contractAddress, code)
-          };
-          const vm = env.chains[chainId].contracts[contractAddress].vm;
-          console.log(env.chains[chainId].contracts[contractAddress].contractCode.wasmBytecode);
-          console.log("Why is this not working?", vm);
-          await vm.build(code.wasmBytecode);
           for (const execution of instance.executionHistory) {
             // @ts-ignore
             if (execution.request.instantiateMsg) {
@@ -334,13 +329,12 @@ export const useSetupSimulationJSON = () => {
                 sender: execution.request.info.sender,
                 funds: execution.request.info.funds,
               };
-              env.chains[chainId].contracts[contractAddress].execute(info, executeMsg);
+              execute(chainId, contractAddress, info, executeMsg);
             }
           }
         }
       }
     }
-    // TODO: Iterate through execution history and execute all messages.
     setSimulateEnv({env});
     setSimulationMetadata(simulation.simulationMetadata);
   }, [simulationMetadata, env]);
