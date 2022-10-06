@@ -1,11 +1,18 @@
 import { Coin, CWChain, CWContractInstance, MsgInfo } from "@terran-one/cw-simulate";
-import { useCallback } from "react";
-import type { Code, Codes } from "../atoms/simulationMetadataState";
-import simulationMetadataState from "../atoms/simulationMetadataState";
-import { useAtom, useAtomValue } from "jotai";
-import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
-import { ISimulationJSON } from "../components/drawer/SimulationMenuItem";
 import { CWAccount } from "@terran-one/cw-simulate/dist/account";
+import { useAtom, useAtomValue } from "jotai";
+import { useCallback } from "react";
+import type { Code, Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
+import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
+import { AsJSON } from "./typeUtils";
+
+export type SimulationJSON = AsJSON<{
+  simulationMetadata: SimulationMetadata;
+  chains: {
+    [key: string]: CWChain;
+  };
+}>
 
 export interface ChainConfig {
   chainId: string;
@@ -193,10 +200,14 @@ export function useCreateContractInstance() {
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback(async (chainId: string, code: Code, info: MsgInfo, instantiateMsg: any): Promise<CWContractInstance> => {
-    const contract = await env.chains[chainId].instantiateContract(code.codeId);
-    contract.instantiate(info, instantiateMsg);
-    setSimulateEnv({env});
-    return contract;
+    try {
+      const contract = await env.chains[chainId].instantiateContract(code.codeId);
+      contract.instantiate(info, instantiateMsg);
+      setSimulateEnv({env});
+      return contract;
+    } catch (e: any) {
+      throw new Error(e.message);
+    }
   }, [env]);
 }
 
@@ -208,7 +219,7 @@ export function useExecutionHistory() {
   return useCallback((chainId: string, contractAddress: string): any => {
     const chain = env.chains[chainId];
     const contract = chain.contracts[contractAddress];
-    return contract.executionHistory;
+    return contract?.executionHistory;
   }, [env]);
 }
 
@@ -273,58 +284,50 @@ export const useSetupSimulationJSON = () => {
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const createChain = useCreateChainForSimulation();
   const storeCode = useStoreCode();
-  const instantiateContract = useCreateContractInstance();
-  return useCallback(async (simulation: ISimulationJSON) => {
+  const createContractInstance = useCreateContractInstance();
+  return useCallback(async (simulation: SimulationJSON) => {
     for (const [chainId, chain] of Object.entries(simulation.chains)) {
-      const newChain = createChain({
+      createChain({
         chainId,
         bech32Prefix: chain.bech32Prefix,
       });
 
       for (const [codeId, code] of Object.entries(chain.codes)) {
-        const codeName = convertCodeIdToCodeName(codeId, simulationMetadata[chainId].codes) || `untitled-${codeId}.wasm`;
-        const newCodeId = storeCode(chainId, codeName, code.wasmBytecode);
-
+        const codeName = convertCodeIdToCodeName(codeId, simulation.simulationMetadata[chainId].codes) || `untitled-${codeId}.wasm`;
+        storeCode(chainId, codeName, Buffer.from(code.wasmBytecode.data));
+        const newCode: Code = {
+          "codeId": parseInt(codeId),
+          "name": codeName
+        };
         for (const [contractAddress, instance] of Object.entries(chain.contracts)) {
-          for (const execution of instance.executionHistory) {
-            // @ts-ignore
-            if (execution.request.instantiateMsg) {
-              const info: MsgInfo = {
-                sender: execution.request.info.sender,
-                funds: execution.request.info.funds,
-              };
+          if (instance.executionHistory) {
+            let newInstance: CWContractInstance;
+            for (const execution of instance.executionHistory) {
+              if ('instantiateMsg' in execution.request && execution.request.instantiateMsg) {
+                const info: MsgInfo = {
+                  sender: execution.request.info.sender,
+                  funds: execution.request.info.funds,
+                };
 
-              // TODO: Not 100% working. Need to fix.
-              env.chains[chainId].contracts = {
-                [contractAddress]: new CWContractInstance(newChain, contractAddress, code)
-              };
-              setSimulateEnv({env});
-              // @ts-ignore
-              const instantiateMsg = execution.request.instantiateMsg;
-              const newCode = {
-                codeId: newCodeId,
-                name: codeName
-              };
-              await instantiateContract(chainId, newCode, info, instantiateMsg);
-            }
+                const instantiateMsg = execution.request.instantiateMsg;
+                // Delete the previous instance if it exists.
+                delete env.chains[chainId].contracts[contractAddress];
+                newInstance = await createContractInstance(chainId, newCode, info, instantiateMsg);
+              }
 
-            // @ts-ignore
-            if (execution.request.executeMsg) {
-              // @ts-ignore
-              const executeMsg = execution.request.executeMsg;
-              // @ts-ignore
-              const info: MsgInfo = {
-                sender: execution.request.info.sender,
-                funds: execution.request.info.funds,
-              };
-              env.chains[chainId].contracts[contractAddress].execute(info, executeMsg);
-              setSimulateEnv({env});
+              if ('executeMsg' in execution.request && execution.request.executeMsg) {
+                const executeMsg = execution.request.executeMsg;
+                const info: MsgInfo = {
+                  sender: execution.request.info.sender,
+                  funds: execution.request.info.funds,
+                };
+                newInstance!.execute(info, executeMsg);
+              }
             }
           }
         }
       }
     }
-    // TODO: Iterate through execution history and execute all messages.
     setSimulateEnv({env});
     setSimulationMetadata(simulation.simulationMetadata);
   }, [simulationMetadata, env]);
