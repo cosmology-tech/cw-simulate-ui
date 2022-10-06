@@ -3,7 +3,6 @@ import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
-import { ISimulationJSON } from "../drawer/SimulationMenuItem";
 import Item from "./item";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { SimulationJSON, useSetupSimulationJSON, useStoreCode } from "../../utils/simulationUtils";
