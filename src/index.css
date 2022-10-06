@@ -35,27 +35,6 @@ code {
   box-shadow: 6px 2px 34px -12px rgba(0, 0, 0, 0.75);
 }
 
-.MuiDropzoneArea-root {
-  border: none !important;
-}
-
-.dropzone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.dropzone .MuiDropzonePreviewList-removeButton {
-  /* .MuiGrid-item padding */
-  top: 64px;
-  transform: translate(-50%, -50%);
-}
-
-.dropzone .MuiDropzonePreviewList-root {
-  justify-content: center;
-}
-
 html,
 body,
 #app,
@@ -63,7 +42,6 @@ body,
 #app > div {
   height: 100vh
 }
-
 
 .cm-focused {
   outline: none !important;
@@ -75,4 +53,8 @@ body,
 
 .cm-gutters {
   min-height: inherit;
+}
+
+#delete-icon:hover {
+  opacity: 0.6;
 }

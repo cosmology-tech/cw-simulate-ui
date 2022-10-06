@@ -18,14 +18,7 @@ import T1Link from "../grid/T1Link";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { useAtom } from "jotai";
-
-const Item = styled(Paper)(({theme}) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  color: theme.palette.text.secondary,
-}));
+import Item from "../upload/item";
 
 export const WelcomeScreen = () => {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
@@ -120,7 +113,7 @@ export const WelcomeScreen = () => {
           md={8}
           sx={{marginTop: 4, marginBottom: 4, width: "60%"}}
         >
-          <Item sx={{border: "1px solid #eae5e5"}}>
+          <Item sx={{border: "1px solid #eae5e5", padding: 0}}>
             <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
           </Item>
         </Grid>

@@ -1,11 +1,13 @@
-import React, { Suspense } from "react";
-import { Box, CircularProgress, SnackbarProps } from "@mui/material";
+import React, { Suspense, useState } from "react";
+import { Box, CircularProgress } from "@mui/material";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
-import { useAtom } from "jotai";
-
-const DropzoneArea = React.lazy(async () => ({default: (await import('react-mui-dropzone')).DropzoneArea}))
+import { useSetAtom } from "jotai";
+import { useDropzone } from 'react-dropzone';
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface IProps {
   dropzoneText?: string;
@@ -23,22 +25,44 @@ const FileUpload = ({
   dropzoneText,
   variant = 'both',
   onAccept,
-  onClear,
+  onClear
 }: IProps) => {
-  const [, setIsFileUploaded] = useAtom(fileUploadedState);
-  const snackbarProps: SnackbarProps = {
-    anchorOrigin: {
-      vertical: "top",
-      horizontal: "center",
-    },
-  };
+  const setIsFileUploaded = useSetAtom(fileUploadedState);
+  const [filename, setFilename] = useState('');
 
-  const text = dropzoneText || "Click to upload a simulation file or contract binary or Drag & drop a file here";
+  const text = dropzoneText || "Click to upload a simulation file or contract binary, or drop a file here";
   const setNotification = useNotification();
 
+  const handleDropzoneClick = (event: any) => {
+    if (event.target.parentElement.id === 'delete-icon') {
+      event.stopPropagation();
+    }
+  };
+
+  const deleteFile = () => {
+    onClear();
+    setFilename('');
+    setIsFileUploaded(false);
+    setNotification('File removed');
+  };
+
   const handleOnFileDrop = (files: File[]) => {
-    // Only allow one file to be uploaded
-    const file: File = files[0];
+    if (!files.length) {
+      return;
+    }
+
+    const file: File = files[0]; // we only support uploading one file
+
+    if (getFileTypesByVariant(variant).indexOf(file.type) === -1) {
+      setNotification("File type not supported", {severity: "error"});
+      return;
+    }
+
+    if (file.size > 50000000) {
+      setNotification("File too large - only files up to 50Mb arre supported", {severity: "error"});
+      return;
+    }
+
     if (file.type === "application/wasm") {
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -60,6 +84,8 @@ const FileUpload = ({
         }
 
         setIsFileUploaded(true);
+        setFilename(file.name);
+        setNotification("File uploaded successfully");
       }
 
       reader.onerror = () => {
@@ -80,37 +106,38 @@ const FileUpload = ({
         //   console.log("Invalid JSON");
         // }
         setIsFileUploaded(true);
+        setFilename(file.name);
+        setNotification("File uploaded successfully");
         onAccept(file.name, json);
       };
 
       reader.onerror = () => {
         setNotification("Error reading simulation file", {severity: "error"});
       }
+    } else {
+      throw new Error("Not implemented");
     }
   };
 
-  const handleOnFileChange = (files: File[]) => {
-    if (files.length === 0) {
-      setIsFileUploaded(false);
-      onClear();
-    }
-  };
-
+  const { getRootProps, getInputProps } = useDropzone({ onDrop: handleOnFileDrop })
   return (
     <Suspense fallback={<Fallback/>}>
-      <DropzoneArea
-        dropzoneClass="dropzone"
-        acceptedFiles={getFileTypesByVariant(variant)}
-        showFileNames={true}
-        dropzoneText={text}
-        onDrop={handleOnFileDrop}
-        onChange={handleOnFileChange}
-        alertSnackbarProps={snackbarProps}
-        filesLimit={1}
-        maxFileSize={50000000} // 50MB max file size ~ 10 contracts
-      />
+      <div {...getRootProps({onClick: handleDropzoneClick})} style={{cursor: 'pointer', padding: '8px'}}>
+        <input {...getInputProps()} />
+        {
+          filename ?
+            <>
+              <AttachFileIcon fontSize="large" />
+              <div style={{fontSize: '24px'}}>{filename} <DeleteIcon id='delete-icon' fontSize="small" onClick={deleteFile} /></div>
+            </> :
+            <>
+              <div style={{fontSize: '24px'}}>{text}</div>
+              <UploadFileIcon fontSize="large" />
+            </>
+        }
+      </div>
     </Suspense>
-  );
+  )
 };
 
 function Fallback() {
@@ -123,7 +150,7 @@ function Fallback() {
 
 export default FileUpload;
 
-function getFileTypesByVariant(variant: "simulation" | "contract" | "both" | undefined) {
+function getFileTypesByVariant(variant: "simulation" | "contract" | "both") {
   switch (variant) {
     case 'both':
       return ['application/wasm', 'application/json'];
@@ -131,6 +158,8 @@ function getFileTypesByVariant(variant: "simulation" | "contract" | "both" | und
       return ['application/json'];
     case 'contract':
       return ['application/wasm'];
+    default:
+      throw new Error("Not supported");
   }
 }
 

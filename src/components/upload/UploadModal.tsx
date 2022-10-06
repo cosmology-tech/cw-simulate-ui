@@ -1,15 +1,16 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
+import Item from "./item";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { SimulationJSON, useSetupSimulationJSON, useStoreCode } from "../../utils/simulationUtils";
 import FileUpload from "./FileUpload";
 
 interface IUploadModalProps {
   dropzoneText?: string;
-  variant?: 'simulation' | 'contract' | 'both';
+  variant: 'simulation' | 'contract' | 'both';
   dropTitle?: string;
   chainId?: string;
   open: boolean;
@@ -53,16 +54,26 @@ export default function UploadModal(props: IUploadModalProps) {
     <Dialog open={open} onClose={() => onClose(false)}>
       <DialogTitle>{dropTitle ?? 'Upload Code'}</DialogTitle>
       <DialogContent>
-        <FileUpload
-          dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
-          variant={variant ?? 'contract'}
-          onAccept={(filename: string, fileContent: Buffer | JSON) => {
-            setFile({filename, fileContent});
-          }}
-          onClear={() => {
-            setFile(undefined);
-          }}
-        />
+        <Grid
+          item
+          xs={11}
+          lg={7}
+          md={8}
+          sx={{marginTop: 4, marginBottom: 4, width: "100%"}}
+        >
+          <Item sx={{border: "1px solid #eae5e5", padding: 0}}>
+            <FileUpload
+              dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
+              variant={variant ?? 'contract'}
+              onAccept={(filename: string, fileContent: Buffer | JSON) => {
+                setFile({filename, fileContent});
+              }}
+              onClear={() => {
+                setFile(undefined);
+              }}
+            />
+          </Item>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(false)}>Cancel</Button>
