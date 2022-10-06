@@ -2,502 +2,494 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "simulation": {
-      "type": "object",
-      "properties": {
-        "chains": {
-          "type": "array",
-          "items": [
-            {
-              "type": "object",
-              "properties": {
-                "chainId": {
-                  "type": "string"
-                },
-                "bech32Prefix": {
-                  "type": "string"
-                },
-                "accounts": {
-                  "type": "array",
-                  "items": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "accountAddress": {
-                          "type": "string"
-                        },
-                        "balance": {
-                          "type": "integer"
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "accountAddress",
-                        "balance"
-                      ]
+    "chains": {
+      "type": "array",
+      "items": [
+        {
+          "type": "object",
+          "properties": {
+            "chainId": {
+              "type": "string"
+            },
+            "bech32Prefix": {
+              "type": "string"
+            },
+            "accounts": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "accountAddress": {
+                      "type": "string"
+                    },
+                    "balance": {
+                      "type": "integer"
                     }
-                  ]
-                },
-                "codes": {
-                  "type": "array",
-                  "items": [
-                    {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "wasmBinaryB64": {
-                          "type": "string"
-                        },
-                        "instances": {
-                          "type": "array",
-                          "items": [
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            },
-                            {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string"
-                                },
-                                "message": {
-                                  "type": "object",
-                                  "properties": {
-                                    "counter": {
-                                      "type": "integer"
-                                    }
-                                  },
-                                  "required": [
-                                    "counter"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "id",
-                                "message"
-                              ]
-                            }
-                          ]
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "wasmBinaryB64",
-                        "instances"
-                      ]
-                    }
+                  },
+                  "required": [
+                    "id",
+                    "accountAddress",
+                    "balance"
                   ]
                 }
-              },
-              "required": [
-                "chainId",
-                "bech32Prefix",
-                "accounts",
-                "codes"
+              ]
+            },
+            "codes": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "wasmBinaryB64": {
+                      "type": "string"
+                    },
+                    "instances": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "object",
+                              "properties": {
+                                "counter": {
+                                  "type": "integer"
+                                }
+                              },
+                              "required": [
+                                "counter"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "message"
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "wasmBinaryB64",
+                    "instances"
+                  ]
+                }
               ]
             }
+          },
+          "required": [
+            "chainId",
+            "bech32Prefix",
+            "accounts",
+            "codes"
           ]
         }
-      },
-      "required": [
-        "chains"
       ]
     }
   },
   "required": [
-    "simulation"
+    "chains"
   ]
 }

@@ -2,7 +2,7 @@ import React, { Suspense, useState } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { base64ToArrayBuffer } from "../../utils/fileUtils";
+import { base64ToArrayBuffer, validateSimulationJSON } from "../../utils/fileUtils";
 import { useSetAtom } from "jotai";
 import { useDropzone } from 'react-dropzone';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -99,12 +99,11 @@ const FileUpload = ({
         const json = JSON.parse(reader.result as string)
 
         // TODO: validate simulation JSON
-        // if (validateSimulationJSON(json)) {
-        //   setIsFileUploaded(true);
-        // } else {
-        //   // TODO: Add error message when JSON is invalid
-        //   console.log("Invalid JSON");
+        // if (!validateSimulationJSON(json)) {
+        //   setNotification("Invalid simulation file", {severity: "error"});
+        //   return;
         // }
+
         setIsFileUploaded(true);
         setFilename(file.name);
         setNotification("File uploaded successfully");

@@ -70,7 +70,12 @@ export const downloadJSON = (content: string, fileName: string, contentType = 'a
 export const validateJSON = (json: any, jsonSchema: any): boolean => {
   const v = new Validator();
   const result = v.validate(json, jsonSchema);
+
   // TODO: Return error message
+  if (!result.valid) {
+    console.error(`JSON validation failed:\n${result.toString()}`);
+  }
+
   return result.valid;
 }
 
