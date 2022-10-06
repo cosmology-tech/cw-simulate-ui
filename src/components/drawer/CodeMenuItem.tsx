@@ -16,6 +16,7 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useCreateContractInstance, useDeleteCodeForSimulation } from "../../utils/simulationUtils";
 import { SENDER_ADDRESS } from "../../configs/variables";
 import { useNavigate } from "react-router-dom";
+import T1Container from "../grid/T1Container";
 
 export interface ICodeMenuItemProps {
   chainId: string;
@@ -161,11 +162,13 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         <DialogContentText>
           Enter the instantiate message for the contract.
         </DialogContentText>
-        <JsonCodeMirrorEditor
-          jsonValue={""}
-          placeholder={placeholder}
-          setPayload={(val) => setPayload(val)}
-        />
+        <T1Container sx={{width: 400, height: 220}}>
+          <JsonCodeMirrorEditor
+            jsonValue={""}
+            placeholder={placeholder}
+            setPayload={(val) => setPayload(val)}
+          />
+        </T1Container>
       </DialogContent>
       <DialogActions>
         <Button
