@@ -89,10 +89,10 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
               onClick={handleStep(index, state)}
               sx={{
                 "& .MuiStepIcon-root": {
-                  color: response.error ? "red" : "",
+                  color: response.error ? "red" : "#00C921",
                 },
                 "& .MuiStepLabel-root .Mui-active": {
-                  color: "#1976d2",
+                  color: response.error ? "#690000" : "#006110",
                 },
               }}
             >
