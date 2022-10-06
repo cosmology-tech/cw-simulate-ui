@@ -2,7 +2,7 @@ import React, { Suspense, useContext, useState } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { base64ToArrayBuffer, validateSimulationJSON } from "../../utils/fileUtils";
+import { base64ToArrayBuffer } from "../../utils/fileUtils";
 import { useSetAtom } from "jotai";
 import { useDropzone } from 'react-dropzone';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
