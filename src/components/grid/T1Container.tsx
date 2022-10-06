@@ -46,6 +46,7 @@ export default function T1Container({
           left: 0,
           right: 0,
           bottom: 0,
+          overflow: 'auto',
         }}
         className="T1Container-content"
       >
