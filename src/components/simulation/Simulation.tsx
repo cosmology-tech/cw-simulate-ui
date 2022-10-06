@@ -1,6 +1,6 @@
 import { Grid, Paper, styled, SxProps, Theme } from "@mui/material";
 import { useAtom, useAtomValue } from "jotai";
-import { ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { responseState } from "../../atoms/responseState";
@@ -92,6 +92,9 @@ function Column({ children, ...props }: IColumnProps) {
         sx={{
           height: '100%',
           overflow: 'auto',
+          '> .T1Widget-root:not(:first-of-type)': {
+            borderTop: `1px solid ${GREY_6}`,
+          },
         }}
       >
         {children}
@@ -108,7 +111,7 @@ interface IWidgetProps {
   sx?: SxProps<Theme>;
 }
 
-function Widget({ children, size = 12, sx, ...props }: IWidgetProps) {
+function Widget({ children, size = 12, className, sx, ...props }: IWidgetProps) {
   return (
     <Grid
       item
@@ -116,12 +119,11 @@ function Widget({ children, size = 12, sx, ...props }: IWidgetProps) {
         {
           p: 2,
           height: `${100*size/12}%`,
-          "&:not(:first-child)": {
-            borderTop: `1px solid ${GREY_6}`,
-          },
+          overflow: 'auto',
         },
         ...(Array.isArray(sx) ? sx : [sx]),
       ]}
+      className={`T1Widget-root ${className}`}
       {...props}
     >
       {children}
