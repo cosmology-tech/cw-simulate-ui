@@ -23,6 +23,7 @@ import { useAtomValue } from "jotai";
 import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import { Coin, CWSimulateEnv } from "@terran-one/cw-simulate";
 import { useCreateAccount, useDeleteAccount } from "../../utils/simulationUtils";
+import T1Container from "../grid/T1Container";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
@@ -99,48 +100,57 @@ const Accounts = () => {
   }
   return (
     <>
-      <Typography variant="h4">{chainId}</Typography>
+      <Grid item container sx={{mb: 2}}>
+        <Grid item flex={1}>
+          <Typography variant="h4">{chainId}</Typography>
+          <Typography variant="h6">Accounts</Typography>
+        </Grid>
+        <Grid item>
+          <Button variant="contained" onClick={handleClickOpen}>
+            New Account
+          </Button>
+        </Grid>
+      </Grid>
+      <Grid item flex={1}>
+        <T1Container>
+          <TableLayout
+            rows={data}
+            columns={{
+              id: 'ID',
+              address: 'Account Address',
+              balances: 'Balances',
+            }}
+            RowMenu={props => (
+              <>
+                <MenuItem onClick={() => handleDeleteAccount(props.row.address)}>
+                  <ListItemIcon>
+                    <DeleteIcon fontSize="small"/>
+                  </ListItemIcon>
+                  <ListItemText>Delete</ListItemText>
+                </MenuItem>
+              </>
+            )}
+          />
+        </T1Container>
+      </Grid>
       <Dialog open={openDialog} onClose={handleClose}>
         <DialogTitle>Add New Account</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Enter account address and balance.
           </DialogContentText>
-          <JsonCodeMirrorEditor jsonValue={DEFAULT_VALUE}
-                                setPayload={handleSetPayload}/>
+          <T1Container sx={{width: 400, height: 220}}>
+            <JsonCodeMirrorEditor
+              jsonValue={DEFAULT_VALUE}
+              setPayload={handleSetPayload}
+            />
+          </T1Container>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleAddAccount}>Add</Button>
         </DialogActions>
       </Dialog>
-      <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>
-        <Grid item xs={4} sx={{display: "flex", justifyContent: "end"}}>
-          <Button variant="contained" onClick={handleClickOpen}>
-            <Typography variant="button">New Account</Typography>
-          </Button>
-        </Grid>
-      </Grid>
-      <Grid item xs={12} sx={{mt: 4}}>
-        <TableLayout
-          rows={data}
-          columns={{
-            id: 'ID',
-            address: 'Account Address',
-            balances: 'Balances',
-          }}
-          RowMenu={props => (
-            <>
-              <MenuItem onClick={() => handleDeleteAccount(props.row.address)}>
-                <ListItemIcon>
-                  <DeleteIcon fontSize="small"/>
-                </ListItemIcon>
-                <ListItemText>Delete</ListItemText>
-              </MenuItem>
-            </>
-          )}
-        />
-      </Grid>
     </>
   );
 };
