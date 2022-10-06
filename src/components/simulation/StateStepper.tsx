@@ -91,6 +91,9 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                 "& .MuiStepIcon-root": {
                   color: response.error ? "red" : "",
                 },
+                "& .MuiStepLabel-root .Mui-active": {
+                  color: "#1976d2",
+                },
               }}
             >
               <StepLabel ref={containerRef}>
