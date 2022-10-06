@@ -43,7 +43,6 @@ body,
   height: 100vh
 }
 
-
 .cm-focused {
   outline: none !important;
 }
@@ -54,4 +53,8 @@ body,
 
 .cm-gutters {
   min-height: inherit;
+}
+
+#delete-icon:hover {
+  opacity: 0.6;
 }

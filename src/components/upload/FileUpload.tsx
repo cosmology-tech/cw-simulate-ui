@@ -1,5 +1,5 @@
 import React, { Suspense, useState } from "react";
-import { Box, CircularProgress, SnackbarProps } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
@@ -7,6 +7,7 @@ import { useSetAtom } from "jotai";
 import { useDropzone } from 'react-dropzone';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 interface IProps {
   dropzoneText?: string;
@@ -24,12 +25,26 @@ const FileUpload = ({
   dropzoneText,
   variant = 'both',
   onAccept,
+  onClear
 }: IProps) => {
   const setIsFileUploaded = useSetAtom(fileUploadedState);
   const [filename, setFilename] = useState('');
 
   const text = dropzoneText || "Click to upload a simulation file or contract binary, or drop a file here";
   const setNotification = useNotification();
+
+  const handleDropzoneClick = (event: any) => {
+    if (event.target.parentElement.id === 'delete-icon') {
+      event.stopPropagation();
+    }
+  };
+
+  const deleteFile = () => {
+    onClear();
+    setFilename('');
+    setIsFileUploaded(false);
+    setNotification('File removed');
+  };
 
   const handleOnFileDrop = (files: File[]) => {
     if (!files.length) {
@@ -107,13 +122,13 @@ const FileUpload = ({
   const { getRootProps, getInputProps } = useDropzone({ onDrop: handleOnFileDrop })
   return (
     <Suspense fallback={<Fallback/>}>
-      <div {...getRootProps()} style={{cursor: 'pointer', padding: '8px'}}>
+      <div {...getRootProps({onClick: handleDropzoneClick})} style={{cursor: 'pointer', padding: '8px'}}>
         <input {...getInputProps()} />
         {
           filename ?
             <>
               <AttachFileIcon fontSize="large" />
-              <div style={{fontSize: '24px'}}>{filename}</div>
+              <div style={{fontSize: '24px'}}>{filename} <DeleteIcon id='delete-icon' fontSize="small" onClick={deleteFile} /></div>
             </> :
             <>
               <div style={{fontSize: '24px'}}>{text}</div>
