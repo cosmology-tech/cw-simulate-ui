@@ -52,11 +52,8 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const containerRef = React.useRef();
   const [, setStepState] = useAtom(blockState);
-  const handleStateView = (
-    state: { dict: { [x: string]: string } },
-    response: any
-  ) => {
-    if (state && !response.error) {
+  const handleStateView = (state: { dict: { [x: string]: string } }) => {
+    if (state) {
       // @ts-ignore
       setStepState(JSON.parse(window.atob(state?.dict._root.entries[0][1])));
     } else {
@@ -74,10 +71,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   }, [currentState, contractAddress]);
 
   React.useEffect(() => {
-    handleStateView(
-      executionHistory[activeStep]?.state,
-      executionHistory[activeStep]?.response
-    );
+    handleStateView(executionHistory[activeStep]?.state);
   }, [activeStep]);
   return (
     <Stepper nonLinear activeStep={activeStep} orientation="vertical">
@@ -92,7 +86,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
           return (
             <Step
               key={`${label}${index}`}
-              onClick={handleStep(state, response)}
+              onClick={handleStep(index, state)}
               sx={{
                 "& .MuiStepIcon-root": {
                   color: response.error ? "red" : "",
@@ -106,7 +100,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                   ) : (
                     <ArrowRightIcon
                       onClick={() => {
-                        handleStateView(state, response);
+                        handleStateView(state);
                         setIsOpen(true);
                       }}
                     />
