@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useContext, useState } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
@@ -8,6 +8,7 @@ import { useDropzone } from 'react-dropzone';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { MenuDrawerContext } from "../drawer/T1Drawer";
 
 interface IProps {
   dropzoneText?: string;
@@ -33,6 +34,8 @@ const FileUpload = ({
   const text = dropzoneText || "Click to upload a simulation file or contract binary, or drop a file here";
   const setNotification = useNotification();
 
+  const menuApi = useContext(MenuDrawerContext);
+
   const handleDropzoneClick = (event: any) => {
     if (event.target.parentElement.id === 'delete-icon') {
       event.stopPropagation();
@@ -46,10 +49,19 @@ const FileUpload = ({
     setNotification('File removed');
   };
 
+  const setUploadSuccessState = (filename: string) => {
+    setIsFileUploaded(true);
+    setFilename(filename);
+    setNotification("File uploaded successfully");
+    menuApi.clearSelection();
+  }
+
   const handleOnFileDrop = (files: File[]) => {
     if (!files.length) {
       return;
     }
+
+    // TODO: confirmation prompt if simulation is already loaded?
 
     const file: File = files[0]; // we only support uploading one file
 
@@ -63,58 +75,61 @@ const FileUpload = ({
       return;
     }
 
-    if (file.type === "application/wasm") {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
+    const reader = new FileReader();
 
-      reader.onload = () => {
-        const contents = reader.result;
-        if (!contents) {
-          setNotification("Failed to extract bytecode", {severity: "error"});
-          return;
+    switch (file.type) {
+      case "application/wasm":
+        reader.readAsDataURL(file);
+
+        reader.onload = () => {
+          const contents = reader.result;
+          if (!contents) {
+            setNotification("Failed to extract bytecode", {severity: "error"});
+            return;
+          }
+
+          try {
+            const buffer = Buffer.from(extractByteCode(contents));
+            onAccept(file.name, buffer);
+          } catch (ex: any) {
+            setNotification(`Failed to extract & store WASM bytecode: ${ex.message ?? ex}`, {severity: "error"});
+            console.error(ex);
+            return;
+          }
+
+          setUploadSuccessState(file.name);
         }
 
-        try {
-          const buffer = Buffer.from(extractByteCode(contents));
-          onAccept(file.name, buffer);
-        } catch (ex: any) {
-          setNotification(`Failed to extract & store WASM bytecode: ${ex.message ?? ex}`, {severity: "error"});
-          console.error(ex);
-          return;
+        reader.onerror = () => {
+          setNotification("Error reading WASM binary file", {severity: "error"});
         }
 
-        setIsFileUploaded(true);
-        setFilename(file.name);
-        setNotification("File uploaded successfully");
-      }
+        break;
 
-      reader.onerror = () => {
-        setNotification("Error reading WASM binary file", {severity: "error"});
-      }
-    } else if (file.type === "application/json") {
-      const reader = new FileReader();
-      reader.readAsText(file);
-      reader.onload = () => {
-        // TODO: confirmation prompt if simulation is already loaded b/c we're about to override that
-        const json = JSON.parse(reader.result as string)
+      case ("application/json"):
+        reader.readAsText(file);
 
-        // TODO: validate simulation JSON
-        // if (!validateSimulationJSON(json)) {
-        //   setNotification("Invalid simulation file", {severity: "error"});
-        //   return;
-        // }
+        reader.onload = () => {
+          const json = JSON.parse(reader.result as string)
 
-        setIsFileUploaded(true);
-        setFilename(file.name);
-        setNotification("File uploaded successfully");
-        onAccept(file.name, json);
-      };
+          // TODO: validate simulation JSON
+          // if (!validateSimulationJSON(json)) {
+          //   setNotification("Invalid simulation file", {severity: "error"});
+          //   return;
+          // }
 
-      reader.onerror = () => {
-        setNotification("Error reading simulation file", {severity: "error"});
-      }
-    } else {
-      throw new Error("Not implemented");
+          setUploadSuccessState(file.name);
+          onAccept(file.name, json);
+        };
+
+        reader.onerror = () => {
+          setNotification("Error reading simulation file", {severity: "error"});
+        }
+
+        break;
+
+      default:
+        throw new Error("Not implemented");
     }
   };
 

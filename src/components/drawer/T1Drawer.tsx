@@ -11,6 +11,7 @@ import { DEFAULT_CHAIN } from "../../configs/variables";
 type MenuDrawerAPI = {
   register(data: MenuDrawerRegisterOptions): void;
   unregister(nodeId: string): void;
+  clearSelection(): void;
 }
 
 type MenuDrawerRegisterOptions = MenuDrawerData[string] & {
@@ -110,6 +111,9 @@ function HierarchyMenu(props: IHierarchyMenuProps) {
       delete data.current[nodeId];
       setExpanded(prev => prev.filter(curr => curr !== nodeId));
     },
+    clearSelection() {
+      setSelected('');
+    }
   }), [location]);
 
   const handleFocusNode = useCallback((e: React.SyntheticEvent, nodeId: string) => {
