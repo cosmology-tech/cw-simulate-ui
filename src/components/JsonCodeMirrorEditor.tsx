@@ -1,11 +1,12 @@
-import React from "react";
-import ReactCodeMirror from "@uiw/react-codemirror";
 import { json } from "@codemirror/lang-json";
-import { Box, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
+import ReactCodeMirror from "@uiw/react-codemirror";
+import { useAtom } from "jotai";
+import React from "react";
+import { jsonErrorState } from "../atoms/jsonErrorState";
 import { GREY_6 } from "../configs/variables";
 import { validateJSON } from "../utils/fileUtils";
-import { jsonErrorState } from "../atoms/jsonErrorState";
-import { useAtom } from "jotai";
+import T1Container from "./grid/T1Container";
 
 interface IJsonCodeMirrorEditorProps {
   jsonValue: string;
@@ -36,15 +37,7 @@ export const JsonCodeMirrorEditor = ({
         position="relative"
         border={`1px solid ${GREY_6}`}
       >
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}
-        >
+        <T1Container>
           <ReactCodeMirror
             value={jsonValue}
             extensions={[json()]}
@@ -69,7 +62,7 @@ export const JsonCodeMirrorEditor = ({
             placeholder={JSON.stringify(defaultPlaceholder, null, 2)}
             style={{border: "none", height: "100%"}}
           />
-        </Box>
+        </T1Container>
       </Grid>
       {jsonError && (
         <Grid item>
