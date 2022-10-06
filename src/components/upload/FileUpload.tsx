@@ -53,7 +53,7 @@ const FileUpload = ({
     setIsFileUploaded(true);
     setFilename(filename);
     setNotification("File uploaded successfully");
-    menuApi.clearSelection();
+    menuApi?.clearSelection();
   }
 
   const handleOnFileDrop = (files: File[]) => {
