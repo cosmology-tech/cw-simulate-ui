@@ -58,7 +58,7 @@ export const OutputCard = ({
         <ReactDiffViewer
           oldValue={beforeState}
           newValue={afterState}
-          showDiffOnly
+          splitView={false}
         />
       ) : (
         <Typography variant={"body2"} color={GREY_3}>

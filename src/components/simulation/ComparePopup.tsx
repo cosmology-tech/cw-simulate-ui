@@ -1,4 +1,4 @@
-import { Grid, Button, Popover, TextField } from "@mui/material";
+import { Grid, Button, Popover, TextField, Typography } from "@mui/material";
 import DifferenceOutlinedIcon from "@mui/icons-material/DifferenceOutlined";
 import React from "react";
 import { useAtom } from "jotai";
@@ -15,6 +15,7 @@ export const ComparePopup = ({
 }: IProps) => {
   const [_, setCompareStates] = useAtom(compareStates);
   const [__, setStateResponseTab] = useAtom(stateResponseTabState);
+  const [error, setError] = React.useState("");
   const [anchorEl, setAnchorEl] =
     React.useState<HTMLButtonElement | null>(null);
   const handleDiffClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -31,12 +32,17 @@ export const ComparePopup = ({
   const id = open ? "simple-popover" : undefined;
   const keyDownHandler = (e: any) => {
     if (e.key == "Enter") {
-      console.log("value", e.target.value);
+      const toCompareState = e.target.value;
+      if (toCompareState > executionHistory.length) {
+        setError("Invalid State");
+        return;
+      }
       setCompareStates({
         state1: getStateString(executionHistory[currentActiveState].state),
         state2: getStateString(executionHistory[e.target.value - 1].state),
       });
       setStateResponseTab("state");
+      setError("");
       e.preventDefault();
     }
   };
@@ -68,6 +74,11 @@ export const ComparePopup = ({
             onKeyPress={(e) => keyDownHandler(e)}
           />
         </Grid>
+        {error && (
+          <Typography variant="subtitle2" color="red" sx={{ p: 1 }}>
+            {error}
+          </Typography>
+        )}
       </Popover>
     </Grid>
   );
