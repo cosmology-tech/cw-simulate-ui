@@ -20,8 +20,15 @@ export const StateRenderer = ({isFileUploaded}: IProps) => {
   // TODO: Check current active state and executionHistory length.
   const isStateTraversed = false;
   return (
-    <Grid item xs={12} sx={{height: "100%"}}>
-      <Grid item xs={12}>
+    <Grid
+      item
+      container
+      direction="column"
+      height="100%"
+      gap={2}
+      flexWrap="nowrap"
+    >
+      <Grid item>
         <StateResponseTab
           currentTab={currentTab}
           setCurrentTab={setCurrentTab}
@@ -30,7 +37,7 @@ export const StateRenderer = ({isFileUploaded}: IProps) => {
           isStateTraversed={isStateTraversed}
         />
       </Grid>
-      <Grid item xs={12} sx={{height: "80%"}}>
+      <Grid item flex={1}>
         {currentTab === "state" ? (
           <OutputCard
             response={currentJSON}

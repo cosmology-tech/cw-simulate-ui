@@ -1,18 +1,12 @@
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./styles/styles.scss";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MenuDrawer, { DRAWER_WIDTH } from "./components/drawer";
-import Home from "./components/home/Home";
-import Simulation from "./components/simulation/Simulation";
-import Chains from "./components/chains/Chains";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
 import SnackbarNotification from "./components/notification/SnackbarNotification";
-import Config from "./components/chains/Config";
-import State from "./components/chains/State";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
 import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
-import Accounts from "./components/chains/Accounts";
+import "./styles/styles.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
@@ -21,48 +15,7 @@ root.render(
     <BrowserRouter>
       <PageRefreshConfirmation/>
       <SnackbarNotification/>
-      <Box sx={{display: "flex", height: "100%"}}>
-        <MenuDrawer/>
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            p: 3,
-            width: {sm: `calc(100% - ${DRAWER_WIDTH}px)`},
-            display: "flex",
-            flexDirection: "column",
-            overflow: "scroll",
-          }}
-        >
-          <Toolbar/>
-          <Routes>
-            <Route
-              index
-              element={
-                <Home/>
-              }
-            />
-
-            {/* <Chains /> ensures the :chainId exists. Do not remove. */}
-            <Route path="/chains" element={<Chains/>}>
-              <Route path=":chainId/config" element={<Config/>}/>
-              <Route path=":chainId/state" element={<State/>}/>
-              {/* TODO: Commented out accounts for now until we have accounts in the cw-simulate */}
-              <Route path=":chainId/accounts" element={<Accounts/>}/>
-              <Route path=":chainId/instances/:instanceAddress" element={<Simulation/>}/>
-            </Route>
-
-            <Route
-              path="*"
-              element={
-                <main style={{padding: "1rem"}}>
-                  <p>There's nothing here!</p>
-                </main>
-              }
-            />
-          </Routes>
-        </Box>
-      </Box>
+      <App/>
     </BrowserRouter>
   </React.StrictMode>
 );

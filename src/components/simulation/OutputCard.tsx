@@ -1,7 +1,8 @@
 import React from "react";
 import { JSONTree } from "react-json-tree";
-import { Box, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { GREY_3, GREY_6 } from "../../configs/variables";
+import T1Container from "../grid/T1Container";
 
 interface IProps {
   response: JSON | undefined | any;
@@ -31,24 +32,23 @@ const theme = {
 
 export const OutputCard = ({response, placeholder}: IProps) => {
   return (
-    <Box
+    <T1Container
       sx={{
-        width: "100%",
-        mt: 2,
-        overflow: "scroll",
-        padding: 2,
         border: `1px solid ${GREY_6}`,
-        height: "100%",
-        textAlign: "left",
+        textAlign: 'left',
+        '> .T1Container-content': {
+          pl: 1,
+          pr: 1,
+        },
       }}
     >
       {response !== undefined ? (
         <JSONTree data={response} theme={theme} invertTheme={false}/>
       ) : (
-        <Typography variant={"body2"} sx={{color: `${GREY_3}`}}>
+        <Typography variant={"body2"} color={GREY_3}>
           {placeholder}
         </Typography>
       )}
-    </Box>
+    </T1Container>
   );
 };

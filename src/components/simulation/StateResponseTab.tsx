@@ -1,4 +1,4 @@
-import { Tab, Tabs } from "@mui/material";
+import { Grid, Tab, Tabs } from "@mui/material";
 import React from "react";
 import DiffSwitch from "./DiffSwitch";
 
@@ -21,31 +21,29 @@ const StateResponseTab = ({
     setCurrentTab(newValue === "response" ? "response" : "state");
   };
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
+    <Grid
+      container
+      direction="column"
+      justifyContent="space-between"
+      alignItems="center"
     >
-      <div style={{display: "flex"}}>
+      <Grid item container>
         <Tabs
           value={currentTab}
           onChange={onChangeHandler}
-          aria-label="State/Response"
+          aria-label="State & Response tabs"
         >
           <Tab value="state" label="State"/>
           <Tab value="response" label="Response"/>
           {/* <Tab value="memory" label="Memory" /> */}
         </Tabs>
-      </div>
+      </Grid>
       {isStateTraversed && (
-        <div>
+        <Grid item>
           <DiffSwitch isChecked={isChecked} setIsChecked={setIsChecked}/>
-        </div>
+        </Grid>
       )}
-    </div>
+    </Grid>
   );
 };
 

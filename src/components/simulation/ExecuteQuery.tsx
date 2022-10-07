@@ -11,6 +11,8 @@ import { SENDER_ADDRESS } from "../../configs/variables";
 import { useAtom, useAtomValue } from "jotai";
 import { stateResponseTabState } from "../../atoms/stateResponseTabState";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
+import { Box } from "@mui/system";
+import T1Container from "../grid/T1Container";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
@@ -85,39 +87,35 @@ export const ExecuteQuery = ({
   }, [executeQueryTab]);
 
   return (
-    <Grid item xs={12} sx={{height: "100%", overflow: "scroll"}}>
-      <Grid item xs={12}>
+    <Grid
+      item
+      container
+      direction="column"
+      flexWrap="nowrap"
+      sx={{
+        height: '100%',
+        gap: 2,
+      }}
+    >
+      <Grid item flexShrink={0}>
         <ExecuteQueryTab/>
       </Grid>
-      <Grid
-        item
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          textAlign: "left",
-          height: "60%",
-          mt: 2,
-        }}
-      >
-        <JsonCodeMirrorEditor
-          jsonValue={payload}
-          setPayload={handleSetPayload}
-        />
+      <Grid item flex={1} position="relative">
+        <T1Container>
+          <JsonCodeMirrorEditor
+            jsonValue={payload}
+            setPayload={handleSetPayload}
+          />
+        </T1Container>
       </Grid>
-      <Grid
-        item
-        xs={2}
-        sx={{mt: 2, display: "flex", justifyContent: "flex-start"}}
-      >
+      <Grid item flexShrink={0}>
         {/* TODO: Enable Dry Run */}
         <Button
-          sx={{mt: 2}}
-          variant={"contained"}
+          variant="contained"
           onClick={onRunHandler}
           disabled={!payload.length || jsonError.length > 0}
         >
-          <Typography variant="button">Run</Typography>
+          Run
         </Button>
       </Grid>
     </Grid>
