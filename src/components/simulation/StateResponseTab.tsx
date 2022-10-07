@@ -7,7 +7,6 @@ interface IProps {
   setCurrentTab: (val: "response" | "state") => void;
   setIsChecked: (val: boolean) => void;
   isChecked: boolean;
-  isStateTraversed: boolean;
 }
 
 const StateResponseTab = ({
@@ -15,32 +14,26 @@ const StateResponseTab = ({
   setCurrentTab,
   isChecked,
   setIsChecked,
-  isStateTraversed,
 }: IProps) => {
   const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(newValue === "response" ? "response" : "state");
   };
   return (
-    <Grid
-      container
-      direction="column"
-      justifyContent="space-between"
-      alignItems="center"
-    >
-      <Grid item container>
+    <Grid container justifyContent="space-between" alignItems="center">
+      <Grid item>
         <Tabs
           value={currentTab}
           onChange={onChangeHandler}
           aria-label="State & Response tabs"
         >
-          <Tab value="state" label="State"/>
-          <Tab value="response" label="Response"/>
+          <Tab value="state" label="State" />
+          <Tab value="response" label="Response" />
           {/* <Tab value="memory" label="Memory" /> */}
         </Tabs>
       </Grid>
-      {isStateTraversed && (
+      {isChecked && (
         <Grid item>
-          <DiffSwitch isChecked={isChecked} setIsChecked={setIsChecked}/>
+          <DiffSwitch isChecked={isChecked} setIsChecked={setIsChecked} />
         </Grid>
       )}
     </Grid>

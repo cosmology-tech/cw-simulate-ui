@@ -2,13 +2,26 @@ import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { Box, Divider, Grid, Paper, Slide, StepContent, StepLabel, Typography, } from "@mui/material";
+import {
+  Box,
+  Button,
+  Divider,
+  Grid,
+  Paper,
+  Popover,
+  Slide,
+  StepContent,
+  StepLabel,
+  TextField,
+  Typography,
+} from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { JSONTree } from "react-json-tree";
 import { blockState } from "../../atoms/blockState";
 import { useExecutionHistory } from "../../utils/simulationUtils";
 import { useAtom } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
+import { ComparePopup } from "./ComparePopup";
 
 const theme = {
   scheme: "chalk",
@@ -42,6 +55,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   const [currentState, _] = useAtom(currentStateNumber);
   const [activeStep, setActiveStep] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
+
   const containerRef = React.useRef();
   const [, setStepState] = useAtom(blockState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
@@ -89,18 +103,26 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
               }}
             >
               <StepLabel ref={containerRef}>
-                <Grid container alignItems="center">
-                  {activeStep === index && isOpen ? (
-                    <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
-                  ) : (
-                    <ArrowRightIcon
-                      onClick={() => {
-                        handleStateView(state);
-                        setIsOpen(true);
-                      }}
+                <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
+                  <Grid container alignItems="center">
+                    {activeStep === index && isOpen ? (
+                      <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
+                    ) : (
+                      <ArrowRightIcon
+                        onClick={() => {
+                          handleStateView(state);
+                          setIsOpen(true);
+                        }}
+                      />
+                    )}
+                    {label}
+                  </Grid>
+                  {executionHistory.length > 1 && (
+                    <ComparePopup
+                      currentActiveState={activeStep}
+                      executionHistory={executionHistory}
                     />
                   )}
-                  {label}
                 </Grid>
               </StepLabel>
 
@@ -133,7 +155,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                           mb: 1,
                         }}
                       >
-                        <Box sx={{position: "sticky", top: 0}}>
+                        <Box sx={{ position: "sticky", top: 0 }}>
                           <Typography
                             variant="caption"
                             sx={{
@@ -144,7 +166,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                           >
                             Request
                           </Typography>
-                          <Divider orientation="horizontal"/>
+                          <Divider orientation="horizontal" />
                         </Box>
                         <Box
                           sx={{
@@ -170,15 +192,15 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                           position: "relative",
                         }}
                       >
-                        <Box sx={{position: "sticky", top: 0}}>
-                          <Divider orientation="horizontal"/>
+                        <Box sx={{ position: "sticky", top: 0 }}>
+                          <Divider orientation="horizontal" />
                           <Typography
                             variant="caption"
                             sx={{ display: "flex", justifyContent: "center" }}
                           >
                             Response
                           </Typography>
-                          <Divider orientation="horizontal"/>
+                          <Divider orientation="horizontal" />
                         </Box>
                         <Box
                           sx={{
