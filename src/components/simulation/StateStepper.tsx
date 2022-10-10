@@ -55,8 +55,6 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   const [currentState, _] = useAtom(currentStateNumber);
   const [activeStep, setActiveStep] = React.useState(0);
   const [isOpen, setIsOpen] = React.useState(false);
-
-  const containerRef = React.useRef();
   const [, setStepState] = useAtom(blockState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     if (state) {
@@ -102,7 +100,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                 },
               }}
             >
-              <StepLabel ref={containerRef}>
+              <StepLabel>
                 <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Grid container alignItems="center">
                     {activeStep === index && isOpen ? (
@@ -128,95 +126,89 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
 
               <StepContent>
                 {activeStep === index && isOpen && (
-                  <Slide
-                    direction="down"
-                    in={true}
-                    container={containerRef.current}
+                  <Paper
+                    elevation={3}
+                    sx={{
+                      height: "30vh",
+                      overflow: "auto",
+                      textAlign: "left",
+                      display: "flex",
+                      flexDirection: "column",
+                      borderTop: "1px solid rgb(0, 0, 0, 0.12)",
+                    }}
                   >
-                    <Paper
-                      elevation={3}
+                    <Grid
+                      item
+                      container
+                      direction="column"
+                      xs={12}
                       sx={{
-                        height: "30vh",
+                        position: "relative",
                         overflow: "auto",
-                        textAlign: "left",
-                        display: "flex",
-                        flexDirection: "column",
-                        borderTop: "1px solid rgb(0, 0, 0, 0.12)",
+                        mb: 1,
                       }}
                     >
-                      <Grid
-                        item
-                        container
-                        direction="column"
-                        xs={12}
-                        sx={{
-                          position: "relative",
-                          overflow: "auto",
-                          mb: 1,
-                        }}
-                      >
-                        <Box sx={{ position: "sticky", top: 0 }}>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              position: "sticky",
-                            }}
-                          >
-                            Request
-                          </Typography>
-                          <Divider orientation="horizontal" />
-                        </Box>
-                        <Box
+                      <Box sx={{ position: "sticky", top: 0 }}>
+                        <Typography
+                          variant="caption"
                           sx={{
-                            overflow: "auto",
-                            marginLeft: "1rem",
+                            display: "flex",
+                            justifyContent: "center",
+                            position: "sticky",
                           }}
                         >
-                          <JSONTree
-                            data={request}
-                            theme={theme}
-                            invertTheme={false}
-                          />
-                        </Box>
-                      </Grid>
-                      <Divider orientation="vertical" flexItem />
-                      <Grid
-                        item
-                        xs={12}
+                          Request
+                        </Typography>
+                        <Divider orientation="horizontal" />
+                      </Box>
+                      <Box
                         sx={{
-                          display: "flex",
-                          flexDirection: "column",
                           overflow: "auto",
-                          position: "relative",
+                          marginLeft: "1rem",
                         }}
                       >
-                        <Box sx={{ position: "sticky", top: 0 }}>
-                          <Divider orientation="horizontal" />
-                          <Typography
-                            variant="caption"
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          >
-                            Response
-                          </Typography>
-                          <Divider orientation="horizontal" />
-                        </Box>
-                        <Box
-                          sx={{
-                            overflow: "auto",
-                            marginLeft: "1rem",
-                          }}
+                        <JSONTree
+                          data={request}
+                          theme={theme}
+                          invertTheme={false}
+                        />
+                      </Box>
+                    </Grid>
+                    <Divider orientation="vertical" flexItem />
+                    <Grid
+                      item
+                      xs={12}
+                      sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        overflow: "auto",
+                        position: "relative",
+                      }}
+                    >
+                      <Box sx={{ position: "sticky", top: 0 }}>
+                        <Divider orientation="horizontal" />
+                        <Typography
+                          variant="caption"
+                          sx={{ display: "flex", justifyContent: "center" }}
                         >
-                          <JSONTree
-                            data={response}
-                            theme={theme}
-                            invertTheme={false}
-                          />
-                        </Box>
-                      </Grid>
-                    </Paper>
-                  </Slide>
+                          Response
+                        </Typography>
+                        <Divider orientation="horizontal" />
+                      </Box>
+                      <Box
+                        sx={{
+                          overflow: "auto",
+                          marginLeft: "1rem",
+                        }}
+                      >
+                        <JSONTree
+                          data={response}
+                          theme={theme}
+                          invertTheme={false}
+                        />
+                      </Box>
+                    </Grid>
+                  </Paper>
                 )}
               </StepContent>
             </Step>
