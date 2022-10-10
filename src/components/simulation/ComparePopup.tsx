@@ -33,7 +33,7 @@ export const ComparePopup = ({
   const keyDownHandler = (e: any) => {
     if (e.key == "Enter") {
       const toCompareState = e.target.value;
-      if (toCompareState > executionHistory.length) {
+      if (toCompareState > executionHistory.length || toCompareState < 0) {
         setError("Invalid State");
         return;
       }
