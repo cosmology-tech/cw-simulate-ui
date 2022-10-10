@@ -1,3 +1,5 @@
+import type { GridSize } from "@mui/system";
+
 export type Defined<T> = T extends null | undefined ? never : T;
 
 export type AsJSON<T> = T extends JSONifiable
@@ -14,4 +16,10 @@ export type AsJSON<T> = T extends JSONifiable
 
 type JSONifiable = {
   toJSON(): any;
+}
+
+type GridSizeName = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+export type GridSizeProps = {
+  [s in GridSizeName]?: boolean | GridSize;
 }

@@ -7,6 +7,7 @@ import { validateConfigJSON } from "../../utils/fileUtils";
 import { useReconfigureChainForSimulation } from "../../utils/simulationUtils";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useAtomValue } from "jotai";
+import T1Container from "../grid/T1Container";
 
 interface IConfigProps {
   chainId?: string | undefined
@@ -44,11 +45,19 @@ const Config = (props: IConfigProps) => {
     <>
       <Typography variant="h4">{chainId}</Typography>
       <Typography variant="h6">Configuration</Typography>
-      <JsonCodeMirrorEditor jsonValue={jsonValue} setPayload={handleSetPayload}/>
       <Grid
         item
-        xs={12}
-        sx={{display: "flex", justifyContent: "end", marginTop: 2}}
+        flex={1}
+      >
+        <T1Container>
+          <JsonCodeMirrorEditor jsonValue={jsonValue} setPayload={handleSetPayload}/>
+        </T1Container>
+      </Grid>
+      <Grid
+        item
+        container
+        justifyContent="flex-end"
+        sx={{mt: 2}}
       >
         <Button variant="contained" sx={{borderRadius: 2}} onClick={handleOnClick}>
           <Typography variant="button">Update Configuration</Typography>

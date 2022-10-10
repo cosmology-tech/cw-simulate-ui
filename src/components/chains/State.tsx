@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import TableLayout from "./TableLayout";
 import { useMemo } from "react";
 import { useAtomValue } from "jotai";
+import T1Container from "../grid/T1Container";
 
 type Row = {
   contract: string;
@@ -29,18 +30,27 @@ const State = () => {
     }
     return rows;
   }, [states]);
-
-  return (
+  
+  const title = (
     <>
       <Typography variant="h4">{chainId}</Typography>
-      {data.length ? (
-        <>
-          <Grid item xs={12} sx={{display: "flex", justifyContent: "end"}}>
-            <Grid item xs={4}>
-              <SearchBar/>
-            </Grid>
+      <Typography variant="h6">States</Typography>
+    </>
+  );
+
+  if (data.length) {
+    return (
+      <>
+        <Grid item container sx={{mb: 2}}>
+          <Grid item flex={1}>
+            {title}
           </Grid>
-          <Grid item xs={12} sx={{mt: 4}}>
+          <Grid item xs={4}>
+            <SearchBar/>
+          </Grid>
+        </Grid>
+        <Grid item flex={1}>
+          <T1Container>
             <TableLayout
               rows={data}
               columns={{
@@ -48,17 +58,23 @@ const State = () => {
                 key: 'Key',
                 value: 'Value',
               }}
-              keyField='key'
+              keyField="key"
             />
-          </Grid>
-        </>
-      ) : (
-        <Grid item xs={12} sx={{display: "flex", justifyContent: "center"}}>
+          </T1Container>
+        </Grid>
+      </>
+    );
+  }
+  else {
+    return (
+      <>
+        {title}
+        <Grid item container justifyContent="center" sx={{mt: 6, mb: 6}}>
           <Typography variant="h6">No States</Typography>
         </Grid>
-      )}
-    </>
-  );
+      </>
+    );
+  }
 };
 
 export default State;

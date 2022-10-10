@@ -7,37 +7,59 @@ import { responseState } from "../../atoms/responseState";
 import { blockState } from "../../atoms/blockState";
 import { useAtom, useAtomValue } from "jotai";
 import { stateResponseTabState } from "../../atoms/stateResponseTabState";
+import { compareStates } from "../../atoms/compareStates";
 
 interface IProps {
   isFileUploaded: boolean;
 }
 
-export const StateRenderer = ({isFileUploaded}: IProps) => {
+export const StateRenderer = ({ isFileUploaded }: IProps) => {
   const [currentTab, setCurrentTab] = useAtom(stateResponseTabState);
+
+  const compareStateObj = useAtomValue(compareStates);
   const [isChecked, setIsChecked] = React.useState(false);
   const response = useAtomValue(responseState);
   const currentJSON = useAtomValue(blockState);
-  // TODO: Check current active state and executionHistory length.
-  const isStateTraversed = false;
+  console.log(compareStateObj);
+  React.useEffect(() => {
+    if (compareStateObj.state1 != "" && compareStateObj.state2 != "")
+      setIsChecked(true);
+  }, [compareStateObj]);
+
   return (
-    <Grid item xs={12} sx={{height: "100%"}}>
-      <Grid item xs={12}>
+    <Grid
+      item
+      container
+      direction="column"
+      height="100%"
+      gap={2}
+      flexWrap="nowrap"
+    >
+      <Grid item>
         <StateResponseTab
           currentTab={currentTab}
           setCurrentTab={setCurrentTab}
           isChecked={isChecked}
           setIsChecked={setIsChecked}
-          isStateTraversed={isStateTraversed}
         />
       </Grid>
-      <Grid item xs={12} sx={{height: "80%"}}>
+      <Grid item flex={1}>
         {currentTab === "state" ? (
-          <OutputCard
-            response={currentJSON}
-            placeholder="Your state will appear here."
-          />
+          isChecked ? (
+            <OutputCard
+              beforeState={compareStateObj.state1}
+              afterState={compareStateObj.state2}
+              isChecked={isChecked}
+              placeholder="Your state diff will appear here."
+            />
+          ) : (
+            <OutputCard
+              response={currentJSON}
+              placeholder="Your state will appear here."
+            />
+          )
         ) : (
-          <OutputRenderer response={response}/>
+          <OutputRenderer response={response} />
         )}
       </Grid>
     </Grid>
