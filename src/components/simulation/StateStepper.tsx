@@ -68,6 +68,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
 
             return (
               <Step
+                ref={el => activeStep === index && activeStep === executionHistory.length - 1 && el?.scrollIntoView()}
                 key={`${label}${index}`}
                 onClick={handleStep(index, state)}
                 sx={{
