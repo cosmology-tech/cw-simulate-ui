@@ -1,19 +1,10 @@
 import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import {
-  Box,
-  Button,
-  Divider,
   Grid,
-  Paper,
-  StepContent,
   StepLabel,
-  Typography,
 } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { JSONTree } from "react-json-tree";
 import { blockState } from "../../atoms/blockState";
 import { useExecutionHistory } from "../../utils/simulationUtils";
 import { useAtom } from "jotai";
@@ -21,7 +12,6 @@ import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { ComparePopup } from "./ComparePopup";
 import { stepRequestState } from "../../atoms/stepRequestState";
 import { stepResponseState } from "../../atoms/stepResponseState";
-import { RequestResponse } from "./RequestResponse";
 
 interface IProps {
   chainId: string;
@@ -104,13 +94,6 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                     )}
                   </Grid>
                 </StepLabel>
-
-                {/* Keeping this in case we need Request/Response dropdown
-                 <StepContent>
-                  {activeStep === index && isOpen && (
-                    <RequestResponse request={request} response={response} />
-                  )}
-                </StepContent> */}
               </Step>
             );
           }

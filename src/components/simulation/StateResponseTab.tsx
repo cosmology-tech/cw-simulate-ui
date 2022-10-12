@@ -33,8 +33,8 @@ const StateResponseTab = ({
           aria-label="State & Response tabs"
         >
           <Tab value="state" label="State" />
-          <Tab value="response" label="Response" />
           <Tab value="request" label="Request" />
+          <Tab value="response" label="Response" />
         </Tabs>
       </Grid>
       {isChecked && (
