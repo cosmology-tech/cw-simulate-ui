@@ -4,7 +4,7 @@ import DiffSwitch from "./DiffSwitch";
 
 interface IProps {
   currentTab: string;
-  setCurrentTab: (val: "response" | "state") => void;
+  setCurrentTab: (val: "response" | "state" | "request") => void;
   setIsChecked: (val: boolean) => void;
   isChecked: boolean;
 }
@@ -16,7 +16,13 @@ const StateResponseTab = ({
   setIsChecked,
 }: IProps) => {
   const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue === "response" ? "response" : "state");
+    setCurrentTab(
+      newValue === "response"
+        ? "response"
+        : newValue === "request"
+        ? "request"
+        : "state"
+    );
   };
   return (
     <Grid container justifyContent="space-between" alignItems="center">
@@ -28,7 +34,7 @@ const StateResponseTab = ({
         >
           <Tab value="state" label="State" />
           <Tab value="response" label="Response" />
-          {/* <Tab value="memory" label="Memory" /> */}
+          <Tab value="request" label="Request" />
         </Tabs>
       </Grid>
       {isChecked && (
