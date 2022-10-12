@@ -1,32 +1,22 @@
 import {
   Grid,
-  Paper,
-  styled,
-  SxProps,
   Tab,
   Tabs,
-  Theme,
   Typography,
 } from "@mui/material";
 import { useAtom, useAtomValue } from "jotai";
-import React, { ReactNode } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { responseState } from "../../atoms/reponseState";
-import type { GridSizeProps } from "../../utils/typeUtils";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 import { ExecuteQuery } from "./ExecuteQuery";
-import { GREY_6 } from "../../configs/variables";
 import { OutputCard } from "./OutputCard";
 import T1Container from "../grid/T1Container";
 import Widget from "./Widget";
-
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-}));
+import Row from "./Row";
+import SplitView from "./SplitView";
 
 const Simulation = () => {
   const [response, setResponse] = useAtom(responseState);
@@ -155,58 +145,3 @@ const Simulation = () => {
 };
 
 export default Simulation;
-
-interface ISplitViewProps {
-  children?: ReactNode;
-  className?: string;
-}
-
-function SplitView({ children, ...props }: ISplitViewProps) {
-  return (
-    <Grid
-      container
-      direction="column"
-      spacing={2}
-      sx={{
-        height: "100%",
-        width: "100%",
-      }}
-      {...props}
-    >
-      {children}
-    </Grid>
-  );
-}
-
-interface IRowProps extends GridSizeProps {
-  children?: ReactNode;
-  className?: string;
-  sx?: SxProps<Theme>;
-}
-
-function Row({ children, ...props }: IRowProps) {
-  return (
-    <Grid
-      item
-      {...props}
-      sx={{
-        height: "100%",
-      }}
-    >
-      <Grid
-        container
-        direction="row"
-        component={StyledPaper}
-        sx={{
-          height: "100%",
-          overflow: "auto",
-          "> .T1Widget-root:not(:first-of-type)": {
-            borderTop: `1px solid ${GREY_6}`,
-          },
-        }}
-      >
-        {children}
-      </Grid>
-    </Grid>
-  );
-}
