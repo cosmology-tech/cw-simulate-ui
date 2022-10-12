@@ -9,9 +9,7 @@ import { useExecute, useQuery } from "../../utils/simulationUtils";
 import { MsgInfo } from "@terran-one/cw-simulate";
 import { SENDER_ADDRESS } from "../../configs/variables";
 import { useAtom, useAtomValue } from "jotai";
-import { stateResponseTabState } from "../../atoms/stateResponseTabState";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
-import { Box } from "@mui/system";
 import T1Container from "../grid/T1Container";
 
 interface IProps {
@@ -28,9 +26,6 @@ export const ExecuteQuery = ({
   const [payload, setPayload] = useState("");
   const executeQueryTab = useAtomValue(executeQueryTabState);
   const [currentState, setCurrentState] = useAtom(currentStateNumber);
-  const [stateResponseTab, setStateResponseTab] = useAtom(
-    stateResponseTabState
-  );
   const jsonError = useAtomValue(jsonErrorState);
   const setNotification = useNotification();
   const execute = useExecute();
@@ -75,7 +70,6 @@ export const ExecuteQuery = ({
     } else {
       handleQuery();
     }
-    setStateResponseTab("response");
   };
 
   const handleSetPayload = (val: string) => {
@@ -93,12 +87,12 @@ export const ExecuteQuery = ({
       direction="column"
       flexWrap="nowrap"
       sx={{
-        height: '100%',
+        height: "100%",
         gap: 2,
       }}
     >
       <Grid item flexShrink={0}>
-        <ExecuteQueryTab/>
+        <ExecuteQueryTab />
       </Grid>
       <Grid item flex={1} position="relative">
         <T1Container>
@@ -108,8 +102,11 @@ export const ExecuteQuery = ({
           />
         </T1Container>
       </Grid>
-      <Grid item flexShrink={0}>
-        {/* TODO: Enable Dry Run */}
+      <Grid
+        item
+        flexShrink={0}
+        sx={{ display: "flex", justifyContent: "flex-end" }}
+      >
         <Button
           variant="contained"
           onClick={onRunHandler}
