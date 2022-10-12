@@ -21,6 +21,7 @@ import { ExecuteQuery } from "./ExecuteQuery";
 import { GREY_6 } from "../../configs/variables";
 import { OutputCard } from "./OutputCard";
 import T1Container from "../grid/T1Container";
+import Widget from "./Widget";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -207,40 +208,6 @@ function Row({ children, ...props }: IRowProps) {
       >
         {children}
       </Grid>
-    </Grid>
-  );
-}
-
-interface IWidgetProps {
-  children?: ReactNode;
-  /** An optional size between 1-12. At 12, size is 100%. Lower values are multiples of 100%/12. Default is 12. */
-  size?: number;
-  className?: string;
-  sx?: SxProps<Theme>;
-}
-
-function Widget({
-  children,
-  size = 12,
-  className,
-  sx,
-  ...props
-}: IWidgetProps) {
-  return (
-    <Grid
-      item
-      sx={[
-        {
-          p: 2,
-          height: `${(100 * size) / 12}%`,
-          overflow: "auto",
-        },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
-      className={`T1Widget-root ${className}`}
-      {...props}
-    >
-      {children}
     </Grid>
   );
 }
