@@ -9,7 +9,7 @@ interface IProps {
   beforeState?: string;
   afterState?: string;
   response?: JSON | undefined | any;
-  isChecked?: boolean;
+  isVisible?: boolean;
   placeholder: string;
 }
 
@@ -39,7 +39,7 @@ export const OutputCard = ({
   afterState,
   response,
   placeholder,
-  isChecked,
+  isVisible,
 }: IProps) => {
   return (
     <T1Container
@@ -54,7 +54,7 @@ export const OutputCard = ({
     >
       {response !== undefined ? (
         <JSONTree data={response} theme={theme} invertTheme={false} />
-      ) : isChecked ? (
+      ) : isVisible ? (
         <ReactDiffViewer
           oldValue={beforeState}
           newValue={afterState}

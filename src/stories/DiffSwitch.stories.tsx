@@ -1,20 +1,20 @@
-import DiffSwitch from "../components/simulation/DiffSwitch";
+import CloseDiff from "../components/simulation/CloseDiff";
 
 export default {
   title: "DiffSwitch",
-  component: DiffSwitch,
+  component: CloseDiff,
   argTypes: {
     isChecked: {
       control: {
         type: "boolean",
-      }
+      },
     },
     setIsChecked: {
       control: {
         type: "function",
-      }
-    }
-  }
-}
+      },
+    },
+  },
+};
 
-export const Default = (args: any) => <DiffSwitch {...args} />
+export const Default = (args: any) => <CloseDiff {...args} />;
