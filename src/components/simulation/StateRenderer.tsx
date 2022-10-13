@@ -21,7 +21,6 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
   const response = useAtomValue(stepResponseState);
   const request = useAtomValue(stepRequestState);
   const currentJSON = useAtomValue(blockState);
-  console.log(compareStateObj);
   React.useEffect(() => {
     if (compareStateObj.state1 != "" && compareStateObj.state2 != "")
       setIsVisible(true);

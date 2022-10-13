@@ -3,7 +3,7 @@ import { JSONTree } from "react-json-tree";
 import { Typography } from "@mui/material";
 import { GREY_3, GREY_6 } from "../../configs/variables";
 import T1Container from "../grid/T1Container";
-import ReactDiffViewer from "@bunchhieng/react-diff-viewer";
+import ReactDiffViewer from "@terran-one/react-diff-viewer";
 
 interface IProps {
   beforeState?: string;
