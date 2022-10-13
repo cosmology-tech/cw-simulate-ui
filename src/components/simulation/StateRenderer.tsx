@@ -17,14 +17,14 @@ interface IProps {
 export const StateRenderer = ({ isFileUploaded }: IProps) => {
   const [currentTab, setCurrentTab] = useAtom(stateResponseTabState);
   const compareStateObj = useAtomValue(compareStates);
-  const [isChecked, setIsChecked] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(false);
   const response = useAtomValue(stepResponseState);
   const request = useAtomValue(stepRequestState);
   const currentJSON = useAtomValue(blockState);
   console.log(compareStateObj);
   React.useEffect(() => {
     if (compareStateObj.state1 != "" && compareStateObj.state2 != "")
-      setIsChecked(true);
+      setIsVisible(true);
   }, [compareStateObj]);
 
   return (
@@ -40,17 +40,17 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
         <StateResponseTab
           currentTab={currentTab}
           setCurrentTab={setCurrentTab}
-          isChecked={isChecked}
-          setIsChecked={setIsChecked}
+          isVisible={isVisible}
+          setIsVisible={setIsVisible}
         />
       </Grid>
       <Grid item flex={1}>
         {currentTab === "state" ? (
-          isChecked ? (
+          isVisible ? (
             <OutputCard
               beforeState={compareStateObj.state1}
               afterState={compareStateObj.state2}
-              isChecked={isChecked}
+              isVisible={isVisible}
               placeholder="Your state diff will appear here."
             />
           ) : (
