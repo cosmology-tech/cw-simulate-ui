@@ -200,13 +200,14 @@ export function useCreateContractInstance() {
   const [{env}, setSimulateEnv] = useAtom(cwSimulateEnvState);
 
   return useCallback(async (chainId: string, code: Code, info: MsgInfo, instantiateMsg: any): Promise<CWContractInstance> => {
-    try {
-      const contract = await env.chains[chainId].instantiateContract(code.codeId);
-      contract.instantiate(info, instantiateMsg);
+    const contract = await env.chains[chainId].instantiateContract(code.codeId);
+    const response = contract.instantiate(info, instantiateMsg);
+    if (response.error) {
+      delete env.chains[chainId].contracts[contract.contractAddress];
+      throw new Error(response.error);
+    } else {
       setSimulateEnv({env});
       return contract;
-    } catch (e: any) {
-      throw new Error(e.message);
     }
   }, [env]);
 }
