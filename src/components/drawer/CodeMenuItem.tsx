@@ -152,14 +152,12 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     };
 
     try {
-      await createContractInstance(chainId, code, info, instantiateMsg);
+      const instance = await createContractInstance(chainId, code, info, instantiateMsg);
+      setNotification(`Successfully instantiated ${contractName} with address ${instance.contractAddress}`);
+      onClose(false);
     } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
-      onClose(false);
     }
-
-    setNotification("Contract instance created");
-    onClose(false);
   }, [payload, onClose]);
   return (
     <Dialog open={open} onClose={() => onClose(false)}>

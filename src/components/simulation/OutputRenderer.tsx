@@ -5,11 +5,11 @@ interface IProps {
   response: JSON | undefined;
 }
 
-export const OutputRenderer = ({response}: IProps) => {
+export const OutputRenderer = ({ response }: IProps) => {
   return (
     <OutputCard
       response={response}
-      placeholder="Your Execute/Query output will appear here."
+      placeholder="Your step response will appear here."
     />
   );
 };

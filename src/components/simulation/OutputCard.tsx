@@ -3,13 +3,13 @@ import { JSONTree } from "react-json-tree";
 import { Typography } from "@mui/material";
 import { GREY_3, GREY_6 } from "../../configs/variables";
 import T1Container from "../grid/T1Container";
-import ReactDiffViewer from "@bunchhieng/react-diff-viewer";
+import ReactDiffViewer from "@terran-one/react-diff-viewer";
 
 interface IProps {
   beforeState?: string;
   afterState?: string;
   response?: JSON | undefined | any;
-  isChecked?: boolean;
+  isVisible?: boolean;
   placeholder: string;
 }
 
@@ -39,7 +39,7 @@ export const OutputCard = ({
   afterState,
   response,
   placeholder,
-  isChecked,
+  isVisible,
 }: IProps) => {
   return (
     <T1Container
@@ -54,7 +54,7 @@ export const OutputCard = ({
     >
       {response !== undefined ? (
         <JSONTree data={response} theme={theme} invertTheme={false} />
-      ) : isChecked ? (
+      ) : isVisible ? (
         <ReactDiffViewer
           oldValue={beforeState}
           newValue={afterState}

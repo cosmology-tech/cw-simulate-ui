@@ -1,22 +1,28 @@
 import { Grid, Tab, Tabs } from "@mui/material";
 import React from "react";
-import DiffSwitch from "./DiffSwitch";
+import CloseDiff from "./CloseDiff";
 
 interface IProps {
   currentTab: string;
-  setCurrentTab: (val: "response" | "state") => void;
-  setIsChecked: (val: boolean) => void;
-  isChecked: boolean;
+  setCurrentTab: (val: "response" | "state" | "request") => void;
+  setIsVisible: (val: boolean) => void;
+  isVisible: boolean;
 }
 
 const StateResponseTab = ({
   currentTab,
   setCurrentTab,
-  isChecked,
-  setIsChecked,
+  isVisible,
+  setIsVisible,
 }: IProps) => {
   const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
-    setCurrentTab(newValue === "response" ? "response" : "state");
+    setCurrentTab(
+      newValue === "response"
+        ? "response"
+        : newValue === "request"
+        ? "request"
+        : "state"
+    );
   };
   return (
     <Grid container justifyContent="space-between" alignItems="center">
@@ -27,13 +33,13 @@ const StateResponseTab = ({
           aria-label="State & Response tabs"
         >
           <Tab value="state" label="State" />
+          <Tab value="request" label="Request" />
           <Tab value="response" label="Response" />
-          {/* <Tab value="memory" label="Memory" /> */}
         </Tabs>
       </Grid>
-      {isChecked && (
+      {isVisible && (
         <Grid item>
-          <DiffSwitch isChecked={isChecked} setIsChecked={setIsChecked} />
+          <CloseDiff isVisible={isVisible} setIsVisible={setIsVisible} />
         </Grid>
       )}
     </Grid>
