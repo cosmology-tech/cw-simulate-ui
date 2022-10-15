@@ -2,9 +2,15 @@ import ArticleIcon from "@mui/icons-material/Article";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import NotesIcon from "@mui/icons-material/Notes";
-import { Button, Grid, Paper, styled, Typography } from "@mui/material";
-import React, { HTMLAttributeAnchorTarget, PropsWithChildren, useCallback, useState } from "react";
-import { To } from "react-router-dom";
+import { Grid, Typography } from "@mui/material";
+import React, {
+  HTMLAttributeAnchorTarget,
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState
+} from "react";
+import { To, useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN } from "../../configs/variables";
 import {
@@ -28,7 +34,7 @@ export const WelcomeScreen = () => {
   const [, setSimulationMetadata] = useAtom(simulationMetadataState);
   const [, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const setupSimulation = useSetupSimulationJSON();
-
+  const navigate = useNavigate();
   const onCreateNewEnvironment = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -46,13 +52,21 @@ export const WelcomeScreen = () => {
     }
   }, [file, createChainForSimulation, storeCode, setNotification, setSimulationMetadata, setSimulateEnv]);
 
-  const onAcceptFile = useCallback((filename: string, fileContent: Buffer | JSON) => {
+  const onAcceptFile = useCallback(async (filename: string, fileContent: Buffer | JSON) => {
     setFile({filename, fileContent});
   }, []);
 
   const onClearFile = useCallback(() => {
     setFile(undefined);
   }, []);
+
+  useEffect(() => {
+    if (file) {
+      onCreateNewEnvironment().then(r => {
+        navigate("/chains");
+      });
+    }
+  }, [file]);
 
   return (
     <Grid
@@ -116,25 +130,6 @@ export const WelcomeScreen = () => {
           <Item sx={{border: "1px solid #eae5e5", padding: 0}}>
             <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
           </Item>
-        </Grid>
-        <Grid
-          item
-          xs={8}
-          md={10}
-          lg={6}
-          sx={{display: "flex", justifyContent: "center", marginBottom: 4}}
-        >
-          <T1Link to={`/chains/${DEFAULT_CHAIN}/config`} sx={{textDecoration: "none"}}
-                  disabled={!file}>
-            <Button
-              variant="contained"
-              sx={{borderRadius: "10px"}}
-              onClick={onCreateNewEnvironment}
-              disabled={!file}
-            >
-              New Simulation Environment
-            </Button>
-          </T1Link>
         </Grid>
       </Grid>
     </Grid>

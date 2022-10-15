@@ -125,6 +125,7 @@ interface IInstantiateDialogProps {
 
 function InstantiateDialog(props: IInstantiateDialogProps) {
   const {code, chainId, open, onClose} = props;
+  const navigate = useNavigate();
   const [payload, setPayload] = useState<string>("");
   const placeholder = {
     "count": 0
@@ -149,6 +150,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
       const instance = await createContractInstance(chainId, code, info, instantiateMsg);
       setNotification(`Successfully instantiated ${contractName} with address ${instance.contractAddress}`);
       onClose(false);
+      navigate(`/chains/${chainId}/instances/${instance.contractAddress}`);
     } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
     }
