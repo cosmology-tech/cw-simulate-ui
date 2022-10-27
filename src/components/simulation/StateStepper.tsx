@@ -1,10 +1,7 @@
 import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
-import {
-  Grid,
-  StepLabel,
-} from "@mui/material";
+import { Grid, StepLabel } from "@mui/material";
 import { blockState } from "../../atoms/blockState";
 import { useExecutionHistory } from "../../utils/simulationUtils";
 import { useAtom } from "jotai";
@@ -49,7 +46,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
     handleStateView(executionHistory[activeStep]?.state);
     stepRequestObj(executionHistory[activeStep]?.request);
     stepResponseObj(executionHistory[activeStep]?.response);
-  }, [activeStep]);
+  }, [activeStep, contractAddress]);
   return (
     <Grid item sx={{ width: "100%" }}>
       <Stepper
@@ -68,7 +65,11 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
 
             return (
               <Step
-                ref={el => activeStep === index && activeStep === executionHistory.length - 1 && el?.scrollIntoView()}
+                ref={(el) =>
+                  activeStep === index &&
+                  activeStep === executionHistory.length - 1 &&
+                  el?.scrollIntoView()
+                }
                 key={`${label}${index}`}
                 onClick={handleStep(index, state)}
                 sx={{

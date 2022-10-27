@@ -78,7 +78,8 @@ export const ExecuteQuery = ({
 
   React.useEffect(() => {
     setPayload("");
-  }, [executeQueryTab]);
+    setResponse(undefined);
+  }, [executeQueryTab, contractAddress]);
 
   return (
     <Grid
