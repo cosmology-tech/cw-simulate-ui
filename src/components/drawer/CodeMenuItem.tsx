@@ -11,9 +11,8 @@ import {
 } from "@mui/material";
 import React, { useCallback, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { MsgInfo } from "@terran-one/cw-simulate";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useCreateContractInstance, useDeleteCodeForSimulation } from "../../utils/simulationUtils";
+import { useDeleteCodeForSimulation } from "../../utils/simulationUtils";
 import { SENDER_ADDRESS } from "../../configs/variables";
 import { useNavigate } from "react-router-dom";
 import T1Container from "../grid/T1Container";

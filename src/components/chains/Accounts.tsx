@@ -17,13 +17,12 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { Account, selectAccountsMetadata } from "../../atoms/simulationMetadataState";
+import { selectAccountsMetadata } from "../../atoms/simulationMetadataState";
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
-import { Coin, CWSimulateEnv } from "@terran-one/cw-simulate";
-import { useCreateAccount, useDeleteAccount } from "../../utils/simulationUtils";
+import { useDeleteAccount } from "../../utils/simulationUtils";
 import T1Container from "../grid/T1Container";
+import { Coin } from "@terran-one/cw-simulate/dist/contract";
 
 const DEFAULT_VALUE = JSON.stringify({
   "address": "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
@@ -39,19 +38,18 @@ const Accounts = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
-  const {env} = useAtomValue(cwSimulateEnvState);
   const accounts = Object.values(useAtomValue(selectAccountsMetadata(chainId)));
-  const createAccount = useCreateAccount();
   const deleteAccount = useDeleteAccount();
 
-  const getBalances = (env: CWSimulateEnv, chainId: string, account: Account): Coin[] => {
-    return Object.values(env.chains[chainId].accounts[account.address]?.balances ?? {});
+  const getBalances = (): Coin[] => {
+    // TODO: Fix this
+    return [];
   }
 
   const data = useMemo(
     () => accounts.map(account => ({
       ...account,
-      balances: getBalances(env, chainId, account).map((c: Coin) => `${c.amount}${c.denom}`)?.join(', ')
+      balances: getBalances().map((c: Coin) => `${c.amount}${c.denom}`)?.join(', ')
     })),
     [accounts]
   );
@@ -82,9 +80,6 @@ const Accounts = () => {
       setNotification("An account with this address already exists", {severity: "error"});
       return;
     }
-
-    // TODO: enforce bech32Prefix
-    createAccount(json.id as string, chainId, json.address as string, json.balances as Coin[]);
 
     setNotification("Account added successfully");
     setOpenDialog(false);
