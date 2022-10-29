@@ -1,11 +1,10 @@
-import { Coin, CWChain, CWContractInstance, MsgInfo } from "@terran-one/cw-simulate";
-import { CWAccount } from "@terran-one/cw-simulate/dist/account";
 import { useAtom, useAtomValue } from "jotai";
 import { useCallback } from "react";
 import type { Code, Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
 import simulationMetadataState from "../atoms/simulationMetadataState";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
 import { AsJSON } from "./typeUtils";
+import {CWSimulateApp} from "@terran-one/cw-simulate";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
