@@ -4,7 +4,10 @@ import type { Code, Codes, SimulationMetadata } from "../atoms/simulationMetadat
 import simulationMetadataState from "../atoms/simulationMetadataState";
 import cwSimulateEnvState from "../atoms/cwSimulateEnvState";
 import { AsJSON } from "./typeUtils";
-import {CWSimulateApp} from "@terran-one/cw-simulate";
+import { CWSimulateApp } from "@terran-one/cw-simulate";
+import { Coin } from "@terran-one/cw-simulate/dist/contract";
+import cwSimulateAppAtom from "../atoms/cwSimulateAppState";
+import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
@@ -12,6 +15,46 @@ export type SimulationJSON = AsJSON<{
     [key: string]: CWChain;
   };
 }>
+
+export function useCreateNewSimulation() {
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppAtom)
+  return useCallback((options: CWSimulateAppOptions) => {
+    const app = new CWSimulateApp({
+      chainId: options.chainId,
+      bech32Prefix: options.bech32Prefix
+    });
+
+    setSimulateApp({app});
+    return app;
+  }, [app]);
+}
+
+export function useInstantiateContract() {
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppAtom)
+  return useCallback(async (sender: string, funds: Coin[], codeId: number, instantiateMsg: any) => {
+    const code = await app.wasm.instantiateContract(sender, funds, codeId, instantiateMsg);
+    setSimulateApp({app});
+    return app;
+  }, [app]);
+}
+
+export function useExecuteContract() {
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppAtom)
+  return useCallback(async (sender: string, funds: Coin[], contractAddress: string, executeMsg: any, trace?: any) => {
+    const result = await app.wasm.executeContract(sender, funds, contractAddress, executeMsg, trace);
+    setSimulateApp({app});
+    return result;
+  }, [app]);
+}
+
+export function useQueryContract() {
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppAtom)
+  return useCallback(async (contractAddress: string, queryMsg: any) => {
+    const result = await app.wasm.query(contractAddress, queryMsg);
+    setSimulateApp({app});
+    return result;
+  }, [app]);
+}
 
 export interface ChainConfig {
   chainId: string;
