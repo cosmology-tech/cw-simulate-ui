@@ -1,12 +1,16 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
-import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import Item from "./item";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { SimulationJSON, useSetupSimulationJSON, useStoreCode } from "../../utils/simulationUtils";
+import {
+  SimulationJSON,
+  useSetupCwSimulateAppJson,
+  useStoreCode
+} from "../../utils/simulationUtils";
 import FileUpload from "./FileUpload";
+import { SENDER_ADDRESS } from "../../configs/variables";
 
 interface IUploadModalProps {
   dropzoneText?: string;
@@ -21,11 +25,10 @@ interface IUploadModalProps {
 export default function UploadModal(props: IUploadModalProps) {
   const {dropzoneText, variant, dropTitle, chainId, open, onClose} = props;
   const [, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [, setSimulateEnv] = useAtom(cwSimulateEnvState);
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
-  const setupSimulation = useSetupSimulationJSON();
+  const setupSimulation = useSetupCwSimulateAppJson();
   const handleAdd = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -35,7 +38,7 @@ export default function UploadModal(props: IUploadModalProps) {
 
     if (variant === 'contract') {
       if (chainId != null) {
-        storeCode(chainId, file.filename, file.fileContent as Buffer);
+        storeCode(SENDER_ADDRESS, file.fileContent as Buffer);
       }
     } else if (variant === 'simulation') {
       try {
@@ -48,7 +51,7 @@ export default function UploadModal(props: IUploadModalProps) {
       }
     }
     onClose(true);
-  }, [file, onClose, setNotification, setSimulateEnv, setSimulationMetadata, storeCode, variant, chainId]);
+  }, [file, onClose, setNotification, setSimulationMetadata, storeCode, variant, chainId]);
 
   return (
     <Dialog open={open} onClose={() => onClose(false)}>

@@ -12,10 +12,12 @@ import {
 import React, { useCallback, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useDeleteCodeForSimulation } from "../../utils/simulationUtils";
+import { useDeleteCode, useInstantiateContract } from "../../utils/simulationUtils";
 import { SENDER_ADDRESS } from "../../configs/variables";
 import { useNavigate } from "react-router-dom";
 import T1Container from "../grid/T1Container";
+import cwSimulateAppState from "../../atoms/cwSimulateAppState";
+import { useAtom } from "jotai";
 
 export interface ICodeMenuItemProps {
   chainId: string;
@@ -51,7 +53,6 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
       ]}
       optionsExtras={({close}) => [
         <DeleteCodeDialog
-          chainId={chainId}
           code={code}
           key="delete-code-dialog"
           open={showDeleteCodeDialog}
@@ -74,7 +75,6 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
 }
 
 interface IDeleteCodeDialogProps {
-  chainId: string;
   code: Code;
   open: boolean;
 
@@ -82,8 +82,8 @@ interface IDeleteCodeDialogProps {
 }
 
 function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
-  const {chainId, code, open, onClose} = props;
-  const deleteCode = useDeleteCodeForSimulation();
+  const {code, open, onClose} = props;
+  const deleteCode = useDeleteCode();
   return (
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Confirm Delete Code</DialogTitle>
@@ -103,7 +103,7 @@ function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
-            deleteCode(chainId, code.codeId);
+            deleteCode(code.codeId);
             onClose();
           }}
         >
@@ -131,7 +131,8 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   }
   const contractName = code.name;
   const setNotification = useNotification();
-  const createContractInstance = useCreateContractInstance();
+  const createContractInstance = useInstantiateContract();
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   const handleInstantiate = useCallback(async () => {
     if (!code) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -140,16 +141,13 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     }
 
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
-    const info: MsgInfo = {
-      sender: SENDER_ADDRESS,
-      funds: [],
-    };
 
     try {
-      const instance = await createContractInstance(chainId, code, info, instantiateMsg);
-      setNotification(`Successfully instantiated ${contractName} with address ${instance.contractAddress}`);
+      const instance = await createContractInstance(SENDER_ADDRESS, [], app.wasm.lastCodeId, instantiateMsg);
+      const contractAddress: string = instance.unwrap().events[0].attributes[0].value;
+      setNotification(`Successfully instantiated ${contractName} with address ${contractAddress}`);
       onClose(false);
-      navigate(`/chains/${chainId}/instances/${instance.contractAddress}`);
+      navigate(`/chains/${chainId}/instances/${contractAddress}`);
     } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
     }

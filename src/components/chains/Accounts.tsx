@@ -20,7 +20,6 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { selectAccountsMetadata } from "../../atoms/simulationMetadataState";
 import { useParams } from "react-router-dom";
 import { useAtomValue } from "jotai";
-import { useDeleteAccount } from "../../utils/simulationUtils";
 import T1Container from "../grid/T1Container";
 import { Coin } from "@terran-one/cw-simulate/dist/contract";
 
@@ -39,7 +38,6 @@ const Accounts = () => {
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
   const accounts = Object.values(useAtomValue(selectAccountsMetadata(chainId)));
-  const deleteAccount = useDeleteAccount();
 
   const getBalances = (): Coin[] => {
     // TODO: Fix this
@@ -86,7 +84,6 @@ const Accounts = () => {
   }
 
   const handleDeleteAccount = (address: string) => {
-    deleteAccount(chainId, address);
     setNotification("Account successfully removed");
   }
 

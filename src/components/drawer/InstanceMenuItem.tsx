@@ -1,36 +1,26 @@
-import { CWContractInstance } from "@terran-one/cw-simulate";
 import T1MenuItem from "./T1MenuItem";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
-import {
-  convertCodeIdToCodeName,
-  useDeleteInstanceForSimulation
-} from "../../utils/simulationUtils";
-import { useAtomValue } from "jotai";
-import { selectCodesMetadata } from "../../atoms/simulationMetadataState";
+import { useDeleteInstance, } from "../../utils/simulationUtils";
 
 export interface IInstanceMenuItemProps {
-  chainId: string;
-  instance: CWContractInstance;
+  instance: string;
 }
 
 export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
   const {
-    chainId,
     instance,
   } = props;
   const [showDeleteInstance, setShowDeleteInstance] = useState(false);
-  const codes = useAtomValue(selectCodesMetadata(chainId));
-  const codeName = convertCodeIdToCodeName(instance.contractCode.codeId.toString(), codes);
   const navigate = useNavigate();
   return (
     <T1MenuItem
-      label={instance.contractAddress}
-      nodeId={`${chainId}/instances/${instance.contractAddress}`}
-      link={`/chains/${chainId}/instances/${instance.contractAddress}`}
+      label={instance}
+      nodeId={`terra-test/instances/${instance}`}
+      link={`/chains/terra-test/instances/${instance}`}
       textEllipsis
-      tooltip={`${codeName} ${instance.contractAddress}`}
+      tooltip={`${instance}`}
       options={[
         <MenuItem
           key="delete-instance"
@@ -47,8 +37,7 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
             navigate('/chains');
           }}
           open={showDeleteInstance}
-          chainId={chainId}
-          instanceAddress={instance.contractAddress}
+          instanceAddress={instance}
         />,
       ]}
     />
@@ -56,7 +45,6 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
 }
 
 interface IDeleteInstanceDialogProps {
-  chainId: string;
   instanceAddress: string;
   open: boolean;
 
@@ -64,8 +52,8 @@ interface IDeleteInstanceDialogProps {
 }
 
 function DeleteInstanceDialog(props: IDeleteInstanceDialogProps) {
-  const {chainId, instanceAddress, ...rest} = props;
-  const deleteInstance = useDeleteInstanceForSimulation();
+  const {instanceAddress, ...rest} = props;
+  const deleteInstance = useDeleteInstance();
   return (
     <Dialog {...rest}>
       <DialogTitle>Confirm Delete Instance</DialogTitle>
@@ -85,7 +73,7 @@ function DeleteInstanceDialog(props: IDeleteInstanceDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
-            deleteInstance(chainId, instanceAddress);
+            deleteInstance(instanceAddress);
             rest.onClose();
           }}
         >

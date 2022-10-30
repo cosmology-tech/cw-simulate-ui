@@ -12,16 +12,14 @@ import React, {
 } from "react";
 import { To, useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { DEFAULT_CHAIN } from "../../configs/variables";
+import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/variables";
 import {
   SimulationJSON,
-  useCreateChainForSimulation,
-  useSetupSimulationJSON,
-  useStoreCode
+  useCreateNewSimulateApp,
+  useStoreCode,
 } from "../../utils/simulationUtils";
 import FileUpload from "../upload/FileUpload";
 import T1Link from "../grid/T1Link";
-import cwSimulateEnvState from "../../atoms/cwSimulateEnvState";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { useAtom } from "jotai";
 import Item from "../upload/item";
@@ -29,28 +27,22 @@ import Item from "../upload/item";
 export const WelcomeScreen = () => {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
   const setNotification = useNotification();
-  const createChainForSimulation = useCreateChainForSimulation();
-  const storeCode = useStoreCode();
   const [, setSimulationMetadata] = useAtom(simulationMetadataState);
-  const [, setSimulateEnv] = useAtom(cwSimulateEnvState);
-  const setupSimulation = useSetupSimulationJSON();
   const navigate = useNavigate();
+  const createSimulateApp = useCreateNewSimulateApp();
+  const storeCode = useStoreCode();
   const onCreateNewEnvironment = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
       return;
     }
     if (file.filename.endsWith(".wasm")) {
-      createChainForSimulation({
-        chainId: DEFAULT_CHAIN,
-        bech32Prefix: 'terra',
-      });
-      storeCode(DEFAULT_CHAIN, file.filename, file.fileContent as Buffer);
+      createSimulateApp({chainId: DEFAULT_CHAIN, bech32Prefix: 'terra'});
+      storeCode(SENDER_ADDRESS, file.fileContent as Buffer);
     } else if (file.filename.endsWith(".json")) {
       const json = file.fileContent as unknown as SimulationJSON;
-      await setupSimulation(json);
     }
-  }, [file, createChainForSimulation, storeCode, setNotification, setSimulationMetadata, setSimulateEnv]);
+  }, [file, storeCode, setNotification, setSimulationMetadata]);
 
   const onAcceptFile = useCallback(async (filename: string, fileContent: Buffer | JSON) => {
     setFile({filename, fileContent});

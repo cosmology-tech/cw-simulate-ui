@@ -3,7 +3,6 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import { Grid, StepLabel } from "@mui/material";
 import { blockState } from "../../atoms/blockState";
-import { useExecutionHistory } from "../../utils/simulationUtils";
 import { useAtom } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { ComparePopup } from "./ComparePopup";
@@ -15,9 +14,7 @@ interface IProps {
   contractAddress: string;
 }
 
-export default function StateStepper({ chainId, contractAddress }: IProps) {
-  const executeHistory = useExecutionHistory();
-  const executionHistory = executeHistory(chainId, contractAddress);
+export default function StateStepper({chainId, contractAddress}: IProps) {
   const [currentState, _] = useAtom(currentStateNumber);
   const [activeStep, setActiveStep] = React.useState(0);
   const [, setStepState] = useAtom(blockState);
@@ -34,33 +31,26 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
     }
   };
 
+  const executionHistory: any[] = []; // TODO: FIX ME
+
   const handleStep =
     (step: number, state: { dict: { [x: string]: string } }) => () => {
       setActiveStep(step);
     };
-  React.useEffect(() => {
-    setActiveStep(executionHistory.length - 1);
-  }, [currentState, contractAddress]);
-
-  React.useEffect(() => {
-    handleStateView(executionHistory[activeStep]?.state);
-    stepRequestObj(executionHistory[activeStep]?.request);
-    stepResponseObj(executionHistory[activeStep]?.response);
-  }, [activeStep, contractAddress]);
   return (
-    <Grid item sx={{ width: "100%" }}>
+    <Grid item sx={{width: "100%"}}>
       <Stepper
         nonLinear
         activeStep={activeStep}
         orientation="vertical"
-        sx={{ width: "90%" }}
+        sx={{width: "90%"}}
       >
         {executionHistory?.map(
           (
             historyObj: { request: any; response: any; state: any },
             index: number
           ) => {
-            const { request, response, state } = historyObj;
+            const {request, response, state} = historyObj;
             const label = Object.keys(request)[2];
 
             return (
@@ -83,7 +73,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
               >
                 <StepLabel>
                   <Grid
-                    sx={{ display: "flex", justifyContent: "space-between" }}
+                    sx={{display: "flex", justifyContent: "space-between"}}
                   >
                     <Grid container alignItems="center">
                       {label}
