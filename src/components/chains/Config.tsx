@@ -29,7 +29,7 @@ const Config = (props: IConfigProps) => {
     }
 
     if (json.chainId !== chainId) {
-      navigate(`/chains/${json.chainId}/config`);
+      navigate('/config');
     }
     setNotification("Config updated successfully");
   };

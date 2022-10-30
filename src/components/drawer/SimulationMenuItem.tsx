@@ -20,6 +20,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
   const handleOnItemClick = React.useCallback((e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    // TODO: FIX ME
     const json = {...app, 'simulationMetadata': simulationMetadata};
     downloadJSON(JSON.stringify(json, null, 2), "simulation.json");
   }, []);
@@ -48,7 +49,7 @@ const SimulationMenuItem = React.memo((props: ISimulationItemProps) => {
           onClose={() => {
             setShowClearSimulation(false);
             close();
-            navigate('/chains');
+            navigate('/');
           }}
         />,
         <UploadModal

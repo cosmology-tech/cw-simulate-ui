@@ -59,7 +59,7 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
           onClose={() => {
             setShowDeleteCodeDialog(false);
             close();
-            navigate('/chains');
+            navigate('/');
           }}
         />,
         <InstantiateDialog

@@ -15,7 +15,7 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/variables";
 import {
   SimulationJSON,
-  useCreateNewSimulateApp,
+  useCreateNewSimulateApp, useSetupCwSimulateAppJson,
   useStoreCode,
 } from "../../utils/simulationUtils";
 import FileUpload from "../upload/FileUpload";
@@ -31,6 +31,7 @@ export const WelcomeScreen = () => {
   const navigate = useNavigate();
   const createSimulateApp = useCreateNewSimulateApp();
   const storeCode = useStoreCode();
+  const setupSimulationJSON = useSetupCwSimulateAppJson();
   const onCreateNewEnvironment = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -41,6 +42,7 @@ export const WelcomeScreen = () => {
       storeCode(SENDER_ADDRESS, file.fileContent as Buffer);
     } else if (file.filename.endsWith(".json")) {
       const json = file.fileContent as unknown as SimulationJSON;
+      setupSimulationJSON(json);
     }
   }, [file, storeCode, setNotification, setSimulationMetadata]);
 

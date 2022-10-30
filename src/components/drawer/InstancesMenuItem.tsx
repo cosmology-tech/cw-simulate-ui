@@ -26,7 +26,7 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
     <T1MenuItem
       label="Instances"
       nodeId={`${chainId}/instances`}
-      link={`/chains/${chainId}/codes`}
+      link={'codes'}
       textEllipsis
       options={[
         <MenuItem
@@ -41,7 +41,7 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
           onClose={() => {
             setShowDeleteInstance(false);
             close();
-            navigate('/chains');
+            navigate('/');
           }}
           open={showDeleteInstance}
         />,
