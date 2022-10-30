@@ -37,7 +37,8 @@ const Accounts = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
-  const accounts = Object.values(useAtomValue(selectAccountsMetadata(chainId)));
+  // TODO: FIX ME. Use BankModule instead
+  const accounts: any[] = [];
 
   const getBalances = (): Coin[] => {
     // TODO: Fix this

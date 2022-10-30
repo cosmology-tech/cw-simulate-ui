@@ -57,7 +57,7 @@ export const WelcomeScreen = () => {
   useEffect(() => {
     if (file) {
       onCreateNewEnvironment().then(r => {
-        navigate("/chains");
+        navigate("/config");
       });
     }
   }, [file]);
