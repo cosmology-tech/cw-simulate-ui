@@ -49,6 +49,7 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
     >
       {instances.map((instance: string) => (
         <InstanceMenuItem
+          chainId={chainId}
           key={instance}
           instance={instance}
         />

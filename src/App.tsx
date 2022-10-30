@@ -1,6 +1,5 @@
 import { Box, Grid, SxProps, Theme } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
-import Chains from "./components/chains/Chains";
 import State from "./components/chains/State";
 import Config from "./components/chains/Config";
 import Accounts from "./components/chains/Accounts";
@@ -16,7 +15,7 @@ function App() {
     height: '100vh',
     pt: '70px',
   };
-  
+
   return (
     <Box sx={rootSx} className="T1App-root">
       <MenuDrawer/>
@@ -33,15 +32,14 @@ function App() {
         <Routes>
           <Route index element={<Home/>}/>
 
+          {/*TODO: A CWSimulateApp only contain a single chain. Wrap everything under /simulation instead*/}
           {/* <Chains /> ensures the :chainId exists. Do not remove. */}
-          <Route path="/chains" element={<Chains/>}>
-            <Route path=":chainId/config" element={<Config/>}/>
-            <Route path=":chainId/state" element={<State/>}/>
-            <Route path=":chainId/accounts" element={<Accounts/>}/>
-            <Route path=":chainId/instances/:instanceAddress" element={<Simulation/>}/>
-          </Route>
+          <Route path="config" element={<Config/>}/>
+          <Route path="state" element={<State/>}/>
+          <Route path="accounts" element={<Accounts/>}/>
+          <Route path="instances/:instanceAddress" element={<Simulation/>}/>
 
-          <Route path="*" element={<VoidScreen/>} />
+          <Route path="*" element={<VoidScreen/>}/>
         </Routes>
       </Grid>
     </Box>

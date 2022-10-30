@@ -28,15 +28,15 @@ export const ExecuteQuery = ({
   const execute = useExecute();
   const query = useQuery();
 
-  const handleExecute = () => {
+  const handleExecute = async () => {
     try {
-      const res: any = execute(
+      const res: any = await execute(
         SENDER_ADDRESS,
         [],
         contractAddress,
         JSON.parse(payload)
       );
-      setResponse(res);
+      setResponse(res as JSON);
       setNotification("Execute was successful!");
       setCurrentState(currentState + 1);
     } catch (err) {
@@ -46,10 +46,10 @@ export const ExecuteQuery = ({
       console.log(err);
     }
   };
-  const handleQuery = () => {
+  const handleQuery = async () => {
     try {
-      const res: any = query(contractAddress, JSON.parse(payload));
-      setResponse(JSON.parse(window.atob(res.ok)));
+      const res: any = await query(contractAddress, JSON.parse(payload));
+      setResponse(res as JSON);
       setNotification("Query was successful!");
     } catch (err) {
       setNotification("Something went wrong while querying.", {
@@ -57,11 +57,11 @@ export const ExecuteQuery = ({
       });
     }
   };
-  const onRunHandler = () => {
+  const onRunHandler = async () => {
     if (executeQueryTab === "execute") {
-      handleExecute();
+      await handleExecute();
     } else {
-      handleQuery();
+      await handleQuery();
     }
   };
 

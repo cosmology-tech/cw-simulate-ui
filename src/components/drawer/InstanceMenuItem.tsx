@@ -5,11 +5,13 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } f
 import { useDeleteInstance, } from "../../utils/simulationUtils";
 
 export interface IInstanceMenuItemProps {
+  chainId: string;
   instance: string;
 }
 
 export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
   const {
+    chainId,
     instance,
   } = props;
   const [showDeleteInstance, setShowDeleteInstance] = useState(false);
@@ -17,8 +19,8 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
   return (
     <T1MenuItem
       label={instance}
-      nodeId={`terra-test/instances/${instance}`}
-      link={`/chains/terra-test/instances/${instance}`}
+      nodeId={`instances/${instance}`}
+      link={`/instances/${instance}`}
       textEllipsis
       tooltip={`${instance}`}
       options={[
@@ -34,7 +36,7 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
           onClose={() => {
             setShowDeleteInstance(false);
             close();
-            navigate('/chains');
+            navigate('/');
           }}
           open={showDeleteInstance}
           instanceAddress={instance}

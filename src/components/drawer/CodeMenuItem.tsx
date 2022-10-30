@@ -144,10 +144,10 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
 
     try {
       const instance = await createContractInstance(SENDER_ADDRESS, [], app.wasm.lastCodeId, instantiateMsg);
-      const contractAddress: string = instance.unwrap().events[0].attributes[0].value;
+      const contractAddress: string = instance?.unwrap().events[0].attributes[0].value;
       setNotification(`Successfully instantiated ${contractName} with address ${contractAddress}`);
       onClose(false);
-      navigate(`/chains/${chainId}/instances/${contractAddress}`);
+      navigate(`/instances/${contractAddress}`);
     } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
     }

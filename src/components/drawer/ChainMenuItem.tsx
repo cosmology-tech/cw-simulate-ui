@@ -16,14 +16,14 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
       label={chainId}
     >
       <T1MenuItem label="Config"
-                  nodeId={`chains/${chainId}/config`}
-                  link={`/chains/${chainId}/config`}/>
+                  nodeId={'config'}
+                  link={'config'}/>
       <T1MenuItem label="State"
-                  nodeId={`chains/${chainId}/state`}
-                  link={`/chains/${chainId}/state`}/>
+                  nodeId={'state'}
+                  link={'state'}/>
       <T1MenuItem label="Accounts"
-                  nodeId={`chains/${chainId}/accounts`}
-                  link={`/chains/${chainId}/accounts`}/>
+                  nodeId={'accounts'}
+                  link={'accounts'}/>
       <CodesMenuItem chainId={chainId}/>
       <InstancesMenuItem chainId={chainId}/>
     </T1MenuItem>
