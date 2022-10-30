@@ -36,7 +36,7 @@ export const ExecuteQuery = ({
         contractAddress,
         JSON.parse(payload)
       );
-      setResponse(res as JSON);
+      setResponse(res.unwrap() as JSON);
       setNotification("Execute was successful!");
       setCurrentState(currentState + 1);
     } catch (err) {
@@ -49,7 +49,7 @@ export const ExecuteQuery = ({
   const handleQuery = async () => {
     try {
       const res: any = await query(contractAddress, JSON.parse(payload));
-      setResponse(res as JSON);
+      setResponse(res.unwrap() as JSON);
       setNotification("Query was successful!");
     } catch (err) {
       setNotification("Something went wrong while querying.", {

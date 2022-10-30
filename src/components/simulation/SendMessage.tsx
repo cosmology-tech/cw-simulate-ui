@@ -14,7 +14,6 @@ interface ISendMessageProps {
 
 export default function ({contractAddress}: ISendMessageProps) {
   const [response, setResponse] = useAtom(responseState);
-
   return (
     <Widget size={6}>
       <Row xs={12}>
