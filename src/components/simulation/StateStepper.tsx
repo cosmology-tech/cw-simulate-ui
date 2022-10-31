@@ -24,8 +24,10 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
 
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     if (state) {
-      // @ts-ignore
-      setStepState(JSON.parse(window.atob(state?._root.entries[0][1])));
+      setStepState(
+        // @ts-ignore
+        JSON.parse(`{\"state\":${window.atob(state?._root.entries[0][1])}}`)
+      );
     } else {
       //TODO: Replace it with some relevant message.
       setStepState(JSON.parse('{"state":"No state exists"}'));
