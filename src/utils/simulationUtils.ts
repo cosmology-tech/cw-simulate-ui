@@ -56,6 +56,7 @@ export function useInstantiateContract() {
   }, [app]);
 }
 
+
 /**
  * This hook is used to execute a contract in the simulation state.
  */
@@ -64,7 +65,10 @@ export function useExecute() {
   const [trace, setTrace] = useAtom(traceState);
   return useCallback(async (sender: string, funds: Coin[], contractAddress: string, executeMsg: any) => {
     const result = await app.wasm.executeContract(sender, funds, contractAddress, executeMsg, trace);
+    const currentState = await app.store.getIn(['wasm', 'contractStorage', contractAddress]);
     setSimulateApp({app});
+    //@ts-ignore
+    trace[trace.length-1].execute.state=currentState;
     setTrace(trace);
     return result;
   }, [app]);

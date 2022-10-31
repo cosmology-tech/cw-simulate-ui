@@ -8,13 +8,14 @@ import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { ComparePopup } from "./ComparePopup";
 import { stepRequestState } from "../../atoms/stepRequestState";
 import { stepResponseState } from "../../atoms/stepResponseState";
+import traceState from "../../atoms/traceState";
 
 interface IProps {
   chainId: string;
   contractAddress: string;
 }
 
-export default function StateStepper({chainId, contractAddress}: IProps) {
+export default function StateStepper({ chainId, contractAddress }: IProps) {
   const [currentState, _] = useAtom(currentStateNumber);
   const [activeStep, setActiveStep] = React.useState(0);
   const [, setStepState] = useAtom(blockState);
@@ -24,35 +25,45 @@ export default function StateStepper({chainId, contractAddress}: IProps) {
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     if (state) {
       // @ts-ignore
-      setStepState(JSON.parse(window.atob(state?.dict._root.entries[0][1])));
+      setStepState(JSON.parse(window.atob(state?._root.entries[0][1])));
     } else {
       //TODO: Replace it with some relevant message.
       setStepState(JSON.parse('{"state":"No state exists"}'));
     }
   };
 
-  const executionHistory: any[] = []; // TODO: FIX ME
+  const executionHistory: any[] = useAtom(traceState)[0];
 
-  const handleStep =
-    (step: number, state: { dict: { [x: string]: string } }) => () => {
-      setActiveStep(step);
-    };
+  React.useEffect(() => {
+    setActiveStep(executionHistory.length - 1);
+  }, [currentState, contractAddress]);
+
+  React.useEffect(() => {
+    handleStateView(executionHistory[activeStep]?.execute.state);
+    stepRequestObj(executionHistory[activeStep]?.request);
+    stepResponseObj(executionHistory[activeStep]?.execute.response);
+  }, [activeStep, contractAddress]);
+
+  const handleStep = (step: number) => {
+    setActiveStep(step);
+  };
   return (
-    <Grid item sx={{width: "100%"}}>
+    <Grid item sx={{ width: "100%" }}>
       <Stepper
         nonLinear
         activeStep={activeStep}
         orientation="vertical"
-        sx={{width: "90%"}}
+        sx={{ width: "90%" }}
       >
         {executionHistory?.map(
           (
-            historyObj: { request: any; response: any; state: any },
+            historyObj: {
+              execute: { response: any; executeMsg: any; subcalls: any };
+            },
             index: number
           ) => {
-            const {request, response, state} = historyObj;
-            const label = Object.keys(request)[2];
-
+            const { response, executeMsg, subcalls } = historyObj.execute;
+            const label = Object.keys(executeMsg)[0];
             return (
               <Step
                 ref={(el) =>
@@ -61,7 +72,7 @@ export default function StateStepper({chainId, contractAddress}: IProps) {
                   el?.scrollIntoView()
                 }
                 key={`${label}${index}`}
-                onClick={handleStep(index, state)}
+                onClick={() => handleStep(index)}
                 sx={{
                   "& .MuiStepIcon-root": {
                     color: response.error ? "red" : "#00C921",
@@ -73,7 +84,7 @@ export default function StateStepper({chainId, contractAddress}: IProps) {
               >
                 <StepLabel>
                   <Grid
-                    sx={{display: "flex", justifyContent: "space-between"}}
+                    sx={{ display: "flex", justifyContent: "space-between" }}
                   >
                     <Grid container alignItems="center">
                       {label}
