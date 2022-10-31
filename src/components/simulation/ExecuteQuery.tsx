@@ -16,10 +16,7 @@ interface IProps {
   contractAddress: string;
 }
 
-export const ExecuteQuery = ({
-  setResponse,
-  contractAddress,
-}: IProps) => {
+export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
   const [payload, setPayload] = useState("");
   const executeQueryTab = useAtomValue(executeQueryTabState);
   const [currentState, setCurrentState] = useAtom(currentStateNumber);
@@ -36,15 +33,21 @@ export const ExecuteQuery = ({
         contractAddress,
         JSON.parse(payload)
       );
-      setResponse(res.unwrap() as JSON);
+      const response = res.err
+        ? ({ error: res.val } as unknown as JSON)
+        : (res.unwrap() as JSON);
+      setResponse(response);
+      if (res.err) {
+        throw new Error(res.err);
+      }
       setNotification("Execute was successful!");
-      setCurrentState(currentState + 1);
     } catch (err) {
       setNotification("Something went wrong while executing.", {
         severity: "error",
       });
       console.log(err);
     }
+    setCurrentState(currentState + 1);
   };
   const handleQuery = async () => {
     try {
@@ -86,7 +89,7 @@ export const ExecuteQuery = ({
       }}
     >
       <Grid item flexShrink={0}>
-        <ExecuteQueryTab/>
+        <ExecuteQueryTab />
       </Grid>
       <Grid item flex={1} position="relative">
         <T1Container>
@@ -99,7 +102,7 @@ export const ExecuteQuery = ({
       <Grid
         item
         flexShrink={0}
-        sx={{display: "flex", justifyContent: "flex-end"}}
+        sx={{ display: "flex", justifyContent: "flex-end" }}
       >
         <Button
           variant="contained"

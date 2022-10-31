@@ -33,15 +33,19 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   };
 
   const executionHistory: any[] = useAtom(traceState)[0];
-
+  console.log(executionHistory);
   React.useEffect(() => {
     setActiveStep(executionHistory.length - 1);
   }, [currentState, contractAddress]);
 
   React.useEffect(() => {
-    handleStateView(executionHistory[activeStep]?.execute.state);
-    stepRequestObj(executionHistory[activeStep]?.request);
-    stepResponseObj(executionHistory[activeStep]?.execute.response);
+    const executionStep = executionHistory[activeStep];
+    handleStateView(executionStep?.execute.state);
+    stepRequestObj(executionStep?.request);
+    const resp = executionStep?.execute.error
+      ? { error: executionStep?.execute.error }
+      : executionStep?.execute.response;
+    stepResponseObj(resp);
   }, [activeStep, contractAddress]);
 
   const handleStep = (step: number) => {
@@ -58,11 +62,17 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
         {executionHistory?.map(
           (
             historyObj: {
-              execute: { response: any; executeMsg: any; subcalls: any };
+              execute: {
+                response: any;
+                executeMsg: any;
+                subcalls: any;
+                error?: any;
+              };
             },
             index: number
           ) => {
-            const { response, executeMsg, subcalls } = historyObj.execute;
+            const { response, executeMsg, subcalls, error } =
+              historyObj.execute;
             const label = Object.keys(executeMsg)[0];
             return (
               <Step
@@ -75,10 +85,10 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                 onClick={() => handleStep(index)}
                 sx={{
                   "& .MuiStepIcon-root": {
-                    color: response.error ? "red" : "#00C921",
+                    color: error !== undefined ? "red" : "#00C921",
                   },
                   "& .MuiStepLabel-root .Mui-active": {
-                    color: response.error ? "#690000" : "#006110",
+                    color: error !== undefined ? "#690000" : "#006110",
                   },
                 }}
               >
