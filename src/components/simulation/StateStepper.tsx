@@ -8,7 +8,7 @@ import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { ComparePopup } from "./ComparePopup";
 import { stepRequestState } from "../../atoms/stepRequestState";
 import { stepResponseState } from "../../atoms/stepResponseState";
-import traceState from "../../atoms/traceState";
+import { executionHistoryState } from "../../atoms/executionHistoryState";
 
 interface IProps {
   chainId: string;
@@ -21,7 +21,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   const [, setStepState] = useAtom(blockState);
   const [, stepRequestObj] = useAtom(stepRequestState);
   const [, stepResponseObj] = useAtom(stepResponseState);
-
+  const [allLogs, ___] = useAtom(executionHistoryState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     if (state) {
       setStepState(
@@ -34,19 +34,18 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
     }
   };
 
-  const executionHistory: any[] = useAtom(traceState)[0];
-  console.log(executionHistory);
+  const executionHistory = allLogs[contractAddress];
   React.useEffect(() => {
     setActiveStep(executionHistory.length - 1);
   }, [currentState, contractAddress]);
 
   React.useEffect(() => {
     const executionStep = executionHistory[activeStep];
-    handleStateView(executionStep?.execute.state);
+    handleStateView(executionStep?.state);
     stepRequestObj(executionStep?.request);
-    const resp = executionStep?.execute.error
-      ? { error: executionStep?.execute.error }
-      : executionStep?.execute.response;
+    const resp = executionStep?.response.error
+      ? { error: executionStep?.response.error }
+      : executionStep?.response;
     stepResponseObj(resp);
   }, [activeStep, contractAddress]);
 
@@ -64,18 +63,14 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
         {executionHistory?.map(
           (
             historyObj: {
-              execute: {
-                response: any;
-                executeMsg: any;
-                subcalls: any;
-                error?: any;
-              };
+              request: any;
+              response: any;
+              state: any;
             },
             index: number
           ) => {
-            const { response, executeMsg, subcalls, error } =
-              historyObj.execute;
-            const label = Object.keys(executeMsg)[0];
+            const { request, response, state } = historyObj;
+            const label = Object.keys(request.executeMsg)[0];
             return (
               <Step
                 ref={(el) =>
@@ -87,10 +82,10 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                 onClick={() => handleStep(index)}
                 sx={{
                   "& .MuiStepIcon-root": {
-                    color: error !== undefined ? "red" : "#00C921",
+                    color: response.error !== undefined ? "red" : "#00C921",
                   },
                   "& .MuiStepLabel-root .Mui-active": {
-                    color: error !== undefined ? "#690000" : "#006110",
+                    color: response.error !== undefined ? "#690000" : "#006110",
                   },
                 }}
               >

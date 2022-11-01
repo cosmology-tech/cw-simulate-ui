@@ -38,12 +38,8 @@ export const ComparePopup = ({
         return;
       }
       setCompareStates({
-        state1: getStateString(
-          executionHistory[currentActiveState].execute.state
-        ),
-        state2: getStateString(
-          executionHistory[e.target.value - 1].execute.state
-        ),
+        state1: getStateString(executionHistory[currentActiveState].state),
+        state2: getStateString(executionHistory[e.target.value - 1].state),
       });
       setStateResponseTab("state");
       setError("");
