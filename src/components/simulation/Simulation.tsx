@@ -9,7 +9,7 @@ const Simulation = () => {
 
   return (
     <SplitView className="T1Simulation-root">
-      <SendMessage chainId={chainId!} contractAddress={contractAddress!} />
+      <SendMessage contractAddress={contractAddress!} />
       <History chainId={chainId!} contractAddress={contractAddress!} />
     </SplitView>
   );

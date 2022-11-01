@@ -3,12 +3,12 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import { Grid, StepLabel } from "@mui/material";
 import { blockState } from "../../atoms/blockState";
-import { useExecutionHistory } from "../../utils/simulationUtils";
 import { useAtom } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { ComparePopup } from "./ComparePopup";
 import { stepRequestState } from "../../atoms/stepRequestState";
 import { stepResponseState } from "../../atoms/stepResponseState";
+import { executionHistoryState } from "../../atoms/executionHistoryState";
 
 interface IProps {
   chainId: string;
@@ -16,37 +16,42 @@ interface IProps {
 }
 
 export default function StateStepper({ chainId, contractAddress }: IProps) {
-  const executeHistory = useExecutionHistory();
-  const executionHistory = executeHistory(chainId, contractAddress);
   const [currentState, _] = useAtom(currentStateNumber);
   const [activeStep, setActiveStep] = React.useState(0);
   const [, setStepState] = useAtom(blockState);
   const [, stepRequestObj] = useAtom(stepRequestState);
   const [, stepResponseObj] = useAtom(stepResponseState);
-
+  const [allLogs, ___] = useAtom(executionHistoryState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     if (state) {
-      // @ts-ignore
-      setStepState(JSON.parse(window.atob(state?.dict._root.entries[0][1])));
+      setStepState(
+        // @ts-ignore
+        JSON.parse(`{\"state\":${window.atob(state?._root.entries[0][1])}}`)
+      );
     } else {
       //TODO: Replace it with some relevant message.
       setStepState(JSON.parse('{"state":"No state exists"}'));
     }
   };
 
-  const handleStep =
-    (step: number, state: { dict: { [x: string]: string } }) => () => {
-      setActiveStep(step);
-    };
+  const executionHistory = allLogs[contractAddress];
   React.useEffect(() => {
     setActiveStep(executionHistory.length - 1);
   }, [currentState, contractAddress]);
 
   React.useEffect(() => {
-    handleStateView(executionHistory[activeStep]?.state);
-    stepRequestObj(executionHistory[activeStep]?.request);
-    stepResponseObj(executionHistory[activeStep]?.response);
+    const executionStep = executionHistory[activeStep];
+    handleStateView(executionStep?.state);
+    stepRequestObj(executionStep?.request);
+    const resp = executionStep?.response.error
+      ? { error: executionStep?.response.error }
+      : executionStep?.response;
+    stepResponseObj(resp);
   }, [activeStep, contractAddress]);
+
+  const handleStep = (step: number) => {
+    setActiveStep(step);
+  };
   return (
     <Grid item sx={{ width: "100%" }}>
       <Stepper
@@ -57,12 +62,15 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
       >
         {executionHistory?.map(
           (
-            historyObj: { request: any; response: any; state: any },
+            historyObj: {
+              request: any;
+              response: any;
+              state: any;
+            },
             index: number
           ) => {
             const { request, response, state } = historyObj;
-            const label = Object.keys(request)[2];
-
+            const label = Object.keys(request.executeMsg)[0];
             return (
               <Step
                 ref={(el) =>
@@ -71,13 +79,13 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                   el?.scrollIntoView()
                 }
                 key={`${label}${index}`}
-                onClick={handleStep(index, state)}
+                onClick={() => handleStep(index)}
                 sx={{
                   "& .MuiStepIcon-root": {
-                    color: response.error ? "red" : "#00C921",
+                    color: response.error !== undefined ? "red" : "#00C921",
                   },
                   "& .MuiStepLabel-root .Mui-active": {
-                    color: response.error ? "#690000" : "#006110",
+                    color: response.error !== undefined ? "#690000" : "#006110",
                   },
                 }}
               >

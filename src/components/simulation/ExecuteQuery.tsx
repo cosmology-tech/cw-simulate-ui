@@ -3,26 +3,20 @@ import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../../atoms/executeQueryTabState";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { jsonErrorState } from "../../atoms/jsonErrorState";
-import { useExecute, useQuery } from "../../utils/simulationUtils";
-import { MsgInfo } from "@terran-one/cw-simulate";
 import { SENDER_ADDRESS } from "../../configs/variables";
 import { useAtom, useAtomValue } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import T1Container from "../grid/T1Container";
+import { useExecute, useQuery } from "../../utils/simulationUtils";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
-  chainId: string;
   contractAddress: string;
 }
 
-export const ExecuteQuery = ({
-  setResponse,
-  chainId,
-  contractAddress,
-}: IProps) => {
+export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
   const [payload, setPayload] = useState("");
   const executeQueryTab = useAtomValue(executeQueryTabState);
   const [currentState, setCurrentState] = useAtom(currentStateNumber);
@@ -30,33 +24,35 @@ export const ExecuteQuery = ({
   const setNotification = useNotification();
   const execute = useExecute();
   const query = useQuery();
-  const info: MsgInfo = {
-    sender: SENDER_ADDRESS,
-    funds: [],
-  };
 
-  const handleExecute = () => {
+  const handleExecute = async () => {
     try {
-      const res: any = execute(
-        chainId,
+      const res: any = await execute(
+        SENDER_ADDRESS,
+        [],
         contractAddress,
-        info,
         JSON.parse(payload)
       );
-      setResponse(res);
+      const response = res.err
+        ? ({ error: res.val } as unknown as JSON)
+        : (res.unwrap() as JSON);
+      setResponse(response);
+      if (res.err) {
+        throw new Error(res.err);
+      }
       setNotification("Execute was successful!");
-      setCurrentState(currentState + 1);
     } catch (err) {
       setNotification("Something went wrong while executing.", {
         severity: "error",
       });
       console.log(err);
     }
+    setCurrentState(currentState + 1);
   };
-  const handleQuery = () => {
+  const handleQuery = async () => {
     try {
-      const res: any = query(chainId, contractAddress, JSON.parse(payload));
-      setResponse(JSON.parse(window.atob(res.ok)));
+      const res: any = await query(contractAddress, JSON.parse(payload));
+      setResponse(res.unwrap() as JSON);
       setNotification("Query was successful!");
     } catch (err) {
       setNotification("Something went wrong while querying.", {
@@ -64,11 +60,11 @@ export const ExecuteQuery = ({
       });
     }
   };
-  const onRunHandler = () => {
+  const onRunHandler = async () => {
     if (executeQueryTab === "execute") {
-      handleExecute();
+      await handleExecute();
     } else {
-      handleQuery();
+      await handleQuery();
     }
   };
 

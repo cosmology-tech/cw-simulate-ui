@@ -1,11 +1,11 @@
-import filteredInstancesFromChainId from "../../selectors/filteredInstancesFromChainId";
 import InstanceMenuItem from "./InstanceMenuItem";
 import T1MenuItem from "./T1MenuItem";
-import { useAtomValue } from "jotai";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
-import { useDeleteAllInstancesForSimulation } from "../../utils/simulationUtils";
+import { useDeleteAllInstances } from "../../utils/simulationUtils";
+import { useAtomValue } from "jotai";
+import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 
 export interface IInstancesMenuItemProps {
   chainId: string;
@@ -15,8 +15,10 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
   const {chainId} = props;
   const [showDeleteInstance, setShowDeleteInstance] = useState(false);
   const navigate = useNavigate();
-  const instances = useAtomValue(filteredInstancesFromChainId(chainId));
-  if (!instances.length) {
+  const {app} = useAtomValue(cwSimulateAppState);
+  // @ts-ignore
+  const instances = app.store.getIn(["wasm", "contractStorage"])?.toArray().map(i => i[0]);
+  if (!instances?.length) {
     return <></>
   }
 
@@ -24,7 +26,7 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
     <T1MenuItem
       label="Instances"
       nodeId={`${chainId}/instances`}
-      link={`/chains/${chainId}/codes`}
+      link={'codes'}
       textEllipsis
       options={[
         <MenuItem
@@ -39,17 +41,16 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
           onClose={() => {
             setShowDeleteInstance(false);
             close();
-            navigate('/chains');
+            navigate('/');
           }}
           open={showDeleteInstance}
-          chainId={chainId}
         />,
       ]}
     >
-      {instances.map(instance => (
+      {instances.map((instance: string) => (
         <InstanceMenuItem
-          key={instance.contractAddress}
           chainId={chainId}
+          key={instance}
           instance={instance}
         />
       ))}
@@ -58,15 +59,14 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
 }
 
 interface IDeleteInstanceDialogProps {
-  chainId: string;
   open: boolean;
 
   onClose(): void;
 }
 
 function DeleteInstancesDialog(props: IDeleteInstanceDialogProps) {
-  const {chainId, ...rest} = props;
-  const deleteAllInstances = useDeleteAllInstancesForSimulation();
+  const {...rest} = props;
+  const deleteAllInstances = useDeleteAllInstances();
   return (
     <Dialog {...rest}>
       <DialogTitle>Confirm Delete All Instances</DialogTitle>
@@ -86,7 +86,7 @@ function DeleteInstancesDialog(props: IDeleteInstanceDialogProps) {
           variant="contained"
           color="error"
           onClick={() => {
-            deleteAllInstances(chainId);
+            deleteAllInstances();
             rest.onClose();
           }}
         >

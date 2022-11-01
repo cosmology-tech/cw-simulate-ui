@@ -2,23 +2,21 @@ import { Button, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import filteredConfigsByChainId from "../../selectors/filteredConfigsByChainId";
 import { validateConfigJSON } from "../../utils/fileUtils";
-import { useReconfigureChainForSimulation } from "../../utils/simulationUtils";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useAtomValue } from "jotai";
 import T1Container from "../grid/T1Container";
+import CwSimulateAppState from "../../atoms/cwSimulateAppState";
 
 interface IConfigProps {
   chainId?: string | undefined
 }
 
 const Config = (props: IConfigProps) => {
-  const chainId = useParams().chainId ?? props.chainId!
-  const configValue = useAtomValue(filteredConfigsByChainId(chainId));
-  const jsonValue = JSON.stringify(configValue, null, 2);
+  const chainId = useParams().chainId ?? props.chainId!;
+  const {app} = useAtomValue(CwSimulateAppState);
+  const jsonValue = JSON.stringify({chainId: app.chainId, bech32Prefix: app.bech32Prefix}, null, 2);
   const [jsonPayload, setJsonPayload] = useState("");
-  const reconfigChain = useReconfigureChainForSimulation();
   const setNotification = useNotification();
   const navigate = useNavigate();
 
@@ -30,9 +28,8 @@ const Config = (props: IConfigProps) => {
       return;
     }
 
-    reconfigChain(configValue.chainId, json);
     if (json.chainId !== chainId) {
-      navigate(`/chains/${json.chainId}/config`);
+      navigate('/config');
     }
     setNotification("Config updated successfully");
   };

@@ -1,14 +1,12 @@
 import { Box, Grid, Stack, Typography, } from "@mui/material";
 import React from "react";
 import { ScreenSearchDesktopOutlined } from "@mui/icons-material";
-import filteredChainsFromSimulationState from "../../selectors/filteredChainsFromSimulationState";
 import { Outlet, useParams } from "react-router-dom";
-import { useAtomValue } from "jotai";
 
 const Chains = () => {
   const params = useParams();
   const chainId = params.chainId!;
-  const chains = useAtomValue(filteredChainsFromSimulationState);
+  const chains = {}; // TODO: FIX ME
   if (chainId in chains) {
     return <Outlet/>
   }

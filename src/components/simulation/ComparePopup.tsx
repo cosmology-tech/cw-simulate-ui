@@ -26,7 +26,7 @@ export const ComparePopup = ({
     setAnchorEl(null);
   };
   const getStateString = (stateObj: any) => {
-    return window.atob(stateObj?.dict._root.entries[0][1]);
+    return window.atob(stateObj?._root.entries[0][1]);
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;

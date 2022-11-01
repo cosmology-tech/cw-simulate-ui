@@ -1,9 +1,4 @@
-import {
-  Grid,
-  Tab,
-  Tabs,
-  Typography,
-} from "@mui/material";
+import { Grid, Tab, Tabs, Typography, } from "@mui/material";
 import { useAtom } from "jotai";
 import React from "react";
 import { responseState } from "../../atoms/reponseState";
@@ -14,13 +9,11 @@ import Widget from "./Widget";
 import Row from "./Row";
 
 interface ISendMessageProps {
-  chainId: string;
   contractAddress: string
 }
 
-export default function({ chainId, contractAddress }: ISendMessageProps) {
+export default function ({contractAddress}: ISendMessageProps) {
   const [response, setResponse] = useAtom(responseState);
-
   return (
     <Widget size={6}>
       <Row xs={12}>
@@ -58,7 +51,6 @@ export default function({ chainId, contractAddress }: ISendMessageProps) {
           <Row xs={6}>
             <ExecuteQuery
               setResponse={setResponse}
-              chainId={chainId}
               contractAddress={contractAddress}
             />
           </Row>
@@ -75,7 +67,7 @@ export default function({ chainId, contractAddress }: ISendMessageProps) {
             >
               <Grid item flexShrink={0}>
                 <Tabs value="response" aria-label="Response tab">
-                  <Tab value="response" label="Response" />
+                  <Tab value="response" label="Response"/>
                 </Tabs>
               </Grid>
               <Grid item flex={1} position="relative">

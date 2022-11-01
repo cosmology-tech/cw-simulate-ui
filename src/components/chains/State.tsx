@@ -1,10 +1,8 @@
-import filteredStatesByChainId from "../../selectors/filteredStatesByChainId";
 import { useParams } from "react-router-dom";
 import { Grid, Typography } from "@mui/material";
 import SearchBar from "./SearchBar";
 import TableLayout from "./TableLayout";
 import { useMemo } from "react";
-import { useAtomValue } from "jotai";
 import T1Container from "../grid/T1Container";
 
 type Row = {
@@ -15,7 +13,7 @@ type Row = {
 
 const State = () => {
   const chainId = useParams().chainId!
-  const states = useAtomValue(filteredStatesByChainId(chainId as string));
+  const states: any[] = []; // TODO: FIX ME
 
   const data = useMemo(() => {
     const rows: Row[] = [];
@@ -30,7 +28,7 @@ const State = () => {
     }
     return rows;
   }, [states]);
-  
+
   const title = (
     <>
       <Typography variant="h4">{chainId}</Typography>
@@ -64,8 +62,7 @@ const State = () => {
         </Grid>
       </>
     );
-  }
-  else {
+  } else {
     return (
       <>
         {title}
