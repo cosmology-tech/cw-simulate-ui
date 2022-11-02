@@ -3,13 +3,15 @@ import Stepper from "@mui/material/Stepper";
 import Step from "@mui/material/Step";
 import { Grid, StepLabel } from "@mui/material";
 import { blockState } from "../../atoms/blockState";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import { ComparePopup } from "./ComparePopup";
 import { stepRequestState } from "../../atoms/stepRequestState";
 import { stepResponseState } from "../../atoms/stepResponseState";
 import { executionHistoryState } from "../../atoms/executionHistoryState";
 import { stateResponseTabState } from "../../atoms/stateResponseTabState";
+import { stepTraceState } from "../../atoms/stepTraceState";
+import traceState from "../../atoms/traceState";
 
 interface IProps {
   chainId: string;
@@ -24,7 +26,8 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
   const [, stepResponseObj] = useAtom(stepResponseState);
   const [allLogs, ___] = useAtom(executionHistoryState);
   const setCurrentTab = useSetAtom(stateResponseTabState);
-
+  const trace = useAtomValue(traceState);
+  const setStepTrace = useSetAtom(stepTraceState);
   const handleStateView = (state: { dict: { [x: string]: string } }) => {
     if (state) {
       setStepState(
@@ -50,11 +53,16 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
       ? { error: executionStep?.response.error }
       : executionStep?.response;
     stepResponseObj(resp);
+    if (activeStep > 0) {
+      setStepTrace(trace[activeStep - 1]);
+    } else {
+      setStepTrace([]);
+    }
   }, [activeStep, contractAddress]);
 
   const handleStep = (step: number) => {
     setActiveStep(step);
-    setCurrentTab('state');
+    setCurrentTab("state");
   };
   return (
     <Grid item sx={{ width: "100%" }}>
