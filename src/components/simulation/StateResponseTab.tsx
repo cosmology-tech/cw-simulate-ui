@@ -4,7 +4,9 @@ import CloseDiff from "./CloseDiff";
 
 interface IProps {
   currentTab: string;
-  setCurrentTab: (val: "response" | "state" | "request") => void;
+  setCurrentTab: (
+    val: "response" | "state" | "request" | "trace" | "debug"
+  ) => void;
   setIsVisible: (val: boolean) => void;
   isVisible: boolean;
 }
@@ -21,6 +23,10 @@ const StateResponseTab = ({
         ? "response"
         : newValue === "request"
         ? "request"
+        : newValue === "trace"
+        ? "trace"
+        : newValue === "debug"
+        ? "debug"
         : "state"
     );
   };
@@ -35,6 +41,8 @@ const StateResponseTab = ({
           <Tab value="state" label="State" />
           <Tab value="request" label="Request" />
           <Tab value="response" label="Response" />
+          <Tab value="trace" label="Trace" />
+          <Tab value="debug" label="Debug" />
         </Tabs>
       </Grid>
       {isVisible && (

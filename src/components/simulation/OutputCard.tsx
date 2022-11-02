@@ -4,6 +4,10 @@ import { Typography } from "@mui/material";
 import { GREY_3, GREY_6 } from "../../configs/variables";
 import T1Container from "../grid/T1Container";
 import ReactDiffViewer from "@terran-one/react-diff-viewer";
+import {
+  ExecuteTraceLog,
+  ReplyTraceLog,
+} from "@terran-one/cw-simulate/dist/modules/wasm";
 
 interface IProps {
   beforeState?: string;
@@ -11,6 +15,7 @@ interface IProps {
   response?: JSON | undefined | any;
   isVisible?: boolean;
   placeholder: string;
+  stepTrace?: ExecuteTraceLog | ReplyTraceLog | {};
 }
 
 const theme = {
@@ -40,6 +45,7 @@ export const OutputCard = ({
   response,
   placeholder,
   isVisible,
+  stepTrace,
 }: IProps) => {
   return (
     <T1Container
@@ -52,7 +58,9 @@ export const OutputCard = ({
         },
       }}
     >
-      {response !== undefined ? (
+      {stepTrace ? (
+        <JSONTree data={stepTrace} theme={theme} invertTheme={false} />
+      ) : response !== undefined ? (
         <JSONTree data={response} theme={theme} invertTheme={false} />
       ) : isVisible ? (
         <ReactDiffViewer
@@ -65,7 +73,6 @@ export const OutputCard = ({
           {placeholder}
         </Typography>
       )}
-      {}
     </T1Container>
   );
 };

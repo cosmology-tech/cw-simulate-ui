@@ -3,10 +3,12 @@ import { useCallback } from "react";
 import type { Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
 import { AsJSON } from "./typeUtils";
 import { AppResponse, CWSimulateApp } from "@terran-one/cw-simulate";
-import { Coin } from "@terran-one/cw-simulate/dist/contract";
+import { Coin } from "@terran-one/cw-simulate/dist/modules/wasm";
 import cwSimulateAppState from "../atoms/cwSimulateAppState";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
-import { CWChain } from "@terran-one/cw-simulate/dist/chain";
+//TODO: Fix this type import
+//@ts-ignore
+import { CWChain } from "@terran-one/cw-simulate/dist/modules/wasm";
 import traceState from "../atoms/traceState";
 import {executionHistoryState, IExecutionHistoryState } from "../atoms/executionHistoryState";
 import { Result } from "ts-results";

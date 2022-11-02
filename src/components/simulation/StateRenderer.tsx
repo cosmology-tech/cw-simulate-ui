@@ -9,6 +9,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { stateResponseTabState } from "../../atoms/stateResponseTabState";
 import { compareStates } from "../../atoms/compareStates";
 import { stepRequestState } from "../../atoms/stepRequestState";
+import { stepTraceState } from "../../atoms/stepTraceState";
 
 interface IProps {
   isFileUploaded: boolean;
@@ -21,6 +22,7 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
   const response = useAtomValue(stepResponseState);
   const request = useAtomValue(stepRequestState);
   const currentJSON = useAtomValue(blockState);
+  const stepTrace = useAtomValue(stepTraceState);
   React.useEffect(() => {
     if (compareStateObj.state1 != "" && compareStateObj.state2 != "")
       setIsVisible(true);
@@ -44,8 +46,8 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
         />
       </Grid>
       <Grid item flex={1}>
-        {currentTab === "state" ? (
-          isVisible ? (
+        {currentTab === "state" &&
+          (isVisible ? (
             <OutputCard
               beforeState={compareStateObj.state1}
               afterState={compareStateObj.state2}
@@ -57,12 +59,16 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
               response={currentJSON}
               placeholder="Your state will appear here."
             />
-          )
-        ) : currentTab === "request" ? (
-          <OutputRenderer response={request} />
-        ) : (
-          <OutputRenderer response={response} />
+          ))}
+        {currentTab === "request" && <OutputRenderer response={request} />}
+        {currentTab === "trace" && (
+          <OutputCard
+            stepTrace={stepTrace}
+            placeholder="Your trace will appear here."
+          />
         )}
+        {currentTab === "response" && <OutputRenderer response={response} />}
+        {currentTab === "debug" && <OutputRenderer response={response} />}
       </Grid>
     </Grid>
   );
