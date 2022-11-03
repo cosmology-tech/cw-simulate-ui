@@ -23,6 +23,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import traceState from "../../atoms/traceState";
 import { JSONTree } from "react-json-tree";
+import { SubStepper } from "./SubStepper";
 
 interface IProps {
   chainId: string;
@@ -160,90 +161,8 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                   </Grid>
                 </StepLabel>
                 <StepContent>
-                  {activeStep === index && isOpen && (
-                    <Paper
-                      elevation={3}
-                      sx={{
-                        height: "30vh",
-                        overflow: "scroll",
-                        textAlign: "left",
-                        display: "flex",
-                        flexDirection: "column",
-                        borderTop: "1px solid rgb(0, 0, 0, 0.12)",
-                      }}
-                    >
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          position: "relative",
-                          overflow: "scroll",
-                          mb: 1,
-                        }}
-                      >
-                        <div style={{ position: "sticky", top: 0 }}>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              position: "sticky",
-                            }}
-                          >
-                            Request
-                          </Typography>
-                          <Divider orientation="horizontal" />
-                        </div>
-                        <div
-                          style={{
-                            overflow: "scroll",
-                            marginLeft: "1rem",
-                          }}
-                        >
-                          <JSONTree
-                            data={request}
-                            theme={theme}
-                            invertTheme={false}
-                          />
-                        </div>
-                      </Grid>
-                      <Divider orientation="vertical" flexItem />
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          overflow: "scroll",
-                          position: "relative",
-                        }}
-                      >
-                        <div style={{ position: "sticky", top: 0 }}>
-                          <Divider orientation="horizontal" />
-                          <Typography
-                            variant="caption"
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          >
-                            Response
-                          </Typography>
-                          <Divider orientation="horizontal" />
-                        </div>
-                        <div
-                          style={{
-                            overflow: "scroll",
-                            marginLeft: "1rem",
-                          }}
-                        >
-                          <JSONTree
-                            data={response}
-                            theme={theme}
-                            invertTheme={false}
-                          />
-                        </div>
-                      </Grid>
-                    </Paper>
+                  {activeStep === index && isOpen && trace.length > 0 && (
+                    <SubStepper traceLog={trace} />
                   )}
                 </StepContent>
               </Step>
