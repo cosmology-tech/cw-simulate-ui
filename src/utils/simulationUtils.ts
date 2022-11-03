@@ -103,7 +103,6 @@ export function useExecute() {
   const [trace, setTrace] = useAtom(traceState);
   return useCallback(async (sender: string, funds: Coin[], contractAddress: string, executeMsg: any) => {
     const result = await app.wasm.executeContract(sender, funds, contractAddress, executeMsg, trace);
-    const currentState = await app.store.getIn(['wasm', 'contractStorage', contractAddress]);
     setSimulateApp({app});
     const newLogs = getExecutionLogs(app,contractAddress, result,executionLog,sender,funds, undefined,executeMsg);
     setExecutionLog(newLogs);

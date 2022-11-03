@@ -99,11 +99,7 @@ export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
           />
         </T1Container>
       </Grid>
-      <Grid
-        item
-        flexShrink={0}
-        sx={{ display: "flex", justifyContent: "flex-end" }}
-      >
+      <Grid item flexShrink={0} sx={{ display: "flex" }}>
         <Button
           variant="contained"
           onClick={onRunHandler}
