@@ -59,12 +59,11 @@ export default function CodeMenuItem(props: ICodeMenuItemProps) {
           onClose={() => {
             setShowDeleteCodeDialog(false);
             close();
-            navigate('/');
+            navigate('/codes');
           }}
         />,
         <InstantiateDialog
           code={code}
-          chainId={chainId}
           key={'instantiate-dialog'}
           open={showInstantiateDialog}
           onClose={(isOpen: boolean) => openCloseDialog(isOpen, close)}
@@ -116,14 +115,13 @@ function DeleteCodeDialog(props: IDeleteCodeDialogProps) {
 
 interface IInstantiateDialogProps {
   code: Code;
-  chainId: string;
   open: boolean;
 
   onClose(success: boolean): void;
 }
 
 function InstantiateDialog(props: IInstantiateDialogProps) {
-  const {code, chainId, open, onClose} = props;
+  const {code, open, onClose} = props;
   const navigate = useNavigate();
   const [payload, setPayload] = useState<string>("");
   const placeholder = {

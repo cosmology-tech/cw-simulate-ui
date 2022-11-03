@@ -10,15 +10,25 @@ interface ICodesMenuItemProps {
   chainId: string;
 }
 
+interface Code {
+  codeId: number,
+  name: string,
+}
+
+interface Codes {
+  [key: number]: Code;
+}
+
 export default function CodesMenuItem(props: ICodesMenuItemProps) {
   const {chainId} = props;
   const {app} = useAtomValue(cwSimulateAppState);
-  //@ts-ignore
-  const codesTest = app.store.getIn(["wasm", "codes"]).toObject();
-  // TODO: FIX ME
-  const codes = {1: {codeId: app.wasm.lastCodeId, name: app.wasm.lastCodeId.toString()}};
-
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
+  //@ts-ignore
+  const codesFromStore = app.store.getIn(["wasm", "codes"]).toObject();
+  const codes = {} as Codes;
+  for (const key of Object.keys(codesFromStore)) {
+    codes[parseInt(key)] = {codeId: parseInt(key), name: key};
+  }
 
   return (
     <>

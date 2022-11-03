@@ -3,21 +3,15 @@ import { useCallback } from "react";
 import type { Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
 import { AsJSON } from "./typeUtils";
 import { AppResponse, CWSimulateApp } from "@terran-one/cw-simulate";
-import { Coin } from "@terran-one/cw-simulate/dist/modules/wasm";
+import { Coin } from "@terran-one/cw-simulate/dist/types";
 import cwSimulateAppState from "../atoms/cwSimulateAppState";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
-//TODO: Fix this type import
-//@ts-ignore
-import { CWChain } from "@terran-one/cw-simulate/dist/modules/wasm";
 import traceState from "../atoms/traceState";
-import {executionHistoryState, IExecutionHistoryState } from "../atoms/executionHistoryState";
+import { executionHistoryState, IExecutionHistoryState } from "../atoms/executionHistoryState";
 import { Result } from "ts-results";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
-  chains: {
-    [key: string]: CWChain;
-  };
 }>
 
 /**
@@ -47,34 +41,35 @@ export function useStoreCode() {
     return codeId;
   }, [app]);
 }
+
 /**
  * This function is used by hooks(instantiate and execute) in order to get and then set execution History
  */
- function getExecutionLogs (app:CWSimulateApp, contractAddress:string, result: Result<AppResponse, string>,executionLog: IExecutionHistoryState, sender: string, funds: Coin[], instantiateMsg?:any, executeMsg?:any) {
-  const currentState =  app.store.getIn(['wasm', 'contractStorage', contractAddress]);
+function getExecutionLogs(app: CWSimulateApp, contractAddress: string, result: Result<AppResponse, string>, executionLog: IExecutionHistoryState, sender: string, funds: Coin[], instantiateMsg?: any, executeMsg?: any) {
+  const currentState = app.store.getIn(['wasm', 'contractStorage', contractAddress]);
   const response = result.err
-      //@ts-ignore
-        ? ({ error: result.val } as unknown as JSON)
-        : result.unwrap() ;
+    //@ts-ignore
+    ? ({error: result.val} as unknown as JSON)
+    : result.unwrap();
   let newLogs = executionLog;
-    const request = {
-      env:app.wasm.getExecutionEnv(contractAddress),
-      info:{
-        funds:funds,
-        sender:sender,
-      },
-      executeMsg:instantiateMsg?{instantiate:instantiateMsg}:executeMsg
-    }
+  const request = {
+    env: app.wasm.getExecutionEnv(contractAddress),
+    info: {
+      funds: funds,
+      sender: sender,
+    },
+    executeMsg: instantiateMsg ? {instantiate: instantiateMsg} : executeMsg
+  }
 
-    if(newLogs[`${contractAddress}`]) {
-       newLogs[`${contractAddress}`].push({state:currentState, request:request, response:response});
-    }
-    else {
-      newLogs[`${contractAddress}`]=[];
-     newLogs[`${contractAddress}`].push({state:currentState, request:request, response:response});
-    }
-    return newLogs;
+  if (newLogs[`${contractAddress}`]) {
+    newLogs[`${contractAddress}`].push({state: currentState, request: request, response: response});
+  } else {
+    newLogs[`${contractAddress}`] = [];
+    newLogs[`${contractAddress}`].push({state: currentState, request: request, response: response});
+  }
+  return newLogs;
 }
+
 /**
  * This hook is used to instantiate a contract in the simulation state.
  */
@@ -83,9 +78,9 @@ export function useInstantiateContract() {
   const [executionLog, setExecutionLog] = useAtom(executionHistoryState);
   return useCallback(async (sender: string, funds: Coin[], codeId: number, instantiateMsg: any) => {
     const result = await app.wasm.instantiateContract(sender, funds, codeId, instantiateMsg);
-    if(result.ok) {
+    if (result.ok) {
       const contractAddress = result.val.events[0].attributes[0].value;
-      const newLogs = getExecutionLogs(app,contractAddress,result,executionLog,sender, funds,instantiateMsg);
+      const newLogs = getExecutionLogs(app, contractAddress, result, executionLog, sender, funds, instantiateMsg);
       setExecutionLog(newLogs);
     }
     setSimulateApp({app});
@@ -104,7 +99,7 @@ export function useExecute() {
   return useCallback(async (sender: string, funds: Coin[], contractAddress: string, executeMsg: any) => {
     const result = await app.wasm.executeContract(sender, funds, contractAddress, executeMsg, trace);
     setSimulateApp({app});
-    const newLogs = getExecutionLogs(app,contractAddress, result,executionLog,sender,funds, undefined,executeMsg);
+    const newLogs = getExecutionLogs(app, contractAddress, result, executionLog, sender, funds, undefined, executeMsg);
     setExecutionLog(newLogs);
     setTrace(trace);
     return result;
