@@ -14,13 +14,13 @@ interface ICodesMenuItemProps {
 export default function CodesMenuItem(props: ICodesMenuItemProps) {
   const {chainId} = props;
   const {app} = useAtomValue(cwSimulateAppState);
-  const simulationMetadata = useAtomValue(simulationMetadataState);
+  const {metadata} = useAtomValue(simulationMetadataState);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   //@ts-ignore
   const codesFromStore = app.store.getIn(["wasm", "codes"]).toObject();
   const codes = {} as Codes;
   for (const key of Object.keys(codesFromStore)) {
-    const fileName = simulationMetadata.codes[parseInt(key)].name;
+    const fileName = metadata.codes[parseInt(key)].name;
     codes[parseInt(key)] = {codeId: parseInt(key), name: fileName};
   }
 

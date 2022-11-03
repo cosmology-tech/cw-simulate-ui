@@ -23,6 +23,6 @@ export interface Code {
   codeId: number;
 }
 
-const simulationMetadataState = atom<SimulationMetadata>({} as SimulationMetadata);
+const simulationMetadataState = atom({metadata: {codes: {}, accounts: {}} as SimulationMetadata});
 
 export default simulationMetadataState;

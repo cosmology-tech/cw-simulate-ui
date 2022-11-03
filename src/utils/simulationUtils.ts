@@ -1,6 +1,7 @@
 import { useAtom } from "jotai";
 import { useCallback } from "react";
 import type { Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
 import { AsJSON } from "./typeUtils";
 import { AppResponse, CWSimulateApp } from "@terran-one/cw-simulate";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
@@ -9,7 +10,6 @@ import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp
 import traceState from "../atoms/traceState";
 import { executionHistoryState, IExecutionHistoryState } from "../atoms/executionHistoryState";
 import { Result } from "ts-results";
-import simulationMetadataState from "../atoms/simulationMetadataState";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
@@ -36,22 +36,17 @@ export function useCreateNewSimulateApp() {
  */
 export function useStoreCode() {
   const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
-  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [{metadata}, setSimulationMetadata] = useAtom(simulationMetadataState);
   return useCallback((creator: string, file: { filename: string, fileContent: Buffer | JSON }) => {
     const codeId = app.wasm.create(creator, file.fileContent as Buffer);
     setSimulateApp({app});
-    setSimulationMetadata({
-      ...simulationMetadata,
-      codes: {
-        ...simulationMetadata.codes,
-        [codeId]: {
-          name: file.filename,
-          codeId: codeId,
-        }
-      }
-    })
+    metadata.codes[codeId] = {
+      name: file.filename,
+      codeId: codeId,
+    };
+    setSimulationMetadata({metadata});
     return codeId;
-  }, [app]);
+  }, [app, metadata, setSimulateApp, setSimulationMetadata]);
 }
 
 /**
@@ -148,7 +143,7 @@ export function useExecuteSubMsg() {
  * This hook is used to call reply in the simulation state.
  */
 export function useReply() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   return useCallback(async (contractAddress: string, replyMessage: any, trace: any) => {
     const result = await app.wasm.reply(contractAddress, replyMessage, trace);
     setSimulateApp({app});
@@ -160,18 +155,22 @@ export function useReply() {
  * This hook is used to delete code in the simulation state.
  */
 export function useDeleteCode() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
+  const [{metadata}, setSimulationMetadata] = useAtom(simulationMetadataState);
   return useCallback((codeId: number) => {
     app.store.deleteIn(["wasm", "codes", codeId]);
     setSimulateApp({app});
-  }, [app]);
+    // delete code from metadata
+    delete metadata.codes[codeId];
+    setSimulationMetadata({metadata});
+  }, [app, metadata]);
 }
 
 /**
  * This hook is used to delete instance in the simulation state.
  */
 export function useDeleteInstance() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   return useCallback((contractAddress: string) => {
     app.store.deleteIn(["wasm", "contractStorage", contractAddress]);
     setSimulateApp({app});
