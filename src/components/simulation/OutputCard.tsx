@@ -7,7 +7,7 @@ import ReactDiffViewer from "@terran-one/react-diff-viewer";
 import {
   ExecuteTraceLog,
   ReplyTraceLog,
-} from "@terran-one/cw-simulate/dist/modules/wasm";
+} from "@terran-one/cw-simulate/dist/types";
 
 interface IProps {
   beforeState?: string;

@@ -24,7 +24,7 @@ interface IUploadModalProps {
 
 export default function UploadModal(props: IUploadModalProps) {
   const {dropzoneText, variant, dropTitle, chainId, open, onClose} = props;
-  const [, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>();
   const setNotification = useNotification();
   const storeCode = useStoreCode();
@@ -37,9 +37,7 @@ export default function UploadModal(props: IUploadModalProps) {
     }
 
     if (variant === 'contract') {
-      if (chainId != null) {
-        storeCode(SENDER_ADDRESS, file.fileContent as Buffer);
-      }
+      storeCode(SENDER_ADDRESS, file);
     } else if (variant === 'simulation') {
       try {
         const json = file.fileContent as any as SimulationJSON;

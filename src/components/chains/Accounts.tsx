@@ -17,19 +17,17 @@ import React, { useMemo, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { selectAccountsMetadata } from "../../atoms/simulationMetadataState";
 import { useParams } from "react-router-dom";
-import { useAtomValue } from "jotai";
 import T1Container from "../grid/T1Container";
-import { Coin } from "@terran-one/cw-simulate/dist/modules/wasm";
+import { Coin } from "@terran-one/cw-simulate/dist/types";
 
 const DEFAULT_VALUE = JSON.stringify(
   {
     address: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
     id: "bob",
     balances: [
-      { denom: "uluna", amount: "1000" },
-      { denom: "uust", amount: "10000" },
+      {denom: "uluna", amount: "1000"},
+      {denom: "uust", amount: "10000"},
     ],
   },
   null,
@@ -54,8 +52,8 @@ const Accounts = () => {
       accounts.map((account) => ({
         ...account,
         balances: getBalances()
-          .map((c: Coin) => `${c.amount}${c.denom}`)
-          ?.join(", "),
+        .map((c: Coin) => `${c.amount}${c.denom}`)
+        ?.join(", "),
       })),
     [accounts]
   );
@@ -73,7 +71,7 @@ const Accounts = () => {
     const json = JSON.parse(payload);
 
     if (payload.length === 0 || !validateAccountJSON(json)) {
-      setNotification("Invalid Account JSON", { severity: "error" });
+      setNotification("Invalid Account JSON", {severity: "error"});
       return;
     }
 
@@ -104,7 +102,7 @@ const Accounts = () => {
   };
   return (
     <>
-      <Grid item container sx={{ mb: 2 }}>
+      <Grid item container sx={{mb: 2}}>
         <Grid item flex={1}>
           <Typography variant="h4">{chainId}</Typography>
           <Typography variant="h6">Accounts</Typography>
@@ -130,7 +128,7 @@ const Accounts = () => {
                   onClick={() => handleDeleteAccount(props.row.address)}
                 >
                   <ListItemIcon>
-                    <DeleteIcon fontSize="small" />
+                    <DeleteIcon fontSize="small"/>
                   </ListItemIcon>
                   <ListItemText>Delete</ListItemText>
                 </MenuItem>
@@ -145,7 +143,7 @@ const Accounts = () => {
           <DialogContentText>
             Enter account address and balance.
           </DialogContentText>
-          <T1Container sx={{ width: 400, height: 220 }}>
+          <T1Container sx={{width: 400, height: 220}}>
             <JsonCodeMirrorEditor
               jsonValue={DEFAULT_VALUE}
               setPayload={handleSetPayload}

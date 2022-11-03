@@ -2,7 +2,7 @@ import React, { Suspense, useContext, useState } from "react";
 import { Box, CircularProgress } from "@mui/material";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { base64ToArrayBuffer, validateSimulationJSON } from "../../utils/fileUtils";
+import { base64ToArrayBuffer } from "../../utils/fileUtils";
 import { useSetAtom } from "jotai";
 import { useDropzone } from 'react-dropzone';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -133,20 +133,23 @@ const FileUpload = ({
     }
   };
 
-  const { getRootProps, getInputProps } = useDropzone({ onDrop: handleOnFileDrop })
+  const {getRootProps, getInputProps} = useDropzone({onDrop: handleOnFileDrop})
   return (
     <Suspense fallback={<Fallback/>}>
-      <div {...getRootProps({onClick: handleDropzoneClick})} style={{cursor: 'pointer', padding: '8px'}}>
+      <div {...getRootProps({onClick: handleDropzoneClick})}
+           style={{cursor: 'pointer', padding: '8px'}}>
         <input {...getInputProps()} />
         {
           filename ?
             <>
-              <AttachFileIcon fontSize="large" />
-              <div style={{fontSize: '24px'}}>{filename} <DeleteIcon id='delete-icon' fontSize="small" onClick={deleteFile} /></div>
+              <AttachFileIcon fontSize="large"/>
+              <div style={{fontSize: '24px'}}>{filename} <DeleteIcon id='delete-icon'
+                                                                     fontSize="small"
+                                                                     onClick={deleteFile}/></div>
             </> :
             <>
               <div style={{fontSize: '24px'}}>{text}</div>
-              <UploadFileIcon fontSize="large" />
+              <UploadFileIcon fontSize="large"/>
             </>
         }
       </div>

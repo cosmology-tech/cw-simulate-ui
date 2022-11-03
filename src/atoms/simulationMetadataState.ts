@@ -1,11 +1,8 @@
 import { atom } from "jotai";
-import { atomFamily, atomWithStorage } from "jotai/utils";
 
 export interface SimulationMetadata {
-  [chainId: string]: {
-    codes: Codes;
-    accounts: Accounts;
-  }
+  codes: Codes;
+  accounts: Accounts;
 }
 
 interface Accounts {
@@ -18,7 +15,7 @@ export interface Account {
 }
 
 export interface Codes {
-  [codeName: string]: Code;
+  [key: number]: Code;
 }
 
 export interface Code {
@@ -26,14 +23,6 @@ export interface Code {
   codeId: number;
 }
 
-const simulationMetadataState = atomWithStorage<SimulationMetadata>('simulationMetadata', {});
+const simulationMetadataState = atom({metadata: {codes: {}, accounts: {}} as SimulationMetadata});
 
 export default simulationMetadataState;
-
-export const selectCodesMetadata = atomFamily((chainId: string) => {
-  return atom(get => get(simulationMetadataState)[chainId]?.codes);
-});
-
-export const selectAccountsMetadata = atomFamily((chainId: string) => {
-  return atom(get => get(simulationMetadataState)[chainId]?.accounts);
-});

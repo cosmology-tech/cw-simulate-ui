@@ -1,23 +1,18 @@
 import { useAtom } from "jotai";
 import { useCallback } from "react";
 import type { Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
+import simulationMetadataState from "../atoms/simulationMetadataState";
 import { AsJSON } from "./typeUtils";
 import { AppResponse, CWSimulateApp } from "@terran-one/cw-simulate";
-import { Coin } from "@terran-one/cw-simulate/dist/modules/wasm";
+import { Coin } from "@terran-one/cw-simulate/dist/types";
 import cwSimulateAppState from "../atoms/cwSimulateAppState";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
-//TODO: Fix this type import
-//@ts-ignore
-import { CWChain } from "@terran-one/cw-simulate/dist/modules/wasm";
 import traceState from "../atoms/traceState";
-import {executionHistoryState, IExecutionHistoryState } from "../atoms/executionHistoryState";
+import { executionHistoryState, IExecutionHistoryState } from "../atoms/executionHistoryState";
 import { Result } from "ts-results";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
-  chains: {
-    [key: string]: CWChain;
-  };
 }>
 
 /**
@@ -40,41 +35,48 @@ export function useCreateNewSimulateApp() {
  * This hook is used to store new WASM bytecode in the simulation state.
  */
 export function useStoreCode() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
-  return useCallback((creator: string, wasm: Uint8Array) => {
-    const codeId = app.wasm.create(creator, wasm);
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
+  const [{metadata}, setSimulationMetadata] = useAtom(simulationMetadataState);
+  return useCallback((creator: string, file: { filename: string, fileContent: Buffer | JSON }) => {
+    const codeId = app.wasm.create(creator, file.fileContent as Buffer);
     setSimulateApp({app});
+    metadata.codes[codeId] = {
+      name: file.filename,
+      codeId: codeId,
+    };
+    setSimulationMetadata({metadata});
     return codeId;
-  }, [app]);
+  }, [app, metadata, setSimulateApp, setSimulationMetadata]);
 }
+
 /**
  * This function is used by hooks(instantiate and execute) in order to get and then set execution History
  */
- function getExecutionLogs (app:CWSimulateApp, contractAddress:string, result: Result<AppResponse, string>,executionLog: IExecutionHistoryState, sender: string, funds: Coin[], instantiateMsg?:any, executeMsg?:any) {
-  const currentState =  app.store.getIn(['wasm', 'contractStorage', contractAddress]);
+function getExecutionLogs(app: CWSimulateApp, contractAddress: string, result: Result<AppResponse, string>, executionLog: IExecutionHistoryState, sender: string, funds: Coin[], instantiateMsg?: any, executeMsg?: any) {
+  const currentState = app.store.getIn(['wasm', 'contractStorage', contractAddress]);
   const response = result.err
-      //@ts-ignore
-        ? ({ error: result.val } as unknown as JSON)
-        : result.unwrap() ;
+    //@ts-ignore
+    ? ({error: result.val} as unknown as JSON)
+    : result.unwrap();
   let newLogs = executionLog;
-    const request = {
-      env:app.wasm.getExecutionEnv(contractAddress),
-      info:{
-        funds:funds,
-        sender:sender,
-      },
-      executeMsg:instantiateMsg?{instantiate:instantiateMsg}:executeMsg
-    }
+  const request = {
+    env: app.wasm.getExecutionEnv(contractAddress),
+    info: {
+      funds: funds,
+      sender: sender,
+    },
+    executeMsg: instantiateMsg ? {instantiate: instantiateMsg} : executeMsg
+  }
 
-    if(newLogs[`${contractAddress}`]) {
-       newLogs[`${contractAddress}`].push({state:currentState, request:request, response:response});
-    }
-    else {
-      newLogs[`${contractAddress}`]=[];
-     newLogs[`${contractAddress}`].push({state:currentState, request:request, response:response});
-    }
-    return newLogs;
+  if (newLogs[`${contractAddress}`]) {
+    newLogs[`${contractAddress}`].push({state: currentState, request: request, response: response});
+  } else {
+    newLogs[`${contractAddress}`] = [];
+    newLogs[`${contractAddress}`].push({state: currentState, request: request, response: response});
+  }
+  return newLogs;
 }
+
 /**
  * This hook is used to instantiate a contract in the simulation state.
  */
@@ -83,9 +85,9 @@ export function useInstantiateContract() {
   const [executionLog, setExecutionLog] = useAtom(executionHistoryState);
   return useCallback(async (sender: string, funds: Coin[], codeId: number, instantiateMsg: any) => {
     const result = await app.wasm.instantiateContract(sender, funds, codeId, instantiateMsg);
-    if(result.ok) {
+    if (result.ok) {
       const contractAddress = result.val.events[0].attributes[0].value;
-      const newLogs = getExecutionLogs(app,contractAddress,result,executionLog,sender, funds,instantiateMsg);
+      const newLogs = getExecutionLogs(app, contractAddress, result, executionLog, sender, funds, instantiateMsg);
       setExecutionLog(newLogs);
     }
     setSimulateApp({app});
@@ -104,7 +106,7 @@ export function useExecute() {
   return useCallback(async (sender: string, funds: Coin[], contractAddress: string, executeMsg: any) => {
     const result = await app.wasm.executeContract(sender, funds, contractAddress, executeMsg, trace);
     setSimulateApp({app});
-    const newLogs = getExecutionLogs(app,contractAddress, result,executionLog,sender,funds, undefined,executeMsg);
+    const newLogs = getExecutionLogs(app, contractAddress, result, executionLog, sender, funds, undefined, executeMsg);
     setExecutionLog(newLogs);
     setTrace(trace);
     return result;
@@ -141,7 +143,7 @@ export function useExecuteSubMsg() {
  * This hook is used to call reply in the simulation state.
  */
 export function useReply() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   return useCallback(async (contractAddress: string, replyMessage: any, trace: any) => {
     const result = await app.wasm.reply(contractAddress, replyMessage, trace);
     setSimulateApp({app});
@@ -153,18 +155,22 @@ export function useReply() {
  * This hook is used to delete code in the simulation state.
  */
 export function useDeleteCode() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
+  const [{metadata}, setSimulationMetadata] = useAtom(simulationMetadataState);
   return useCallback((codeId: number) => {
     app.store.deleteIn(["wasm", "codes", codeId]);
     setSimulateApp({app});
-  }, [app]);
+    // delete code from metadata
+    delete metadata.codes[codeId];
+    setSimulationMetadata({metadata});
+  }, [app, metadata]);
 }
 
 /**
  * This hook is used to delete instance in the simulation state.
  */
 export function useDeleteInstance() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   return useCallback((contractAddress: string) => {
     app.store.deleteIn(["wasm", "contractStorage", contractAddress]);
     setSimulateApp({app});

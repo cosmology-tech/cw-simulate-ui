@@ -41,7 +41,7 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
           onClose={() => {
             setShowDeleteInstance(false);
             close();
-            navigate('/');
+            navigate('/instances');
           }}
           open={showDeleteInstance}
         />,
