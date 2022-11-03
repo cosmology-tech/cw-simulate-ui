@@ -9,6 +9,7 @@ import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp
 import traceState from "../atoms/traceState";
 import { executionHistoryState, IExecutionHistoryState } from "../atoms/executionHistoryState";
 import { Result } from "ts-results";
+import simulationMetadataState from "../atoms/simulationMetadataState";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
@@ -34,10 +35,21 @@ export function useCreateNewSimulateApp() {
  * This hook is used to store new WASM bytecode in the simulation state.
  */
 export function useStoreCode() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
-  return useCallback((creator: string, wasm: Uint8Array) => {
-    const codeId = app.wasm.create(creator, wasm);
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
+  const [simulationMetadata, setSimulationMetadata] = useAtom(simulationMetadataState);
+  return useCallback((creator: string, file: { filename: string, fileContent: Buffer | JSON }) => {
+    const codeId = app.wasm.create(creator, file.fileContent as Buffer);
     setSimulateApp({app});
+    setSimulationMetadata({
+      ...simulationMetadata,
+      codes: {
+        ...simulationMetadata.codes,
+        [codeId]: {
+          name: file.filename,
+          codeId: codeId,
+        }
+      }
+    })
     return codeId;
   }, [app]);
 }

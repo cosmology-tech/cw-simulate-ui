@@ -39,7 +39,7 @@ export const WelcomeScreen = () => {
     }
     if (file.filename.endsWith(".wasm")) {
       createSimulateApp({chainId: DEFAULT_CHAIN, bech32Prefix: 'terra'});
-      storeCode(SENDER_ADDRESS, file.fileContent as Buffer);
+      storeCode(SENDER_ADDRESS, file);
     } else if (file.filename.endsWith(".json")) {
       const json = file.fileContent as unknown as SimulationJSON;
       setupSimulationJSON(json);

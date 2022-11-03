@@ -5,36 +5,30 @@ import CodeMenuItem from "./CodeMenuItem";
 import T1MenuItem from "./T1MenuItem";
 import { useAtomValue } from "jotai";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
+import simulationMetadataState, { Codes } from "../../atoms/simulationMetadataState";
 
 interface ICodesMenuItemProps {
   chainId: string;
 }
 
-interface Code {
-  codeId: number,
-  name: string,
-}
-
-interface Codes {
-  [key: number]: Code;
-}
-
 export default function CodesMenuItem(props: ICodesMenuItemProps) {
   const {chainId} = props;
   const {app} = useAtomValue(cwSimulateAppState);
+  const simulationMetadata = useAtomValue(simulationMetadataState);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   //@ts-ignore
   const codesFromStore = app.store.getIn(["wasm", "codes"]).toObject();
   const codes = {} as Codes;
   for (const key of Object.keys(codesFromStore)) {
-    codes[parseInt(key)] = {codeId: parseInt(key), name: key};
+    const fileName = simulationMetadata.codes[parseInt(key)].name;
+    codes[parseInt(key)] = {codeId: parseInt(key), name: fileName};
   }
 
   return (
     <>
       <T1MenuItem
         label="Codes"
-        nodeId={`${chainId}/codes`}
+        nodeId={'codes'}
         options={[
           <MenuItem
             key="upload-contract"
