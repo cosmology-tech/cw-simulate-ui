@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } from "@mui/material";
 import { useDeleteInstance, } from "../../utils/simulationUtils";
+import { useClipboard } from '../../utils/hookUtils'
 
 export interface IInstanceMenuItemProps {
   chainId: string;
@@ -16,19 +17,27 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
   } = props;
   const [showDeleteInstance, setShowDeleteInstance] = useState(false);
   const navigate = useNavigate();
+  const { copyToClipboard } = useClipboard()
+
   return (
     <T1MenuItem
       label={instance}
       nodeId={`instances/${instance}`}
       link={`/instances/${instance}`}
       textEllipsis
-      tooltip={`${instance}`}
-      options={[
+      tooltip={instance}
+      options={({close}) => [
         <MenuItem
           key="delete-instance"
           onClick={() => {
             setShowDeleteInstance(true);
           }}>Delete</MenuItem>,
+        <MenuItem
+          key="copy-instance-address"
+          onClick={() => {
+            copyToClipboard(instance);
+            close();
+          }}>Copy Address</MenuItem>
       ]}
       optionsExtras={({close}) => [
         <DeleteInstanceDialog
