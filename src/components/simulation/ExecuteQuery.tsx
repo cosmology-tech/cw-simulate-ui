@@ -10,13 +10,14 @@ import { useAtom, useAtomValue } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import T1Container from "../grid/T1Container";
 import { useExecute, useQuery } from "../../utils/simulationUtils";
+import traceState from "../../atoms/traceState";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
   contractAddress: string;
 }
 
-export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
+export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
   const [payload, setPayload] = useState("");
   const executeQueryTab = useAtomValue(executeQueryTabState);
   const [currentState, setCurrentState] = useAtom(currentStateNumber);
@@ -24,7 +25,7 @@ export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
   const setNotification = useNotification();
   const execute = useExecute();
   const query = useQuery();
-
+  const trace = useAtomValue(traceState);
   const handleExecute = async () => {
     try {
       const res: any = await execute(
@@ -34,8 +35,9 @@ export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
         JSON.parse(payload)
       );
       const response = res.err
-        ? ({ error: res.val } as unknown as JSON)
+        ? ({error: res.val} as unknown as JSON)
         : (res.unwrap() as JSON);
+      console.log(trace);
       setResponse(response);
       if (res.err) {
         throw new Error(res.err);
@@ -89,7 +91,7 @@ export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
       }}
     >
       <Grid item flexShrink={0}>
-        <ExecuteQueryTab />
+        <ExecuteQueryTab/>
       </Grid>
       <Grid item flex={1} position="relative">
         <T1Container>
@@ -99,7 +101,7 @@ export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
           />
         </T1Container>
       </Grid>
-      <Grid item flexShrink={0} sx={{ display: "flex" }}>
+      <Grid item flexShrink={0} sx={{display: "flex"}}>
         <Button
           variant="contained"
           onClick={onRunHandler}
