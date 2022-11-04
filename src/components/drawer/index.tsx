@@ -13,7 +13,7 @@ export default function MenuDrawer() {
     <>
       <CssBaseline/>
       <T1AppBar/>
-      {location.pathname !== "/" && <T1Drawer width={DRAWER_WIDTH}/>}
+      {location.pathname !== "/" && <T1Drawer barWidth={40} drawerWidth={DRAWER_WIDTH}/>}
     </>
   );
 }

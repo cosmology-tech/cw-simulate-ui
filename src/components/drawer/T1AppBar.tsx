@@ -30,7 +30,7 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
   const location = useLocation();
 
   return (
-    <AppBar position="fixed" sx={{backgroundColor: ORANGE_3}}>
+    <AppBar position="static" sx={{backgroundColor: ORANGE_3}}>
       <Toolbar sx={{justifyContent: "space-between"}}>
         <div>
           {location.pathname === "/" && (

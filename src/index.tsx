@@ -1,3 +1,4 @@
+import { CssBaseline } from "@mui/material";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import React from "react";
@@ -13,6 +14,7 @@ const root = ReactDOM.createRoot(document.getElementById("root")!);
 root.render(
   <React.StrictMode>
     <BrowserRouter>
+      <CssBaseline />
       <PageRefreshConfirmation/>
       <SnackbarNotification/>
       <App/>

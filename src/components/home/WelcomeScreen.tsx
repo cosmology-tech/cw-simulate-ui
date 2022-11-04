@@ -64,17 +64,11 @@ export const WelcomeScreen = () => {
 
   return (
     <Grid
-      xs={12}
-      md={12}
-      lg={12}
-      xl={12}
       container
       item
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+      flex={1}
+      alignItems="center"
+      justifyContent="center"
     >
       <Grid
         xs={12}
