@@ -1,12 +1,14 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { Box, Divider, Drawer, ListItemButton, styled, SxProps, Theme } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Box, ClickAwayListener, Divider, Grid, IconButton, ListItemButton, Paper, styled, SxProps, Theme } from "@mui/material";
+import Slide from "@mui/material/Slide";
 import TreeView from "@mui/lab/TreeView";
 import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router";
 import Logo from "./Logo";
 import ChainsMenuItem from "./ChainsMenuItem";
 import SimulationMenuItem from "./SimulationMenuItem";
-import { DEFAULT_CHAIN } from "../../configs/variables";
+import { DEFAULT_CHAIN, GREY_4 } from "../../configs/variables";
 
 type MenuDrawerAPI = {
   register(data: MenuDrawerRegisterOptions): void;
@@ -36,49 +38,124 @@ const DrawerHeader = styled("div")(({theme}) => ({
 }));
 
 export interface IT1Drawer {
-  width: number;
+  barWidth?: number;
+  drawerWidth?: number;
 }
 
 const T1Drawer = React.memo((props: IT1Drawer) => {
   const {
-    width: drawerWidth,
+    barWidth = 50,
+    drawerWidth = 250,
   } = props;
+  
+  const [open, setOpen] = useState(true);
 
   return (
-    <Box component="nav">
-      <Drawer
+    <ClickAwayListener onClickAway={() => setOpen(false)}>
+      <Box
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
-            width: drawerWidth,
-          },
+          position: 'relative',
         }}
-        variant="permanent"
-        open
+      >
+        <DrawerBar width={barWidth}>
+          <IconButton onClick={() => setOpen(true)}>
+            <MenuIcon />
+          </IconButton>
+        </DrawerBar>
+        <Drawer
+          width={drawerWidth}
+          open={open}
+        >
+          <HierarchyMenu
+            sx={{
+              marginTop: 2,
+              '& .MuiTreeItem-content': {
+                py: 1,
+              },
+            }}
+          >
+            <SimulationMenuItem/>
+            <ChainsMenuItem/>
+          </HierarchyMenu>
+        </Drawer>
+      </Box>
+    </ClickAwayListener>
+  );
+});
+
+export default T1Drawer;
+
+interface IDrawerBar {
+  children?: ReactNode;
+  width: number;
+}
+
+const DrawerBar = React.forwardRef<HTMLDivElement | null, IDrawerBar>(({ children, width }, ref) => {
+  return (
+    <Paper
+      ref={ref}
+      sx={{
+        position: 'relative',
+        width,
+        height: '100%',
+        border: 0,
+        borderRadius: 0,
+        borderRight: `1px solid ${GREY_4}`,
+        zIndex: 100,
+      }}
+    >
+      <Grid
+        container
+        direction="column"
+        alignItems="center"
+        height="100%"
+        sx={{
+          pt: 1,
+          pb: 1,
+        }}
+      >
+        {children}
+      </Grid>
+    </Paper>
+  );
+});
+
+interface ICustomDrawer {
+  children?: ReactNode;
+  width: number;
+  open: boolean;
+}
+
+function Drawer({ children, width, open }: ICustomDrawer) {
+  return (
+    <Slide
+      direction="right"
+      in={open}
+    >
+      <Paper
+        component="nav"
+        sx={{
+          position: 'absolute',
+          height: '100%',
+          top: 0,
+          left: '100%',
+          width,
+          boxSizing: 'border-box',
+          border: 0,
+          borderRadius: 0,
+          borderRight: `1px solid ${GREY_4}`,
+          zIndex: 99,
+        }}
       >
         <DrawerHeader>
           <Logo LinkComponent={ListItemButton}/>
         </DrawerHeader>
         <Divider/>
-        <HierarchyMenu
-          sx={{
-            marginTop: 2,
-            '& .MuiTreeItem-content': {
-              py: 1,
-            },
-          }}
-        >
-          <SimulationMenuItem/>
-          <ChainsMenuItem/>
-        </HierarchyMenu>
-      </Drawer>
-    </Box>
-  );
-});
-
-export default T1Drawer;
+        {children}
+      </Paper>
+    </Slide>
+  )
+}
 
 interface IHierarchyMenuProps {
   children?: ReactNode;
