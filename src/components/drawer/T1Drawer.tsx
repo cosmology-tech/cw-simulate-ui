@@ -48,7 +48,7 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
     drawerWidth = 250,
   } = props;
   
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
