@@ -58,7 +58,7 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
         }}
       >
         <DrawerBar width={barWidth}>
-          <IconButton onClick={() => setOpen(true)}>
+          <IconButton onClick={() => setOpen(curr => !curr)}>
             <MenuIcon />
           </IconButton>
         </DrawerBar>
