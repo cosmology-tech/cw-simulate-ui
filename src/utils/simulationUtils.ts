@@ -83,16 +83,18 @@ function getExecutionLogs(app: CWSimulateApp, contractAddress: string, result: R
 export function useInstantiateContract() {
   const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   const [executionLog, setExecutionLog] = useAtom(executionHistoryState);
+  const [trace, setTrace] = useAtom(traceState)
   return useCallback(async (sender: string, funds: Coin[], codeId: number, instantiateMsg: any) => {
-    const result = await app.wasm.instantiateContract(sender, funds, codeId, instantiateMsg);
+    const result = await app.wasm.instantiateContract(sender, funds, codeId, instantiateMsg, trace);
     if (result.ok) {
       const contractAddress = result.val.events[0].attributes[0].value;
       const newLogs = getExecutionLogs(app, contractAddress, result, executionLog, sender, funds, instantiateMsg);
       setExecutionLog(newLogs);
     }
     setSimulateApp({app});
+    setTrace(trace);
     return result;
-  }, [app]);
+  }, [app, executionLog, trace]);
 }
 
 

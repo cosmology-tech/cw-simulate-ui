@@ -1,59 +1,30 @@
 import * as React from "react";
 import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import {
-  Divider,
-  Grid,
-  Paper,
-  Slide,
-  StepContent,
-  StepLabel,
-  Typography,
-} from "@mui/material";
+import { Grid, Step, StepContent, StepLabel } from "@mui/material";
 import { blockState } from "../../atoms/blockState";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
-import { ComparePopup } from "./ComparePopup";
 import { stepRequestState } from "../../atoms/stepRequestState";
 import { stepResponseState } from "../../atoms/stepResponseState";
-import { executionHistoryState } from "../../atoms/executionHistoryState";
 import { stateResponseTabState } from "../../atoms/stateResponseTabState";
-import { stepTraceState } from "../../atoms/stepTraceState";
+import traceState from "../../atoms/traceState";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import traceState from "../../atoms/traceState";
-import { JSONTree } from "react-json-tree";
+import { SubStepper } from "./SubStepper";
+import { ComparePopup } from "./ComparePopup";
+import { executionHistoryState } from "../../atoms/executionHistoryState";
+import { stepTraceState } from "../../atoms/stepTraceState";
+import { useEffect, useState } from "react";
 
 interface IProps {
-  chainId: string;
   contractAddress: string;
 }
-const theme = {
-  scheme: "chalk",
-  author: "chris kempson (http://chriskempson.com)",
-  base00: "#FFFFFF",
-  base01: "#202020",
-  base02: "#303030",
-  base03: "#505050",
-  base04: "#b0b0b0",
-  base05: "#d0d0d0",
-  base06: "#e0e0e0",
-  base07: "#f5f5f5",
-  base08: "#fb9fb1",
-  base09: "#eda987",
-  base0A: "#ddb26f",
-  base0B: "#acc267",
-  base0C: "#12cfc0",
-  base0D: "#6fc2ef",
-  base0E: "#e1a3ee",
-  base0F: "#deaf8f",
-};
 
-export default function StateStepper({ chainId, contractAddress }: IProps) {
+export default function StateStepper({contractAddress}: IProps) {
   const [currentState, _] = useAtom(currentStateNumber);
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const [, setStepState] = useAtom(blockState);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [, stepRequestObj] = useAtom(stepRequestState);
   const [, stepResponseObj] = useAtom(stepResponseState);
   const [allLogs, ___] = useAtom(executionHistoryState);
@@ -72,22 +43,22 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
       setStepState(JSON.parse('{"state":"No state exists"}'));
     }
   };
-
   const executionHistory = allLogs[contractAddress];
-  React.useEffect(() => {
+
+  useEffect(() => {
     setActiveStep(executionHistory.length - 1);
   }, [currentState, contractAddress]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const executionStep = executionHistory[activeStep];
     handleStateView(executionStep?.state);
     stepRequestObj(executionStep?.request);
     const resp = executionStep?.response.error
-      ? { error: executionStep?.response.error }
+      ? {error: executionStep?.response.error}
       : executionStep?.response;
     stepResponseObj(resp);
     if (activeStep > 0) {
-      setStepTrace(trace[activeStep - 1]);
+      setStepTrace(trace[activeStep]);
     } else {
       setStepTrace([]);
     }
@@ -97,13 +68,14 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
     setActiveStep(step);
     setCurrentTab("state");
   };
+
   return (
-    <Grid item sx={{ width: "100%" }}>
+    <Grid item sx={{width: "100%"}}>
       <Stepper
         nonLinear
         activeStep={activeStep}
         orientation="vertical"
-        sx={{ width: "90%" }}
+        sx={{width: "90%"}}
       >
         {executionHistory?.map(
           (
@@ -114,7 +86,7 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
             },
             index: number
           ) => {
-            const { request, response, state } = historyObj;
+            const {request, response, state} = historyObj;
             const label = Object.keys(request.executeMsg)[0];
             return (
               <Step
@@ -127,27 +99,30 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                 onClick={() => handleStep(index)}
                 sx={{
                   "& .MuiStepIcon-root": {
-                    color: response.error !== undefined ? "red" : "#00C921",
+                    color: response.error !== undefined ? "red" : "",
                   },
                   "& .MuiStepLabel-root .Mui-active": {
-                    color: response.error !== undefined ? "#690000" : "#006110",
+                    color: response.error !== undefined ? "#690000" : "",
                   },
                 }}
               >
                 <StepLabel>
                   <Grid
-                    sx={{ display: "flex", justifyContent: "space-between" }}
+                    sx={{display: "flex", justifyContent: "space-between"}}
                   >
                     <Grid container alignItems="center">
-                      {activeStep === index && isOpen ? (
-                        <ArrowDropDownIcon onClick={() => setIsOpen(false)} />
+                      {trace[index].trace && trace[index].trace!.length > 0 ? (
+                        activeStep === index && isOpen ? (
+                          <ArrowDropDownIcon onClick={() => setIsOpen(false)}/>
+                        ) : (
+                          <ArrowRightIcon
+                            onClick={() => {
+                              setIsOpen(true);
+                            }}
+                          />
+                        )
                       ) : (
-                        <ArrowRightIcon
-                          onClick={() => {
-                            handleStateView(state);
-                            setIsOpen(true);
-                          }}
-                        />
+                        ""
                       )}
                       {label}
                     </Grid>
@@ -160,91 +135,10 @@ export default function StateStepper({ chainId, contractAddress }: IProps) {
                   </Grid>
                 </StepLabel>
                 <StepContent>
-                  {activeStep === index && isOpen && (
-                    <Paper
-                      elevation={3}
-                      sx={{
-                        height: "30vh",
-                        overflow: "scroll",
-                        textAlign: "left",
-                        display: "flex",
-                        flexDirection: "column",
-                        borderTop: "1px solid rgb(0, 0, 0, 0.12)",
-                      }}
-                    >
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          position: "relative",
-                          overflow: "scroll",
-                          mb: 1,
-                        }}
-                      >
-                        <div style={{ position: "sticky", top: 0 }}>
-                          <Typography
-                            variant="caption"
-                            sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              position: "sticky",
-                            }}
-                          >
-                            Request
-                          </Typography>
-                          <Divider orientation="horizontal" />
-                        </div>
-                        <div
-                          style={{
-                            overflow: "scroll",
-                            marginLeft: "1rem",
-                          }}
-                        >
-                          <JSONTree
-                            data={request}
-                            theme={theme}
-                            invertTheme={false}
-                          />
-                        </div>
-                      </Grid>
-                      <Divider orientation="vertical" flexItem />
-                      <Grid
-                        item
-                        xs={12}
-                        sx={{
-                          display: "flex",
-                          flexDirection: "column",
-                          overflow: "scroll",
-                          position: "relative",
-                        }}
-                      >
-                        <div style={{ position: "sticky", top: 0 }}>
-                          <Divider orientation="horizontal" />
-                          <Typography
-                            variant="caption"
-                            sx={{ display: "flex", justifyContent: "center" }}
-                          >
-                            Response
-                          </Typography>
-                          <Divider orientation="horizontal" />
-                        </div>
-                        <div
-                          style={{
-                            overflow: "scroll",
-                            marginLeft: "1rem",
-                          }}
-                        >
-                          <JSONTree
-                            data={response}
-                            theme={theme}
-                            invertTheme={false}
-                          />
-                        </div>
-                      </Grid>
-                    </Paper>
-                  )}
+                  {activeStep === index &&
+                    isOpen &&
+                    trace[index].trace &&
+                    index > 0 && <SubStepper traceLog={trace[index].trace}/>}
                 </StepContent>
               </Step>
             );

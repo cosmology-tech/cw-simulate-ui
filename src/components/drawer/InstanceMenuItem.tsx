@@ -5,13 +5,11 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem } f
 import { useDeleteInstance, } from "../../utils/simulationUtils";
 
 export interface IInstanceMenuItemProps {
-  chainId: string;
   instance: string;
 }
 
 export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
   const {
-    chainId,
     instance,
   } = props;
   const [showDeleteInstance, setShowDeleteInstance] = useState(false);
@@ -36,7 +34,7 @@ export default function InstanceMenuItem(props: IInstanceMenuItemProps) {
           onClose={() => {
             setShowDeleteInstance(false);
             close();
-            navigate('/instances');
+            navigate('/config');
           }}
           open={showDeleteInstance}
           instanceAddress={instance}

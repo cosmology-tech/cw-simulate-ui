@@ -25,7 +25,7 @@ export default function ChainMenuItem(props: IChainMenuItemProps) {
                   nodeId={'accounts'}
                   link={'accounts'}/>
       <CodesMenuItem chainId={chainId}/>
-      <InstancesMenuItem chainId={chainId}/>
+      <InstancesMenuItem/>
     </T1MenuItem>
   );
 }
