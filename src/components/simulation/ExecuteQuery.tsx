@@ -10,7 +10,6 @@ import { useAtom, useAtomValue } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import T1Container from "../grid/T1Container";
 import { useExecute, useQuery } from "../../utils/simulationUtils";
-import traceState from "../../atoms/traceState";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
@@ -25,7 +24,6 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
   const setNotification = useNotification();
   const execute = useExecute();
   const query = useQuery();
-  const trace = useAtomValue(traceState);
   const handleExecute = async () => {
     try {
       const res: any = await execute(
@@ -37,7 +35,6 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
       const response = res.err
         ? ({error: res.val} as unknown as JSON)
         : (res.unwrap() as JSON);
-      console.log(trace);
       setResponse(response);
       if (res.err) {
         throw new Error(res.err);

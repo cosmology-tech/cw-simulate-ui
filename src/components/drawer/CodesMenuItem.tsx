@@ -20,8 +20,10 @@ export default function CodesMenuItem(props: ICodesMenuItemProps) {
   const codesFromStore = app.store.getIn(["wasm", "codes"]).toObject();
   const codes = {} as Codes;
   for (const key of Object.keys(codesFromStore)) {
-    const fileName = metadata.codes[parseInt(key)].name;
-    codes[parseInt(key)] = {codeId: parseInt(key), name: fileName};
+    const fileName = metadata.codes[parseInt(key)]?.name;
+    if (fileName) {
+      codes[parseInt(key)] = {codeId: parseInt(key), name: fileName};
+    }
   }
 
   return (

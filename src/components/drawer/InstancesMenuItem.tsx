@@ -8,11 +8,9 @@ import { useAtomValue } from "jotai";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 
 export interface IInstancesMenuItemProps {
-  chainId: string;
 }
 
 export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
-  const {chainId} = props;
   const [showDeleteInstance, setShowDeleteInstance] = useState(false);
   const navigate = useNavigate();
   const {app} = useAtomValue(cwSimulateAppState);
@@ -25,7 +23,7 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
   return (
     <T1MenuItem
       label="Instances"
-      nodeId={`${chainId}/instances`}
+      nodeId={'instances'}
       link={'codes'}
       textEllipsis
       options={[
@@ -41,7 +39,7 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
           onClose={() => {
             setShowDeleteInstance(false);
             close();
-            navigate('/instances');
+            navigate('/config');
           }}
           open={showDeleteInstance}
         />,
@@ -49,7 +47,6 @@ export default function InstancesMenuItem(props: IInstancesMenuItemProps) {
     >
       {instances.map((instance: string) => (
         <InstanceMenuItem
-          chainId={chainId}
           key={instance}
           instance={instance}
         />
