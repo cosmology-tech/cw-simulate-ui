@@ -1,6 +1,6 @@
 import React from "react";
 import { JSONTree } from "react-json-tree";
-import { Typography } from "@mui/material";
+import { Grid, Switch, Typography } from "@mui/material";
 import { GREY_3, GREY_6 } from "../../configs/variables";
 import T1Container from "../grid/T1Container";
 import ReactDiffViewer from "@terran-one/react-diff-viewer";
@@ -8,6 +8,9 @@ import {
   ExecuteTraceLog,
   ReplyTraceLog,
 } from "@terran-one/cw-simulate/dist/types";
+import { useAtomValue } from "jotai";
+import { tableViewEnabledState } from "../../atoms/tableViewEnabledState";
+import { JsonToTable } from "react-json-to-table";
 
 interface IProps {
   beforeState?: string;
@@ -47,6 +50,7 @@ export const OutputCard = ({
   isVisible,
   stepTrace,
 }: IProps) => {
+  const tableViewEnabled = useAtomValue(tableViewEnabledState);
   return (
     <T1Container
       sx={{
@@ -59,9 +63,17 @@ export const OutputCard = ({
       }}
     >
       {stepTrace ? (
-        <JSONTree data={stepTrace} theme={theme} invertTheme={false} />
+        tableViewEnabled ? (
+          <JsonToTable json={stepTrace} />
+        ) : (
+          <JSONTree data={stepTrace} theme={theme} invertTheme={false} />
+        )
       ) : response !== undefined ? (
-        <JSONTree data={response} theme={theme} invertTheme={false} />
+        tableViewEnabled ? (
+          <JsonToTable json={response} />
+        ) : (
+          <JSONTree data={response} theme={theme} invertTheme={false} />
+        )
       ) : isVisible ? (
         <ReactDiffViewer
           oldValue={beforeState}

@@ -1,7 +1,8 @@
-import { Grid, Tab, Tabs } from "@mui/material";
+import { Grid, Tab, Tabs, Switch, Tooltip } from "@mui/material";
 import React from "react";
+import { tableViewEnabledState } from "../../atoms/tableViewEnabledState";
 import CloseDiff from "./CloseDiff";
-
+import { useAtom } from "jotai";
 interface IProps {
   currentTab: string;
   setCurrentTab: (
@@ -17,6 +18,7 @@ const StateResponseTab = ({
   isVisible,
   setIsVisible,
 }: IProps) => {
+  const [tableView, setTableView] = useAtom(tableViewEnabledState);
   const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(
       newValue === "response"
@@ -45,10 +47,21 @@ const StateResponseTab = ({
           <Tab value="debug" label="Debug" />
         </Tabs>
       </Grid>
-      {isVisible && (
+
+      {isVisible && currentTab === "state" && (
         <Grid item>
           <CloseDiff isVisible={isVisible} setIsVisible={setIsVisible} />
         </Grid>
+      )}
+      {!isVisible && (
+        <Tooltip placement="top" title="Switch to table view">
+          <Switch
+            checked={tableView}
+            onChange={() => setTableView(!tableView)}
+            name="loading"
+            color="primary"
+          />
+        </Tooltip>
       )}
     </Grid>
   );
