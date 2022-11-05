@@ -62,10 +62,11 @@ const FileUpload = ({
     }
 
     // TODO: confirmation prompt if simulation is already loaded?
-
     const file: File = files[0]; // we only support uploading one file
+    const isJsonFile = file.name.endsWith('.json');
+    const isWasmFile = file.name.endsWith('.wasm');
 
-    if (getFileTypesByVariant(variant).indexOf(file.type) === -1) {
+    if (getFileTypesByVariant(variant).indexOf(file.type) === -1 && !(isJsonFile || isWasmFile)) {
       setNotification("File type not supported", {severity: "error"});
       return;
     }
@@ -77,59 +78,52 @@ const FileUpload = ({
 
     const reader = new FileReader();
 
-    switch (file.type) {
-      case "application/wasm":
-        reader.readAsDataURL(file);
+    if (file.type === 'application/wasm' || isWasmFile) {
+      reader.readAsDataURL(file);
 
-        reader.onload = () => {
-          const contents = reader.result;
-          if (!contents) {
-            setNotification("Failed to extract bytecode", {severity: "error"});
-            return;
-          }
-
-          try {
-            const buffer = Buffer.from(extractByteCode(contents));
-            onAccept(file.name, buffer);
-          } catch (ex: any) {
-            setNotification(`Failed to extract & store WASM bytecode: ${ex.message ?? ex}`, {severity: "error"});
-            console.error(ex);
-            return;
-          }
-
-          setUploadSuccessState(file.name);
+      reader.onload = () => {
+        const contents = reader.result;
+        if (!contents) {
+          setNotification("Failed to extract bytecode", {severity: "error"});
+          return;
         }
 
-        reader.onerror = () => {
-          setNotification("Error reading WASM binary file", {severity: "error"});
+        try {
+          const buffer = Buffer.from(extractByteCode(contents));
+          onAccept(file.name, buffer);
+        } catch (ex: any) {
+          setNotification(`Failed to extract & store WASM bytecode: ${ex.message ?? ex}`, {severity: "error"});
+          console.error(ex);
+          return;
         }
 
-        break;
+        setUploadSuccessState(file.name);
+      }
 
-      case ("application/json"):
-        reader.readAsText(file);
+      reader.onerror = () => {
+        setNotification("Error reading WASM binary file", {severity: "error"});
+      }
+    }
 
-        reader.onload = () => {
-          const json = JSON.parse(reader.result as string)
+    if (file.type === 'application/json' || isJsonFile) {
+      reader.readAsText(file);
 
-          // TODO: validate simulation JSON
-          // if (!validateSimulationJSON(json)) {
-          //   setNotification("Invalid simulation file", {severity: "error"});
-          //   return;
-          // }
+      reader.onload = () => {
+        const json = JSON.parse(reader.result as string)
 
-          setUploadSuccessState(file.name);
-          onAccept(file.name, json);
-        };
+        // TODO: validate simulation JSON
+        // if (!validateSimulationJSON(json)) {
+        //   setNotification("Invalid simulation file", {severity: "error"});
+        //   return;
+        // }
 
-        reader.onerror = () => {
-          setNotification("Error reading simulation file", {severity: "error"});
-        }
+        setUploadSuccessState(file.name);
+        onAccept(file.name, json);
+      };
 
-        break;
-
-      default:
-        throw new Error("Not implemented");
+      reader.onerror = () => {
+        setNotification("Error reading simulation file", {severity: "error"});
+      }
     }
   };
 
@@ -167,7 +161,7 @@ function Fallback() {
 
 export default FileUpload;
 
-function getFileTypesByVariant(variant: "simulation" | "contract" | "both") {
+function getFileTypesByVariant(variant: "simulation" | "contract" | "both" | undefined) {
   switch (variant) {
     case 'both':
       return ['application/wasm', 'application/json'];
@@ -183,8 +177,11 @@ function getFileTypesByVariant(variant: "simulation" | "contract" | "both") {
 function extractByteCode(contents: string | ArrayBuffer): ArrayBuffer {
   if (typeof contents !== 'string')
     return contents;
-  const prefix = 'data:application/wasm;base64,';
-  if (!contents.startsWith(prefix))
+  const prefixes = ['data:application/wasm;base64,', 'data:application/octet-stream;base64,'];
+
+  const prefix = prefixes.find(p => contents.startsWith(p));
+  if (!prefix) {
     throw new Error(`Malformed WASM source file`);
+  }
   return base64ToArrayBuffer(contents.substring(prefix.length));
 }
