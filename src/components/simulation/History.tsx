@@ -1,7 +1,4 @@
-import {
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Grid, Typography, } from "@mui/material";
 import { useAtomValue } from "jotai";
 import React from "react";
 import Widget from "./Widget";
@@ -11,11 +8,10 @@ import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 
 interface IHistoryProps {
-  chainId: string;
   contractAddress: string
 }
 
-export default function({ chainId, contractAddress }: IHistoryProps) {
+export default function ({contractAddress}: IHistoryProps) {
   const isFileUploaded = useAtomValue(fileUploadedState);
 
   return (
@@ -54,12 +50,11 @@ export default function({ chainId, contractAddress }: IHistoryProps) {
         >
           <Row xs={4}>
             <StateStepper
-              chainId={chainId!}
               contractAddress={contractAddress!}
             />
           </Row>
           <Row xs={8}>
-            <StateRenderer isFileUploaded={isFileUploaded} />
+            <StateRenderer isFileUploaded={isFileUploaded}/>
           </Row>
         </Grid>
       </Row>

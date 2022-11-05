@@ -13,19 +13,21 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TableLayout from "./TableLayout";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { validateAccountJSON } from "../../utils/fileUtils";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useParams } from "react-router-dom";
 import T1Container from "../grid/T1Container";
+import { useAtomValue } from "jotai";
+import cwSimulateAppState from "../../atoms/cwSimulateAppState";
+import { SENDER_ADDRESS } from "../../configs/variables";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
+import { validateAccountJSON } from "../../utils/fileUtils";
 
 const DEFAULT_VALUE = JSON.stringify(
   {
-    address: "terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd7",
-    id: "bob",
-    balances: [
+    sender: SENDER_ADDRESS,
+    coins: [
       {denom: "uluna", amount: "1000"},
       {denom: "uust", amount: "10000"},
     ],
@@ -39,29 +41,20 @@ const Accounts = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
-  // TODO: FIX ME. Use BankModule instead
-  const accounts: any[] = [];
-
-  const getBalances = (): Coin[] => {
-    // TODO: Fix this
-    return [];
-  };
-
-  const data = useMemo(
-    () =>
-      accounts.map((account) => ({
-        ...account,
-        balances: getBalances()
-        .map((c: Coin) => `${c.amount}${c.denom}`)
-        ?.join(", "),
-      })),
-    [accounts]
-  );
-
+  const {app} = useAtomValue(cwSimulateAppState);
+  const accounts = app.bank.getBalances().toArray();
   const handleClickOpen = () => {
     setOpenDialog(true);
     setPayload(DEFAULT_VALUE);
   };
+
+  const data = accounts.map((account) => {
+    return {
+      id: account[0],
+      address: account[0],
+      balances: account[1].map((c: Coin) => `${c.amount} ${c.denom}`).join(", "),
+    };
+  });
 
   const handleClose = () => {
     setOpenDialog(false);
@@ -75,20 +68,14 @@ const Accounts = () => {
       return;
     }
 
-    if (accounts.find((acc) => acc.id === json.id)) {
-      setNotification("An account with this ID already exists", {
-        severity: "error",
-      });
-      return;
-    }
-
-    if (accounts.find((acc) => acc.address === json.address)) {
+    if (accounts.find((acc: [string, Coin[]]) => acc[0] === json.address)) {
       setNotification("An account with this address already exists", {
         severity: "error",
       });
       return;
     }
 
+    app.bank.setBalance(json.sender, json.coins)
     setNotification("Account added successfully");
     setOpenDialog(false);
   };
@@ -100,6 +87,7 @@ const Accounts = () => {
   const handleSetPayload = (payload: string) => {
     setPayload(payload);
   };
+
   return (
     <>
       <Grid item container sx={{mb: 2}}>
@@ -118,7 +106,6 @@ const Accounts = () => {
           <TableLayout
             rows={data}
             columns={{
-              id: "ID",
               address: "Account Address",
               balances: "Balances",
             }}
