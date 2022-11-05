@@ -1,5 +1,7 @@
 import type { GridSize } from "@mui/system";
 
+export type Falsy = undefined | null | false;
+
 export type Defined<T> = T extends null | undefined ? never : T;
 
 export type AsJSON<T> = T extends JSONifiable

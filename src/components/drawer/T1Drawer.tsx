@@ -1,41 +1,22 @@
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Box, ClickAwayListener, Divider, Grid, IconButton, ListItemButton, Paper, styled, SxProps, Theme } from "@mui/material";
+import ArticleIcon from "@mui/icons-material/Article";
+import DeveloperBoardIcon from "@mui/icons-material/DeveloperBoard";
+import RecentActorsIcon from "@mui/icons-material/RecentActors";
+import SettingsIcon from "@mui/icons-material/Settings";
+import StorageIcon from "@mui/icons-material/Storage";
+import Box from "@mui/material/Box";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
-import TreeView from "@mui/lab/TreeView";
-import React, { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
-import Logo from "./Logo";
-import ChainsMenuItem from "./ChainsMenuItem";
-import SimulationMenuItem from "./SimulationMenuItem";
-import { DEFAULT_CHAIN, GREY_4 } from "../../configs/variables";
+import Tooltip from "@mui/material/Tooltip";
+import React, { MouseEvent, ReactNode, useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { GREY_4 } from "../../configs/variables";
+import ContractsSubMenu from "./ContractsSubMenu";
+import InstancesSubMenu from "./InstancesSubMenu";
 
-type MenuDrawerAPI = {
-  register(data: MenuDrawerRegisterOptions): void;
-  unregister(nodeId: string): void;
-  clearSelection(): void;
-}
-
-type MenuDrawerRegisterOptions = MenuDrawerData[string] & {
-  nodeId: string;
-}
-
-type MenuDrawerData = {
-  [nodeId: string]: {
-    link?: boolean | string;
-  }
-}
-
-export const MenuDrawerContext = React.createContext<MenuDrawerAPI>(null as any);
-
-const DrawerHeader = styled("div")(({theme}) => ({
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: "flex-end",
-}));
+type SubMenu = 'contracts' | 'instances' | 'states' | 'accounts' | 'config';
 
 export interface IT1Drawer {
   barWidth?: number;
@@ -48,42 +29,79 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
     drawerWidth = 250,
   } = props;
   
-  const [open, setOpen] = useState(false);
-
+  const navigate = useNavigate();
+  const [menu, setMenu] = useState<SubMenu | undefined>(undefined);
+  
   return (
-    <ClickAwayListener onClickAway={() => setOpen(false)}>
+    <ClickAwayListener onClickAway={() => setMenu(undefined)}>
       <Box
         sx={{
           position: 'relative',
         }}
       >
         <DrawerBar width={barWidth}>
-          <IconButton onClick={() => setOpen(curr => !curr)}>
-            <MenuIcon />
-          </IconButton>
+          <MenuIconButton
+            menu="contracts"
+            Icon={ArticleIcon}
+            setMenu={setMenu}
+            tooltip="Contracts"
+          />
+          <MenuIconButton
+            menu="instances"
+            Icon={DeveloperBoardIcon}
+            setMenu={setMenu}
+            tooltip="Contract Instances"
+          />
+          <MenuIconButton
+            menu="states"
+            Icon={StorageIcon}
+            setMenu={setMenu}
+            tooltip="All States"
+            onClick={() => {navigate('/state')}}
+          />
+          <MenuIconButton
+            menu="accounts"
+            Icon={RecentActorsIcon}
+            setMenu={setMenu}
+            tooltip="Accounts"
+            onClick={() => {navigate('/accounts')}}
+          />
+          <MenuIconButton
+            menu="config"
+            Icon={SettingsIcon}
+            setMenu={setMenu}
+            tooltip="Chain Configuration"
+            onClick={() => {navigate('/config')}}
+          />
         </DrawerBar>
-        <Drawer
-          width={drawerWidth}
-          open={open}
-        >
-          <HierarchyMenu
-            sx={{
-              marginTop: 2,
-              '& .MuiTreeItem-content': {
-                py: 1,
-              },
-            }}
-          >
-            <SimulationMenuItem/>
-            <ChainsMenuItem/>
-          </HierarchyMenu>
-        </Drawer>
+        <SubMenu width={drawerWidth} menu={menu} />
       </Box>
     </ClickAwayListener>
   );
 });
 
 export default T1Drawer;
+
+interface ISubMenuProps {
+  menu: SubMenu | undefined;
+  width: number;
+}
+
+function SubMenu({ menu, width }: ISubMenuProps) {
+  const contents = (() => {
+    switch (menu) {
+      case 'contracts': return <ContractsSubMenu />;
+      case 'instances': return <InstancesSubMenu />;
+      default: return null;
+    }
+  })();
+  
+  return (
+    <Drawer width={width} open={!!contents}>
+      {contents}
+    </Drawer>
+  )
+}
 
 interface IDrawerBar {
   children?: ReactNode;
@@ -147,108 +165,43 @@ function Drawer({ children, width, open }: ICustomDrawer) {
           zIndex: 99,
         }}
       >
-        <DrawerHeader>
-          <Logo LinkComponent={ListItemButton}/>
-        </DrawerHeader>
-        <Divider/>
         {children}
       </Paper>
     </Slide>
   )
 }
 
-interface IHierarchyMenuProps {
-  children?: ReactNode;
-  sx?: SxProps<Theme>;
+interface IMenuIconButtonProps {
+  menu: SubMenu;
+  tooltip?: string;
+  Icon: React.ElementType<{}>;
+  setMenu(setter: (curr: SubMenu | undefined) => SubMenu | undefined): void;
+  onClick?(e: MouseEvent): void;
 }
 
-function HierarchyMenu(props: IHierarchyMenuProps) {
-  const {children, sx} = props;
-
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [expanded, setExpanded] = useState(['chains', `chains/${DEFAULT_CHAIN}`, `${DEFAULT_CHAIN}/codes`]);
-  const [selected, setSelected] = useState('');
-  const data = useRef<MenuDrawerData>({});
-
-  const api = useMemo<MenuDrawerAPI>(() => ({
-    register({nodeId, ...nodeData}) {
-      if (nodeId in data)
-        throw new Error(`Duplicate node ID ${nodeId}`);
-      data.current[nodeId] = nodeData;
-
-      // MUI quirk due to un/mount of subtrees
-      const link = extractNodeLink(nodeId, nodeData);
-      if (link && link === `${location.pathname}${location.hash}`)
-        setSelected(nodeId);
-      setExpanded(prev => [...prev, nodeId]);
-    },
-    unregister(nodeId) {
-      delete data.current[nodeId];
-      setExpanded(prev => prev.filter(curr => curr !== nodeId));
-    },
-    clearSelection() {
-      setSelected('');
+function MenuIconButton({
+  menu,
+  tooltip,
+  setMenu,
+  Icon,
+  onClick: _onClick,
+}: IMenuIconButtonProps)
+{
+  const onClick = useCallback((e: MouseEvent) => {
+    _onClick?.(e);
+    if (!e.isDefaultPrevented()) {
+      setMenu(curr => curr !== menu ? menu : undefined);
     }
-  }), [location]);
-
-  const handleFocusNode = useCallback((e: React.SyntheticEvent, nodeId: string) => {
-    const nodeData = data.current[nodeId];
-    // MUI quirk: onNodeFocus is called twice, not sure why, seems like a bug...
-    if (!nodeData) return;
-
-    const link = extractNodeLink(nodeId, nodeData);
-    if (link && location.pathname !== link) {
-      setSelected(nodeId);
-      navigate(link);
-    }
-  }, [location]);
-
-  useEffect(() => {
-    for (const nodeId in data.current) {
-      const link = extractNodeLink(nodeId, data.current[nodeId]);
-      if (link && link === `${location.pathname}${location.hash}`)
-        setSelected(nodeId);
-    }
-  }, [location]);
-
+  }, [menu, _onClick]);
+  
   return (
-    <MenuDrawerContext.Provider value={api}>
-      <TreeView
-        defaultExpandIcon={<SubtreeIcon/>}
-        defaultCollapseIcon={<SubtreeIcon expanded/>}
-        sx={sx}
-        onNodeFocus={handleFocusNode}
-        onNodeToggle={(_, nodeIds) => {
-          setExpanded(nodeIds);
-        }}
-        expanded={expanded}
-        selected={selected}
-      >
-        {children}
-      </TreeView>
-    </MenuDrawerContext.Provider>
+    <Tooltip
+      title={tooltip}
+      placement="right"
+    >
+      <IconButton onClick={onClick}>
+        <Icon />
+      </IconButton>
+    </Tooltip>
   )
-}
-
-interface ISubtreeIconProps {
-  expanded?: boolean;
-}
-
-/** Subtree expand/collapse icon w/ built-in simple CSS animation */
-function SubtreeIcon({expanded}: ISubtreeIconProps) {
-  return (
-    <ChevronRightIcon
-      sx={{
-        transition: 'transform .15s linear',
-        transform: `rotate(${expanded ? '90deg' : '0'})`,
-      }}
-    />
-  )
-}
-
-function extractNodeLink(nodeId: string, nodeData: MenuDrawerData[string]) {
-  if (nodeData.link === undefined) return false;
-  return nodeData.link === true ? `/${nodeId}` : nodeData.link;
 }
