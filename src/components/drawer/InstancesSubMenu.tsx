@@ -1,4 +1,7 @@
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
 import { useAtomValue } from "jotai";
+import { useCallback } from "react";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
@@ -29,11 +32,30 @@ interface IInstanceMenuItemProps {
 
 function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
   // TODO: find contract name from instance
+  const copyToClipboard = useCallback((data: string) => navigator.clipboard?.writeText(data), []);
+  
   return (
     <T1MenuItem
       label={instance}
       textEllipsis
       link={`/instances/${instance}`}
+      options={({close}) => [
+        <MenuItem
+          key="copy-address"
+          onClick={() => {
+            copyToClipboard(instance);
+            close();
+          }}
+          disabled={!navigator.clipboard}
+        >
+          <ListItemIcon>
+            <ContentCopyIcon />
+          </ListItemIcon>
+          <ListItemText>
+            Copy address
+          </ListItemText>
+        </MenuItem>
+      ]}
     />
   )
 }
