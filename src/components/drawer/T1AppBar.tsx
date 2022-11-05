@@ -33,9 +33,7 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
     <AppBar position="static" sx={{backgroundColor: ORANGE_3}}>
       <Toolbar sx={{justifyContent: "space-between"}}>
         <div>
-          {location.pathname === "/" && (
-            <Logo LinkComponent={IconButton} white/>
-          )}
+          <Logo LinkComponent={IconButton} white/>
         </div>
         <div>
           <IconButton sx={{borderRadius: 5}}>

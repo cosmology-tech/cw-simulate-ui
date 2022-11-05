@@ -8,7 +8,6 @@ import { useDropzone } from 'react-dropzone';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { MenuDrawerContext } from "../drawer/T1Drawer";
 
 interface IProps {
   dropzoneText?: string;
@@ -34,8 +33,6 @@ const FileUpload = ({
   const text = dropzoneText || "Click to upload a simulation file or contract binary, or drop a file here";
   const setNotification = useNotification();
 
-  const menuApi = useContext(MenuDrawerContext);
-
   const handleDropzoneClick = (event: any) => {
     if (event.target.parentElement.id === 'delete-icon') {
       event.stopPropagation();
@@ -53,7 +50,6 @@ const FileUpload = ({
     setIsFileUploaded(true);
     setFilename(filename);
     setNotification("File uploaded successfully");
-    menuApi?.clearSelection();
   }
 
   const handleOnFileDrop = (files: File[]) => {
