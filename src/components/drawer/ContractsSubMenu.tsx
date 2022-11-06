@@ -169,7 +169,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
 
   return (
     <Dialog open={open} onClose={() => onClose()}>
-      <DialogTitle>Enter Instantiate Message</DialogTitle>
+      <DialogTitle>Instantiate Message</DialogTitle>
       <DialogContent>
         <DialogContentText>
           Pick an account to instantiate the contract with.
@@ -177,8 +177,8 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         <Autocomplete
           onInputChange={(event, value) => setAccount(value)}
           sx={{width: "100%"}}
-          renderInput={(params: AutocompleteRenderInputParams) => <TextField {...params}
-                                                                             label={"Account"}/>}
+          renderInput={(params: AutocompleteRenderInputParams) =>
+            <TextField {...params} label={"Account"}/>}
           options={accountList}/>
       </DialogContent>
       <DialogContent>
