@@ -23,7 +23,7 @@ export const JsonCodeMirrorEditor = ({
     json: "Enter your json here",
   };
   const [jsonError, setJsonError] = useAtom(jsonErrorState);
-  
+
   return (
     <Grid
       container

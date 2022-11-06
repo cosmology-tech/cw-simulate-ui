@@ -1,21 +1,36 @@
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import UploadIcon from "@mui/icons-material/Upload";
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, ListItemIcon, ListItemText, MenuItem } from "@mui/material";
+import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  TextField
+} from "@mui/material";
 import { useAtom, useAtomValue } from "jotai";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import simulationMetadataState, { Code, Codes } from "../../atoms/simulationMetadataState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/variables";
+import { DEFAULT_CHAIN } from "../../configs/variables";
 import { useInstantiateContract } from "../../utils/simulationUtils";
 import T1Container from "../grid/T1Container";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import UploadModal from "../upload/UploadModal";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
+import { Coin } from "@terran-one/cw-simulate/dist/types";
 
-export interface IContractsSubMenuProps {}
+export interface IContractsSubMenuProps {
+}
 
 export default function ContractsSubMenu(props: IContractsSubMenuProps) {
   const chainId = DEFAULT_CHAIN;
@@ -31,7 +46,7 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
       codes[parseInt(key)] = {codeId: parseInt(key), name: fileName};
     }
   }
-  
+
   return (
     <>
       <SubMenuHeader
@@ -42,7 +57,7 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
             onClick={() => setOpenUploadDialog(true)}
           >
             <ListItemIcon>
-              <UploadIcon />
+              <UploadIcon/>
             </ListItemIcon>
             <ListItemText>
               Upload new contract
@@ -50,11 +65,11 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
           </MenuItem>
         ]}
       />
-      
+
       {Object.values(codes).map((code) => (
         <CodeMenuItem key={code?.codeId} chainId={chainId} code={code}/>
       ))}
-      
+
       <UploadModal
         chainId={DEFAULT_CHAIN}
         variant="contract"
@@ -72,9 +87,9 @@ interface ICodeMenuItemProps {
   code: Code;
 }
 
-function CodeMenuItem({ chainId, code }: ICodeMenuItemProps) {
+function CodeMenuItem({chainId, code}: ICodeMenuItemProps) {
   const [openInstantiate, setOpenInstantiate] = useState(false);
-  
+
   return (
     <T1MenuItem
       label={code.name}
@@ -85,7 +100,7 @@ function CodeMenuItem({ chainId, code }: ICodeMenuItemProps) {
           onClick={() => setOpenInstantiate(true)}
         >
           <ListItemIcon>
-            <RocketLaunchIcon />
+            <RocketLaunchIcon/>
           </ListItemIcon>
           <ListItemText>
             Instantiate
@@ -107,6 +122,7 @@ function CodeMenuItem({ chainId, code }: ICodeMenuItemProps) {
 interface IInstantiateDialogProps {
   code: Code;
   open: boolean;
+
   onClose(): void;
 }
 
@@ -121,6 +137,9 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const setNotification = useNotification();
   const createContractInstance = useInstantiateContract();
   const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
+  const accounts = app.bank.getBalances().toArray();
+  const accountList = accounts.map((balance: [string, Coin[]]) => balance[0]);
+  const [account, setAccount] = useState<string>("");
   const handleInstantiate = useCallback(async () => {
     if (!code) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -131,19 +150,37 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
 
     try {
-      const instance = await createContractInstance(SENDER_ADDRESS, [], app.wasm.lastCodeId, instantiateMsg);
+      // @ts-ignore
+      const [sender, funds] = accounts.find((balance: [string, Coin[]]) => balance[0] === account);
+      if (!sender) {
+        setNotification("Please select an account", {severity: "error"});
+        return;
+      }
+      const instance = await createContractInstance(sender, funds, app.wasm.lastCodeId, instantiateMsg);
+      // @ts-ignore
       const contractAddress: string = instance?.unwrap().events[0].attributes[0].value;
       setNotification(`Successfully instantiated ${contractName} with address ${contractAddress}`);
       onClose();
       navigate(`/instances/${contractAddress}`);
-    }
-    catch (e: any) {
+    } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
     }
   }, [payload, onClose]);
+
   return (
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Enter Instantiate Message</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Pick an account to instantiate the contract with.
+        </DialogContentText>
+        <Autocomplete
+          onInputChange={(event, value) => setAccount(value)}
+          sx={{width: "100%"}}
+          renderInput={(params: AutocompleteRenderInputParams) => <TextField {...params}
+                                                                             label={"Account"}/>}
+          options={accountList}/>
+      </DialogContent>
       <DialogContent>
         <DialogContentText>
           Enter the instantiate message for the contract.
