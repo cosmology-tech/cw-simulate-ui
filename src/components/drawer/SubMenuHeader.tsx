@@ -15,7 +15,7 @@ export default function SubMenuHeader({
 }: ISubMenuHeaderProps)
 {
   const [optionsOpen, setOptionsOpen] = useState(false);
-  
+
   return (
     <Grid
       container
@@ -27,7 +27,7 @@ export default function SubMenuHeader({
         background: ORANGE_5_2,
       }}
     >
-      <Grid item flex={1}>{title}</Grid>
+      <Grid item flex={1} sx={{fontWeight: "bold"}}>{title}</Grid>
       {options && (
         <Grid item>
           <Options

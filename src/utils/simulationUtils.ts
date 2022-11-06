@@ -25,10 +25,9 @@ export function useCreateNewSimulateApp() {
       chainId: options.chainId,
       bech32Prefix: options.bech32Prefix
     });
-
     setSimulateApp({app});
     return app;
-  }, [app]);
+  }, [app, setSimulateApp]);
 }
 
 /**
