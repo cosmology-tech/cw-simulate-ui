@@ -9,6 +9,7 @@ import SimulationScreen from "./components/screens/SimulationScreen";
 import WelcomeScreen from "./components/screens/WelcomeScreen";
 import Simulation from "./components/simulation/Simulation";
 import T1Container from "./components/grid/T1Container";
+import "./index.css";
 
 function App() {
   return (
