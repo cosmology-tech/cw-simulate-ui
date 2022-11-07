@@ -24,7 +24,7 @@ import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { useAtom } from "jotai";
 import FileUploadPaper from "../upload/FileUploadPaper";
 
-export const WelcomeScreen = () => {
+export default function WelcomeScreen() {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
   const setNotification = useNotification();
   const [, setSimulationMetadata] = useAtom(simulationMetadataState);

@@ -10,6 +10,7 @@ import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { responseState } from "../../atoms/reponseState";
+import T1Container from "../grid/T1Container";
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -23,8 +24,6 @@ const Simulation = () => {
   const isFileUploaded = useAtomValue(fileUploadedState);
   return (
     <SplitView className="T1Simulation-root">
-      {/* <SendMessage contractAddress={contractAddress!} /> */}
-      {/* <History chainId={chainId!} contractAddress={contractAddress!} /> */}
       <Column xs={4} className="T1Simulation-left">
         <Widget sx={{p: 1}}>
           <StateStepper contractAddress={contractAddress!}/>
@@ -129,7 +128,9 @@ function Widget({
       className={`T1Widget-root ${className}`}
       {...props}
     >
-      {children}
+      <T1Container>
+        {children}
+      </T1Container>
     </Grid>
   );
 }
