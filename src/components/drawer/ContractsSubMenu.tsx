@@ -150,22 +150,22 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
 
     try {
-      // @ts-ignore
-      const [sender, funds] = accounts.find((balance: [string, Coin[]]) => balance[0] === account);
+      const [sender, funds] = accounts.find((balance: [string, Coin[]]) => balance[0] === account) ?? [undefined, []];
       if (!sender) {
         setNotification("Please select an account", {severity: "error"});
         return;
       }
       const instance = await createContractInstance(sender, funds, app.wasm.lastCodeId, instantiateMsg);
-      // @ts-ignore
       const contractAddress: string = instance?.unwrap().events[0].attributes[0].value;
       setNotification(`Successfully instantiated ${contractName} with address ${contractAddress}`);
       onClose();
       navigate(`/instances/${contractAddress}`);
-    } catch (e: any) {
-      setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
     }
-  }, [payload, onClose]);
+    catch (e: any) {
+      setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
+      console.error(e);
+    }
+  }, [account, payload, onClose]);
 
   return (
     <Dialog open={open} onClose={() => onClose()}>
