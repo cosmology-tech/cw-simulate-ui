@@ -15,9 +15,9 @@ import { useNavigate } from "react-router-dom";
 import { GREY_4 } from "../../configs/variables";
 import ContractsSubMenu from "./ContractsSubMenu";
 import InstancesSubMenu from "./InstancesSubMenu";
-import ConfigSubMenu from "./ConfigSubMenu";
+import SettingsSubMenu from "./SettingsSubMenu";
 
-type SubMenu = 'contracts' | 'instances' | 'states' | 'accounts' | 'config';
+type SubMenu = 'contracts' | 'instances' | 'states' | 'accounts' | 'settings';
 
 export interface IT1Drawer {
   barWidth?: number;
@@ -68,10 +68,10 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
             onClick={() => {navigate('/accounts')}}
           />
           <MenuIconButton
-            menu="config"
+            menu="settings"
             Icon={SettingsIcon}
             setMenu={setMenu}
-            tooltip="Chain Configuration"
+            tooltip="Settings"
           />
         </DrawerBar>
         <SubMenu width={drawerWidth} menu={menu} />
@@ -92,7 +92,7 @@ function SubMenu({ menu, width }: ISubMenuProps) {
     switch (menu) {
       case 'contracts': return <ContractsSubMenu />;
       case 'instances': return <InstancesSubMenu />;
-      case 'config': return <ConfigSubMenu />;
+      case 'settings': return <SettingsSubMenu />;
       default: return null;
     }
   })();
