@@ -31,8 +31,6 @@ export default function SubMenuHeader({
       setOptionsOpen(false);
     },
   }), []);
-  
-  console.log(theme.palette.primary);
 
   return (
     <Grid
