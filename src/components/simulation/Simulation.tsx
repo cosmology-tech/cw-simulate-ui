@@ -38,13 +38,13 @@ const Simulation = () => {
               fontSize="small" onClick={() => setShowExecuteQuery(true)}/>
             Show Execute & Query
           </Typography>}
-        {showExecuteQuery && <Widget size={5}>
+        {showExecuteQuery && <Widget size={4}>
           <ExecuteQuery
             setResponse={setResponse}
             contractAddress={contractAddress!}
           />
         </Widget>}
-        <Widget sx={{p: 1}} size={6}>
+        <Widget sx={{p: 1}} size={showExecuteQuery ? 7 : 11}>
           <StateStepper contractAddress={contractAddress!}/>
         </Widget>
       </Column>

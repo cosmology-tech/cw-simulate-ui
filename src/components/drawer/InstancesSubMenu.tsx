@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
+import simulationMetadataState from "../../atoms/simulationMetadataState";
 
 export interface IInstancesSubMenuProps {}
 
@@ -12,7 +13,7 @@ export default function InstancesSubMenu(props: IInstancesSubMenuProps) {
   const {app} = useAtomValue(cwSimulateAppState);
   // @ts-ignore
   const instances = app.store.getIn(["wasm", "contractStorage"])?.toArray().map(i => i[0]);
-  
+  const simulationMetadata = useAtomValue(simulationMetadataState);
   return (
     <>
       <SubMenuHeader title="Instances" />
@@ -33,12 +34,13 @@ interface IInstanceMenuItemProps {
 function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
   // TODO: find contract name from instance
   const copyToClipboard = useCallback((data: string) => navigator.clipboard?.writeText(data), []);
-  
+
   return (
     <T1MenuItem
       label={instance}
       textEllipsis
       link={`/instances/${instance}`}
+      tooltip={`${""} ${instance}`}
       options={({close}) => [
         <MenuItem
           key="copy-address"

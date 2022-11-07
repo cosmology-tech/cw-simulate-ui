@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { GREY_4 } from "../../configs/variables";
 import ContractsSubMenu from "./ContractsSubMenu";
 import InstancesSubMenu from "./InstancesSubMenu";
+import ConfigSubMenu from "./ConfigSubMenu";
 
 type SubMenu = 'contracts' | 'instances' | 'states' | 'accounts' | 'config';
 
@@ -28,10 +29,10 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
     barWidth = 50,
     drawerWidth = 250,
   } = props;
-  
+
   const navigate = useNavigate();
   const [menu, setMenu] = useState<SubMenu | undefined>(undefined);
-  
+
   return (
     <ClickAwayListener onClickAway={() => setMenu(undefined)}>
       <Box
@@ -71,7 +72,6 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
             Icon={SettingsIcon}
             setMenu={setMenu}
             tooltip="Chain Configuration"
-            onClick={() => {navigate('/config')}}
           />
         </DrawerBar>
         <SubMenu width={drawerWidth} menu={menu} />
@@ -92,10 +92,11 @@ function SubMenu({ menu, width }: ISubMenuProps) {
     switch (menu) {
       case 'contracts': return <ContractsSubMenu />;
       case 'instances': return <InstancesSubMenu />;
+      case 'config': return <ConfigSubMenu />;
       default: return null;
     }
   })();
-  
+
   return (
     <Drawer width={width} open={!!contents}>
       {contents}
@@ -193,7 +194,7 @@ function MenuIconButton({
       setMenu(curr => curr !== menu ? menu : undefined);
     }
   }, [menu, _onClick]);
-  
+
   return (
     <Tooltip
       title={tooltip}
