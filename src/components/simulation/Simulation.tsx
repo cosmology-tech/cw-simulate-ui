@@ -24,19 +24,19 @@ const Simulation = () => {
   const {instanceAddress: contractAddress} = useParams();
   const [, setResponse] = useAtom(responseState);
   const isFileUploaded = useAtomValue(fileUploadedState);
-  const [showExecuteQuery, setShowExecuteQuery] = useState(false);
+  const [showExecuteQuery, setShowExecuteQuery] = useState(true);
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
         {showExecuteQuery ?
           <Typography sx={{textAlign: 'center'}}>
             <MinimizeRoundedIcon fontSize="small" onClick={() => setShowExecuteQuery(false)}/>
-            Minimize Execute & Query
+            Hide Execute & Query
           </Typography>
           : <Typography sx={{textAlign: 'center'}}>
-            <ExpandCircleDownOutlinedIcon fontSize="small"
-                                          onClick={() => setShowExecuteQuery(true)}/>
-            Expand Execute & Query
+            <ExpandCircleDownOutlinedIcon
+              fontSize="small" onClick={() => setShowExecuteQuery(true)}/>
+            Show Execute & Query
           </Typography>}
         {showExecuteQuery && <Widget size={5}>
           <ExecuteQuery
