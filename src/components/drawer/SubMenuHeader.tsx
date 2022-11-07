@@ -1,20 +1,36 @@
 import { ListItemIcon, MenuItem } from "@mui/material";
 import Grid from "@mui/material/Grid";
-import { ReactNode, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
 import { ORANGE_5_2 } from "../../configs/variables";
 import Options from "../Options";
 
 export interface ISubMenuHeaderProps {
   title?: string;
-  options?: ReactNode;
+  options?: Options;
+  /** Modals & other popovers used in options. Can take a function receiving callbacks such as `close`. */
+  optionsExtras?: OptionsExtras;
+}
+
+type Options = ReactNode[] | ((api: OptionsAPI) => ReactNode[]);
+type OptionsExtras = ReactNode | ((api: OptionsAPI) => ReactNode);
+
+type OptionsAPI = {
+  close(): void;
 }
 
 export default function SubMenuHeader({
   title = '',
   options,
+  optionsExtras,
 }: ISubMenuHeaderProps)
 {
   const [optionsOpen, setOptionsOpen] = useState(false);
+  
+  const api = useMemo(() => ({
+    close() {
+      setOptionsOpen(false);
+    },
+  }), []);
 
   return (
     <Grid
@@ -43,8 +59,9 @@ export default function SubMenuHeader({
             onOpen={() => setOptionsOpen(true)}
             onClose={() => setOptionsOpen(false)}
           >
-            {options}
+            {typeof options === 'function' ? options(api) : options}
           </Options>
+          {typeof optionsExtras === 'function' ? optionsExtras(api) : optionsExtras}
         </Grid>
       )}
     </Grid>

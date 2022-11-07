@@ -64,20 +64,22 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
             </ListItemText>
           </MenuItem>
         ]}
+        optionsExtras={({ close }) => <>
+          <UploadModal
+            chainId={DEFAULT_CHAIN}
+            variant="contract"
+            open={openUploadDialog}
+            onClose={() => {
+              setOpenUploadDialog(false);
+              close();
+            }}
+          />
+        </>}
       />
 
       {Object.values(codes).map((code) => (
         <CodeMenuItem key={code?.codeId} chainId={chainId} code={code}/>
       ))}
-
-      <UploadModal
-        chainId={DEFAULT_CHAIN}
-        variant="contract"
-        open={openUploadDialog}
-        onClose={() => {
-          setOpenUploadDialog(false);
-        }}
-      />
     </>
   );
 }
