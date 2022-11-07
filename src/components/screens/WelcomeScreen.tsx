@@ -57,7 +57,7 @@ export default function WelcomeScreen() {
   useEffect(() => {
     if (file) {
       onCreateNewEnvironment().then(r => {
-        navigate("/config");
+        navigate("/accounts");
       });
     }
   }, [file]);
