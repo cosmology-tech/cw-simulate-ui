@@ -1,8 +1,7 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Paper, styled } from "@mui/material";
 import { useAtom } from "jotai";
 import { useCallback, useState } from "react";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
-import Item from "./item";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import {
   SimulationJSON,
@@ -11,6 +10,7 @@ import {
 } from "../../utils/simulationUtils";
 import FileUpload from "./FileUpload";
 import { SENDER_ADDRESS } from "../../configs/variables";
+import FileUploadPaper from "./FileUploadPaper";
 
 interface IUploadModalProps {
   dropzoneText?: string;
@@ -54,27 +54,19 @@ export default function UploadModal(props: IUploadModalProps) {
   return (
     <Dialog open={open} onClose={() => onClose(false)}>
       <DialogTitle>{dropTitle ?? 'Upload Code'}</DialogTitle>
-      <DialogContent>
-        <Grid
-          item
-          xs={11}
-          lg={7}
-          md={8}
-          sx={{marginTop: 4, marginBottom: 4, width: "100%"}}
-        >
-          <Item sx={{border: "1px solid #eae5e5", padding: 0}}>
-            <FileUpload
-              dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
-              variant={variant ?? 'contract'}
-              onAccept={(filename: string, fileContent: Buffer | JSON) => {
-                setFile({filename, fileContent});
-              }}
-              onClear={() => {
-                setFile(undefined);
-              }}
-            />
-          </Item>
-        </Grid>
+      <DialogContent sx={{ width: '50vw', maxWidth: 600 }}>
+        <FileUploadPaper sx={{ width: '100%', minHeight: 180 }}>
+          <FileUpload
+            dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
+            variant={variant ?? 'contract'}
+            onAccept={(filename: string, fileContent: Buffer | JSON) => {
+              setFile({filename, fileContent});
+            }}
+            onClear={() => {
+              setFile(undefined);
+            }}
+          />
+        </FileUploadPaper>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(false)}>Cancel</Button>

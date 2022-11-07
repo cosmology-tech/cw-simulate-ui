@@ -12,7 +12,7 @@ import React, {
 } from "react";
 import { To, useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/variables";
+import { DEFAULT_CHAIN, GREY_5, SENDER_ADDRESS } from "../../configs/variables";
 import {
   SimulationJSON,
   useCreateNewSimulateApp, useSetupCwSimulateAppJson,
@@ -22,7 +22,7 @@ import FileUpload from "../upload/FileUpload";
 import T1Link from "../grid/T1Link";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { useAtom } from "jotai";
-import Item from "../upload/item";
+import FileUploadPaper from "../upload/FileUploadPaper";
 
 export const WelcomeScreen = () => {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
@@ -78,15 +78,15 @@ export const WelcomeScreen = () => {
         container
         item
         justifyContent="center"
-        sx={{border: "1px solid #eae5e5", borderRadius: "10px", width: "60%"}}
+        sx={{border: `1px solid ${GREY_5}`, borderRadius: "10px", width: "60%"}}
         className="outerGrid"
       >
         <Grid
           item
           xs={12}
-          sx={{marginTop: 4, marginBottom: 4, textAlign: "center"}}
+          sx={{ my: 4 }}
         >
-          <Typography variant="h2" sx={{fontWeight: 600}}>
+          <Typography variant="h2" fontWeight={600} textAlign="center">
             CosmWasm Simulator
           </Typography>
         </Grid>
@@ -103,7 +103,7 @@ export const WelcomeScreen = () => {
             <NotesIcon sx={{cursor: "pointer"}}/>
             <Typography>Examples</Typography>
           </NavIcon>
-          <NavIcon to='https://github.com/Terran-One/cw-debug-ui'>
+          <NavIcon to='https://github.com/Terran-One/cw-simulate-ui'>
             <GitHubIcon sx={{cursor: "pointer"}}/>
             <Typography>Github</Typography>
           </NavIcon>
@@ -113,11 +113,11 @@ export const WelcomeScreen = () => {
           xs={11}
           lg={7}
           md={8}
-          sx={{marginTop: 4, marginBottom: 4, width: "60%"}}
+          sx={{ my: 4, width: "60%" }}
         >
-          <Item sx={{border: "1px solid #eae5e5", padding: 0}}>
+          <FileUploadPaper sx={{ minHeight: 280 }}>
             <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
-          </Item>
+          </FileUploadPaper>
         </Grid>
       </Grid>
     </Grid>
@@ -128,17 +128,14 @@ function WelcomeNavIcons({children}: PropsWithChildren) {
   return (
     <Grid
       item
+      container
+      direction="row"
+      flexWrap="wrap"
+      justifyContent="space-between"
       xs={11}
       lg={6}
       md={8}
-      sx={{
-        marginTop: 4,
-        marginBottom: 4,
-        display: "flex",
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "space-between",
-      }}
+      sx={{ my: 4 }}
     >
       {children}
     </Grid>
@@ -161,13 +158,10 @@ function NavIcon(props: INavIconProps) {
     <T1Link {...rest}>
       <Grid
         container
-        component='div'
         direction='column'
+        alignItems='center'
         sx={{
-          alignItems: 'center',
-          display: 'flex',
-          marginLeft: 1,
-          marginRight: 1,
+          mx: 1,
         }}
       >
         {children}
