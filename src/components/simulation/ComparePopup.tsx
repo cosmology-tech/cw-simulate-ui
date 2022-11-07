@@ -42,7 +42,6 @@ export const ComparePopup = ({ currentActiveState, trace }: IProps) => {
         state1: getStateString(trace[currentActiveState].storeSnapshot),
         state2: getStateString(trace[e.target.value - 1].storeSnapshot),
       });
-      setStateResponseTab("state");
       setError("");
       e.preventDefault();
     }
