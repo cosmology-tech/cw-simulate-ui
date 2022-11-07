@@ -1,5 +1,5 @@
 import React, { Suspense, useContext, useState } from "react";
-import { Box, CircularProgress } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
@@ -123,22 +123,33 @@ const FileUpload = ({
     }
   };
 
-  const {getRootProps, getInputProps} = useDropzone({onDrop: handleOnFileDrop})
+  const {getRootProps, getInputProps} = useDropzone({
+    onDrop: handleOnFileDrop,
+    accept: buildAcceptProp(variant),
+  });
+  
   return (
     <Suspense fallback={<Fallback/>}>
-      <div {...getRootProps({onClick: handleDropzoneClick})}
-           style={{cursor: 'pointer', padding: '8px'}}>
+      <div
+        {...getRootProps({ onClick: handleDropzoneClick })}
+        style={{cursor: 'pointer', padding: '8px'}}
+      >
         <input {...getInputProps()} />
         {
-          filename ?
-            <>
+          filename
+          ? <>
               <AttachFileIcon fontSize="large"/>
-              <div style={{fontSize: '24px'}}>{filename} <DeleteIcon id='delete-icon'
-                                                                     fontSize="small"
-                                                                     onClick={deleteFile}/></div>
-            </> :
-            <>
-              <div style={{fontSize: '24px'}}>{text}</div>
+              <Box>
+                <Typography fontSize="24px">{filename}</Typography>
+                <DeleteIcon
+                  id='delete-icon'
+                  fontSize="small"
+                  onClick={deleteFile}
+                />
+              </Box>
+            </>
+          : <>
+              <Typography fontSize="24px">{text}</Typography>
               <UploadFileIcon fontSize="large"/>
             </>
         }
@@ -157,7 +168,7 @@ function Fallback() {
 
 export default FileUpload;
 
-function getFileTypesByVariant(variant: "simulation" | "contract" | "both" | undefined) {
+function getFileTypesByVariant(variant: IProps['variant']) {
   switch (variant) {
     case 'both':
       return ['application/wasm', 'application/json'];
@@ -168,6 +179,11 @@ function getFileTypesByVariant(variant: "simulation" | "contract" | "both" | und
     default:
       throw new Error("Not supported");
   }
+}
+
+function buildAcceptProp(variant: IProps['variant']): Record<string, string[]> {
+  const filetypes = getFileTypesByVariant(variant);
+  return Object.fromEntries(filetypes.map(t => [t, []]));
 }
 
 function extractByteCode(contents: string | ArrayBuffer): ArrayBuffer {
