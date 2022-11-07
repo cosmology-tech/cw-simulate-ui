@@ -12,21 +12,21 @@ import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { responseState } from "../../atoms/reponseState";
 import T1Container from "../grid/T1Container";
 
-const StyledPaper = styled(Paper)(({theme}) => ({
+const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
 }));
 
 const Simulation = () => {
-  const {instanceAddress: contractAddress} = useParams();
+  const { instanceAddress: contractAddress } = useParams();
   const [, setResponse] = useAtom(responseState);
   const isFileUploaded = useAtomValue(fileUploadedState);
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
-        <Widget sx={{p: 1}}>
-          <StateStepper contractAddress={contractAddress!}/>
+        <Widget sx={{ p: 1 }}>
+          <StateStepper contractAddress={contractAddress!} />
         </Widget>
       </Column>
       <Column xs={8} className="T1Simulation-right">
@@ -37,7 +37,7 @@ const Simulation = () => {
           />
         </Widget>
         <Widget size={6}>
-          <StateRenderer isFileUploaded={isFileUploaded}/>
+          <StateRenderer isFileUploaded={isFileUploaded} />
         </Widget>
       </Column>
     </SplitView>
@@ -51,7 +51,7 @@ interface ISplitViewProps {
   className?: string;
 }
 
-function SplitView({children, ...props}: ISplitViewProps) {
+function SplitView({ children, ...props }: ISplitViewProps) {
   return (
     <Grid
       container
@@ -72,7 +72,7 @@ interface IColumnProps extends GridSizeProps {
   className?: string;
 }
 
-function Column({children, ...props}: IColumnProps) {
+function Column({ children, ...props }: IColumnProps) {
   return (
     <Grid
       item
