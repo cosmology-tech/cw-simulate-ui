@@ -44,6 +44,9 @@ export const dark = createTheme({
     background: {
       default: '#1A2027',
     },
+    text: {
+      primary: '#EAECEC'
+    },
     line: '#DEE3EB',
   },
 });
