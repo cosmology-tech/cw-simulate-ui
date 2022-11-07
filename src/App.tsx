@@ -1,12 +1,12 @@
-import { Grid, SxProps, Theme } from "@mui/material";
+import { Grid } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import State from "./components/chains/State";
 import Config from "./components/chains/Config";
 import Accounts from "./components/chains/Accounts";
 import T1AppBar from "./components/drawer/T1AppBar";
-import Home from "./components/home/Home";
-import VoidScreen from "./components/home/VoidScreen";
-import MainScreen from "./components/simulation/MainScreen";
+import VoidScreen from "./components/screens/VoidScreen";
+import SimulationScreen from "./components/screens/SimulationScreen";
+import WelcomeScreen from "./components/screens/WelcomeScreen";
 import Simulation from "./components/simulation/Simulation";
 
 function App() {
@@ -14,11 +14,9 @@ function App() {
     <Grid container direction="column" width="100vw" height="100vh" className="T1App-root">
       <T1AppBar />
       <Routes>
-        <Route index element={<Home/>}/>
+        <Route index element={<WelcomeScreen />}/>
 
-        <Route element={<MainScreen/>}>
-          {/*TODO: A CWSimulateApp only contain a single chain. Wrap everything under /simulation instead*/}
-          {/* <Chains /> ensures the :chainId exists. Do not remove. */}
+        <Route element={<SimulationScreen />}>
           <Route path="config" element={<Config/>}/>
           <Route path="state" element={<State/>}/>
           <Route path="accounts" element={<Accounts/>}/>

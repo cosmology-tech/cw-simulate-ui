@@ -24,7 +24,7 @@ import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { useAtom } from "jotai";
 import FileUploadPaper from "../upload/FileUploadPaper";
 
-export const WelcomeScreen = () => {
+const WelcomeScreen = () => {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
   const setNotification = useNotification();
   const [, setSimulationMetadata] = useAtom(simulationMetadataState);
@@ -123,6 +123,8 @@ export const WelcomeScreen = () => {
     </Grid>
   );
 };
+
+export default WelcomeScreen;
 
 function WelcomeNavIcons({children}: PropsWithChildren) {
   return (

@@ -23,8 +23,6 @@ const Simulation = () => {
   const isFileUploaded = useAtomValue(fileUploadedState);
   return (
     <SplitView className="T1Simulation-root">
-      {/* <SendMessage contractAddress={contractAddress!} /> */}
-      {/* <History chainId={chainId!} contractAddress={contractAddress!} /> */}
       <Column xs={4} className="T1Simulation-left">
         <Widget sx={{p: 1}}>
           <StateStepper contractAddress={contractAddress!}/>
