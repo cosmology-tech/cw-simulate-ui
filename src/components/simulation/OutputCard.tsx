@@ -5,14 +5,21 @@ import { GREY_3, GREY_6 } from "../../configs/variables";
 import T1Container from "../grid/T1Container";
 import ReactDiffViewer from "@terran-one/react-diff-viewer";
 import {
+  ContractResponse,
   ExecuteTraceLog,
   ReplyTraceLog,
 } from "@terran-one/cw-simulate/dist/types";
+import { IRequest } from "../../atoms/stepRequestState";
 
 interface IProps {
   beforeState?: string;
   afterState?: string;
-  response?: JSON | undefined | any;
+  response?:
+    | JSON
+    | undefined
+    | IRequest
+    | { ok: ContractResponse }
+    | { error: any };
   isVisible?: boolean;
   placeholder: string;
   stepTrace?: ExecuteTraceLog | ReplyTraceLog | {};

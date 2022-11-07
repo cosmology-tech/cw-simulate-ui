@@ -4,15 +4,13 @@ import React from "react";
 import { useAtom } from "jotai";
 import { compareStates } from "../../atoms/compareStates";
 import { stateResponseTabState } from "../../atoms/stateResponseTabState";
+import { TraceLog } from "@terran-one/cw-simulate";
 
 interface IProps {
   currentActiveState: number;
-  executionHistory: any;
+  trace: TraceLog[];
 }
-export const ComparePopup = ({
-  currentActiveState,
-  executionHistory,
-}: IProps) => {
+export const ComparePopup = ({ currentActiveState, trace }: IProps) => {
   const [_, setCompareStates] = useAtom(compareStates);
   const [__, setStateResponseTab] = useAtom(stateResponseTabState);
   const [error, setError] = React.useState("");
@@ -26,20 +24,23 @@ export const ComparePopup = ({
     setAnchorEl(null);
   };
   const getStateString = (stateObj: any) => {
-    return window.atob(stateObj?._root.entries[0][1]);
+    const entries =
+      stateObj?._root.entries[0][1]?._root?.entries[2][1]?._root?.entries[0][1]
+        ?._root?.entries;
+    return window.atob(entries[0][1]);
   };
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const keyDownHandler = (e: any) => {
     if (e.key == "Enter") {
       const toCompareState = e.target.value;
-      if (toCompareState > executionHistory.length || toCompareState < 0) {
+      if (toCompareState > trace.length || toCompareState < 0) {
         setError("Invalid State");
         return;
       }
       setCompareStates({
-        state1: getStateString(executionHistory[currentActiveState].state),
-        state2: getStateString(executionHistory[e.target.value - 1].state),
+        state1: getStateString(trace[currentActiveState].storeSnapshot),
+        state2: getStateString(trace[e.target.value - 1].storeSnapshot),
       });
       setStateResponseTab("state");
       setError("");
