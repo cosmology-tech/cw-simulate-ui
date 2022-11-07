@@ -1,8 +1,15 @@
+import { ContractResponse } from "@terran-one/cw-simulate";
 import React from "react";
+import { IRequest } from "../../atoms/stepRequestState";
 import { OutputCard } from "./OutputCard";
 
 interface IProps {
-  response: JSON | undefined;
+  response:
+    | JSON
+    | undefined
+    | IRequest
+    | { ok: ContractResponse }
+    | { error: any };
 }
 
 export const OutputRenderer = ({ response }: IProps) => {

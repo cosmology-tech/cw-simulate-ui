@@ -1,14 +1,14 @@
 import { Grid, Step, StepContent, StepLabel, Stepper } from "@mui/material";
 import { TraceLog } from "@terran-one/cw-simulate";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
 import React from "react";
 
 interface IProps {
   traceLog: TraceLog[] | undefined;
 }
 
-export const SubStepper = ({traceLog}: IProps) => {
+export const SubStepper = ({ traceLog }: IProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [activeStep, setActiveStep] = React.useState(0);
   const handleStep = (step: number) => {
@@ -16,12 +16,12 @@ export const SubStepper = ({traceLog}: IProps) => {
   };
 
   return (
-    <Grid item sx={{width: "100%"}}>
+    <Grid item sx={{ width: "100%" }}>
       <Stepper
         nonLinear
         activeStep={activeStep}
         orientation="vertical"
-        sx={{width: "90%"}}
+        sx={{ width: "90%" }}
       >
         {traceLog?.map((traceObj: TraceLog, index: number) => {
           return (
@@ -35,13 +35,13 @@ export const SubStepper = ({traceLog}: IProps) => {
               onClick={() => handleStep(index)}
             >
               <StepLabel>
-                <Grid sx={{display: "flex", justifyContent: "space-between"}}>
+                <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
                   <Grid container alignItems="center">
                     {traceObj.trace && traceObj.trace.length > 0 ? (
                       activeStep === index && isOpen ? (
-                        <ArrowDropDownIcon onClick={() => setIsOpen(false)}/>
+                        <RemoveIcon onClick={() => setIsOpen(false)} />
                       ) : (
-                        <ArrowRightIcon
+                        <AddIcon
                           onClick={() => {
                             setIsOpen(true);
                           }}
@@ -62,7 +62,7 @@ export const SubStepper = ({traceLog}: IProps) => {
                   isOpen &&
                   traceObj.trace &&
                   traceObj.trace.length > 0 && (
-                    <SubStepper traceLog={traceObj.trace}/>
+                    <SubStepper traceLog={traceObj.trace} />
                   )}
               </StepContent>
             </Step>
