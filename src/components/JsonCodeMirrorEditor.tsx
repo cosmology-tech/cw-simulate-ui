@@ -4,7 +4,7 @@ import ReactCodeMirror from "@uiw/react-codemirror";
 import { useAtom } from "jotai";
 import React from "react";
 import { jsonErrorState } from "../atoms/jsonErrorState";
-import { GREY_6 } from "../configs/variables";
+import { useTheme } from "../configs/theme";
 import { validateJSON } from "../utils/fileUtils";
 import T1Container from "./grid/T1Container";
 
@@ -23,6 +23,8 @@ export const JsonCodeMirrorEditor = ({
     json: "Enter your json here",
   };
   const [jsonError, setJsonError] = useAtom(jsonErrorState);
+  
+  const theme = useTheme();
 
   return (
     <Grid
@@ -35,7 +37,7 @@ export const JsonCodeMirrorEditor = ({
         item
         flex={1}
         position="relative"
-        border={`1px solid ${GREY_6}`}
+        border={`1px solid ${theme.palette.line}`}
       >
         <T1Container>
           <ReactCodeMirror

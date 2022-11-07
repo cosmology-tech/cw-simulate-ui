@@ -9,8 +9,6 @@ import {
   Toolbar
 } from "@mui/material";
 import React from "react";
-import { useLocation } from "react-router";
-import { ORANGE_3, WHITE } from "../../configs/variables";
 import Logo from "./Logo";
 
 interface AppBarProps extends MuiAppBarProps {
@@ -27,10 +25,8 @@ interface IT1AppBarProps {
 }
 
 const T1AppBar = React.memo((props: IT1AppBarProps) => {
-  const location = useLocation();
-
   return (
-    <AppBar position="static" sx={{backgroundColor: ORANGE_3}}>
+    <AppBar position="static">
       <Toolbar sx={{justifyContent: "space-between"}}>
         <div>
           <Logo LinkComponent={IconButton} white/>
@@ -38,7 +34,7 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
         <div>
           <IconButton sx={{borderRadius: 5}}>
             <Link href={"documentation"} underline={"none"}>
-              <HelpIcon sx={{color: WHITE}}/>
+              <HelpIcon sx={{color: '#fff'}}/>
             </Link>
           </IconButton>
           <IconButton sx={{borderRadius: 5}}>
@@ -46,7 +42,7 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
               href={"https://github.com/Terran-One/cw-debug-ui"}
               underline={"none"}
             >
-              <GitHubIcon sx={{color: WHITE}}/>
+              <GitHubIcon sx={{color: '#fff'}}/>
             </Link>
           </IconButton>
         </div>

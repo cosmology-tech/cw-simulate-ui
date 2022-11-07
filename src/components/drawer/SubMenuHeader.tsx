@@ -1,7 +1,6 @@
-import { ListItemIcon, MenuItem } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { ReactNode, useMemo, useState } from "react";
-import { ORANGE_5_2 } from "../../configs/variables";
+import { useTheme } from "../../configs/theme";
 import Options from "../Options";
 
 export interface ISubMenuHeaderProps {
@@ -25,12 +24,15 @@ export default function SubMenuHeader({
 }: ISubMenuHeaderProps)
 {
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const theme = useTheme();
   
   const api = useMemo(() => ({
     close() {
       setOptionsOpen(false);
     },
   }), []);
+  
+  console.log(theme.palette.primary);
 
   return (
     <Grid
@@ -40,7 +42,7 @@ export default function SubMenuHeader({
       sx={{
         minHeight: 56,
         p: 1,
-        background: ORANGE_5_2,
+        background: theme.palette.primary.light,
       }}
     >
       <Grid item flex={1} sx={{fontWeight: "bold"}}>{title}</Grid>

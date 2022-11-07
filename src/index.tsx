@@ -1,23 +1,35 @@
-import { CssBaseline } from "@mui/material";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import { CssBaseline, ThemeProvider } from "@mui/material";
+import { useAtomValue } from "jotai";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import uiState from "./atoms/uiState";
 import SnackbarNotification from "./components/notification/SnackbarNotification";
 import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
+import { light as lightTheme, dark as darkTheme } from "./configs/theme";
 import "./styles/styles.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
-root.render(
-  <React.StrictMode>
-    <BrowserRouter>
+function Root() {
+  const { dark: isDark } = useAtomValue(uiState);
+  const theme = isDark ? darkTheme : lightTheme;
+  
+  return (
+    <ThemeProvider theme={theme}>
       <CssBaseline />
       <PageRefreshConfirmation/>
       <SnackbarNotification/>
       <App/>
+    </ThemeProvider>
+  )
+}
+
+root.render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <Root />
     </BrowserRouter>
   </React.StrictMode>
 );

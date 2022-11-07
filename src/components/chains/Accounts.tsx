@@ -20,7 +20,7 @@ import { useParams } from "react-router-dom";
 import T1Container from "../grid/T1Container";
 import { useAtomValue } from "jotai";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
-import { SENDER_ADDRESS } from "../../configs/variables";
+import { SENDER_ADDRESS } from "../../configs/constants";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 import { validateAccountJSON } from "../../utils/fileUtils";
 

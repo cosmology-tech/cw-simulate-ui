@@ -1,7 +1,7 @@
 import React from "react";
 import { JSONTree } from "react-json-tree";
-import { Typography } from "@mui/material";
-import { GREY_3, GREY_6 } from "../../configs/variables";
+import Typography from "@mui/material/Typography";
+import useTheme from "@mui/material/styles/createTheme";
 import T1Container from "../grid/T1Container";
 import ReactDiffViewer from "@terran-one/react-diff-viewer";
 import {
@@ -54,10 +54,12 @@ export const OutputCard = ({
   isVisible,
   stepTrace,
 }: IProps) => {
+  const muiTheme = useTheme();
+  
   return (
     <T1Container
       sx={{
-        border: `1px solid ${GREY_6}`,
+        border: `1px solid ${muiTheme.palette.line}`,
         textAlign: "left",
         "> .T1Container-content": {
           pl: 1,
@@ -76,7 +78,7 @@ export const OutputCard = ({
           splitView={false}
         />
       ) : (
-        <Typography variant={"body2"} color={GREY_3}>
+        <Typography variant="body2" color={muiTheme.palette.grey[50]}>
           {placeholder}
         </Typography>
       )}

@@ -2,7 +2,9 @@ import ArticleIcon from "@mui/icons-material/Article";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import NotesIcon from "@mui/icons-material/Notes";
-import { Grid, Typography } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import useTheme from "@mui/material/styles/useTheme";
 import React, {
   HTMLAttributeAnchorTarget,
   PropsWithChildren,
@@ -12,7 +14,7 @@ import React, {
 } from "react";
 import { To, useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { DEFAULT_CHAIN, GREY_5, SENDER_ADDRESS } from "../../configs/variables";
+import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/constants";
 import {
   SimulationJSON,
   useCreateNewSimulateApp, useSetupCwSimulateAppJson,
@@ -32,6 +34,9 @@ export default function WelcomeScreen() {
   const createSimulateApp = useCreateNewSimulateApp();
   const storeCode = useStoreCode();
   const setupSimulationJSON = useSetupCwSimulateAppJson();
+  
+  const theme = useTheme();
+  
   const onCreateNewEnvironment = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -78,7 +83,7 @@ export default function WelcomeScreen() {
         container
         item
         justifyContent="center"
-        sx={{border: `1px solid ${GREY_5}`, borderRadius: "10px", width: "60%"}}
+        sx={{border: `1px solid ${theme.palette.line}`, borderRadius: "10px", width: "60%"}}
         className="outerGrid"
       >
         <Grid

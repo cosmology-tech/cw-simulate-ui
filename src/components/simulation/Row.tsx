@@ -1,7 +1,10 @@
-import { Theme } from "@emotion/react";
-import { SxProps, Grid, Paper, styled } from "@mui/material";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import styled from "@mui/material/styles/styled";
+import type { SxProps } from "@mui/system/styleFunctionSx";
+import { Theme } from "@mui/material/styles/createTheme";
+import useTheme from "@mui/material/styles/useTheme";
 import { ReactNode } from "react";
-import { GREY_6 } from "../../configs/variables";
 import { GridSizeProps } from "../../utils/typeUtils";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -17,6 +20,8 @@ interface IRowProps extends GridSizeProps {
 }
 
 export default function Row({ children, ...props }: IRowProps) {
+  const theme = useTheme();
+  
   return (
     <Grid
       item
@@ -33,7 +38,7 @@ export default function Row({ children, ...props }: IRowProps) {
           height: "100%",
           overflow: "auto",
           "> .T1Widget-root:not(:first-of-type)": {
-            borderTop: `1px solid ${GREY_6}`,
+            borderTop: `1px solid ${theme.palette.line}`,
           },
         }}
       >
