@@ -10,6 +10,7 @@ import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { responseState } from "../../atoms/reponseState";
+import T1Container from "../grid/T1Container";
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -127,7 +128,9 @@ function Widget({
       className={`T1Widget-root ${className}`}
       {...props}
     >
-      {children}
+      <T1Container>
+        {children}
+      </T1Container>
     </Grid>
   );
 }
