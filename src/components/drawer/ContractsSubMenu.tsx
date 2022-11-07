@@ -38,7 +38,7 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
   const {metadata} = useAtomValue(simulationMetadataState);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   //@ts-ignore
-  const codesFromStore = app.store.getIn(["wasm", "codes"]).toObject();
+  const codesFromStore = app.store.getIn(["wasm", "codes"])?.toObject() ?? {};
   const codes = {} as Codes;
   for (const key of Object.keys(codesFromStore)) {
     const fileName = metadata.codes[parseInt(key)]?.name;
