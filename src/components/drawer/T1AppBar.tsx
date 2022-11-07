@@ -9,7 +9,6 @@ import styled from "@mui/material/styles/styled";
 import React from "react";
 import Logo from "./Logo";
 import DarkModeSwitch from "./DarkModeSwitch";
-import { useNavigate } from "react-router-dom";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -25,8 +24,6 @@ interface IT1AppBarProps {
 }
 
 const T1AppBar = React.memo((props: IT1AppBarProps) => {
-  const navigate = useNavigate();
-  
   return (
     <AppBar position="static">
       <Toolbar sx={{ justifyContent: 'space-between' }}>
