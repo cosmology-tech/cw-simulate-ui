@@ -1,8 +1,9 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useAtom, useAtomValue } from "jotai";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import type { Theme } from "@mui/material/styles/createTheme";
 import styled from "@mui/material/styles/styled";
 import useTheme from "@mui/material/styles/useTheme";
@@ -14,6 +15,8 @@ import StateStepper from "./StateStepper";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { responseState } from "../../atoms/reponseState";
 import T1Container from "../grid/T1Container";
+import ExpandCircleDownOutlinedIcon from '@mui/icons-material/ExpandCircleDownOutlined';
+import MinimizeRoundedIcon from '@mui/icons-material/MinimizeRounded';
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -25,20 +28,31 @@ const Simulation = () => {
   const {instanceAddress: contractAddress} = useParams();
   const [, setResponse] = useAtom(responseState);
   const isFileUploaded = useAtomValue(fileUploadedState);
+  const [showExecuteQuery, setShowExecuteQuery] = useState(true);
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
-        <Widget sx={{p: 1}}>
-          <StateStepper contractAddress={contractAddress!}/>
-        </Widget>
-      </Column>
-      <Column xs={8} className="T1Simulation-right">
-        <Widget size={6}>
+        {showExecuteQuery ?
+          <Typography sx={{textAlign: 'center'}}>
+            <MinimizeRoundedIcon fontSize="small" onClick={() => setShowExecuteQuery(false)}/>
+            Hide Execute & Query
+          </Typography>
+          : <Typography sx={{textAlign: 'center'}}>
+            <ExpandCircleDownOutlinedIcon
+              fontSize="small" onClick={() => setShowExecuteQuery(true)}/>
+            Show Execute & Query
+          </Typography>}
+        {showExecuteQuery && <Widget size={4}>
           <ExecuteQuery
             setResponse={setResponse}
             contractAddress={contractAddress!}
           />
+        </Widget>}
+        <Widget sx={{p: 1}} size={showExecuteQuery ? 7 : 11}>
+          <StateStepper contractAddress={contractAddress!}/>
         </Widget>
+      </Column>
+      <Column xs={8} className="T1Simulation-right">
         <Widget size={6}>
           <StateRenderer isFileUploaded={isFileUploaded}/>
         </Widget>

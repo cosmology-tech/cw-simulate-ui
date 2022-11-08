@@ -4,19 +4,10 @@ import CloseDiff from "./CloseDiff";
 
 interface IProps {
   currentTab: string;
-  setCurrentTab: (
-    val: "response" | "state" | "request" | "trace" | "debug"
-  ) => void;
-  setIsVisible: (val: boolean) => void;
-  isVisible: boolean;
+  setCurrentTab: (val: "response" | "request" | "trace" | "debug") => void;
 }
 
-const StateResponseTab = ({
-  currentTab,
-  setCurrentTab,
-  isVisible,
-  setIsVisible,
-}: IProps) => {
+const StateResponseTab = ({ currentTab, setCurrentTab }: IProps) => {
   const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(
       newValue === "response"
@@ -25,9 +16,7 @@ const StateResponseTab = ({
         ? "request"
         : newValue === "trace"
         ? "trace"
-        : newValue === "debug"
-        ? "debug"
-        : "state"
+        : "debug"
     );
   };
   return (
@@ -38,18 +27,12 @@ const StateResponseTab = ({
           onChange={onChangeHandler}
           aria-label="State & Response tabs"
         >
-          <Tab value="state" label="State" />
           <Tab value="request" label="Request" />
           <Tab value="response" label="Response" />
           <Tab value="trace" label="Trace" />
           <Tab value="debug" label="Debug" />
         </Tabs>
       </Grid>
-      {isVisible && (
-        <Grid item>
-          <CloseDiff isVisible={isVisible} setIsVisible={setIsVisible} />
-        </Grid>
-      )}
     </Grid>
   );
 };

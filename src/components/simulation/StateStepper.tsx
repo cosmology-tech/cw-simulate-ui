@@ -77,7 +77,7 @@ export default function StateStepper({ contractAddress }: IProps) {
 
   const handleStep = (step: number) => {
     setActiveStep(step);
-    setCurrentTab("state");
+    setCurrentTab("response");
   };
 
   return (

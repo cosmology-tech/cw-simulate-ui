@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import simulationMetadataState, { Code, Codes } from "../../atoms/simulationMetadataState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { DEFAULT_CHAIN } from "../../configs/constants";
+import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/constants";
 import { useInstantiateContract } from "../../utils/simulationUtils";
 import T1Container from "../grid/T1Container";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
@@ -64,7 +64,7 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
             </ListItemText>
           </MenuItem>
         ]}
-        optionsExtras={({ close }) => <>
+        optionsExtras={({close}) => <>
           <UploadModal
             chainId={DEFAULT_CHAIN}
             variant="contract"
@@ -141,7 +141,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   const accounts = app.bank.getBalances().toArray();
   const accountList = accounts.map((balance: [string, Coin[]]) => balance[0]);
-  const [account, setAccount] = useState<string>("");
+  const [account, setAccount] = useState<string>(SENDER_ADDRESS);
   const handleInstantiate = useCallback(async () => {
     if (!code) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -162,8 +162,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
       setNotification(`Successfully instantiated ${contractName} with address ${contractAddress}`);
       onClose();
       navigate(`/instances/${contractAddress}`);
-    }
-    catch (e: any) {
+    } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
       console.error(e);
     }
@@ -179,6 +178,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         <Autocomplete
           onInputChange={(event, value) => setAccount(value)}
           sx={{width: "100%"}}
+          defaultValue={SENDER_ADDRESS}
           renderInput={(params: AutocompleteRenderInputParams) =>
             <TextField {...params} label={"Account"}/>}
           options={accountList}/>

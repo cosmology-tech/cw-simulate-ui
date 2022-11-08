@@ -1,3 +1,3 @@
 import { atom } from "jotai";
 
-export const stateResponseTabState = atom<'state' | 'request' | 'response' |'trace'|'debug'>('state');
+export const stateResponseTabState = atom<'request' | 'response' |'trace'|'debug'>('response');

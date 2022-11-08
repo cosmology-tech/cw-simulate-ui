@@ -2,7 +2,6 @@ import React from "react";
 import StateResponseTab from "./StateResponseTab";
 import { OutputCard } from "./OutputCard";
 import { Grid } from "@mui/material";
-import { OutputRenderer } from "./OutputRenderer";
 import { stepResponseState } from "../../atoms/stepResponseState";
 import { blockState } from "../../atoms/blockState";
 import { useAtom, useAtomValue } from "jotai";
@@ -10,6 +9,7 @@ import { stateResponseTabState } from "../../atoms/stateResponseTabState";
 import { compareStates } from "../../atoms/compareStates";
 import { stepRequestState } from "../../atoms/stepRequestState";
 import { stepTraceState } from "../../atoms/stepTraceState";
+import { StateTab } from "./StateTab";
 
 interface IProps {
   isFileUploaded: boolean;
@@ -29,25 +29,63 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
   }, [compareStateObj]);
 
   return (
-    <Grid
-      item
-      container
-      direction="column"
-      height="100%"
-      gap={2}
-      flexWrap="nowrap"
-    >
-      <Grid item>
-        <StateResponseTab
-          currentTab={currentTab}
-          setCurrentTab={setCurrentTab}
-          isVisible={isVisible}
-          setIsVisible={setIsVisible}
-        />
+    <Grid container height="100%">
+      <Grid
+        item
+        container
+        direction="column"
+        height="100%"
+        width="50%"
+        gap={2}
+        flexWrap="nowrap"
+      >
+        <Grid item>
+          <StateResponseTab
+            currentTab={currentTab}
+            setCurrentTab={setCurrentTab}
+          />
+        </Grid>
+        <Grid item flex={1}>
+          {currentTab === "request" && (
+            <OutputCard
+              response={request}
+              placeholder="Your request will appear here."
+            />
+          )}
+          {currentTab === "trace" && (
+            <OutputCard
+              stepTrace={stepTrace}
+              placeholder="Your trace will appear here."
+            />
+          )}
+          {currentTab === "response" && (
+            <OutputCard
+              response={response}
+              placeholder="Your response will appear here."
+            />
+          )}
+          {currentTab === "debug" && (
+            <OutputCard
+              response={response}
+              placeholder="Your debug messages will appear here."
+            />
+          )}
+        </Grid>
       </Grid>
-      <Grid item flex={1}>
-        {currentTab === "state" &&
-          (isVisible ? (
+      <Grid
+        item
+        container
+        direction="column"
+        height="100%"
+        width="50%"
+        gap={2}
+        flexWrap="nowrap"
+      >
+        <Grid item>
+          <StateTab isVisible={isVisible} setIsVisible={setIsVisible} />
+        </Grid>
+        <Grid item flex={1}>
+          {isVisible ? (
             <OutputCard
               beforeState={compareStateObj.state1}
               afterState={compareStateObj.state2}
@@ -59,16 +97,8 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
               response={currentJSON}
               placeholder="Your state will appear here."
             />
-          ))}
-        {currentTab === "request" && <OutputRenderer response={request} />}
-        {currentTab === "trace" && (
-          <OutputCard
-            stepTrace={stepTrace}
-            placeholder="Your trace will appear here."
-          />
-        )}
-        {currentTab === "response" && <OutputRenderer response={response} />}
-        {currentTab === "debug" && <OutputRenderer response={response} />}
+          )}
+        </Grid>
       </Grid>
     </Grid>
   );

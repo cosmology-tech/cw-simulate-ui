@@ -3,11 +3,12 @@ import { useCallback } from "react";
 import type { Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
 import simulationMetadataState from "../atoms/simulationMetadataState";
 import { AsJSON } from "./typeUtils";
-import { AppResponse, CWSimulateApp } from "@terran-one/cw-simulate";
+import { CWSimulateApp } from "@terran-one/cw-simulate";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 import cwSimulateAppState from "../atoms/cwSimulateAppState";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
 import traceState from "../atoms/traceState";
+import { DEFAULT_FUNDS, SENDER_ADDRESS } from "../configs/constants";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
@@ -36,6 +37,7 @@ export function useStoreCode() {
   const [{metadata}, setSimulationMetadata] = useAtom(simulationMetadataState);
   return useCallback((creator: string, file: { filename: string, fileContent: Buffer | JSON }) => {
     const codeId = app.wasm.create(creator, file.fileContent as Buffer);
+    app.bank.setBalance(SENDER_ADDRESS, DEFAULT_FUNDS);
     setSimulateApp({app});
     metadata.codes[codeId] = {
       name: file.filename,
@@ -46,7 +48,7 @@ export function useStoreCode() {
   }, [app, metadata, setSimulateApp, setSimulationMetadata]);
 }
 
- 
+
 /**
  * This hook is used to instantiate a contract in the simulation state.
  */
