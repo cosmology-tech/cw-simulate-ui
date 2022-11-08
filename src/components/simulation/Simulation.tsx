@@ -1,8 +1,8 @@
-import ExpandCircleDownOutlinedIcon from '@mui/icons-material/ExpandCircleDownOutlined';
-import MinimizeRoundedIcon from '@mui/icons-material/MinimizeRounded';
+import ExpandCircleDownOutlinedIcon from "@mui/icons-material/ExpandCircleDownOutlined";
+import MinimizeRoundedIcon from "@mui/icons-material/MinimizeRounded";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
-import Divider from '@mui/material/Divider';
+import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
@@ -20,27 +20,48 @@ import T1Container from "../grid/T1Container";
 import { ExecuteQuery } from "./ExecuteQuery";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
-import CollapsibleIcon from '../CollapsibleIcon';
+import CollapsibleIcon from "../CollapsibleIcon";
 
-const StyledPaper = styled(Paper)(({theme}) => ({
+const StyledPaper = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(1),
 }));
 
 const Simulation = () => {
-  const {instanceAddress: contractAddress} = useParams();
+  const { instanceAddress: contractAddress } = useParams();
   const isFileUploaded = useAtomValue(fileUploadedState);
-  
+
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
         <CollapsibleExecuteQuery contractAddress={contractAddress!} />
         <Divider sx={{ my: 1 }} />
-        <StateStepper contractAddress={contractAddress!}/>
+        <StateStepper contractAddress={contractAddress!} />
       </Column>
       <Column xs={8} className="T1Simulation-right">
         <Widget size={6}>
-          <StateRenderer isFileUploaded={isFileUploaded}/>
+          <StateRenderer isFileUploaded={isFileUploaded} />
+        </Widget>
+        <Widget size={6}>
+          <Grid
+            item
+            container
+            direction="column"
+            height="100%"
+            width="50%"
+            gap={2}
+            flexWrap="nowrap"
+          >
+            <Grid item>
+              <QueryResponseTab />
+            </Grid>
+            <Grid item flex={1}>
+              <OutputCard
+                response={response}
+                placeholder="Your response will appear here"
+              />
+            </Grid>
+          </Grid>
         </Widget>
       </Column>
     </SplitView>
@@ -54,7 +75,7 @@ interface ISplitViewProps {
   className?: string;
 }
 
-function SplitView({children, ...props}: ISplitViewProps) {
+function SplitView({ children, ...props }: ISplitViewProps) {
   return (
     <Grid
       container
@@ -75,9 +96,9 @@ interface IColumnProps extends GridSizeProps {
   className?: string;
 }
 
-function Column({children, ...props}: IColumnProps) {
+function Column({ children, ...props }: IColumnProps) {
   const theme = useTheme();
-  
+
   return (
     <Grid
       item
@@ -133,9 +154,7 @@ function Widget({
       className={`T1Widget-root ${className}`}
       {...props}
     >
-      <T1Container>
-        {children}
-      </T1Container>
+      <T1Container>{children}</T1Container>
     </Grid>
   );
 }
@@ -144,29 +163,29 @@ interface ICollapsibleExecuteQueryProps {
   contractAddress: string;
 }
 
-function CollapsibleExecuteQuery({ contractAddress }: ICollapsibleExecuteQueryProps) {
+function CollapsibleExecuteQuery({
+  contractAddress,
+}: ICollapsibleExecuteQueryProps) {
   const theme = useTheme();
   const setResponse = useSetAtom(responseState);
   const [showExecuteQuery, setShowExecuteQuery] = useState(true);
-  
+
   return (
-    <Box sx={{ borderRadius: 1, overflow: 'hidden', pb: 0.5 }}>
+    <Box sx={{ borderRadius: 1, overflow: "hidden", pb: 0.5 }}>
       <Box
         sx={{
-          display: 'flex',
-          alignItems: 'center',
+          display: "flex",
+          alignItems: "center",
           background: theme.palette.common.black,
           color: theme.palette.common.white,
-          cursor: 'pointer',
+          cursor: "pointer",
           py: 0.5,
           px: 1,
         }}
-        onClick={() => setShowExecuteQuery(curr => !curr)}
+        onClick={() => setShowExecuteQuery((curr) => !curr)}
       >
         <CollapsibleIcon expanded={showExecuteQuery} />
-        <Typography sx={{ fontSize: '1.1rem' }}>
-          Execute & Query
-        </Typography>
+        <Typography sx={{ fontSize: "1.1rem" }}>Execute & Query</Typography>
       </Box>
       <Collapse in={showExecuteQuery}>
         <Box sx={{ height: 280 }}>
@@ -177,5 +196,5 @@ function CollapsibleExecuteQuery({ contractAddress }: ICollapsibleExecuteQueryPr
         </Box>
       </Collapse>
     </Box>
-  )
+  );
 }
