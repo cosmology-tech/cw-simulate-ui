@@ -1,56 +1,110 @@
-import { useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import SubMenuHeader from "./SubMenuHeader";
 import {
   Box,
   Button,
-  FormControl,
-  FormGroup,
-  FormHelperText,
-  Input,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
   Typography
 } from "@mui/material";
-import { ReactNode } from "react";
+import React, { ChangeEvent, ReactNode, useState } from "react";
+import { useNotification } from "../../atoms/snackbarNotificationState";
+import { CWSimulateApp } from "@terran-one/cw-simulate";
 
 export interface ISettingsSubMenuProps {
 }
 
-export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
-  const {app} = useAtomValue(cwSimulateAppState);
+interface IChainConfigFormValues {
+  chainId: string;
+  bech32Prefix: string;
+}
 
-  const handleResetSimulation = () => {
-    // TODO: Show dialog to confirm then reset the simulation
-  }
+export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
+  const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({} as IChainConfigFormValues);
+  const setNotification = useNotification();
+  const [openResetSimulationDialog, setOpenResetSimulationDialog] = useState(false);
+  const handleResetSimulation = (e: any) => {
+    setSimulateApp({
+      app: new CWSimulateApp({
+        chainId: "terra-test",
+        bech32Prefix: "terra"
+      })
+    });
+  };
 
   const handleSaveConfig = () => {
-    //TODO: save config
+    app.chainId = chainConfigFormValues.chainId;
+    app.bech32Prefix = chainConfigFormValues.bech32Prefix;
+    setSimulateApp({app});
+    setNotification("Chain config saved successfully");
+  };
+
+  const handleOnChangeChainConfig = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    const {name, value} = e.target;
+    setChainConfigFormValues({...chainConfigFormValues, [name]: value});
   }
+
+  const handleClose = () => {
+    setOpenResetSimulationDialog(false);
+  };
 
   return (
     <>
       <SubMenuHeader title="Settings"/>
       <SettingSubMenu title={'Chain Configuration'}>
-        <FormControl sx={{width: '90%'}}>
-          <FormGroup>
-            <Input id="chainId" aria-describedby="chainIdHelperText" defaultValue={app.chainId}/>
-            <FormHelperText id="chainIdHelperText">Chain Id</FormHelperText>
-
-            <Input id="bech32Prefix" aria-describedby="bech32PrefixHelperText"
-                   defaultValue={app.bech32Prefix}/>
-            <FormHelperText id="bech32PrefixHelperText">Bech32 Prefix</FormHelperText>
-
-            <Button variant={'contained'} onClick={() => handleSaveConfig}>Save</Button>
-          </FormGroup>
-        </FormControl>
+        <TextField sx={{width: '90%'}} helperText={'Chain Id'}
+                   id="chainId"
+                   defaultValue={app.chainId}
+                   variant={'standard'}
+                   name={'chainId'}
+                   onChange={handleOnChangeChainConfig}/>
+        <TextField sx={{width: '90%'}} helperText={'Bech32 Prefix'}
+                   id="bech32Prefix"
+                   variant={'standard'}
+                   name={'bech32Prefix'}
+                   defaultValue={app.bech32Prefix}
+                   onChange={handleOnChangeChainConfig}/>
+        <Button sx={{width: '90%'}} onClick={handleSaveConfig} variant={'contained'}>Save</Button>
       </SettingSubMenu>
       <SettingSubMenu title={'Simulation'}>
         <Button sx={{width: '90%'}} variant={'contained'}
-                onClick={() => handleResetSimulation}>
+                onClick={() => setOpenResetSimulationDialog(true)}>
           Reset Simulation
         </Button>
+        <ResetSimulationDialog open={openResetSimulationDialog}
+                               onClose={() => setOpenResetSimulationDialog(false)}/>
       </SettingSubMenu>
     </>
   )
+}
+
+interface IResetSimulationDialogProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const ResetSimulationDialog = (props: IResetSimulationDialogProps) => {
+  return (
+    <Dialog open={props.open} onClose={props.onClose}>
+      <DialogTitle>Reset Simulation</DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to reset the simulation? This will clear all the accounts,
+          instances and contracts.
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={props.onClose}>Cancel</Button>
+        <Button color={'error'} onClick={props.onClose}>Add</Button>
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 export interface ISettingSubMenuProps {
