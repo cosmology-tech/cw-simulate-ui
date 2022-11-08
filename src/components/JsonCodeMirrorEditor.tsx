@@ -61,6 +61,7 @@ export const JsonCodeMirrorEditor = ({
                 setJsonError("Invalid JSON");
               }
             }}
+            theme={theme.palette.mode}
             placeholder={JSON.stringify(defaultPlaceholder, null, 2)}
             style={{border: "none", height: "100%"}}
           />

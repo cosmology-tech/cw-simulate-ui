@@ -13,7 +13,7 @@ declare module "@mui/material/styles" {
 export const light = createTheme({
   palette: {
     primary: {
-      light: '#FEC5B3',
+      light: '#fd9561',
       main: '#FD6A00',
       dark: '#BA6930',
     },
@@ -27,6 +27,10 @@ export const light = createTheme({
       paper: '#FFFFFF',
     },
     line: '#DEE3EB',
+    common: {
+      black: '#404040',
+      white: '#eaecec',
+    },
   },
 });
 
@@ -34,9 +38,9 @@ export const dark = createTheme({
   palette: {
     mode: 'dark',
     primary: {
-      light: '#FEC5B3',
-      main: '#FD6A00',
-      dark: '#BA6930',
+      light: '#ad6650',
+      main: '#AC4800',
+      dark: '#864313',
     },
     secondary: {
       light: '#B1E9EA',
@@ -52,6 +56,10 @@ export const dark = createTheme({
       secondary: '#fff',
     },
     line: '#5a6576',
+    common: {
+      black: '#202020',
+      white: '#eaecec',
+    },
   },
 });
 

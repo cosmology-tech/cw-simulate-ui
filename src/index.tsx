@@ -4,7 +4,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import uiState from "./atoms/uiState";
+import { darkModeState } from "./atoms/uiState";
 import SnackbarNotification from "./components/notification/SnackbarNotification";
 import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
 import { light as lightTheme, dark as darkTheme } from "./configs/theme";
@@ -13,7 +13,7 @@ import "./styles/styles.scss";
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 function Root() {
-  const { dark: isDark } = useAtomValue(uiState);
+  const isDark = useAtomValue(darkModeState);
   const theme = isDark ? darkTheme : lightTheme;
   
   return (

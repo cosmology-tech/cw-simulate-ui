@@ -5,7 +5,7 @@ import Grid from "@mui/material/Grid";
 import Switch from "@mui/material/Switch";
 import { useAtom } from "jotai";
 import { useCallback } from "react";
-import uiState from "../../atoms/uiState";
+import { darkModeState } from "../../atoms/uiState";
 
 export interface IDarkModeSwitchProps {
   iconColors?: string;
@@ -16,28 +16,14 @@ export default function DarkModeSwitch(props: IDarkModeSwitchProps) {
     iconColors = 'grey',
   } = props;
   
-  const [{ dark: checked }, setUIState] = useAtom(uiState);
-  
-  const onChange = useCallback(() => {
-    setUIState(state => ({
-      ...state,
-      dark: !state.dark,
-    }))
-  }, []);
-  
-  const setDarkMode = (set: boolean) => {
-    setUIState(state => ({
-      ...state,
-      dark: set,
-    }));
-  };
+  const [checked, setDarkMode] = useAtom(darkModeState);
   
   return (
     <Grid item container flex={1} alignItems="center">
       <IconButton onClick={() => setDarkMode(false)}>
         <LightModeIcon sx={{ color: iconColors }} />
       </IconButton>
-      <Switch checked={checked} onChange={onChange} />
+      <Switch checked={checked} onChange={() => setDarkMode(state => !state)} />
       <IconButton onClick={() => setDarkMode(true)}>
         <DarkModeIcon sx={{ color: iconColors }} />
       </IconButton>

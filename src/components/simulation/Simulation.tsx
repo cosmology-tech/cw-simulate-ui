@@ -19,7 +19,6 @@ import ExpandCircleDownOutlinedIcon from '@mui/icons-material/ExpandCircleDownOu
 import MinimizeRoundedIcon from '@mui/icons-material/MinimizeRounded';
 
 const StyledPaper = styled(Paper)(({theme}) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
 }));

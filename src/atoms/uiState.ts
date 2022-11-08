@@ -1,10 +1,3 @@
-import { atom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
 
-type UIState = {
-  dark: boolean;
-}
-
-const uiState = atom<UIState>({
-  dark: false,
-});
-export default uiState;
+export const darkModeState = atomWithStorage('darkmode', false);
