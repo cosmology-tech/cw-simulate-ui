@@ -36,6 +36,7 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
         bech32Prefix: "terra"
       })
     });
+    setOpenResetSimulationDialog(false);
   };
 
   const handleSaveConfig = () => {
@@ -78,7 +79,8 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
           Reset Simulation
         </Button>
         <ResetSimulationDialog open={openResetSimulationDialog}
-                               onClose={() => setOpenResetSimulationDialog(false)}/>
+                               onClose={() => setOpenResetSimulationDialog(false)}
+                               onReset={handleResetSimulation}/>
       </SettingSubMenu>
     </>
   )
@@ -87,6 +89,7 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
 interface IResetSimulationDialogProps {
   open: boolean;
   onClose: () => void;
+  onReset: (e: any) => void;
 }
 
 const ResetSimulationDialog = (props: IResetSimulationDialogProps) => {
@@ -101,7 +104,7 @@ const ResetSimulationDialog = (props: IResetSimulationDialogProps) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onClose}>Cancel</Button>
-        <Button color={'error'} onClick={props.onClose}>Add</Button>
+        <Button color={'error'} onClick={props.onReset}>Reset</Button>
       </DialogActions>
     </Dialog>
   );
