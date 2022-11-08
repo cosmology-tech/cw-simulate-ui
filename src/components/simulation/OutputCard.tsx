@@ -9,6 +9,7 @@ import {
   ExecuteTraceLog,
   ReplyTraceLog,
 } from "@terran-one/cw-simulate/dist/types";
+import ReactJson from "react-json-view";
 import { IRequest } from "../../atoms/stepRequestState";
 
 interface IProps {
@@ -66,10 +67,12 @@ export const OutputCard = ({
       }}
     >
       {stepTrace ? (
-        <JSONTree data={stepTrace} theme={theme} invertTheme={false} />
-      ) : response !== undefined ? (
-        <JSONTree data={response} theme={theme} invertTheme={false} />
-      ) : isVisible ? (
+        <ReactJson src={stepTrace} />
+      ) : // <JSONTree data={stepTrace} theme={theme} invertTheme={false} />
+      response !== undefined ? (
+        <ReactJson src={response} />
+      ) : // <JSONTree data={response} theme={theme} invertTheme={false} />
+      isVisible ? (
         <ReactDiffViewer
           oldValue={beforeState}
           newValue={afterState}
