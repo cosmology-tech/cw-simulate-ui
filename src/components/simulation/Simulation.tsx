@@ -1,9 +1,13 @@
 import React, { ReactNode, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Theme } from "@emotion/react";
 import { useAtom, useAtomValue } from "jotai";
-import { Grid, Paper, styled, SxProps, Typography } from "@mui/material";
-import { GREY_6 } from "../../configs/variables";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import type { Theme } from "@mui/material/styles/createTheme";
+import styled from "@mui/material/styles/styled";
+import useTheme from "@mui/material/styles/useTheme";
+import type { SxProps } from "@mui/system/styleFunctionSx";
 import { GridSizeProps } from "../../utils/typeUtils";
 import { ExecuteQuery } from "./ExecuteQuery";
 import { StateRenderer } from "./StateRenderer";
@@ -15,7 +19,6 @@ import ExpandCircleDownOutlinedIcon from '@mui/icons-material/ExpandCircleDownOu
 import MinimizeRoundedIcon from '@mui/icons-material/MinimizeRounded';
 
 const StyledPaper = styled(Paper)(({theme}) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
 }));
@@ -86,6 +89,8 @@ interface IColumnProps extends GridSizeProps {
 }
 
 function Column({children, ...props}: IColumnProps) {
+  const theme = useTheme();
+  
   return (
     <Grid
       item
@@ -102,7 +107,7 @@ function Column({children, ...props}: IColumnProps) {
           height: "100%",
           overflow: "auto",
           "> .T1Widget-root:not(:first-of-type)": {
-            borderTop: `1px solid ${GREY_6}`,
+            borderTop: `1px solid ${theme.palette.line}`,
           },
         }}
       >

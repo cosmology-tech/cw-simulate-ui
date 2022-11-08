@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import simulationMetadataState, { Code, Codes } from "../../atoms/simulationMetadataState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/variables";
+import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/constants";
 import { useInstantiateContract } from "../../utils/simulationUtils";
 import T1Container from "../grid/T1Container";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";

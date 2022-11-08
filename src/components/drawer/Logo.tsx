@@ -1,6 +1,7 @@
-import { SxProps, Theme } from "@mui/material";
+import type { SxProps } from "@mui/system/styleFunctionSx";
+import type { Theme } from "@mui/material/styles/createTheme";
+import useTheme from "@mui/material/styles/useTheme";
 import React from "react";
-import { ORANGE_3, WHITE } from "../../configs/variables";
 
 interface ILogoProps {
   LinkComponent: React.ComponentType<React.PropsWithChildren<{
@@ -12,6 +13,7 @@ interface ILogoProps {
 
 const Logo = React.memo((props: ILogoProps) => {
   const {LinkComponent, white} = props;
+  const theme = useTheme();
 
   return (
     <LinkComponent href="/" sx={{borderRadius: 5}}>
@@ -22,7 +24,7 @@ const Logo = React.memo((props: ILogoProps) => {
       />
       <div
         style={{
-          color: white ? WHITE : ORANGE_3,
+          color: white ? '#fff' : theme.palette.primary.main,
           fontWeight: "bold",
           fontSize: 14,
           marginLeft: 10,

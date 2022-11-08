@@ -12,7 +12,7 @@ import Slide from "@mui/material/Slide";
 import Tooltip from "@mui/material/Tooltip";
 import React, { MouseEvent, ReactNode, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { GREY_4 } from "../../configs/variables";
+import { useTheme } from "../../configs/theme";
 import ContractsSubMenu from "./ContractsSubMenu";
 import InstancesSubMenu from "./InstancesSubMenu";
 import SettingsSubMenu from "./SettingsSubMenu";
@@ -110,6 +110,8 @@ interface IDrawerBar {
 }
 
 const DrawerBar = React.forwardRef<HTMLDivElement | null, IDrawerBar>(({ children, width }, ref) => {
+  const theme = useTheme();
+  
   return (
     <Paper
       ref={ref}
@@ -119,7 +121,7 @@ const DrawerBar = React.forwardRef<HTMLDivElement | null, IDrawerBar>(({ childre
         height: '100%',
         border: 0,
         borderRadius: 0,
-        borderRight: `1px solid ${GREY_4}`,
+        borderRight: `1px solid ${theme.palette.line}`,
         zIndex: 100,
       }}
     >
@@ -146,6 +148,8 @@ interface ICustomDrawer {
 }
 
 function Drawer({ children, width, open }: ICustomDrawer) {
+  const theme = useTheme();
+  
   return (
     <Slide
       direction="right"
@@ -162,7 +166,7 @@ function Drawer({ children, width, open }: ICustomDrawer) {
           boxSizing: 'border-box',
           border: 0,
           borderRadius: 0,
-          borderRight: `1px solid ${GREY_4}`,
+          borderRight: `1px solid ${theme.palette.line}`,
           zIndex: 99,
         }}
       >

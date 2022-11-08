@@ -9,7 +9,7 @@ import {
   useStoreCode
 } from "../../utils/simulationUtils";
 import FileUpload from "./FileUpload";
-import { SENDER_ADDRESS } from "../../configs/variables";
+import { SENDER_ADDRESS } from "../../configs/constants";
 import FileUploadPaper from "./FileUploadPaper";
 
 interface IUploadModalProps {

@@ -5,7 +5,7 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { executeQueryTabState } from "../../atoms/executeQueryTabState";
 import { Button, Grid } from "@mui/material";
 import { jsonErrorState } from "../../atoms/jsonErrorState";
-import { SENDER_ADDRESS } from "../../configs/variables";
+import { SENDER_ADDRESS } from "../../configs/constants";
 import { useAtom, useAtomValue } from "jotai";
 import { currentStateNumber } from "../../atoms/currentStateNumber";
 import T1Container from "../grid/T1Container";

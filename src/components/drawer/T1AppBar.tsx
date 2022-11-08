@@ -1,17 +1,14 @@
 import HelpIcon from "@mui/icons-material/Help";
 import GitHubIcon from "@mui/icons-material/GitHub";
-import {
-  AppBar as MuiAppBar,
-  AppBarProps as MuiAppBarProps,
-  IconButton,
-  Link,
-  styled,
-  Toolbar
-} from "@mui/material";
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import IconButton from "@mui/material/IconButton";
+import Grid from "@mui/material/Grid";
+import Link from "@mui/material/Link";
+import Toolbar from "@mui/material/Toolbar";
+import styled from "@mui/material/styles/styled";
 import React from "react";
-import { useLocation } from "react-router";
-import { ORANGE_3, WHITE } from "../../configs/variables";
 import Logo from "./Logo";
+import DarkModeSwitch from "./DarkModeSwitch";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -27,28 +24,24 @@ interface IT1AppBarProps {
 }
 
 const T1AppBar = React.memo((props: IT1AppBarProps) => {
-  const location = useLocation();
-
   return (
-    <AppBar position="static" sx={{backgroundColor: ORANGE_3}}>
-      <Toolbar sx={{justifyContent: "space-between"}}>
+    <AppBar position="static">
+      <Toolbar sx={{ justifyContent: 'space-between' }}>
         <div>
           <Logo LinkComponent={IconButton} white/>
         </div>
         <div>
-          <IconButton sx={{borderRadius: 5}}>
-            <Link href={"documentation"} underline={"none"}>
-              <HelpIcon sx={{color: WHITE}}/>
+          <Grid container alignItems="center">
+            <DarkModeSwitch iconColors="white" />
+            <IconButton>
+              <HelpIcon sx={{color: '#fff'}}/>
+            </IconButton>
+            <Link href="https://github.com/Terran-One/cw-simulate-ui" sx={{display: 'block'}}>
+              <IconButton>
+                <GitHubIcon sx={{color: '#fff'}}/>
+              </IconButton>
             </Link>
-          </IconButton>
-          <IconButton sx={{borderRadius: 5}}>
-            <Link
-              href={"https://github.com/Terran-One/cw-debug-ui"}
-              underline={"none"}
-            >
-              <GitHubIcon sx={{color: WHITE}}/>
-            </Link>
-          </IconButton>
+          </Grid>
         </div>
       </Toolbar>
     </AppBar>
