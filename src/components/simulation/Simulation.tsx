@@ -21,6 +21,8 @@ import { ExecuteQuery } from "./ExecuteQuery";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 import CollapsibleIcon from "../CollapsibleIcon";
+import { QueryResponseTab } from "./QueryResponseTab";
+import { OutputCard } from "./OutputCard";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -30,7 +32,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 const Simulation = () => {
   const { instanceAddress: contractAddress } = useParams();
   const isFileUploaded = useAtomValue(fileUploadedState);
-
+  const response = useAtomValue(responseState);
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
