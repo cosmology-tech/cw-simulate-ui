@@ -1,15 +1,17 @@
-import React from "react";
+import React, {Component} from "react";
 import StateResponseTab from "./StateResponseTab";
-import { OutputCard } from "./OutputCard";
-import { Grid } from "@mui/material";
-import { stepResponseState } from "../../atoms/stepResponseState";
-import { blockState } from "../../atoms/blockState";
-import { useAtom, useAtomValue } from "jotai";
-import { stateResponseTabState } from "../../atoms/stateResponseTabState";
-import { compareStates } from "../../atoms/compareStates";
-import { stepRequestState } from "../../atoms/stepRequestState";
-import { stepTraceState } from "../../atoms/stepTraceState";
-import { StateTab } from "./StateTab";
+import {OutputCard} from "./OutputCard";
+import {Grid} from "@mui/material";
+import {stepResponseState} from "../../atoms/stepResponseState";
+import {blockState} from "../../atoms/blockState";
+import {useAtom, useAtomValue} from "jotai";
+import {stateResponseTabState} from "../../atoms/stateResponseTabState";
+import {compareStates} from "../../atoms/compareStates";
+import {stepRequestState} from "../../atoms/stepRequestState";
+import {stepTraceState} from "../../atoms/stepTraceState";
+import {StateTab} from "./StateTab";
+import {SummaryTab, ResponseTab, CallsTab, DebugTab} from "./InspectorTabs";
+import T1Container from "../grid/T1Container";
 
 interface IProps {
   isFileUploaded: boolean;
@@ -27,6 +29,23 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
     if (compareStateObj.state1 != "" && compareStateObj.state2 != "")
       setIsVisible(true);
   }, [compareStateObj]);
+
+
+  let renderedTab;
+
+  switch(currentTab) {
+    case "summary":
+      renderedTab = <SummaryTab traceLog={stepTrace}/>;
+      break;
+    case "response":
+      renderedTab = <ResponseTab traceLog={stepTrace}/>;
+      break;
+    case "calls":
+      renderedTab = <CallsTab traceLog={stepTrace}/>;
+      break;
+    default:
+      renderedTab = <DebugTab traceLog={stepTrace}/>;
+  }
 
   return (
     <Grid container height="100%">
@@ -46,30 +65,7 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
           />
         </Grid>
         <Grid item flex={1}>
-          {currentTab === "request" && (
-            <OutputCard
-              response={request}
-              placeholder="Your request will appear here."
-            />
-          )}
-          {currentTab === "trace" && (
-            <OutputCard
-              stepTrace={stepTrace}
-              placeholder="Your trace will appear here."
-            />
-          )}
-          {currentTab === "response" && (
-            <OutputCard
-              response={response}
-              placeholder="Your response will appear here."
-            />
-          )}
-          {currentTab === "debug" && (
-            <OutputCard
-              response={response}
-              placeholder="Your debug messages will appear here."
-            />
-          )}
+          <T1Container>{renderedTab}</T1Container>
         </Grid>
       </Grid>
       <Grid
