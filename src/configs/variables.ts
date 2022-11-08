@@ -1,5 +1,10 @@
 export const DEFAULT_CHAIN = 'terratest-1';
 export const SENDER_ADDRESS = 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6';
+export const DEFAULT_FUNDS = [{denom: "uluna", amount: "1000"}, {
+  denom: "uust",
+  amount: "1000"
+}];
+
 //WIDTH RATIOS
 export const DESKTOP_PX = "1440px";
 export const TABLET_PX = "768px";

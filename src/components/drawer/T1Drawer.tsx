@@ -15,8 +15,9 @@ import { useNavigate } from "react-router-dom";
 import { GREY_4 } from "../../configs/variables";
 import ContractsSubMenu from "./ContractsSubMenu";
 import InstancesSubMenu from "./InstancesSubMenu";
+import SettingsSubMenu from "./SettingsSubMenu";
 
-type SubMenu = 'contracts' | 'instances' | 'states' | 'accounts' | 'config';
+type SubMenu = 'contracts' | 'instances' | 'states' | 'accounts' | 'settings';
 
 export interface IT1Drawer {
   barWidth?: number;
@@ -28,10 +29,10 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
     barWidth = 50,
     drawerWidth = 250,
   } = props;
-  
+
   const navigate = useNavigate();
   const [menu, setMenu] = useState<SubMenu | undefined>(undefined);
-  
+
   return (
     <ClickAwayListener onClickAway={() => setMenu(undefined)}>
       <Box
@@ -67,11 +68,10 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
             onClick={() => {navigate('/accounts')}}
           />
           <MenuIconButton
-            menu="config"
+            menu="settings"
             Icon={SettingsIcon}
             setMenu={setMenu}
-            tooltip="Chain Configuration"
-            onClick={() => {navigate('/config')}}
+            tooltip="Settings"
           />
         </DrawerBar>
         <SubMenu width={drawerWidth} menu={menu} />
@@ -92,10 +92,11 @@ function SubMenu({ menu, width }: ISubMenuProps) {
     switch (menu) {
       case 'contracts': return <ContractsSubMenu />;
       case 'instances': return <InstancesSubMenu />;
+      case 'settings': return <SettingsSubMenu />;
       default: return null;
     }
   })();
-  
+
   return (
     <Drawer width={width} open={!!contents}>
       {contents}
@@ -193,7 +194,7 @@ function MenuIconButton({
       setMenu(curr => curr !== menu ? menu : undefined);
     }
   }, [menu, _onClick]);
-  
+
   return (
     <Tooltip
       title={tooltip}
