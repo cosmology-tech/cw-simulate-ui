@@ -1,127 +1,167 @@
 import React from "react";
-import YAML from 'yaml';
-import {TraceLog} from "@terran-one/cw-simulate/dist/types";
+import YAML from "yaml";
+import { TraceLog } from "@terran-one/cw-simulate/dist/types";
 import {
-  DataGrid,
-  GridCellParams,
-  GridColDef,
-  GridRowsProp,
-  GridToolbar,
-  GridToolbarQuickFilter
-} from "@mui/x-data-grid";
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import T1Container from "../grid/T1Container";
+import TableLayout from "../chains/TableLayout";
+import { useTheme } from "../../configs/theme";
+import CallMadeIcon from "@mui/icons-material/CallMade";
 
 export interface InspectorTabProps {
-  traceLog: TraceLog | {}
+  traceLog: TraceLog | {};
 }
 
-export const ResponseTab = ({traceLog}: InspectorTabProps) => {
-
-  if (!('type' in traceLog)) {
-    return (
-      <span>Nothing here to see.</span>
-    )
+export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
+  const muiTheme = useTheme();
+  if (!("type" in traceLog)) {
+    return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
-  let {response, contractAddress} = traceLog as TraceLog;
+  let { response, contractAddress } = traceLog as TraceLog;
 
-  if ('error' in response) {
+  if ("error" in response) {
     return (
-      <div>
-        <h3>Error</h3>
-        <pre>
-          {response.error}
-        </pre>
-      </div>
-    )
+      <Grid>
+        <Typography variant="h3">Error</Typography>
+        <Typography variant="h6">{response.error}</Typography>
+      </Grid>
+    );
   }
 
-  let {messages, attributes, events, data} = response.ok;
+  let { messages, attributes, events, data } = response.ok;
+  const attributesRowData = attributes.map((attribute, index) => {
+    return {
+      id: `${index}`,
+      key: attribute.key,
+      value: attribute.value,
+    };
+  });
+  const messagesRowData = messages.map((message, index) => {
+    return {
+      sno: `${index}`,
+      id: `${message.id}`,
+      content: YAML.stringify(message.msg),
+      reply_on: message.reply_on,
+    };
+  });
+  return (
+    <Grid>
+      {data && (
+        <>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              background: `${muiTheme.palette.common.black}`,
+              textAlign: "center",
+              color: muiTheme.palette.common.white,
+            }}
+          >
+            Data
+          </Typography>
+          <Typography variant="body2">{data}</Typography>
+        </>
+      )}
+      <Typography
+        variant="subtitle1"
+        sx={{
+          background: `${muiTheme.palette.common.black}`,
+          textAlign: "center",
+          color: muiTheme.palette.common.white,
+        }}
+      >
+        Attributes
+      </Typography>
+      <Grid item flex={1} sx={{ height: "10vh", maxHeight: "20vh", mt: 1 }}>
+        <T1Container>
+          <TableLayout
+            rows={attributesRowData}
+            columns={{
+              id: "#",
+              key: "KEY",
+              value: "VALUE",
+            }}
+            inspectorTable={true}
+          />
+        </T1Container>
+      </Grid>
+
+      <Typography
+        variant="subtitle1"
+        sx={{
+          background: `${muiTheme.palette.common.black}`,
+          textAlign: "center",
+          color: muiTheme.palette.common.white,
+        }}
+      >
+        Messages
+      </Typography>
+
+      <Grid item flex={1} sx={{ height: "10vh", maxHeight: "20vh", mt: 1 }}>
+        <T1Container>
+          <TableLayout
+            rows={messagesRowData}
+            columns={{
+              sno: "#",
+              id: "ID",
+              content: "Content",
+              reply_on: "Reply On",
+            }}
+            inspectorTable={true}
+          />
+        </T1Container>
+      </Grid>
+    </Grid>
+  );
+};
+
+export const SummaryTab = ({ traceLog }: InspectorTabProps) => {
+  const muiTheme = useTheme();
+  if (!("type" in traceLog)) {
+    return <Typography variant="caption">Nothing here to see.</Typography>;
+  }
+
+  let { type, msg, env, response, contractAddress } = traceLog as TraceLog;
 
   return (
-    <div>
-      <h2>Response</h2>
-      <h3>Data</h3>
-      {data && <pre>{data}</pre>}
-      <h3>Attributes</h3>
-      <table>
-        <thead>
-        <th>#</th>
-        <th>Key</th>
-        <th>Value</th>
-        </thead>
-        <tbody>
-        {attributes.map((a, i) => {
-          return (
-            <tr key={`attr-i`}>
-              <td>{i}</td>
-              <td>{a.key}</td>
-              <td>{a.value}</td>
-            </tr>
-          )
-        })}
-        </tbody>
-      </table>
-      <h3>Messages</h3>
-      <table>
-        <thead>
-        <th>#</th>
-        <th>ID</th>
-        <th>Content</th>
-        <th>Reply On</th>
-        </thead>
-        <tbody>
-        {messages.map((m, i) => {
-          return (
-            <tr key={i}>
-              <td>{i}</td>
-              <td>{m.id}</td>
-              <td>
-                <pre>{YAML.stringify(m.msg)}</pre>
-              </td>
-              <td>{m.reply_on}</td>
-            </tr>
-          )
-        })}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
-
-export const SummaryTab = ({traceLog}: InspectorTabProps) => {
-
-  if (!('type' in traceLog)) {
-    return (
-      <span>Nothing here to see.</span>
-    )
-  }
-
-  let {type, msg, env, response, contractAddress} = traceLog as TraceLog;
-
-  return (
-    <div>
-      <h3>wasm/execute</h3>
-      <table>
-        <tr>
-          <td>Sender</td>
-          <td>{contractAddress}</td>
-        </tr>
-        <tr>
-          <td>Funds</td>
-          <td>10000uluna</td>
-        </tr>
-
-
-      </table>
-      <h4>ExecuteMsg</h4>
-      <pre>
-        {YAML.stringify(msg)}
-      </pre>
-    </div>
-  )
-}
-
+    <Grid>
+      <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+        wasm/execute
+      </Typography>
+      <Typography
+        variant="subtitle1"
+        sx={{
+          background: `${muiTheme.palette.common.black}`,
+          textAlign: "center",
+          color: muiTheme.palette.common.white,
+        }}
+      >
+        Info
+      </Typography>
+      <Grid item flex={1} sx={{ height: "10vh", maxHeight: "20vh", mt: 1 }}>
+        <T1Container>
+          <TableLayout
+            rows={[{ id: "1", sender: contractAddress, funds: "10000uluna" }]}
+            columns={{
+              id: "id",
+              sender: "Sender",
+              funds: "Funds",
+            }}
+            inspectorTable={true}
+          />
+        </T1Container>
+      </Grid>
+      <Typography variant="subtitle2">ExecuteMsg</Typography>
+      <Typography variant="body2">{YAML.stringify(msg)}</Typography>
+    </Grid>
+  );
+};
 
 const combineCallHistory = (traceLog: TraceLog): any[] => {
   let res = [...traceLog.callHistory];
@@ -130,8 +170,8 @@ const combineCallHistory = (traceLog: TraceLog): any[] => {
       res = res.concat(combineCallHistory(t));
     });
   }
-  return res
-}
+  return res;
+};
 
 const combineDebugMsgs = (traceLog: TraceLog): string[] => {
   let res = [...traceLog.debugMsgs];
@@ -140,52 +180,56 @@ const combineDebugMsgs = (traceLog: TraceLog): string[] => {
       res = res.concat(combineDebugMsgs(t));
     });
   }
-  return res
-}
+  return res;
+};
 
-export const CallsTab = ({traceLog}: InspectorTabProps) => {
-
-  if (!('type' in traceLog)) {
-    return (
-      <span>Nothing here to see.</span>
-    )
+export const CallsTab = ({ traceLog }: InspectorTabProps) => {
+  if (!("type" in traceLog)) {
+    return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
-  let {trace, callHistory} = traceLog;
+  let { trace, callHistory } = traceLog;
 
   let combinedCallHistory = combineCallHistory(traceLog);
 
-
   return (
-    <div>
-      <ul>
+    <Grid>
+      <List>
         {combinedCallHistory.map((call, i) => {
           return (
-            <li key={`call-${i}`}>
-              <span>{call.call.type}</span>
-            </li>
-          )
+            <ListItem>
+              <ListItemIcon>
+                <CallMadeIcon />
+              </ListItemIcon>
+              <ListItemText primary={call.call.type} />
+            </ListItem>
+          );
         })}
-      </ul>
-    </div>
-  )
-}
-
-
-export const DebugTab = ({traceLog}: InspectorTabProps) => {
-  if (!('type' in traceLog)) {
-    return (
-      <span>Nothing here to see.</span>
-    )
-  }
-
-  return (
-      <div>
-        <table>
-          <thead>
-            <th>ID</th>
-          </thead>
-        </table>
-      </div>
+      </List>
+    </Grid>
   );
-}
+};
+
+export const DebugTab = ({ traceLog }: InspectorTabProps) => {
+  if (!("type" in traceLog)) {
+    return <Typography variant="caption">Nothing here to see.</Typography>;
+  }
+  let combinedDebugMsgs = combineDebugMsgs(traceLog);
+  console.log(combinedDebugMsgs);
+  return (
+    <Grid>
+      <List>
+        {combinedDebugMsgs.map((msg, i) => {
+          return (
+            <ListItem>
+              <ListItemIcon>
+                <CallMadeIcon />
+              </ListItemIcon>
+              <ListItemText primary={msg} />
+            </ListItem>
+          );
+        })}
+      </List>
+    </Grid>
+  );
+};

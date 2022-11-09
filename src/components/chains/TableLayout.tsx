@@ -1,4 +1,4 @@
-import { ComponentType, useId, useMemo, useRef, useState, } from "react";
+import { ComponentType, useId, useMemo, useRef, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -10,7 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { IconButton, Menu } from "@mui/material";
 
-const StyledTableCell = styled(TableCell)(({theme}) => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
@@ -20,7 +20,7 @@ const StyledTableCell = styled(TableCell)(({theme}) => ({
   },
 }));
 
-const StyledTableRow = styled(TableRow)(({theme}) => ({
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
@@ -32,17 +32,18 @@ const StyledTableRow = styled(TableRow)(({theme}) => ({
 
 export type ITableLayoutProps<T extends DataSet> = {
   RowMenu?: ComponentType<ITableLayoutRowMenuProps<T>>;
+  inspectorTable?: boolean;
 } & (
   | {
-  rows: T[];
-  columns: ColumnMap<T>;
-  keyField: keyof T;
-}
+      rows: T[];
+      columns: ColumnMap<T>;
+      keyField: keyof T;
+    }
   | {
-  rows: (T & { id: string })[];
-  columns: ColumnMap<T & { id: string }>;
-}
-  );
+      rows: (T & { id: string })[];
+      columns: ColumnMap<T & { id: string }>;
+    }
+);
 
 export interface ITableLayoutRowMenuProps<T extends DataSet> {
   row: T;
@@ -62,7 +63,7 @@ type ColumnMap<T extends DataSet> = {
 export default function TableLayout<T extends DataSet>(
   props: ITableLayoutProps<T>
 ) {
-  const {rows, columns, RowMenu} = props;
+  const { rows, columns, RowMenu, inspectorTable } = props;
   const keyField = "keyField" in props ? props.keyField : ("id" as keyof T);
 
   const keys = useMemo(
@@ -73,16 +74,22 @@ export default function TableLayout<T extends DataSet>(
 
   return (
     <TableContainer component={Paper}>
-      <Table sx={{width: "100%"}} aria-label="customized table">
+      <Table sx={{ width: "100%" }} aria-label="customized table">
         <TableHead>
           <TableRow>
             {[
-              ...labels.map((label, idx) => (
-                <StyledTableCell key={keys[idx]} align="center">
-                  {label}
-                </StyledTableCell>
-              )),
-              ...(RowMenu ? [<StyledTableCell key="t1rowmenu"/>] : []),
+              ...labels.map((label, idx) =>
+                inspectorTable ? (
+                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                    {label}
+                  </TableCell>
+                ) : (
+                  <StyledTableCell key={keys[idx]} align="center">
+                    {label}
+                  </StyledTableCell>
+                )
+              ),
+              ...(RowMenu ? [<StyledTableCell key="t1rowmenu" />] : []),
             ]}
           </TableRow>
         </TableHead>
@@ -97,6 +104,7 @@ export default function TableLayout<T extends DataSet>(
                 RowMenu,
               }}
               key={row[keyField]}
+              inspectorTable={inspectorTable}
             />
           ))}
         </TableBody>
@@ -110,11 +118,12 @@ interface T1TableRowProps<T extends DataSet> {
   row: T;
   index: number;
   keys: (keyof T & string)[];
+  inspectorTable?: boolean;
   RowMenu: ITableLayoutProps<T>["RowMenu"];
 }
 
 function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
-  const {data, row, index, keys, RowMenu} = props;
+  const { data, row, index, keys, RowMenu, inspectorTable } = props;
 
   const ref = useRef<HTMLButtonElement>(null);
   const menuButtonId = useId();
@@ -122,11 +131,17 @@ function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
 
   return (
     <StyledTableRow>
-      {keys.map((key) => (
-        <StyledTableCell align="center" component="th" scope="row" key={key}>
-          {row[key]}
-        </StyledTableCell>
-      ))}
+      {keys.map((key) =>
+        inspectorTable ? (
+          <TableCell align="center" sx={{ p: 1 }}>
+            {row[key]}
+          </TableCell>
+        ) : (
+          <StyledTableCell align="center" component="th" scope="row" key={key}>
+            {row[key]}
+          </StyledTableCell>
+        )
+      )}
       {RowMenu && (
         <StyledTableCell align="center" component="th" scope="row">
           <IconButton
@@ -135,7 +150,7 @@ function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
             disabled={menuOpen}
             onClick={() => setMenuOpen(true)}
           >
-            <MoreVertIcon fontSize="inherit"/>
+            <MoreVertIcon fontSize="inherit" />
           </IconButton>
           <Menu
             open={menuOpen}
@@ -151,7 +166,7 @@ function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
             }}
             aria-labelledby={menuButtonId}
           >
-            <RowMenu {...{data, row, index}} />
+            <RowMenu {...{ data, row, index }} />
           </Menu>
         </StyledTableCell>
       )}
