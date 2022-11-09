@@ -22,7 +22,6 @@
     "react-dropzone": "^14.2.2",
     "react-flow-renderer": "^10.3.17",
     "react-json-tree": "^0.17.0",
-    "react-json-view": "^1.21.3",
     "react-object-table-viewer": "^1.0.7",
     "react-router-dom": "^6.4.1",
     "sass": "^1.55.0",
