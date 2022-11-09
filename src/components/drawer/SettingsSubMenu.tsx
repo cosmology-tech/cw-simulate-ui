@@ -26,6 +26,7 @@ interface IChainConfigFormValues {
 
 export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
   const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
+  debugger;
   const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({} as IChainConfigFormValues);
   const setNotification = useNotification();
   const [openResetSimulationDialog, setOpenResetSimulationDialog] = useState(false);
