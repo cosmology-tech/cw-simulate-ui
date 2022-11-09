@@ -1,10 +1,5 @@
-import ArticleIcon from "@mui/icons-material/Article";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import NotesIcon from "@mui/icons-material/Notes";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import useTheme from "@mui/material/styles/useTheme";
+import { Box, Grid, Stack, SvgIcon, Typography } from "@mui/material";
 import React, {
   HTMLAttributeAnchorTarget,
   PropsWithChildren,
@@ -17,7 +12,8 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/constants";
 import {
   SimulationJSON,
-  useCreateNewSimulateApp, useSetupCwSimulateAppJson,
+  useCreateNewSimulateApp,
+  useSetupCwSimulateAppJson,
   useStoreCode,
 } from "../../utils/simulationUtils";
 import FileUpload from "../upload/FileUpload";
@@ -25,6 +21,10 @@ import T1Link from "../grid/T1Link";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { useAtom } from "jotai";
 import FileUploadPaper from "../upload/FileUploadPaper";
+import { ReactComponent as LunaIcon } from "@public/luna.svg";
+import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
+import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
+import JunoSvgIcon from "./JunoIcon";
 
 export default function WelcomeScreen() {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
@@ -34,9 +34,9 @@ export default function WelcomeScreen() {
   const createSimulateApp = useCreateNewSimulateApp();
   const storeCode = useStoreCode();
   const setupSimulationJSON = useSetupCwSimulateAppJson();
-  
+
   const theme = useTheme();
-  
+
   const onCreateNewEnvironment = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -89,44 +89,60 @@ export default function WelcomeScreen() {
         <Grid
           item
           xs={12}
-          sx={{ my: 4 }}
+          sx={{my: 4}}
         >
           <Typography variant="h2" fontWeight={600} textAlign="center">
             CosmWasm Simulator
           </Typography>
         </Grid>
         <WelcomeNavIcons>
-          <NavIcon to='/tutorials'>
-            <LibraryBooksIcon sx={{cursor: "pointer"}}/>
-            <Typography>Tutorials</Typography>
-          </NavIcon>
-          <NavIcon to='/documentation'>
-            <ArticleIcon sx={{cursor: "pointer"}}/>
-            <Typography>Documentation</Typography>
-          </NavIcon>
-          <NavIcon to='/examples'>
-            <NotesIcon sx={{cursor: "pointer"}}/>
-            <Typography>Examples</Typography>
-          </NavIcon>
-          <NavIcon to='https://github.com/Terran-One/cw-simulate-ui'>
-            <GitHubIcon sx={{cursor: "pointer"}}/>
-            <Typography>Github</Typography>
-          </NavIcon>
+          <SvgIconWrapper icon={LunaIcon} name={'Terra'}/>
+          <SvgIconWrapper icon={InjectiveIcon} name={'Injective'}/>
+          <SvgIconWrapper icon={OsmosisIcon} name={'Osmosis'}/>
+          <SvgIconWrapper icon={JunoSvgIcon} name={'Juno'}/>
         </WelcomeNavIcons>
         <Grid
           item
           xs={11}
           lg={7}
           md={8}
-          sx={{ my: 4, width: "60%" }}
+          sx={{my: 4, width: "60%"}}
         >
-          <FileUploadPaper sx={{ minHeight: 280 }}>
+          <FileUploadPaper sx={{minHeight: 280}}>
             <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
           </FileUploadPaper>
         </Grid>
       </Grid>
     </Grid>
   );
+};
+
+interface ISvgIconWrapperProps {
+  icon: any;
+  fontSize?: number;
+  name: string;
+}
+
+const SvgIconWrapper = ({icon, fontSize, name}: ISvgIconWrapperProps) => {
+  const theme = useTheme();
+  const [iconName, setIconName] = useState<string>("");
+  const [isClicked, setIsClicked] = useState<boolean>(false);
+  const backgroundColor = isClicked ? theme.palette.primary.main : theme.palette.background.default;
+  const handleClick = (event: React.MouseEvent) => {
+    setIconName(name);
+    setIsClicked(!isClicked);
+  };
+
+  return (
+    <Stack onClick={handleClick}>
+      <Box sx={{bgcolor: backgroundColor, borderRadius: '50%'}}>
+        <SvgIcon component={icon} style={{fontSize: fontSize ?? 60}} inheritViewBox/>
+      </Box>
+      <Typography fontWeight={300} textAlign="center">
+        {name}
+      </Typography>
+    </Stack>
+  )
 };
 
 function WelcomeNavIcons({children}: PropsWithChildren) {
@@ -140,7 +156,7 @@ function WelcomeNavIcons({children}: PropsWithChildren) {
       xs={11}
       lg={6}
       md={8}
-      sx={{ my: 4 }}
+      sx={{my: 4}}
     >
       {children}
     </Grid>
