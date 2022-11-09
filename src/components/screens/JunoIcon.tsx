@@ -2,11 +2,11 @@ import * as React from "react"
 
 const JunoSvgIcon = (props: any) => (
   <svg
-    viewBox="0 0 264.58 264.58"
+    viewBox="0 0 220 220"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <g transform="translate(0 -32.417)">
+    <g transform="translate(-20 -45)">
       <ellipse
         cx={130.54}
         cy={169.52}
@@ -26,6 +26,7 @@ const JunoSvgIcon = (props: any) => (
         strokeWidth={6.841}
         style={{
           paintOrder: "normal",
+          color: "black",
         }}
       />
       <g
