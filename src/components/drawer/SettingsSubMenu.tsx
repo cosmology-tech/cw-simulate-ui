@@ -15,6 +15,7 @@ import {
 import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { CWSimulateApp } from "@terran-one/cw-simulate";
+import { TerraConfig } from "../../configs/constants";
 
 export interface ISettingsSubMenuProps {
 }
@@ -26,16 +27,12 @@ interface IChainConfigFormValues {
 
 export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
   const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
-  debugger;
   const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({} as IChainConfigFormValues);
   const setNotification = useNotification();
   const [openResetSimulationDialog, setOpenResetSimulationDialog] = useState(false);
   const handleResetSimulation = (e: any) => {
     setSimulateApp({
-      app: new CWSimulateApp({
-        chainId: "terra-test",
-        bech32Prefix: "terra"
-      })
+      app: new CWSimulateApp(TerraConfig)
     });
     setOpenResetSimulationDialog(false);
   };
