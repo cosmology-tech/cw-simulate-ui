@@ -32,7 +32,6 @@ import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 import JunoSvgIcon from "./JunoIcon";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
-import UpdateIcon from '@mui/icons-material/Update';
 
 const enum IconEnum {
   TerraIcon = "Terra",
@@ -128,6 +127,14 @@ export default function WelcomeScreen() {
             CosmWasm Simulator
           </Typography>
         </Grid>
+        <Grid
+          item
+          xs={12}
+        >
+          <Typography variant="h6" textAlign="center">
+            Select a configuration
+          </Typography>
+        </Grid>
         <WelcomeNavIcons>
           <SvgIconWrapper icon={TerraIcon} name={IconEnum.TerraIcon}
                           handleOnClick={handleOnSvgIconClick} clickedIcon={svgIcon}/>
@@ -179,7 +186,10 @@ const SvgIconWrapper = ({
         flexDirection: 'column'
       }} onClick={(event) => handleOnClick(event)}>
         <Box
-          sx={{bgcolor: name === clickedIcon ? theme.palette.primary.light : theme.palette.background.default, borderRadius: 2}}>
+          sx={{
+            bgcolor: name === clickedIcon ? theme.palette.primary.light : theme.palette.background.default,
+            borderRadius: 2
+          }}>
           <SvgIcon component={icon} style={{fontSize: fontSize ?? 60}} inheritViewBox/>
         </Box>
         <Typography fontWeight={300} textAlign="center">
