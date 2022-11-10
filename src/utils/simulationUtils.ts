@@ -7,7 +7,7 @@ import { CWSimulateApp } from "@terran-one/cw-simulate";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 import cwSimulateAppState from "../atoms/cwSimulateAppState";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
-import traceState from "../atoms/traceState";
+import {traceState} from "../atoms/simulationPageAtoms";
 import { DEFAULT_FUNDS, SENDER_ADDRESS } from "../configs/constants";
 
 export type SimulationJSON = AsJSON<{
@@ -18,12 +18,14 @@ export type SimulationJSON = AsJSON<{
  * This hook is used to initialize the simulation state.
  */
 export function useCreateNewSimulateApp() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   return useCallback((options: CWSimulateAppOptions) => {
     const app = new CWSimulateApp({
       chainId: options.chainId,
       bech32Prefix: options.bech32Prefix
     });
+
+    console.log(app);
     setSimulateApp({app});
     return app;
   }, [app, setSimulateApp]);

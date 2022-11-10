@@ -3,7 +3,7 @@ import { Grid, Typography } from "@mui/material";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import { useAtom } from "jotai";
 import React from "react";
-import { jsonErrorState } from "../atoms/jsonErrorState";
+import { jsonErrorState } from "../atoms/simulationPageAtoms";
 import { useTheme } from "../configs/theme";
 import { validateJSON } from "../utils/fileUtils";
 import T1Container from "./grid/T1Container";
@@ -23,16 +23,11 @@ export const JsonCodeMirrorEditor = ({
     json: "Enter your json here",
   };
   const [jsonError, setJsonError] = useAtom(jsonErrorState);
-  
+
   const theme = useTheme();
 
   return (
-    <Grid
-      container
-      direction="column"
-      height="100%"
-      gap={1}
-    >
+    <Grid container direction="column" height="100%" gap={1}>
       <Grid
         item
         flex={1}
@@ -63,7 +58,7 @@ export const JsonCodeMirrorEditor = ({
             }}
             theme={theme.palette.mode}
             placeholder={JSON.stringify(defaultPlaceholder, null, 2)}
-            style={{border: "none", height: "100%"}}
+            style={{ border: "none", height: "100%" }}
           />
         </T1Container>
       </Grid>

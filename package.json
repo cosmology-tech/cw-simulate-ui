@@ -85,6 +85,7 @@
     "postcss": "^8.4.17",
     "postcss-import": "^15.0.0",
     "process": "^0.11.10",
+    "react-app-alias": "^2.2.2",
     "react-app-rewired": "^2.2.1",
     "react-scripts": "^5.0.1",
     "webpack": "^5.74.0"

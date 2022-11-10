@@ -1,18 +1,20 @@
 import * as React from "react";
 import Stepper from "@mui/material/Stepper";
 import { Grid, Step, StepContent, StepLabel } from "@mui/material";
-import { blockState } from "../../atoms/blockState";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
-import { currentStateNumber } from "../../atoms/currentStateNumber";
-import { stepRequestState } from "../../atoms/stepRequestState";
-import { stepResponseState } from "../../atoms/stepResponseState";
-import { stateResponseTabState } from "../../atoms/stateResponseTabState";
-import traceState from "../../atoms/traceState";
+import {
+  currentStateNumber,
+  stepRequestState,
+  stepResponseState,
+  stateResponseTabState,
+  traceState,
+  blockState,
+  stepTraceState,
+} from "../../atoms/simulationPageAtoms";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { SubStepper } from "./SubStepper";
 import { ComparePopup } from "./ComparePopup";
-import { stepTraceState } from "../../atoms/stepTraceState";
 import { useEffect, useState } from "react";
 import { Map } from "immutable";
 import { TraceLog } from "@terran-one/cw-simulate";

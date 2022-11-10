@@ -1,7 +1,7 @@
-import { Grid, Tab, Tabs, Typography, } from "@mui/material";
+import { Grid, Tab, Tabs, Typography } from "@mui/material";
 import { useAtom } from "jotai";
 import React from "react";
-import { responseState } from "../../atoms/reponseState";
+import { responseState } from "../../atoms/simulationPageAtoms";
 import { ExecuteQuery } from "./ExecuteQuery";
 import { OutputCard } from "./OutputCard";
 import T1Container from "../grid/T1Container";
@@ -9,10 +9,10 @@ import Widget from "./Widget";
 import Row from "./Row";
 
 interface ISendMessageProps {
-  contractAddress: string
+  contractAddress: string;
 }
 
-export default function ({contractAddress}: ISendMessageProps) {
+export default function ({ contractAddress }: ISendMessageProps) {
   const [response, setResponse] = useAtom(responseState);
   return (
     <Widget size={6}>
@@ -67,7 +67,7 @@ export default function ({contractAddress}: ISendMessageProps) {
             >
               <Grid item flexShrink={0}>
                 <Tabs value="response" aria-label="Response tab">
-                  <Tab value="response" label="Response"/>
+                  <Tab value="response" label="Response" />
                 </Tabs>
               </Grid>
               <Grid item flex={1} position="relative">

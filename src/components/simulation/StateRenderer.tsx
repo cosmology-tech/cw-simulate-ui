@@ -2,13 +2,15 @@ import React, { Component } from "react";
 import StateResponseTab from "./StateResponseTab";
 import { OutputCard } from "./OutputCard";
 import { Grid } from "@mui/material";
-import { stepResponseState } from "../../atoms/stepResponseState";
-import { blockState } from "../../atoms/blockState";
 import { useAtom, useAtomValue } from "jotai";
-import { stateResponseTabState } from "../../atoms/stateResponseTabState";
-import { compareStates } from "../../atoms/compareStates";
-import { stepRequestState } from "../../atoms/stepRequestState";
-import { stepTraceState } from "../../atoms/stepTraceState";
+import {
+  stateResponseTabState,
+  stepResponseState,
+  stepRequestState,
+  compareStates,
+  stepTraceState,
+  blockState,
+} from "../../atoms/simulationPageAtoms";
 import { StateTab } from "./StateTab";
 import { SummaryTab, ResponseTab, CallsTab, DebugTab } from "./InspectorTabs";
 import T1Container from "../grid/T1Container";

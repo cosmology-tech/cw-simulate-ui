@@ -1,6 +1,10 @@
 const {ProvidePlugin} = require('webpack');
+const {aliasWebpack, aliasJest} = require('react-app-alias');
+const options = {}; // default is empty for most cases
 
 module.exports = function override(config, env) {
+  aliasWebpack(options)(config);
+  aliasJest(options)(config);
   config.resolve.fallback = {
     crypto: require.resolve('crypto-browserify'),
     stream: require.resolve('stream-browserify'),
@@ -12,7 +16,7 @@ module.exports = function override(config, env) {
   config.plugins.push(
     new ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
-      process: 'process/browser',
+      process: 'process/browser'
     }),
   );
 
