@@ -23,6 +23,7 @@ import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import { SENDER_ADDRESS } from "../../configs/constants";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 import { validateAccountJSON } from "../../utils/fileUtils";
+import { useSetBalance } from "../../utils/simulationUtils";
 
 const DEFAULT_VALUE = JSON.stringify(
   {
@@ -41,6 +42,7 @@ const Accounts = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
+  const setBalance = useSetBalance();
   const {app} = useAtomValue(cwSimulateAppState);
   const accounts = app.bank.getBalances().toArray();
   const handleClickOpen = () => {
@@ -75,7 +77,7 @@ const Accounts = () => {
       return;
     }
 
-    app.bank.setBalance(json.sender, json.coins)
+    setBalance(json.sender, json.coins);
     setNotification("Account added successfully");
     setOpenDialog(false);
   };

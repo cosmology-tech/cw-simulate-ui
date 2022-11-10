@@ -24,7 +24,7 @@ export interface IT1Drawer {
   drawerWidth?: number;
 }
 
-const T1Drawer = React.memo((props: IT1Drawer) => {
+const T1Drawer = (props: IT1Drawer) => {
   const {
     barWidth = 50,
     drawerWidth = 250,
@@ -78,7 +78,7 @@ const T1Drawer = React.memo((props: IT1Drawer) => {
       </Box>
     </ClickAwayListener>
   );
-});
+}
 
 export default T1Drawer;
 
