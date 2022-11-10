@@ -7,7 +7,7 @@ import { CWSimulateApp } from "@terran-one/cw-simulate";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 import cwSimulateAppState from "../atoms/cwSimulateAppState";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
-import traceState from "../atoms/traceState";
+import {traceState} from "../atoms/simulationPageAtoms";
 import { DEFAULT_FUNDS, SENDER_ADDRESS } from "../configs/constants";
 
 export type SimulationJSON = AsJSON<{

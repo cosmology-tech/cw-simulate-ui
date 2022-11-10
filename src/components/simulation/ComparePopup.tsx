@@ -2,8 +2,10 @@ import { Grid, Button, Popover, TextField, Typography } from "@mui/material";
 import DifferenceOutlinedIcon from "@mui/icons-material/DifferenceOutlined";
 import React from "react";
 import { useAtom } from "jotai";
-import { compareStates } from "../../atoms/compareStates";
-import { stateResponseTabState } from "../../atoms/stateResponseTabState";
+import {
+  compareStates,
+  stateResponseTabState,
+} from "../../atoms/simulationPageAtoms";
 import { TraceLog } from "@terran-one/cw-simulate";
 
 interface IProps {

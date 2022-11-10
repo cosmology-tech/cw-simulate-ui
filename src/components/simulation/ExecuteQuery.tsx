@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { executeQueryTabState } from "../../atoms/executeQueryTabState";
+import {
+  executeQueryTabState,
+  currentStateNumber,
+} from "../../atoms/simulationPageAtoms";
 import { Button, Grid } from "@mui/material";
-import { jsonErrorState } from "../../atoms/jsonErrorState";
+import { jsonErrorState } from "../../atoms/simulationPageAtoms";
 import { SENDER_ADDRESS } from "../../configs/constants";
 import { useAtom, useAtomValue } from "jotai";
-import { currentStateNumber } from "../../atoms/currentStateNumber";
 import T1Container from "../grid/T1Container";
 import { useExecute, useQuery } from "../../utils/simulationUtils";
 
@@ -16,7 +18,7 @@ interface IProps {
   contractAddress: string;
 }
 
-export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
+export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
   const [payload, setPayload] = useState("");
   const executeQueryTab = useAtomValue(executeQueryTabState);
   const [currentState, setCurrentState] = useAtom(currentStateNumber);
@@ -33,7 +35,7 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
         JSON.parse(payload)
       );
       const response = res.err
-        ? ({error: res.val} as unknown as JSON)
+        ? ({ error: res.val } as unknown as JSON)
         : (res.unwrap() as JSON);
       setResponse(response);
       if (res.err) {
@@ -88,7 +90,7 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
       }}
     >
       <Grid item flexShrink={0}>
-        <ExecuteQueryTab/>
+        <ExecuteQueryTab />
       </Grid>
       <Grid item flex={1} position="relative">
         <T1Container>
@@ -98,7 +100,7 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
           />
         </T1Container>
       </Grid>
-      <Grid item flexShrink={0} sx={{display: "flex"}}>
+      <Grid item flexShrink={0} sx={{ display: "flex" }}>
         <Button
           variant="contained"
           onClick={onRunHandler}

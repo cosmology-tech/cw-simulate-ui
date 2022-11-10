@@ -8,7 +8,7 @@ import {
   ExecuteTraceLog,
   ReplyTraceLog,
 } from "@terran-one/cw-simulate/dist/types";
-import { IRequest } from "../../atoms/stepRequestState";
+import { IRequest } from "../../atoms/simulationPageAtoms";
 import T1JsonTree from "../T1JsonTree";
 
 interface IProps {
@@ -34,7 +34,7 @@ export const OutputCard = ({
   stepTrace,
 }: IProps) => {
   const muiTheme = useTheme();
-  
+
   return (
     <T1Container
       sx={{
