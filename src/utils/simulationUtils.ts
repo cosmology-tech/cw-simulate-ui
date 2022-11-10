@@ -18,12 +18,14 @@ export type SimulationJSON = AsJSON<{
  * This hook is used to initialize the simulation state.
  */
 export function useCreateNewSimulateApp() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState)
+  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   return useCallback((options: CWSimulateAppOptions) => {
     const app = new CWSimulateApp({
       chainId: options.chainId,
       bech32Prefix: options.bech32Prefix
     });
+
+    console.log(app);
     setSimulateApp({app});
     return app;
   }, [app, setSimulateApp]);

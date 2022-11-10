@@ -1,10 +1,5 @@
-import ArticleIcon from "@mui/icons-material/Article";
-import GitHubIcon from "@mui/icons-material/GitHub";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import NotesIcon from "@mui/icons-material/Notes";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import useTheme from "@mui/material/styles/useTheme";
+import { Box, Grid, SvgIcon, Typography } from "@mui/material";
 import React, {
   HTMLAttributeAnchorTarget,
   PropsWithChildren,
@@ -14,10 +9,17 @@ import React, {
 } from "react";
 import { To, useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/constants";
+import {
+  InjectiveConfig,
+  JunoConfig,
+  OsmosisConfig,
+  SENDER_ADDRESS,
+  TerraConfig
+} from "../../configs/constants";
 import {
   SimulationJSON,
-  useCreateNewSimulateApp, useSetupCwSimulateAppJson,
+  useCreateNewSimulateApp,
+  useSetupCwSimulateAppJson,
   useStoreCode,
 } from "../../utils/simulationUtils";
 import FileUpload from "../upload/FileUpload";
@@ -25,7 +27,33 @@ import T1Link from "../grid/T1Link";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { useAtom } from "jotai";
 import FileUploadPaper from "../upload/FileUploadPaper";
+import { ReactComponent as TerraIcon } from "@public/luna.svg";
+import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
+import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
+import JunoSvgIcon from "./JunoIcon";
+import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
 
+const enum IconEnum {
+  TerraIcon = "Terra",
+  InjectiveIcon = "Injective",
+  OsmosisIcon = "Osmosis",
+  JunoIcon = "Juno",
+}
+
+const getChainConfig = (chain: string) => {
+  switch (chain) {
+    case IconEnum.TerraIcon:
+      return TerraConfig;
+    case IconEnum.InjectiveIcon:
+      return InjectiveConfig;
+    case IconEnum.OsmosisIcon:
+      return OsmosisConfig;
+    case IconEnum.JunoIcon:
+      return JunoConfig;
+    default:
+      return IconEnum.TerraIcon;
+  }
+}
 export default function WelcomeScreen() {
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>(undefined);
   const setNotification = useNotification();
@@ -34,22 +62,22 @@ export default function WelcomeScreen() {
   const createSimulateApp = useCreateNewSimulateApp();
   const storeCode = useStoreCode();
   const setupSimulationJSON = useSetupCwSimulateAppJson();
-  
   const theme = useTheme();
-  
+  const [svgIcon, setSvgIcon] = useState<IconEnum>(IconEnum.TerraIcon);
+
   const onCreateNewEnvironment = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
       return;
     }
     if (file.filename.endsWith(".wasm")) {
-      createSimulateApp({chainId: DEFAULT_CHAIN, bech32Prefix: 'terra'});
+      createSimulateApp(getChainConfig(svgIcon) as CWSimulateAppOptions);
       storeCode(SENDER_ADDRESS, file);
     } else if (file.filename.endsWith(".json")) {
       const json = file.fileContent as unknown as SimulationJSON;
       setupSimulationJSON(json);
     }
-  }, [file, storeCode, setNotification, setSimulationMetadata]);
+  }, [file, storeCode, setNotification, setSimulationMetadata, svgIcon]);
 
   const onAcceptFile = useCallback(async (filename: string, fileContent: Buffer | JSON) => {
     setFile({filename, fileContent});
@@ -66,6 +94,10 @@ export default function WelcomeScreen() {
       });
     }
   }, [file]);
+
+  const handleOnSvgIconClick = (event: any) => {
+    setSvgIcon(event.currentTarget.id as IconEnum);
+  }
 
   return (
     <Grid
@@ -89,44 +121,83 @@ export default function WelcomeScreen() {
         <Grid
           item
           xs={12}
-          sx={{ my: 4 }}
+          sx={{my: 4}}
         >
           <Typography variant="h2" fontWeight={600} textAlign="center">
             CosmWasm Simulator
           </Typography>
         </Grid>
+        <Grid
+          item
+          xs={12}
+        >
+          <Typography variant="h6" textAlign="center">
+            Select a configuration
+          </Typography>
+        </Grid>
         <WelcomeNavIcons>
-          <NavIcon to='/tutorials'>
-            <LibraryBooksIcon sx={{cursor: "pointer"}}/>
-            <Typography>Tutorials</Typography>
-          </NavIcon>
-          <NavIcon to='/documentation'>
-            <ArticleIcon sx={{cursor: "pointer"}}/>
-            <Typography>Documentation</Typography>
-          </NavIcon>
-          <NavIcon to='/examples'>
-            <NotesIcon sx={{cursor: "pointer"}}/>
-            <Typography>Examples</Typography>
-          </NavIcon>
-          <NavIcon to='https://github.com/Terran-One/cw-simulate-ui'>
-            <GitHubIcon sx={{cursor: "pointer"}}/>
-            <Typography>Github</Typography>
-          </NavIcon>
+          <SvgIconWrapper icon={TerraIcon} name={IconEnum.TerraIcon}
+                          handleOnClick={handleOnSvgIconClick} clickedIcon={svgIcon}/>
+          <SvgIconWrapper icon={InjectiveIcon} name={IconEnum.InjectiveIcon}
+                          handleOnClick={handleOnSvgIconClick} clickedIcon={svgIcon}/>
+          <SvgIconWrapper icon={OsmosisIcon} name={IconEnum.OsmosisIcon}
+                          handleOnClick={handleOnSvgIconClick} clickedIcon={svgIcon}/>
+          <SvgIconWrapper icon={JunoSvgIcon} name={IconEnum.JunoIcon}
+                          handleOnClick={handleOnSvgIconClick} clickedIcon={svgIcon}/>
         </WelcomeNavIcons>
         <Grid
           item
           xs={11}
           lg={7}
           md={8}
-          sx={{ my: 4, width: "60%" }}
+          sx={{mb: 4, width: "60%"}}
         >
-          <FileUploadPaper sx={{ minHeight: 280 }}>
+          <FileUploadPaper sx={{minHeight: 280}}>
             <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
           </FileUploadPaper>
         </Grid>
       </Grid>
     </Grid>
   );
+};
+
+interface ISvgIconWrapperProps {
+  icon: any;
+  fontSize?: number;
+  name: string;
+  clickedIcon: string;
+  backgroundColor?: string;
+  handleOnClick: (e: any) => void;
+}
+
+const SvgIconWrapper = ({
+  icon,
+  fontSize,
+  name,
+  clickedIcon,
+  handleOnClick
+}: ISvgIconWrapperProps) => {
+  const theme = useTheme();
+  return (
+    <>
+      <Box id={name} sx={{
+        borderRadius: '50%',
+        display: 'flex',
+        flexDirection: 'column'
+      }} onClick={(event) => handleOnClick(event)}>
+        <Box
+          sx={{
+            bgcolor: name === clickedIcon ? theme.palette.primary.light : theme.palette.background.default,
+            borderRadius: 2
+          }}>
+          <SvgIcon component={icon} style={{fontSize: fontSize ?? 60}} inheritViewBox/>
+        </Box>
+        <Typography fontWeight={300} textAlign="center">
+          {name}
+        </Typography>
+      </Box>
+    </>
+  )
 };
 
 function WelcomeNavIcons({children}: PropsWithChildren) {
@@ -140,7 +211,7 @@ function WelcomeNavIcons({children}: PropsWithChildren) {
       xs={11}
       lg={6}
       md={8}
-      sx={{ my: 4 }}
+      sx={{my: 4}}
     >
       {children}
     </Grid>
