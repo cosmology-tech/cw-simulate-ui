@@ -142,8 +142,8 @@ export default function WelcomeScreen() {
             clickedIcon={svgIcon}
           />
           <SvgIconWrapper
-            icon={InjectiveIcon}
-            name={IconEnum.InjectiveIcon}
+            icon={JunoSvgIcon}
+            name={IconEnum.JunoIcon}
             handleOnClick={handleOnSvgIconClick}
             clickedIcon={svgIcon}
           />
@@ -154,8 +154,8 @@ export default function WelcomeScreen() {
             clickedIcon={svgIcon}
           />
           <SvgIconWrapper
-            icon={JunoSvgIcon}
-            name={IconEnum.JunoIcon}
+            icon={InjectiveIcon}
+            name={IconEnum.InjectiveIcon}
             handleOnClick={handleOnSvgIconClick}
             clickedIcon={svgIcon}
           />
