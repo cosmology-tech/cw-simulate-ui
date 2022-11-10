@@ -215,7 +215,6 @@ export const DebugTab = ({ traceLog }: InspectorTabProps) => {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
   let combinedDebugMsgs = combineDebugMsgs(traceLog);
-  console.log(combinedDebugMsgs);
   return (
     <Grid>
       <List>
