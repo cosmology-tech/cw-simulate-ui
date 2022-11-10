@@ -12,7 +12,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import React, { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { CWSimulateApp } from "@terran-one/cw-simulate";
 import { TerraConfig } from "../../configs/constants";
@@ -52,17 +52,6 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
   const handleClose = () => {
     setOpenResetSimulationDialog(false);
   };
-  
-  useEffect(() => {
-    setTimeout(() => {
-      setSimulateApp({
-        app: new CWSimulateApp({
-          chainId: 'injective-1',
-          bech32Prefix: 'inj',
-        })
-      });
-    }, 5000);
-  })
 
   return (
     <>
