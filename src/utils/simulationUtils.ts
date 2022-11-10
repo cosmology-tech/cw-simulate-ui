@@ -25,7 +25,6 @@ export function useCreateNewSimulateApp() {
       bech32Prefix: options.bech32Prefix
     });
 
-    console.log(app);
     setSimulateApp({app});
     return app;
   }, [app, setSimulateApp]);
