@@ -150,7 +150,7 @@ export default function WelcomeScreen() {
           xs={11}
           lg={7}
           md={8}
-          sx={{my: 4, width: "60%"}}
+          sx={{mb: 4, width: "60%"}}
         >
           <FileUploadPaper sx={{minHeight: 280}}>
             <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
