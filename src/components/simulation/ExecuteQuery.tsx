@@ -8,7 +8,7 @@ import {
 } from "../../atoms/simulationPageAtoms";
 import { Button, Grid } from "@mui/material";
 import { jsonErrorState } from "../../atoms/simulationPageAtoms";
-import { SENDER_ADDRESS } from "../../configs/constants";
+import { DEFAULT_TERRA_ADDRESS } from "../../configs/constants";
 import { useAtom, useAtomValue } from "jotai";
 import T1Container from "../grid/T1Container";
 import { useExecute, useQuery } from "../../utils/simulationUtils";
@@ -29,7 +29,7 @@ export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
   const handleExecute = async () => {
     try {
       const res: any = await execute(
-        SENDER_ADDRESS,
+        DEFAULT_TERRA_ADDRESS,
         [],
         contractAddress,
         JSON.parse(payload)

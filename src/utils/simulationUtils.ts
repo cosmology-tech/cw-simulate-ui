@@ -7,12 +7,30 @@ import { CWSimulateApp } from "@terran-one/cw-simulate";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 import cwSimulateAppState from "../atoms/cwSimulateAppState";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
-import {traceState} from "../atoms/simulationPageAtoms";
-import { DEFAULT_FUNDS, SENDER_ADDRESS } from "../configs/constants";
+import { traceState } from "../atoms/simulationPageAtoms";
+import {
+  DEFAULT_INJECTIVE_ADDRESS,
+  DEFAULT_INJECTIVE_FUNDS,
+  DEFAULT_JUNO_ADDRESS,
+  DEFAULT_JUNO_FUNDS,
+  DEFAULT_OSMOSIS_ADDRESS,
+  DEFAULT_OSMOSIS_FUNDS,
+  DEFAULT_TERRA_ADDRESS,
+  DEFAULT_TERRA_FUNDS,
+  InjectiveConfig,
+  JunoConfig,
+  OsmosisConfig,
+  TerraConfig
+} from "../configs/constants";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
 }>
+
+export interface AddressAndFunds {
+  address: string;
+  funds: Coin[];
+}
 
 /**
  * This hook is used to initialize the simulation state.
@@ -36,14 +54,14 @@ export function useCreateNewSimulateApp() {
 export function useStoreCode() {
   const setSimulateApp = useSetAtom(cwSimulateAppState);
   const setSimulationMetadata = useSetAtom(simulationMetadataState);
-  return useCallback((creator: string, file: { filename: string, fileContent: Buffer | JSON }) => {
+  return useCallback((addressAndFunds: AddressAndFunds, file: { filename: string, fileContent: Buffer | JSON }) => {
     let codeId: number;
     setSimulateApp(({app}) => {
-      codeId = app.wasm.create(creator, file.fileContent as Buffer);
-      app.bank.setBalance(SENDER_ADDRESS, DEFAULT_FUNDS);
+      codeId = app.wasm.create(addressAndFunds.address, file.fileContent as Buffer);
+      app.bank.setBalance(addressAndFunds.address, addressAndFunds.funds);
       return {app};
     });
-    
+
     setSimulationMetadata(({metadata}) => {
       metadata.codes[codeId] = {
         name: file.filename,
@@ -51,7 +69,7 @@ export function useStoreCode() {
       };
       return {metadata};
     });
-    
+
     //@ts-ignore
     return codeId;
   }, []);
@@ -181,6 +199,21 @@ export function useDeleteAllInstances() {
     app.store.deleteIn(["wasm", "contractStorage"]);
     setSimulateApp({app});
   }, [app]);
+}
+
+export function getAddressAndFunds(chainId: string | undefined): AddressAndFunds {
+  switch (chainId) {
+    case TerraConfig.chainId:
+      return {address: DEFAULT_TERRA_ADDRESS, funds: DEFAULT_TERRA_FUNDS};
+    case JunoConfig.chainId:
+      return {address: DEFAULT_JUNO_ADDRESS, funds: DEFAULT_JUNO_FUNDS};
+    case OsmosisConfig.chainId:
+      return {address: DEFAULT_OSMOSIS_ADDRESS, funds: DEFAULT_OSMOSIS_FUNDS};
+    case InjectiveConfig.chainId:
+      return {address: DEFAULT_INJECTIVE_ADDRESS, funds: DEFAULT_INJECTIVE_FUNDS};
+    default:
+      return {address: DEFAULT_TERRA_ADDRESS, funds: DEFAULT_TERRA_FUNDS};
+  }
 }
 
 export interface ChainConfig {

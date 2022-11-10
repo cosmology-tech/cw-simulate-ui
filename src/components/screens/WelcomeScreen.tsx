@@ -9,14 +9,9 @@ import React, {
 } from "react";
 import { To, useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
+import { InjectiveConfig, JunoConfig, OsmosisConfig, TerraConfig, } from "../../configs/constants";
 import {
-  InjectiveConfig,
-  JunoConfig,
-  OsmosisConfig,
-  SENDER_ADDRESS,
-  TerraConfig,
-} from "../../configs/constants";
-import {
+  getAddressAndFunds,
   SimulationJSON,
   useCreateNewSimulateApp,
   useSetupCwSimulateAppJson,
@@ -76,8 +71,8 @@ export default function WelcomeScreen() {
       return;
     }
     if (file.filename.endsWith(".wasm")) {
-      createSimulateApp(getChainConfig(svgIcon) as CWSimulateAppOptions);
-      storeCode(SENDER_ADDRESS, file);
+      const app = createSimulateApp(getChainConfig(svgIcon) as CWSimulateAppOptions);
+      storeCode(getAddressAndFunds(app.chainId), file);
     } else if (file.filename.endsWith(".json")) {
       const json = file.fileContent as unknown as SimulationJSON;
       setupSimulationJSON(json);
@@ -86,7 +81,7 @@ export default function WelcomeScreen() {
 
   const onAcceptFile = useCallback(
     async (filename: string, fileContent: Buffer | JSON) => {
-      setFile({ filename, fileContent });
+      setFile({filename, fileContent});
     },
     []
   );
@@ -124,7 +119,7 @@ export default function WelcomeScreen() {
         }}
         className="outerGrid"
       >
-        <Grid item xs={12} sx={{ my: 4 }}>
+        <Grid item xs={12} sx={{my: 4}}>
           <Typography variant="h2" fontWeight={600} textAlign="center">
             CosmWasm Simulator
           </Typography>
@@ -160,9 +155,9 @@ export default function WelcomeScreen() {
             clickedIcon={svgIcon}
           />
         </WelcomeNavIcons>
-        <Grid item xs={11} lg={7} md={8} sx={{ mb: 4, width: "60%" }}>
-          <FileUploadPaper sx={{ minHeight: 280 }}>
-            <FileUpload onAccept={onAcceptFile} onClear={onClearFile} />
+        <Grid item xs={11} lg={7} md={8} sx={{mb: 4, width: "60%"}}>
+          <FileUploadPaper sx={{minHeight: 280}}>
+            <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
           </FileUploadPaper>
         </Grid>
       </Grid>
@@ -209,7 +204,7 @@ const SvgIconWrapper = ({
         >
           <SvgIcon
             component={icon}
-            style={{ fontSize: fontSize ?? 60 }}
+            style={{fontSize: fontSize ?? 60}}
             inheritViewBox
           />
         </Box>
@@ -221,7 +216,7 @@ const SvgIconWrapper = ({
   );
 };
 
-function WelcomeNavIcons({ children }: PropsWithChildren) {
+function WelcomeNavIcons({children}: PropsWithChildren) {
   return (
     <Grid
       item
@@ -232,7 +227,7 @@ function WelcomeNavIcons({ children }: PropsWithChildren) {
       xs={11}
       lg={6}
       md={8}
-      sx={{ my: 4 }}
+      sx={{my: 4}}
     >
       {children}
     </Grid>
@@ -246,7 +241,7 @@ interface INavIconProps extends PropsWithChildren {
 }
 
 function NavIcon(props: INavIconProps) {
-  const { children, ...rest } = props;
+  const {children, ...rest} = props;
 
   return (
     <T1Link {...rest}>

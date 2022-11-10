@@ -4,12 +4,12 @@ import { useCallback, useState } from "react";
 import simulationMetadataState from "../../atoms/simulationMetadataState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import {
+  getAddressAndFunds,
   SimulationJSON,
   useSetupCwSimulateAppJson,
   useStoreCode
 } from "../../utils/simulationUtils";
 import FileUpload from "./FileUpload";
-import { SENDER_ADDRESS } from "../../configs/constants";
 import FileUploadPaper from "./FileUploadPaper";
 
 interface IUploadModalProps {
@@ -37,7 +37,7 @@ export default function UploadModal(props: IUploadModalProps) {
     }
 
     if (variant === 'contract') {
-      storeCode(SENDER_ADDRESS, file);
+      storeCode(getAddressAndFunds(chainId), file);
     } else if (variant === 'simulation') {
       try {
         const json = file.fileContent as any as SimulationJSON;
