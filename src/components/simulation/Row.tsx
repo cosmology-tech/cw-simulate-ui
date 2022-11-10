@@ -21,7 +21,7 @@ interface IRowProps extends GridSizeProps {
 
 export default function Row({ children, ...props }: IRowProps) {
   const theme = useTheme();
-  
+
   return (
     <Grid
       item
