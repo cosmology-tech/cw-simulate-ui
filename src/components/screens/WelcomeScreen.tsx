@@ -142,6 +142,12 @@ export default function WelcomeScreen() {
             clickedIcon={svgIcon}
           />
           <SvgIconWrapper
+            icon={JunoSvgIcon}
+            name={IconEnum.JunoIcon}
+            handleOnClick={handleOnSvgIconClick}
+            clickedIcon={svgIcon}
+          />
+          <SvgIconWrapper
             icon={InjectiveIcon}
             name={IconEnum.InjectiveIcon}
             handleOnClick={handleOnSvgIconClick}
@@ -150,12 +156,6 @@ export default function WelcomeScreen() {
           <SvgIconWrapper
             icon={OsmosisIcon}
             name={IconEnum.OsmosisIcon}
-            handleOnClick={handleOnSvgIconClick}
-            clickedIcon={svgIcon}
-          />
-          <SvgIconWrapper
-            icon={JunoSvgIcon}
-            name={IconEnum.JunoIcon}
             handleOnClick={handleOnSvgIconClick}
             clickedIcon={svgIcon}
           />
