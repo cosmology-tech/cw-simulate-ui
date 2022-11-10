@@ -148,14 +148,14 @@ export default function WelcomeScreen() {
             clickedIcon={svgIcon}
           />
           <SvgIconWrapper
-            icon={InjectiveIcon}
-            name={IconEnum.InjectiveIcon}
+            icon={OsmosisIcon}
+            name={IconEnum.OsmosisIcon}
             handleOnClick={handleOnSvgIconClick}
             clickedIcon={svgIcon}
           />
           <SvgIconWrapper
-            icon={OsmosisIcon}
-            name={IconEnum.OsmosisIcon}
+            icon={InjectiveIcon}
+            name={IconEnum.InjectiveIcon}
             handleOnClick={handleOnSvgIconClick}
             clickedIcon={svgIcon}
           />
