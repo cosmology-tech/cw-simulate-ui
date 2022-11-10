@@ -4,18 +4,18 @@ import CloseDiff from "./CloseDiff";
 
 interface IProps {
   currentTab: string;
-  setCurrentTab: (val: "response" | "request" | "trace" | "debug") => void;
+  setCurrentTab: (val: "summary" | "response" | "calls" | "debug") => void;
 }
 
 const StateResponseTab = ({ currentTab, setCurrentTab }: IProps) => {
   const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
     setCurrentTab(
-      newValue === "response"
+      newValue === "summary"
+        ? "summary"
+        : newValue === "response"
         ? "response"
-        : newValue === "request"
-        ? "request"
-        : newValue === "trace"
-        ? "trace"
+        : newValue === "calls"
+        ? "calls"
         : "debug"
     );
   };
@@ -27,9 +27,9 @@ const StateResponseTab = ({ currentTab, setCurrentTab }: IProps) => {
           onChange={onChangeHandler}
           aria-label="State & Response tabs"
         >
-          <Tab value="request" label="Request" />
+          <Tab value="summary" label="Summary" />
           <Tab value="response" label="Response" />
-          <Tab value="trace" label="Trace" />
+          <Tab value="calls" label="Calls" />
           <Tab value="debug" label="Debug" />
         </Tabs>
       </Grid>

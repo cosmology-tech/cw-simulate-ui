@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import StateResponseTab from "./StateResponseTab";
 import { OutputCard } from "./OutputCard";
 import { Grid } from "@mui/material";
@@ -12,6 +12,9 @@ import {
   blockState,
 } from "../../atoms/simulationPageAtoms";
 import { StateTab } from "./StateTab";
+import { SummaryTab, ResponseTab, CallsTab, DebugTab } from "./InspectorTabs";
+import T1Container from "../grid/T1Container";
+import { useTheme } from "../../configs/theme";
 
 interface IProps {
   isFileUploaded: boolean;
@@ -25,10 +28,27 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
   const request = useAtomValue(stepRequestState);
   const currentJSON = useAtomValue(blockState);
   const stepTrace = useAtomValue(stepTraceState);
+  const muiTheme = useTheme();
   React.useEffect(() => {
     if (compareStateObj.state1 != "" && compareStateObj.state2 != "")
       setIsVisible(true);
   }, [compareStateObj]);
+
+  let renderedTab;
+
+  switch (currentTab) {
+    case "summary":
+      renderedTab = <SummaryTab traceLog={stepTrace} />;
+      break;
+    case "response":
+      renderedTab = <ResponseTab traceLog={stepTrace} />;
+      break;
+    case "calls":
+      renderedTab = <CallsTab traceLog={stepTrace} />;
+      break;
+    default:
+      renderedTab = <DebugTab traceLog={stepTrace} />;
+  }
 
   return (
     <Grid container height="100%">
@@ -48,30 +68,17 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
           />
         </Grid>
         <Grid item flex={1}>
-          {currentTab === "request" && (
-            <OutputCard
-              response={request}
-              placeholder="Your request will appear here."
-            />
-          )}
-          {currentTab === "trace" && (
-            <OutputCard
-              stepTrace={stepTrace}
-              placeholder="Your trace will appear here."
-            />
-          )}
-          {currentTab === "response" && (
-            <OutputCard
-              response={response}
-              placeholder="Your response will appear here."
-            />
-          )}
-          {currentTab === "debug" && (
-            <OutputCard
-              response={response}
-              placeholder="Your debug messages will appear here."
-            />
-          )}
+          <T1Container
+            sx={{
+              border: `1px solid ${muiTheme.palette.line}`,
+              textAlign: "left",
+              "> .T1Container-content": {
+                p: 1,
+              },
+            }}
+          >
+            {renderedTab}
+          </T1Container>
         </Grid>
       </Grid>
       <Grid

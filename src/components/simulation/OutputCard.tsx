@@ -1,6 +1,5 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
-import useTheme from "@mui/material/styles/createTheme";
 import T1Container from "../grid/T1Container";
 import ReactDiffViewer from "@terran-one/react-diff-viewer";
 import {
@@ -10,6 +9,7 @@ import {
 } from "@terran-one/cw-simulate/dist/types";
 import { IRequest } from "../../atoms/simulationPageAtoms";
 import T1JsonTree from "../T1JsonTree";
+import { useTheme } from "../../configs/theme";
 
 interface IProps {
   beforeState?: string;
