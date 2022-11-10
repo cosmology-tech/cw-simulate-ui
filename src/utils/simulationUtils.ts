@@ -1,4 +1,4 @@
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { useCallback } from "react";
 import type { Codes, SimulationMetadata } from "../atoms/simulationMetadataState";
 import simulationMetadataState from "../atoms/simulationMetadataState";
@@ -18,7 +18,7 @@ export type SimulationJSON = AsJSON<{
  * This hook is used to initialize the simulation state.
  */
 export function useCreateNewSimulateApp() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
+  const setSimulateApp = useSetAtom(cwSimulateAppState);
   return useCallback((options: CWSimulateAppOptions) => {
     const app = new CWSimulateApp({
       chainId: options.chainId,
@@ -27,26 +27,44 @@ export function useCreateNewSimulateApp() {
 
     setSimulateApp({app});
     return app;
-  }, [app, setSimulateApp]);
+  }, []);
 }
 
 /**
  * This hook is used to store new WASM bytecode in the simulation state.
  */
 export function useStoreCode() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
-  const [{metadata}, setSimulationMetadata] = useAtom(simulationMetadataState);
+  const setSimulateApp = useSetAtom(cwSimulateAppState);
+  const setSimulationMetadata = useSetAtom(simulationMetadataState);
   return useCallback((creator: string, file: { filename: string, fileContent: Buffer | JSON }) => {
-    const codeId = app.wasm.create(creator, file.fileContent as Buffer);
-    app.bank.setBalance(SENDER_ADDRESS, DEFAULT_FUNDS);
-    setSimulateApp({app});
-    metadata.codes[codeId] = {
-      name: file.filename,
-      codeId: codeId,
-    };
-    setSimulationMetadata({metadata});
+    let codeId: number;
+    setSimulateApp(({app}) => {
+      codeId = app.wasm.create(creator, file.fileContent as Buffer);
+      app.bank.setBalance(SENDER_ADDRESS, DEFAULT_FUNDS);
+      return {app};
+    });
+    
+    setSimulationMetadata(({metadata}) => {
+      metadata.codes[codeId] = {
+        name: file.filename,
+        codeId: codeId,
+      };
+      return {metadata};
+    });
+    
+    //@ts-ignore
     return codeId;
-  }, [app, metadata, setSimulateApp, setSimulationMetadata]);
+  }, []);
+}
+
+export function useSetBalance() {
+  const setSimulateApp = useSetAtom(cwSimulateAppState);
+  return useCallback((addr: string, funds: Coin[]) => {
+    setSimulateApp(({app}) => {
+      app.bank.setBalance(addr, funds);
+      return {app};
+    });
+  }, []);
 }
 
 
