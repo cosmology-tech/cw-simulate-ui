@@ -1,30 +1,24 @@
 import React from "react";
 import YAML from "yaml";
 import { TraceLog } from "@terran-one/cw-simulate/dist/types";
-import {
-  Grid,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Typography,
-} from "@mui/material";
+import { Grid, List, ListItem, ListItemIcon, ListItemText, Typography, } from "@mui/material";
 import T1Container from "../grid/T1Container";
 import TableLayout from "../chains/TableLayout";
 import { useTheme } from "../../configs/theme";
 import CallMadeIcon from "@mui/icons-material/CallMade";
+import { ObjectInspector } from 'react-inspector';
 
 export interface InspectorTabProps {
   traceLog: TraceLog | {};
 }
 
-export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
+export const ResponseTab = ({traceLog}: InspectorTabProps) => {
   const muiTheme = useTheme();
   if (!("type" in traceLog)) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
-  let { response, contractAddress } = traceLog as TraceLog;
+  let {response, contractAddress} = traceLog as TraceLog;
 
   if ("error" in response) {
     return (
@@ -35,7 +29,7 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
     );
   }
 
-  let { messages, attributes, events, data } = response.ok;
+  let {messages, attributes, events, data} = response.ok;
   const attributesRowData = attributes.map((attribute, index) => {
     return {
       id: `${index}`,
@@ -47,7 +41,7 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
     return {
       sno: `${index}`,
       id: `${message.id}`,
-      content: YAML.stringify(message.msg, { indent: 2 }),
+      content: YAML.stringify(message.msg, {indent: 2}),
       reply_on: message.reply_on,
     };
   });
@@ -78,7 +72,7 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
       >
         Attributes
       </Typography>
-      <Grid item flex={1} sx={{ height: "10vh", maxHeight: "20vh", mt: 1 }}>
+      <Grid item flex={1} sx={{height: "10vh", maxHeight: "20vh", mt: 1}}>
         <T1Container>
           <TableLayout
             rows={attributesRowData}
@@ -103,7 +97,7 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
         Messages
       </Typography>
 
-      <Grid item flex={1} sx={{ height: "10vh", maxHeight: "20vh", mt: 1 }}>
+      <Grid item flex={1} sx={{height: "10vh", maxHeight: "20vh", mt: 1}}>
         <T1Container>
           <TableLayout
             rows={messagesRowData}
@@ -121,17 +115,17 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
   );
 };
 
-export const SummaryTab = ({ traceLog }: InspectorTabProps) => {
+export const SummaryTab = ({traceLog}: InspectorTabProps) => {
   const muiTheme = useTheme();
   if (!("type" in traceLog)) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
-  let { type, msg, env, response, contractAddress } = traceLog as TraceLog;
+  let {type, msg, env, response, contractAddress} = traceLog as TraceLog;
 
   return (
     <Grid>
-      <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
+      <Typography variant="subtitle2" sx={{fontWeight: "bold"}}>
         wasm/execute
       </Typography>
       <Typography
@@ -144,10 +138,10 @@ export const SummaryTab = ({ traceLog }: InspectorTabProps) => {
       >
         Info
       </Typography>
-      <Grid item flex={1} sx={{ height: "10vh", maxHeight: "20vh", mt: 1 }}>
+      <Grid item flex={1} sx={{height: "10vh", maxHeight: "20vh", mt: 1}}>
         <T1Container>
           <TableLayout
-            rows={[{ id: "1", sender: contractAddress, funds: "10000uluna" }]}
+            rows={[{id: "1", sender: contractAddress, funds: "10000uluna"}]}
             columns={{
               id: "id",
               sender: "Sender",
@@ -163,72 +157,55 @@ export const SummaryTab = ({ traceLog }: InspectorTabProps) => {
   );
 };
 
-const combineCallHistory = (traceLog: TraceLog): any[] => {
-  let res = [...traceLog.callHistory];
+const combineLogs = (traceLog: TraceLog): any[] => {
+  let res = [...traceLog.logs];
   if (traceLog.trace) {
     traceLog.trace.forEach((t) => {
-      res = res.concat(combineCallHistory(t));
+      res = res.concat(combineLogs(t));
     });
   }
   return res;
 };
 
-const combineDebugMsgs = (traceLog: TraceLog): string[] => {
-  let res = [...traceLog.debugMsgs];
-  if (traceLog.trace) {
-    traceLog.trace.forEach((t) => {
-      res = res.concat(combineDebugMsgs(t));
-    });
-  }
-  return res;
-};
-
-export const CallsTab = ({ traceLog }: InspectorTabProps) => {
+export const LogsTab = ({traceLog}: InspectorTabProps) => {
   if (!("type" in traceLog)) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
-  let { trace, callHistory } = traceLog;
-
-  let combinedCallHistory = combineCallHistory(traceLog);
-
+  let combineLogsHistory = combineLogs(traceLog);
   return (
     <Grid>
-      <List>
-        {combinedCallHistory.map((call, i) => {
-          return (
-            <ListItem>
-              <ListItemIcon>
-                <CallMadeIcon />
-              </ListItemIcon>
-              <ListItemText primary={call.call.type} />
-            </ListItem>
-          );
-        })}
-      </List>
+      <ObjectInspector data={combineLogsHistory} theme={"chromeDark"} expandLevel={10}/>
+      {/*<List>*/}
+      {/*  {combineLogsHistory.map((call, i) => {*/}
+      {/*    return (*/}
+      {/*      <>*/}
+      {/*        {call.type === "call" ?*/}
+      {/*          <CallListItem call={call} key={i}/> :*/}
+      {/*          <ListItemText primary={call.type}/>}*/}
+      {/*      </>*/}
+      {/*    );*/}
+      {/*  })}*/}
+      {/*</List>*/}
     </Grid>
   );
 };
 
-export const DebugTab = ({ traceLog }: InspectorTabProps) => {
-  if (!("type" in traceLog)) {
-    return <Typography variant="caption">Nothing here to see.</Typography>;
-  }
-  let combinedDebugMsgs = combineDebugMsgs(traceLog);
+const CallListItem = ({call}: { call: any }) => {
   return (
-    <Grid>
-      <List>
-        {combinedDebugMsgs.map((msg, i) => {
-          return (
-            <ListItem>
-              <ListItemIcon>
-                <CallMadeIcon />
-              </ListItemIcon>
-              <ListItemText primary={msg} />
-            </ListItem>
-          );
-        })}
+    <List>
+      <ListItem>
+        <ListItemIcon>
+          <CallMadeIcon/>
+        </ListItemIcon>
+        <ListItemText primary={call.fn}/>
+      </ListItem>
+      <List disablePadding>
+        <ListItem component="div" disablePadding sx={{pl: 4}}>
+          <ListItemText primary={`"args": ${call.args}`}/>
+          <ListItemText primary={`"result": ${call.result}`}/>
+        </ListItem>
       </List>
-    </Grid>
-  );
+    </List>
+  )
 };
