@@ -16,29 +16,24 @@ import TableLayout from "./TableLayout";
 import React, { useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useParams } from "react-router-dom";
 import T1Container from "../grid/T1Container";
 import { useAtomValue } from "jotai";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
-import { SENDER_ADDRESS } from "../../configs/constants";
+import { DEFAULT_TERRA_ADDRESS, DEFAULT_TERRA_FUNDS } from "../../configs/constants";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useSetBalance } from "../../utils/simulationUtils";
 
 const DEFAULT_VALUE = JSON.stringify(
   {
-    sender: SENDER_ADDRESS,
-    coins: [
-      {denom: "uluna", amount: "1000"},
-      {denom: "uust", amount: "10000"},
-    ],
+    sender: DEFAULT_TERRA_ADDRESS,
+    coins: DEFAULT_TERRA_FUNDS,
   },
   null,
   2
 );
 
 const Accounts = () => {
-  const chainId = useParams().chainId!;
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
   const setNotification = useNotification();
@@ -94,7 +89,6 @@ const Accounts = () => {
     <>
       <Grid item container sx={{mb: 2}}>
         <Grid item flex={1}>
-          <Typography variant="h4">{chainId}</Typography>
           <Typography variant="h6">Accounts</Typography>
         </Grid>
         <Grid item>

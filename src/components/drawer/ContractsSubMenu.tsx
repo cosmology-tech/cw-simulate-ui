@@ -20,8 +20,7 @@ import { useNavigate } from "react-router-dom";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import simulationMetadataState, { Code, Codes } from "../../atoms/simulationMetadataState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { DEFAULT_CHAIN, SENDER_ADDRESS } from "../../configs/constants";
-import { useInstantiateContract } from "../../utils/simulationUtils";
+import { getAddressAndFunds, useInstantiateContract } from "../../utils/simulationUtils";
 import T1Container from "../grid/T1Container";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import UploadModal from "../upload/UploadModal";
@@ -33,7 +32,6 @@ export interface IContractsSubMenuProps {
 }
 
 export default function ContractsSubMenu(props: IContractsSubMenuProps) {
-  const chainId = DEFAULT_CHAIN;
   const {app} = useAtomValue(cwSimulateAppState);
   const {metadata} = useAtomValue(simulationMetadataState);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
@@ -66,7 +64,6 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
         ]}
         optionsExtras={({close}) => <>
           <UploadModal
-            chainId={DEFAULT_CHAIN}
             variant="contract"
             open={openUploadDialog}
             onClose={() => {
@@ -78,18 +75,17 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
       />
 
       {Object.values(codes).map((code) => (
-        <CodeMenuItem key={code?.codeId} chainId={chainId} code={code}/>
+        <CodeMenuItem key={code?.codeId} code={code}/>
       ))}
     </>
   );
 }
 
 interface ICodeMenuItemProps {
-  chainId: string;
   code: Code;
 }
 
-function CodeMenuItem({chainId, code}: ICodeMenuItemProps) {
+function CodeMenuItem({code}: ICodeMenuItemProps) {
   const [openInstantiate, setOpenInstantiate] = useState(false);
 
   return (
@@ -141,7 +137,8 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   const accounts = app.bank.getBalances().toArray();
   const accountList = accounts.map((balance: [string, Coin[]]) => balance[0]);
-  const [account, setAccount] = useState<string>(SENDER_ADDRESS);
+  const addressAndFunds = getAddressAndFunds(app.chainId);
+  const [account, setAccount] = useState<string>(addressAndFunds.address);
   const handleInstantiate = useCallback(async () => {
     if (!code) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -178,7 +175,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         <Autocomplete
           onInputChange={(event, value) => setAccount(value)}
           sx={{width: "100%"}}
-          defaultValue={SENDER_ADDRESS}
+          defaultValue={addressAndFunds.address}
           renderInput={(params: AutocompleteRenderInputParams) =>
             <TextField {...params} label={"Account"}/>}
           options={accountList}/>
