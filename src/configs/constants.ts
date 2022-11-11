@@ -1,4 +1,4 @@
-import { Coin } from "@terran-one/cw-simulate/dist/types";
+import { Coin } from "@terran-one/cw-simulate";
 
 export const DEFAULT_CHAIN = 'phoenix-1';
 export const DEFAULT_TERRA_ADDRESS = 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6';

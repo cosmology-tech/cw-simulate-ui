@@ -249,7 +249,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
 
   return (
     <Dialog open={open} onClose={() => onClose()}>
-      <DialogTitle>Instantiate Message</DialogTitle>
+      <DialogTitle>Instantiate Contract</DialogTitle>
       <DialogContent>
         <DialogContentText>
           Pick an account to instantiate the contract with.
@@ -259,12 +259,12 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
           sx={{width: "100%"}}
           defaultValue={addressAndFunds.address}
           renderInput={(params: AutocompleteRenderInputParams) =>
-            <TextField {...params} label={"Account"}/>}
+            <TextField {...params} label={"Sender"}/>}
           options={accountList}/>
       </DialogContent>
       <DialogContent>
         <DialogContentText>
-          Enter the instantiate message for the contract.
+          InstantiateMsg
         </DialogContentText>
         <T1Container sx={{width: 400, height: 220}}>
           <JsonCodeMirrorEditor
