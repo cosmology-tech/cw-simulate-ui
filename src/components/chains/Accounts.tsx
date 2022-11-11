@@ -19,7 +19,7 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import T1Container from "../grid/T1Container";
 import { useAtomValue } from "jotai";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
-import { DEFAULT_TERRA_ADDRESS } from "../../configs/constants";
+import { DEFAULT_TERRA_ADDRESS, DEFAULT_TERRA_FUNDS } from "../../configs/constants";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 import { validateAccountJSON } from "../../utils/fileUtils";
 import { useSetBalance } from "../../utils/simulationUtils";
@@ -27,10 +27,7 @@ import { useSetBalance } from "../../utils/simulationUtils";
 const DEFAULT_VALUE = JSON.stringify(
   {
     sender: DEFAULT_TERRA_ADDRESS,
-    coins: [
-      {denom: "uluna", amount: "1000"},
-      {denom: "uust", amount: "10000"},
-    ],
+    coins: DEFAULT_TERRA_FUNDS,
   },
   null,
   2

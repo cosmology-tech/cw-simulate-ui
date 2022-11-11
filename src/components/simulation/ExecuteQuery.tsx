@@ -3,39 +3,41 @@ import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import {
-  executeQueryTabState,
   currentStateNumber,
+  executeQueryTabState,
+  jsonErrorState,
 } from "../../atoms/simulationPageAtoms";
 import { Button, Grid } from "@mui/material";
-import { jsonErrorState } from "../../atoms/simulationPageAtoms";
-import { DEFAULT_TERRA_ADDRESS } from "../../configs/constants";
 import { useAtom, useAtomValue } from "jotai";
 import T1Container from "../grid/T1Container";
-import { useExecute, useQuery } from "../../utils/simulationUtils";
+import { getAddressAndFunds, useExecute, useQuery } from "../../utils/simulationUtils";
+import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 
 interface IProps {
   setResponse: (val: JSON | undefined) => void;
   contractAddress: string;
 }
 
-export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
+export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
   const [payload, setPayload] = useState("");
   const executeQueryTab = useAtomValue(executeQueryTabState);
   const [currentState, setCurrentState] = useAtom(currentStateNumber);
   const jsonError = useAtomValue(jsonErrorState);
+  const {app} = useAtomValue(cwSimulateAppState);
+  const addressAndFunds = getAddressAndFunds(app.chainId);
   const setNotification = useNotification();
   const execute = useExecute();
   const query = useQuery();
   const handleExecute = async () => {
     try {
       const res: any = await execute(
-        DEFAULT_TERRA_ADDRESS,
-        [],
+        addressAndFunds.address,
+        addressAndFunds.funds,
         contractAddress,
         JSON.parse(payload)
       );
       const response = res.err
-        ? ({ error: res.val } as unknown as JSON)
+        ? ({error: res.val} as unknown as JSON)
         : (res.unwrap() as JSON);
       setResponse(response);
       if (res.err) {
@@ -90,7 +92,7 @@ export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
       }}
     >
       <Grid item flexShrink={0}>
-        <ExecuteQueryTab />
+        <ExecuteQueryTab/>
       </Grid>
       <Grid item flex={1} position="relative">
         <T1Container>
@@ -100,7 +102,7 @@ export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
           />
         </T1Container>
       </Grid>
-      <Grid item flexShrink={0} sx={{ display: "flex" }}>
+      <Grid item flexShrink={0} sx={{display: "flex"}}>
         <Button
           variant="contained"
           onClick={onRunHandler}
