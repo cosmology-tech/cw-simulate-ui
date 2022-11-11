@@ -91,9 +91,6 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
         gap: 2,
       }}
     >
-      <Grid item flexShrink={0}>
-        <ExecuteQueryTab/>
-      </Grid>
       <Grid item flex={1} position="relative">
         <T1Container>
           <JsonCodeMirrorEditor

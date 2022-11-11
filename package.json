@@ -1,5 +1,5 @@
 {
-  "name": "cw-debug",
+  "name": "@terran-one/cw-simulate-ui",
   "version": "0.1.0",
   "private": true,
   "main": "src/index.tsx",
@@ -12,7 +12,7 @@
     "@mui/material": "^5.10.7",
     "@mui/x-data-grid": "^5.17.10",
     "@mui/x-data-grid-generator": "^5.17.5",
-    "@terran-one/cw-simulate": "^2.4.0",
+    "@terran-one/cw-simulate": "^2.5.0",
     "@terran-one/react-diff-viewer": "^3.1.1",
     "@uiw/react-codemirror": "^4.12.3",
     "jotai": "^1.8.4",
