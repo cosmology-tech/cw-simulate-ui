@@ -83,7 +83,7 @@ export default function StateStepper({ contractAddress }: IProps) {
   };
 
   return (
-    <Grid item sx={{ width: "100%" }}>
+    <Grid item sx={{ width: "100%"}}>
 
       <Stepper
         nonLinear

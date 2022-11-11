@@ -1,5 +1,3 @@
-import ExpandCircleDownOutlinedIcon from "@mui/icons-material/ExpandCircleDownOutlined";
-import MinimizeRoundedIcon from "@mui/icons-material/MinimizeRounded";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import Divider from "@mui/material/Divider";
@@ -12,7 +10,7 @@ import useTheme from "@mui/material/styles/useTheme";
 import type { SxProps } from "@mui/system/styleFunctionSx";
 import React, { ReactNode, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { responseState } from "../../atoms/simulationPageAtoms";
 import { GridSizeProps } from "../../utils/typeUtils";
@@ -21,25 +19,26 @@ import { ExecuteQuery } from "./ExecuteQuery";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 import CollapsibleIcon from "../CollapsibleIcon";
+import { workerData } from "worker_threads";
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
+const StyledPaper = styled(Paper)(({theme}) => ({
   ...theme.typography.body2,
   padding: theme.spacing(1),
 }));
 
 const Simulation = () => {
-  const { instanceAddress: contractAddress } = useParams();
+  const {instanceAddress: contractAddress} = useParams();
   const isFileUploaded = useAtomValue(fileUploadedState);
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
-        <CollapsibleExecuteQuery contractAddress={contractAddress!} />
-        <Divider sx={{ my: 1 }} />
-        <StateStepper contractAddress={contractAddress!} />
+        <CollapsibleExecuteQuery contractAddress={contractAddress!}/>
+        <Divider sx={{my: 1}}/>
+        <StateStepper contractAddress={contractAddress!}/>
       </Column>
       <Column xs={8} className="T1Simulation-right">
-        <Widget size={6}>
-          <StateRenderer isFileUploaded={isFileUploaded} />
+        <Widget>
+          <StateRenderer isFileUploaded={isFileUploaded}/>
         </Widget>
       </Column>
     </SplitView>
@@ -53,12 +52,12 @@ interface ISplitViewProps {
   className?: string;
 }
 
-function SplitView({ children, ...props }: ISplitViewProps) {
+function SplitView({children, ...props}: ISplitViewProps) {
   return (
     <Grid
       container
       direction="row"
-      spacing={2}
+      spacing={1}
       sx={{
         height: "100%",
       }}
@@ -74,7 +73,7 @@ interface IColumnProps extends GridSizeProps {
   className?: string;
 }
 
-function Column({ children, ...props }: IColumnProps) {
+function Column({children, ...props}: IColumnProps) {
   const theme = useTheme();
 
   return (
@@ -149,7 +148,7 @@ function CollapsibleExecuteQuery({
   const [showExecuteQuery, setShowExecuteQuery] = useState(true);
 
   return (
-    <Box sx={{ borderRadius: 1, overflow: "hidden", pb: 0.5 }}>
+    <Box sx={{borderRadius: 1, overflow: "hidden", pb: 0.5}}>
       <Box
         sx={{
           display: "flex",
@@ -162,11 +161,11 @@ function CollapsibleExecuteQuery({
         }}
         onClick={() => setShowExecuteQuery((curr) => !curr)}
       >
-        <CollapsibleIcon expanded={showExecuteQuery} />
-        <Typography sx={{ fontSize: "1.1rem" }}>Execute & Query</Typography>
+        <CollapsibleIcon expanded={showExecuteQuery}/>
+        <Typography sx={{fontSize: "1.1rem"}}>Execute & Query</Typography>
       </Box>
       <Collapse in={showExecuteQuery}>
-        <Box sx={{ height: 280 }}>
+        <Box sx={{height: 280}}>
           <ExecuteQuery
             setResponse={setResponse}
             contractAddress={contractAddress!}
