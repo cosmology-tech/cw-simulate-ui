@@ -47,7 +47,7 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
     return {
       sno: `${index}`,
       id: `${message.id}`,
-      content: YAML.stringify(message.msg),
+      content: YAML.stringify(message.msg, { indent: 2 }),
       reply_on: message.reply_on,
     };
   });

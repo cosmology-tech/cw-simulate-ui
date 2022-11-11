@@ -54,7 +54,6 @@ export const OutputCard = ({
         <ReactDiffViewer
           oldValue={beforeState}
           newValue={afterState}
-          splitView={false}
         />
       ) : (
         <Typography variant="body2" color={muiTheme.palette.grey[50]}>

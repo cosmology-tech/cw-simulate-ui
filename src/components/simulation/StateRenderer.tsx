@@ -89,6 +89,7 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
         width="50%"
         gap={2}
         flexWrap="nowrap"
+        sx={{ pl: 1 }}
       >
         <Grid item>
           <StateTab isVisible={isVisible} setIsVisible={setIsVisible} />
