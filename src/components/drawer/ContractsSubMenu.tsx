@@ -20,13 +20,18 @@ import { useNavigate } from "react-router-dom";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import simulationMetadataState, { Code, Codes } from "../../atoms/simulationMetadataState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { getAddressAndFunds, useInstantiateContract } from "../../utils/simulationUtils";
+import {
+  getAddressAndFunds,
+  useDeleteCode,
+  useInstantiateContract
+} from "../../utils/simulationUtils";
 import T1Container from "../grid/T1Container";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import UploadModal from "../upload/UploadModal";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
+import { DeleteForever } from "@mui/icons-material";
 
 export interface IContractsSubMenuProps {
 }
@@ -64,6 +69,7 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
         ]}
         optionsExtras={({close}) => <>
           <UploadModal
+            chainId={app.chainId}
             variant="contract"
             open={openUploadDialog}
             onClose={() => {
@@ -87,6 +93,7 @@ interface ICodeMenuItemProps {
 
 function CodeMenuItem({code}: ICodeMenuItemProps) {
   const [openInstantiate, setOpenInstantiate] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
   return (
     <T1MenuItem
@@ -111,9 +118,83 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
               close();
             }}
           />
+        </MenuItem>,
+        <MenuItem key={"delete"} onClick={() => setOpenDelete(true)}>
+          <ListItemIcon>
+            <DeleteForever/>
+          </ListItemIcon>
+          <ListItemText>
+            Delete
+          </ListItemText>
+          <DeleteDialog
+            code={code}
+            open={openDelete}
+            onClose={() => {
+              setOpenDelete(false);
+              close();
+            }}
+          />
         </MenuItem>
       ]}
+      optionsExtras={({close}) => <>
+        <InstantiateDialog
+          code={code}
+          open={openInstantiate}
+          onClose={() => {
+            setOpenInstantiate(false);
+            close();
+          }}
+        />
+        <DeleteDialog
+          code={code}
+          open={openDelete}
+          onClose={() => {
+            setOpenDelete(false);
+            close();
+          }}
+        />
+      </>}
     />
+  );
+}
+
+interface IDeleteDialogProps {
+  code: Code;
+  open: boolean;
+  onClose: () => void;
+}
+
+function DeleteDialog(props: IDeleteDialogProps) {
+  const {code, open, onClose} = props;
+  const deleteCode = useDeleteCode();
+  const setNotification = useNotification();
+  const handleDeleteContract = () => {
+    deleteCode(code.codeId);
+    setNotification("Successfully deleted contract");
+  }
+
+  return (
+    <Dialog
+      open={open}
+      onClose={onClose}
+    >
+      <DialogTitle>
+        Delete contract
+      </DialogTitle>
+      <DialogContent>
+        <DialogContentText>
+          Are you sure you want to delete this contract?
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>
+          Cancel
+        </Button>
+        <Button onClick={handleDeleteContract}>
+          Delete
+        </Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 
@@ -155,6 +236,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         return;
       }
       const instance = await createContractInstance(sender, funds, app.wasm.lastCodeId, instantiateMsg);
+      // @ts-ignore
       const contractAddress: string = instance?.unwrap().events[0].attributes[0].value;
       setNotification(`Successfully instantiated ${contractName} with address ${contractAddress}`);
       onClose();
