@@ -12,7 +12,7 @@ import {
   blockState,
 } from "../../atoms/simulationPageAtoms";
 import { StateTab } from "./StateTab";
-import { SummaryTab, ResponseTab, CallsTab, DebugTab } from "./InspectorTabs";
+import { SummaryTab, ResponseTab, LogsTab } from "./InspectorTabs";
 import T1Container from "../grid/T1Container";
 import { useTheme } from "../../configs/theme";
 
@@ -43,11 +43,11 @@ export const StateRenderer = ({ isFileUploaded }: IProps) => {
     case "response":
       renderedTab = <ResponseTab traceLog={stepTrace} />;
       break;
-    case "calls":
-      renderedTab = <CallsTab traceLog={stepTrace} />;
+    case "logs":
+      renderedTab = <LogsTab traceLog={stepTrace} />;
       break;
     default:
-      renderedTab = <DebugTab traceLog={stepTrace} />;
+      renderedTab = <LogsTab traceLog={stepTrace} />;
   }
 
   return (

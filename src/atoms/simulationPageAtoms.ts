@@ -29,7 +29,7 @@ export const executeQueryTabState = atom<string>("execute");
 export const jsonErrorState = atom<string>("");
 export const responseState = atom<JSON | undefined>(undefined);
 export const stateResponseTabState =
-  atom<"summary" | "response" | "calls" | "debug">("summary");
+  atom<"summary" | "response" | "logs">("summary");
 export const stepTraceState = atom<ExecuteTraceLog | ReplyTraceLog | {}>({});
 export const traceState = atom<TraceLog[]>([]);
 export const stepRequestState = atom<IRequest | undefined>(undefined);
