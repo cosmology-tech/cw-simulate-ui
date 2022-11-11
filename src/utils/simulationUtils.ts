@@ -160,11 +160,16 @@ export function useDeleteCode() {
   const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
   const [{metadata}, setSimulationMetadata] = useAtom(simulationMetadataState);
   return useCallback((codeId: number) => {
-    app.store.deleteIn(["wasm", "codes", codeId]);
-    setSimulateApp({app});
-    // delete code from metadata
-    delete metadata.codes[codeId];
-    setSimulationMetadata({metadata});
+    setSimulateApp(({app}) => {
+      // TODO: WE CAN'T DELETE CODE YET. FIX LATER.
+      app.store.deleteIn(["wasm", "codes", codeId]);
+      return {app};
+    });
+
+    setSimulationMetadata(({metadata}) => {
+      delete metadata.codes[codeId];
+      return {metadata};
+    });
   }, [app, metadata]);
 }
 
