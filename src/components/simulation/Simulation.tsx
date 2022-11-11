@@ -162,7 +162,7 @@ function CollapsibleExecuteQuery({
         onClick={() => setShowExecuteQuery((curr) => !curr)}
       >
         <CollapsibleIcon expanded={showExecuteQuery}/>
-        <Typography sx={{fontSize: "1.1rem"}}>Execute & Query</Typography>
+        <Typography sx={{fontSize: "1.1rem"}}>Execute</Typography>
       </Box>
       <Collapse in={showExecuteQuery}>
         <Box sx={{height: 280}}>
