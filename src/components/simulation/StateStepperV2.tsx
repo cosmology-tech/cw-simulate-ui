@@ -194,7 +194,7 @@ export default function StateStepperV2({ contractAddress }: IProps) {
   const traces = useAtomValue(traceState);
   const [activeStep, setActiveStep] = useState("");
   const currentState = useAtomValue(currentStateNumber);
-  console.log("Traces", traces);
+
   const handleStateView = (state: Map<string, any>) => {
     const entries =
       //@ts-ignore
@@ -217,9 +217,7 @@ export default function StateStepperV2({ contractAddress }: IProps) {
     return responseObj;
   };
   const handleClick = (e: SyntheticEvent, nodeId: string) => {
-    console.log(nodeId);
     setActiveStep(nodeId);
-    console.log("****", getTrace(nodeId.split("-"), traces));
     setCurrentTab("summary");
   };
   useEffect(() => {
