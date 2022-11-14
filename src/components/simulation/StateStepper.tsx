@@ -142,6 +142,7 @@ function renderTreeItems(
     if (!trace.trace?.length) {
       return (
         <StyledTreeItem
+          key={index}
           sx={{ ml: depth * 2 }}
           nodeId={
             prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
