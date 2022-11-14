@@ -1,9 +1,9 @@
 import { CWSimulateApp } from "@terran-one/cw-simulate";
 import { atom } from "jotai";
-import { TerraConfig } from "../configs/constants";
+import { defaults } from "../configs/constants";
 
 const cwSimulateAppState = atom({
-  app: new CWSimulateApp(TerraConfig),
+  app: new CWSimulateApp(defaults.chains.terra),
 });
 
 export default cwSimulateAppState;

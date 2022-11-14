@@ -8,20 +8,7 @@ import { Coin } from "@terran-one/cw-simulate/dist/types";
 import cwSimulateAppState from "../atoms/cwSimulateAppState";
 import { CWSimulateAppOptions } from "@terran-one/cw-simulate/dist/CWSimulateApp";
 import { traceState } from "../atoms/simulationPageAtoms";
-import {
-  DEFAULT_INJECTIVE_ADDRESS,
-  DEFAULT_INJECTIVE_FUNDS,
-  DEFAULT_JUNO_ADDRESS,
-  DEFAULT_JUNO_FUNDS,
-  DEFAULT_OSMOSIS_ADDRESS,
-  DEFAULT_OSMOSIS_FUNDS,
-  DEFAULT_TERRA_ADDRESS,
-  DEFAULT_TERRA_FUNDS,
-  InjectiveConfig,
-  JunoConfig,
-  OsmosisConfig,
-  TerraConfig
-} from "../configs/constants";
+import { defaults } from "../configs/constants";
 
 export type SimulationJSON = AsJSON<{
   simulationMetadata: SimulationMetadata;
@@ -181,17 +168,12 @@ export function useDeleteAllInstances() {
 }
 
 export function getAddressAndFunds(chainId: string | undefined): AddressAndFunds {
-  switch (chainId) {
-    case TerraConfig.chainId:
-      return {address: DEFAULT_TERRA_ADDRESS, funds: DEFAULT_TERRA_FUNDS};
-    case JunoConfig.chainId:
-      return {address: DEFAULT_JUNO_ADDRESS, funds: DEFAULT_JUNO_FUNDS};
-    case OsmosisConfig.chainId:
-      return {address: DEFAULT_OSMOSIS_ADDRESS, funds: DEFAULT_OSMOSIS_FUNDS};
-    case InjectiveConfig.chainId:
-      return {address: DEFAULT_INJECTIVE_ADDRESS, funds: DEFAULT_INJECTIVE_FUNDS};
-    default:
-      return {address: DEFAULT_TERRA_ADDRESS, funds: DEFAULT_TERRA_FUNDS};
+  let chain = Object.values(defaults.chains).find(chain => chain.chainId === chainId);
+  if (!chain) chain = defaults.chains.terra;
+  
+  return {
+    address: chain.sender,
+    funds: chain.funds,
   }
 }
 

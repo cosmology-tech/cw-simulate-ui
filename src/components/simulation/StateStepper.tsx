@@ -203,6 +203,7 @@ export default function StateStepper({ contractAddress }: IProps) {
       )
     );
   };
+  
   const getRequestObject = (currentTrace: TraceLog) => {
     const { env, type, msg } = currentTrace;
     const responseObj = {
@@ -213,9 +214,11 @@ export default function StateStepper({ contractAddress }: IProps) {
     };
     return responseObj;
   };
+  
   const handleClick = (e: SyntheticEvent, nodeId: string) => {
     setActiveStep(nodeId);
   };
+  
   useEffect(() => {
     const executionStep = getTrace(activeStep.split("-"), traces);
     handleStateView(executionStep?.storeSnapshot);
