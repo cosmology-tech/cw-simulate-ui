@@ -143,7 +143,7 @@ function renderTreeItems(
     if (trace.trace?.length === 0) {
       return (
         <StyledTreeItem
-          sx={{ ml: depth * 2 }}
+          sx={{ml: depth >= 1 ? depth * 2 : 0}}
           nodeId={
             prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
           }
@@ -154,6 +154,7 @@ function renderTreeItems(
     } else {
       return (
         <StyledTreeItem
+          sx={{ml: depth >= 1 ? depth * 2 : 0}}
           nodeId={
             prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
           }

@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
-import State from "./components/chains/State";
 import Accounts from "./components/chains/Accounts";
 import T1AppBar from "./components/drawer/T1AppBar";
 import VoidScreen from "./components/screens/VoidScreen";
@@ -20,7 +19,6 @@ function App() {
             <Routes>
               <Route index element={<WelcomeScreen/>}/>
               <Route element={<SimulationScreen/>}>
-                <Route path="state" element={<State/>}/>
                 <Route path="accounts" element={<Accounts/>}/>
                 <Route path="instances/:instanceAddress" element={<Simulation/>}/>
               </Route>

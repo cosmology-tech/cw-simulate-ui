@@ -54,13 +54,6 @@ const T1Drawer = (props: IT1Drawer) => {
             tooltip="Contract Instances"
           />
           <MenuIconButton
-            menu="states"
-            Icon={StorageIcon}
-            setMenu={setMenu}
-            tooltip="All States"
-            onClick={() => {navigate('/state')}}
-          />
-          <MenuIconButton
             menu="accounts"
             Icon={RecentActorsIcon}
             setMenu={setMenu}
@@ -111,7 +104,7 @@ interface IDrawerBar {
 
 const DrawerBar = React.forwardRef<HTMLDivElement | null, IDrawerBar>(({ children, width }, ref) => {
   const theme = useTheme();
-  
+
   return (
     <Paper
       ref={ref}
@@ -149,7 +142,7 @@ interface ICustomDrawer {
 
 function Drawer({ children, width, open }: ICustomDrawer) {
   const theme = useTheme();
-  
+
   return (
     <Slide
       direction="right"
