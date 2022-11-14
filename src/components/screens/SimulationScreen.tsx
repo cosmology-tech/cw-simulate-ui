@@ -2,9 +2,9 @@ import { Grid } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import T1Drawer from "../drawer/T1Drawer";
 
-export interface IMainScreen {}
+export interface ISimulationScreen {}
 
-export default function MainScreen(props: IMainScreen) {
+export default function SimulationScreen(props: ISimulationScreen) {
   return (
     <Grid
       item

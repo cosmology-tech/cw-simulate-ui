@@ -16,16 +16,12 @@ import { SummaryTab, ResponseTab, LogsTab } from "./InspectorTabs";
 import T1Container from "../grid/T1Container";
 import { useTheme } from "../../configs/theme";
 
-interface IProps {
-  isFileUploaded: boolean;
-}
+interface IProps {}
 
-export const StateRenderer = ({ isFileUploaded }: IProps) => {
+export const StateRenderer = ({}: IProps) => {
   const [currentTab, setCurrentTab] = useAtom(stateResponseTabState);
   const compareStateObj = useAtomValue(compareStates);
   const [isVisible, setIsVisible] = React.useState(false);
-  const response = useAtomValue(stepResponseState);
-  const request = useAtomValue(stepRequestState);
   const currentJSON = useAtomValue(blockState);
   const stepTrace = useAtomValue(stepTraceState);
   const muiTheme = useTheme();

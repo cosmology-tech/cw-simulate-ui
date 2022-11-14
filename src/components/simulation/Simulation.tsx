@@ -10,8 +10,7 @@ import useTheme from "@mui/material/styles/useTheme";
 import type { SxProps } from "@mui/system/styleFunctionSx";
 import React, { ReactNode, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useAtomValue, useSetAtom } from "jotai";
-import { fileUploadedState } from "../../atoms/fileUploadedState";
+import { useSetAtom } from "jotai";
 import { responseState } from "../../atoms/simulationPageAtoms";
 import { GridSizeProps } from "../../utils/typeUtils";
 import T1Container from "../grid/T1Container";
@@ -27,7 +26,6 @@ const StyledPaper = styled(Paper)(({theme}) => ({
 
 const Simulation = () => {
   const {instanceAddress: contractAddress} = useParams();
-  const isFileUploaded = useAtomValue(fileUploadedState);
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
@@ -37,7 +35,7 @@ const Simulation = () => {
       </Column>
       <Column xs={8} className="T1Simulation-right">
         <Widget>
-          <StateRenderer isFileUploaded={isFileUploaded}/>
+          <StateRenderer />
         </Widget>
       </Column>
     </SplitView>

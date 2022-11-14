@@ -3,7 +3,6 @@ import { useAtomValue } from "jotai";
 import React from "react";
 import Widget from "./Widget";
 import Row from "./Row";
-import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 
@@ -12,8 +11,6 @@ interface IHistoryProps {
 }
 
 export default function ({contractAddress}: IHistoryProps) {
-  const isFileUploaded = useAtomValue(fileUploadedState);
-
   return (
     <Widget size={6}>
       <Row xs={12}>
@@ -52,7 +49,7 @@ export default function ({contractAddress}: IHistoryProps) {
             <StateStepper contractAddress={contractAddress!}/>
           </Row>
           <Row xs={8}>
-            <StateRenderer isFileUploaded={isFileUploaded}/>
+            <StateRenderer />
           </Row>
         </Grid>
       </Row>

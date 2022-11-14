@@ -1,6 +1,5 @@
 import React, { Suspense, useContext, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
-import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
 import { useSetAtom } from "jotai";
@@ -27,7 +26,6 @@ const FileUpload = ({
   onAccept,
   onClear
 }: IProps) => {
-  const setIsFileUploaded = useSetAtom(fileUploadedState);
   const [filename, setFilename] = useState('');
 
   const text = dropzoneText || "Click to upload a simulation file or contract binary, or drop a file here";
@@ -42,15 +40,7 @@ const FileUpload = ({
   const deleteFile = () => {
     onClear();
     setFilename('');
-    setIsFileUploaded(false);
-    setNotification('File removed');
   };
-
-  const setUploadSuccessState = (filename: string) => {
-    setIsFileUploaded(true);
-    setFilename(filename);
-    setNotification("File uploaded successfully");
-  }
 
   const handleOnFileDrop = (files: File[]) => {
     if (!files.length) {
@@ -86,14 +76,13 @@ const FileUpload = ({
 
         try {
           const buffer = Buffer.from(extractByteCode(contents));
+          setFilename(file.name);
           onAccept(file.name, buffer);
         } catch (ex: any) {
           setNotification(`Failed to extract & store WASM bytecode: ${ex.message ?? ex}`, {severity: "error"});
           console.error(ex);
           return;
         }
-
-        setUploadSuccessState(file.name);
       }
 
       reader.onerror = () => {
@@ -113,7 +102,7 @@ const FileUpload = ({
         //   return;
         // }
 
-        setUploadSuccessState(file.name);
+        setFilename(file.name);
         onAccept(file.name, json);
       };
 
