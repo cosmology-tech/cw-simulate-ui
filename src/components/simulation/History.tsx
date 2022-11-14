@@ -11,7 +11,7 @@ interface IHistoryProps {
   contractAddress: string;
 }
 
-export default function ({ contractAddress }: IHistoryProps) {
+export default function ({contractAddress}: IHistoryProps) {
   const isFileUploaded = useAtomValue(fileUploadedState);
 
   return (
@@ -49,10 +49,10 @@ export default function ({ contractAddress }: IHistoryProps) {
           }}
         >
           <Row xs={4}>
-            <StateStepper contractAddress={contractAddress!} />
+            <StateStepper contractAddress={contractAddress!}/>
           </Row>
           <Row xs={8}>
-            <StateRenderer isFileUploaded={isFileUploaded} />
+            <StateRenderer isFileUploaded={isFileUploaded}/>
           </Row>
         </Grid>
       </Row>

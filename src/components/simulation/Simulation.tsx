@@ -17,9 +17,8 @@ import { GridSizeProps } from "../../utils/typeUtils";
 import T1Container from "../grid/T1Container";
 import { ExecuteQuery } from "./ExecuteQuery";
 import { StateRenderer } from "./StateRenderer";
-import StateStepper from "./StateStepper";
 import CollapsibleIcon from "../CollapsibleIcon";
-import { workerData } from "worker_threads";
+import StateStepper from "./StateStepper";
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   ...theme.typography.body2,

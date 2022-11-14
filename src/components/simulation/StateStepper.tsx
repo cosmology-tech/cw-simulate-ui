@@ -1,39 +1,198 @@
 import * as React from "react";
-import Stepper from "@mui/material/Stepper";
-import { Grid, Step, StepContent, StepLabel } from "@mui/material";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { SyntheticEvent, useEffect, useState } from "react";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import TreeView from "@mui/lab/TreeView";
+import TreeItem, { treeItemClasses, TreeItemProps } from "@mui/lab/TreeItem";
+import Typography from "@mui/material/Typography";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { SvgIconProps } from "@mui/material/SvgIcon";
+import { TraceLog } from "@terran-one/cw-simulate/dist/types";
+import { useAtomValue, useSetAtom } from "jotai";
 import {
+  blockState,
   currentStateNumber,
+  stateResponseTabState,
   stepRequestState,
   stepResponseState,
-  stateResponseTabState,
-  traceState,
-  blockState,
   stepTraceState,
+  traceState,
 } from "../../atoms/simulationPageAtoms";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import { SubStepper } from "./SubStepper";
-import { ComparePopup } from "./ComparePopup";
-import { useEffect, useState } from "react";
+import useMuiTheme from "@mui/material/styles/useTheme";
 import { Map } from "immutable";
-import { TraceLog } from "@terran-one/cw-simulate";
 
+declare module "react" {
+  interface CSSProperties {
+    "--tree-view-color"?: string;
+    "--tree-view-bg-color"?: string;
+  }
+}
+
+type StyledTreeItemProps = TreeItemProps & {
+  bgColor?: string;
+  color?: string;
+  labelIcon: JSX.Element;
+  labelInfo?: string;
+  labelText: string;
+};
+
+const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  [`& .${treeItemClasses.content}`]: {
+    color: theme.palette.text.secondary,
+    borderTopRightRadius: theme.spacing(2),
+    borderBottomRightRadius: theme.spacing(2),
+    paddingRight: theme.spacing(1),
+    fontWeight: theme.typography.fontWeightMedium,
+    "&.Mui-expanded": {
+      fontWeight: theme.typography.fontWeightRegular,
+    },
+    "&:hover": {
+      backgroundColor: theme.palette.action.hover,
+    },
+    "&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused": {
+      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      color: "var(--tree-view-color)",
+    },
+    [`& .${treeItemClasses.label}`]: {
+      fontWeight: "inherit",
+      color: "inherit",
+    },
+  },
+  [`& .${treeItemClasses.group}`]: {
+    marginLeft: 0,
+    [`& .${treeItemClasses.content}`]: {
+      paddingLeft: theme.spacing(2),
+    },
+  },
+}));
+
+function StyledTreeItem(props: StyledTreeItemProps) {
+  const { bgColor, color, labelIcon, labelInfo, labelText, ...other } = props;
+
+  return (
+    <StyledTreeItemRoot
+      label={
+        <Box sx={{ display: "flex", alignItems: "center", p: 0.5, pr: 0 }}>
+          <Box sx={{ p: 1 }}>{labelIcon}</Box>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: "inherit", flexGrow: 1 }}
+          >
+            {labelText}
+          </Typography>
+        </Box>
+      }
+      style={{
+        "--tree-view-color": color,
+        "--tree-view-bg-color": bgColor,
+      }}
+      {...other}
+    />
+  );
+}
+
+type NumberIconProps = SvgIconProps & {
+  number: number;
+};
+
+function NumberIcon<SvgIconComponent>({ number }: NumberIconProps) {
+  const theme = useMuiTheme();
+  return (
+    <Box
+      sx={{
+        width: 24,
+        height: 24,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: "50%",
+        bgcolor: theme.palette.grey[900],
+      }}
+    >
+      <Typography
+        variant="body2"
+        sx={{ color: theme.palette.common.white, fontWeight: "bold" }}
+      >
+        {number}
+      </Typography>
+    </Box>
+  );
+}
+
+function getTreeItemLabel(trace: TraceLog) {
+  switch (trace.type) {
+    case "reply":
+      return `reply : ${trace.msg.id}`;
+    case "instantiate":
+      return "instantiate";
+    case "execute":
+      return Object.keys(trace.msg)[0];
+    default:
+      return "unknown";
+  }
+}
+
+function renderTreeItems(
+  traces?: TraceLog[],
+  depth: number = 0,
+  prefix: string = ""
+) {
+  return traces?.map((trace: TraceLog, index: number) => {
+    if (trace.trace?.length === 0) {
+      return (
+        <StyledTreeItem
+          sx={{ ml: depth * 2 }}
+          nodeId={
+            prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
+          }
+          labelIcon={<NumberIcon number={index + 1} />}
+          labelText={getTreeItemLabel(trace)}
+        />
+      );
+    } else {
+      return (
+        <StyledTreeItem
+          nodeId={
+            prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
+          }
+          labelIcon={<NumberIcon number={index + 1} />}
+          labelText={getTreeItemLabel(trace)}
+        >
+          {renderTreeItems(
+            trace.trace,
+            depth + 1,
+            prefix !== "" ? `${prefix}-${index}` : `${index}`
+          )}
+        </StyledTreeItem>
+      );
+    }
+  });
+}
+const getTrace = (locArray: string[], traces: TraceLog[]) => {
+  let traceObj: TraceLog = traces[Number(locArray[0])];
+  for (let i = 1; i < locArray.length - 1; i++) {
+    if (traceObj.trace) {
+      traceObj = traceObj.trace[Number(locArray[i])];
+    }
+  }
+  return traceObj;
+};
 interface IProps {
   contractAddress: string;
 }
 
 export default function StateStepper({ contractAddress }: IProps) {
-  const [currentState, _] = useAtom(currentStateNumber);
-  const [activeStep, setActiveStep] = useState(0);
-  const [, setStepState] = useAtom(blockState);
-  const [isOpen, setIsOpen] = useState(false);
-  const [, stepRequestObj] = useAtom(stepRequestState);
-  const [, stepResponseObj] = useAtom(stepResponseState);
   const setCurrentTab = useSetAtom(stateResponseTabState);
-  const trace = useAtomValue(traceState);
   const setStepTrace = useSetAtom(stepTraceState);
-  const containerRef = React.useRef();
+  const setStepState = useSetAtom(blockState);
+  const stepRequestObj = useSetAtom(stepRequestState);
+  const stepResponseObj = useSetAtom(stepResponseState);
+  const traces = useAtomValue(traceState);
+  const [activeStep, setActiveStep] = useState("");
+  const currentState = useAtomValue(currentStateNumber);
+
   const handleStateView = (state: Map<string, any>) => {
     const entries =
       //@ts-ignore
@@ -45,7 +204,6 @@ export default function StateStepper({ contractAddress }: IProps) {
       )
     );
   };
-
   const getRequestObject = (currentTrace: TraceLog) => {
     const { env, type, msg } = currentTrace;
     const responseObj = {
@@ -56,12 +214,12 @@ export default function StateStepper({ contractAddress }: IProps) {
     };
     return responseObj;
   };
+  const handleClick = (e: SyntheticEvent, nodeId: string) => {
+    setActiveStep(nodeId);
+    setCurrentTab("summary");
+  };
   useEffect(() => {
-    setActiveStep(trace.length - 1);
-  }, [currentState, contractAddress]);
-
-  useEffect(() => {
-    const executionStep = trace[activeStep];
+    const executionStep = getTrace(activeStep.split("-"), traces);
     handleStateView(executionStep?.storeSnapshot);
     stepRequestObj(getRequestObject(executionStep));
     //@ts-ignore
@@ -70,91 +228,22 @@ export default function StateStepper({ contractAddress }: IProps) {
         { error: executionStep?.response.error }
       : executionStep?.response;
     stepResponseObj(resp);
-    if (activeStep > 0) {
-      setStepTrace(trace[activeStep]);
-    } else {
-      setStepTrace([]);
-    }
+    setStepTrace(executionStep);
   }, [activeStep, contractAddress]);
 
-  const handleStep = (step: number) => {
-    setActiveStep(step);
-    setCurrentTab("response");
-  };
+  useEffect(() => {}, [currentState]);
 
   return (
-    <Grid item sx={{ width: "100%"}}>
-
-      <Stepper
-        nonLinear
-        activeStep={activeStep}
-        orientation="vertical"
-        sx={{ width: "90%" }}
-      >
-        {trace?.map((infoObj, index: number) => {
-          const { response } = infoObj;
-          const request = getRequestObject(infoObj);
-          const label = Object.keys(request.executeMsg)[0];
-          return (
-            <Step
-              ref={(el) =>
-                activeStep === index &&
-                activeStep === trace.length - 1 &&
-                el?.scrollIntoView()
-              }
-              key={`${label}${index}`}
-              onClick={() => handleStep(index)}
-              sx={{
-                "& .MuiStepIcon-root": {
-                  //@ts-ignore
-                  color: response.error ? "red" : "",
-                },
-                "& .MuiStepLabel-root .Mui-active": {
-                  //@ts-ignore
-                  color: response.error !== undefined ? "#690000" : "",
-                },
-              }}
-            >
-              <StepLabel>
-                <Grid sx={{ display: "flex", justifyContent: "space-between" }}>
-                  <Grid container alignItems="center">
-                    {trace[index].trace && trace[index].trace!.length > 0 ? (
-                      activeStep === index && isOpen ? (
-                        <RemoveIcon
-                          fontSize="small"
-                          onClick={() => setIsOpen(false)}
-                        />
-                      ) : (
-                        <AddIcon
-                          fontSize="small"
-                          onClick={() => {
-                            setIsOpen(true);
-                          }}
-                        />
-                      )
-                    ) : (
-                      ""
-                    )}
-                    {label}
-                  </Grid>
-                  {trace.length > 1 && (
-                    <ComparePopup
-                      currentActiveState={activeStep}
-                      trace={trace}
-                    />
-                  )}
-                </Grid>
-              </StepLabel>
-              <StepContent>
-                {activeStep === index &&
-                  isOpen &&
-                  infoObj.trace &&
-                  index > 0 && <SubStepper traceLog={infoObj.trace} />}
-              </StepContent>
-            </Step>
-          );
-        })}
-      </Stepper>
-    </Grid>
+    <TreeView
+      aria-label="StateStepper"
+      defaultExpanded={["3"]}
+      defaultCollapseIcon={<ArrowDropDownIcon />}
+      defaultExpandIcon={<ArrowRightIcon />}
+      defaultEndIcon={<div style={{ width: 24 }} />}
+      sx={{ height: 264, flexGrow: 1, maxWidth: "100%", overflowY: "auto" }}
+      onNodeSelect={handleClick}
+    >
+      {renderTreeItems(traces)}
+    </TreeView>
   );
 }
