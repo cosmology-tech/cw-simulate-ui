@@ -3,7 +3,6 @@ import ReactDiffViewer from "@terran-one/react-diff-viewer";
 import { useAtomValue } from "jotai";
 import React, {useEffect, useState} from "react";
 import { blockState, compareStates } from "../../atoms/simulationPageAtoms";
-import { useTheme } from "../../configs/theme";
 import T1JsonTree from "../T1JsonTree";
 import CloseDiff from "./CloseDiff";
 
