@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Box, Grid } from "@mui/material";
 import { Route, Routes } from "react-router-dom";
 import State from "./components/chains/State";
 import Accounts from "./components/chains/Accounts";
@@ -9,10 +9,29 @@ import WelcomeScreen from "./components/screens/WelcomeScreen";
 import Simulation from "./components/simulation/Simulation";
 import T1Container from "./components/grid/T1Container";
 import "./index.css";
+import CommandPalette, { Command } from "react-command-palette";
+import React from "react";
+
+const commands = [{
+  name: "toggle dark mode",
+  command() {
+  },
+}, {
+  name: "Reset simulation",
+  command() {
+  }
+}, {
+  name: "Upload a contract",
+  command() {
+  }
+}] as Command[];
 
 function App() {
   return (
     <Grid container direction="column" width="100vw" height="100vh" className="T1App-root">
+      <Box sx={{textAlign: 'center'}}>
+        <CommandPalette commands={commands}/>
+      </Box>
       <T1AppBar/>
       <Grid item flex={1} sx={{display: 'relative'}}>
         <T1Container>

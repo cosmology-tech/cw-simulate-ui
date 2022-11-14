@@ -7,7 +7,7 @@ import App from "./App";
 import { darkModeState } from "./atoms/uiState";
 import SnackbarNotification from "./components/notification/SnackbarNotification";
 import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
-import { light as lightTheme, dark as darkTheme } from "./configs/theme";
+import { dark as darkTheme, light as lightTheme } from "./configs/theme";
 import "./styles/styles.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
@@ -15,10 +15,10 @@ const root = ReactDOM.createRoot(document.getElementById("root")!);
 function Root() {
   const isDark = useAtomValue(darkModeState);
   const theme = isDark ? darkTheme : lightTheme;
-  
+
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
+      <CssBaseline/>
       <PageRefreshConfirmation/>
       <SnackbarNotification/>
       <App/>
@@ -29,7 +29,7 @@ function Root() {
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Root />
+      <Root/>
     </BrowserRouter>
   </React.StrictMode>
 );
