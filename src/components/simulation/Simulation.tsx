@@ -22,25 +22,25 @@ import CollapsibleIcon from "../CollapsibleIcon";
 import { workerData } from "worker_threads";
 import StateStepperV2 from "./StateStepperV2";
 
-const StyledPaper = styled(Paper)(({theme}) => ({
+const StyledPaper = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(1),
 }));
 
 const Simulation = () => {
-  const {instanceAddress: contractAddress} = useParams();
+  const { instanceAddress: contractAddress } = useParams();
   const isFileUploaded = useAtomValue(fileUploadedState);
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
-        <CollapsibleExecuteQuery contractAddress={contractAddress!}/>
-        <Divider sx={{my: 1}}/>
+        <CollapsibleExecuteQuery contractAddress={contractAddress!} />
+        <Divider sx={{ my: 1 }} />
         {/*<StateStepper contractAddress={contractAddress!}/>*/}
-        <StateStepperV2/>
+        <StateStepperV2 contractAddress={contractAddress!} />
       </Column>
       <Column xs={8} className="T1Simulation-right">
         <Widget>
-          <StateRenderer isFileUploaded={isFileUploaded}/>
+          <StateRenderer isFileUploaded={isFileUploaded} />
         </Widget>
       </Column>
     </SplitView>
@@ -54,7 +54,7 @@ interface ISplitViewProps {
   className?: string;
 }
 
-function SplitView({children, ...props}: ISplitViewProps) {
+function SplitView({ children, ...props }: ISplitViewProps) {
   return (
     <Grid
       container
@@ -75,7 +75,7 @@ interface IColumnProps extends GridSizeProps {
   className?: string;
 }
 
-function Column({children, ...props}: IColumnProps) {
+function Column({ children, ...props }: IColumnProps) {
   const theme = useTheme();
 
   return (
@@ -150,7 +150,7 @@ function CollapsibleExecuteQuery({
   const [showExecuteQuery, setShowExecuteQuery] = useState(true);
 
   return (
-    <Box sx={{borderRadius: 1, overflow: "hidden", pb: 0.5}}>
+    <Box sx={{ borderRadius: 1, overflow: "hidden", pb: 0.5 }}>
       <Box
         sx={{
           display: "flex",
@@ -163,11 +163,11 @@ function CollapsibleExecuteQuery({
         }}
         onClick={() => setShowExecuteQuery((curr) => !curr)}
       >
-        <CollapsibleIcon expanded={showExecuteQuery}/>
-        <Typography sx={{fontSize: "1.1rem"}}>Execute</Typography>
+        <CollapsibleIcon expanded={showExecuteQuery} />
+        <Typography sx={{ fontSize: "1.1rem" }}>Execute</Typography>
       </Box>
       <Collapse in={showExecuteQuery}>
-        <Box sx={{height: 280}}>
+        <Box sx={{ height: 280 }}>
           <ExecuteQuery
             setResponse={setResponse}
             contractAddress={contractAddress!}
