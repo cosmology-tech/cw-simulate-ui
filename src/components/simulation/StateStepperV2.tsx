@@ -122,7 +122,7 @@ function renderTreeItems(traces?: TraceLog[], depth: number = 0) {
   return traces?.map((trace) => {
     if (trace.trace?.length === 0) {
       return (
-        <StyledTreeItem sx={{ml: depth > 1 ? 4 : 0}}
+        <StyledTreeItem sx={{ml: depth > 1 ? depth * 2 : 0}}
                         nodeId={Math.random().toString(36).substr(2, 9)}
                         labelIcon={getTreeItemIcon(trace)}
                         labelText={getTreeItemLabel(trace)}/>
