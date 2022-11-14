@@ -1,4 +1,4 @@
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 import SubMenuHeader from "./SubMenuHeader";
 import {
@@ -16,6 +16,8 @@ import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { CWSimulateApp } from "@terran-one/cw-simulate";
 import { defaults } from "../../configs/constants";
+import { useNavigate } from "react-router-dom";
+import { stepTraceState, traceState } from "../../atoms/simulationPageAtoms";
 
 export interface ISettingsSubMenuProps {
 }
@@ -30,12 +32,18 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
   const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({} as IChainConfigFormValues);
   const setNotification = useNotification();
   const [openResetSimulationDialog, setOpenResetSimulationDialog] = useState(false);
+  const navigate = useNavigate();
+  const setStepTrace = useSetAtom(stepTraceState);
+  const setTraces = useSetAtom(traceState);
   const handleResetSimulation = (e: any) => {
     setSimulateApp({
       app: new CWSimulateApp(defaults.chains.terra)
     });
     setOpenResetSimulationDialog(false);
+    navigate('/accounts');
   };
+  setStepTrace([]);
+  setTraces([]);
 
   const handleSaveConfig = () => {
     app.chainId = chainConfigFormValues.chainId;

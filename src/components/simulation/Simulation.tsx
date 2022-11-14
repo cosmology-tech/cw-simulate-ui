@@ -10,13 +10,13 @@ import useTheme from "@mui/material/styles/useTheme";
 import type { SxProps } from "@mui/system/styleFunctionSx";
 import React, { ReactNode, useState } from "react";
 import { useParams } from "react-router-dom";
+import { joinSx } from "../../utils/reactUtils";
 import { GridSizeProps } from "../../utils/typeUtils";
 import T1Container from "../grid/T1Container";
 import Executor from "./Executor";
 import { StateRenderer } from "./StateRenderer";
 import CollapsibleIcon from "../CollapsibleIcon";
 import StateStepper from "./StateStepper";
-import { joinSx } from "src/utils/reactUtils";
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   ...theme.typography.body2,
