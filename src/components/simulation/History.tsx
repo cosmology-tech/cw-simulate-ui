@@ -5,13 +5,13 @@ import Widget from "./Widget";
 import Row from "./Row";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { StateRenderer } from "./StateRenderer";
-import StateStepper from "./StateStepper";
+import StateStepperV2 from "./StateStepperV2";
 
 interface IHistoryProps {
   contractAddress: string;
 }
 
-export default function ({ contractAddress }: IHistoryProps) {
+export default function ({contractAddress}: IHistoryProps) {
   const isFileUploaded = useAtomValue(fileUploadedState);
 
   return (
@@ -49,10 +49,10 @@ export default function ({ contractAddress }: IHistoryProps) {
           }}
         >
           <Row xs={4}>
-            <StateStepper contractAddress={contractAddress!} />
+            <StateStepperV2 contractAddress={contractAddress!}/>
           </Row>
           <Row xs={8}>
-            <StateRenderer isFileUploaded={isFileUploaded} />
+            <StateRenderer isFileUploaded={isFileUploaded}/>
           </Row>
         </Grid>
       </Row>

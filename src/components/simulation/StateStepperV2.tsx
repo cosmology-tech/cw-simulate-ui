@@ -134,8 +134,6 @@ function getTreeItemLabel(trace: TraceLog) {
   }
 }
 
-// const generateRandomId = () => Math.random().toString(36).substring(2, 12);
-
 function renderTreeItems(
   traces?: TraceLog[],
   depth: number = 0,
