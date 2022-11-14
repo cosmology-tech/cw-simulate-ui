@@ -33,7 +33,6 @@ export default function StateStepper({ contractAddress }: IProps) {
   const setCurrentTab = useSetAtom(stateResponseTabState);
   const trace = useAtomValue(traceState);
   const setStepTrace = useSetAtom(stepTraceState);
-  const containerRef = React.useRef();
   const handleStateView = (state: Map<string, any>) => {
     const entries =
       //@ts-ignore

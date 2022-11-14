@@ -20,6 +20,7 @@ import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 import CollapsibleIcon from "../CollapsibleIcon";
 import { workerData } from "worker_threads";
+import StateStepperV2 from "./StateStepperV2";
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   ...theme.typography.body2,
@@ -34,7 +35,8 @@ const Simulation = () => {
       <Column xs={4} className="T1Simulation-left">
         <CollapsibleExecuteQuery contractAddress={contractAddress!}/>
         <Divider sx={{my: 1}}/>
-        <StateStepper contractAddress={contractAddress!}/>
+        {/*<StateStepper contractAddress={contractAddress!}/>*/}
+        <StateStepperV2/>
       </Column>
       <Column xs={8} className="T1Simulation-right">
         <Widget>
