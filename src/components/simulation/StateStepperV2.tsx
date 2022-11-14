@@ -117,12 +117,13 @@ function getTreeItemLabel(trace: TraceLog) {
   }
 }
 
-function renderTreeItems(traces?: TraceLog[]) {
-  console.log(traces);
-  return traces?.map((trace, i) => {
+function renderTreeItems(traces?: TraceLog[], depth: number = 0) {
+  console.log(depth);
+  return traces?.map((trace) => {
     if (trace.trace?.length === 0) {
       return (
-        <StyledTreeItem nodeId={Math.random().toString(36).substr(2, 9)}
+        <StyledTreeItem sx={{ml: depth > 1 ? 4 : 0}}
+                        nodeId={Math.random().toString(36).substr(2, 9)}
                         labelIcon={getTreeItemIcon(trace)}
                         labelText={getTreeItemLabel(trace)}/>
       )
@@ -131,7 +132,7 @@ function renderTreeItems(traces?: TraceLog[]) {
         <StyledTreeItem nodeId={Math.random().toString(36).substr(2, 9)}
                         labelIcon={getTreeItemIcon(trace)}
                         labelText={getTreeItemLabel(trace)}>
-          {renderTreeItems(trace.trace)}
+          {renderTreeItems(trace.trace, depth + 1)}
         </StyledTreeItem>
       )
     }
