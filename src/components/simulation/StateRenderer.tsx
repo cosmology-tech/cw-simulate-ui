@@ -1,111 +1,73 @@
-import React, { Component } from "react";
-import StateResponseTab from "./StateResponseTab";
-import { OutputCard } from "./OutputCard";
-import { Grid } from "@mui/material";
-import { useAtom, useAtomValue } from "jotai";
-import {
-  stateResponseTabState,
-  stepResponseState,
-  stepRequestState,
-  compareStates,
-  stepTraceState,
-  blockState,
-} from "../../atoms/simulationPageAtoms";
-import { StateTab } from "./StateTab";
-import { SummaryTab, ResponseTab, LogsTab } from "./InspectorTabs";
+import styled from "@mui/material/styles/styled";
+import { Grid, Typography } from "@mui/material";
+import { useAtomValue } from "jotai";
+import React, { PropsWithChildren } from "react";
+import { stepTraceState } from "../../atoms/simulationPageAtoms";
 import T1Container from "../grid/T1Container";
-import { useTheme } from "../../configs/theme";
+import { T1Tab, T1Tabs } from "../T1Tabs";
+import { SummaryTab, ResponseTab, LogsTab } from "./InspectorTabs";
+import { StateTab } from "./StateTab";
 
 interface IProps {}
 
 export const StateRenderer = ({}: IProps) => {
-  const [currentTab, setCurrentTab] = useAtom(stateResponseTabState);
-  const compareStateObj = useAtomValue(compareStates);
-  const [isVisible, setIsVisible] = React.useState(false);
-  const currentJSON = useAtomValue(blockState);
   const stepTrace = useAtomValue(stepTraceState);
-  const muiTheme = useTheme();
-  React.useEffect(() => {
-    if (compareStateObj.state1 != "" && compareStateObj.state2 != "")
-      setIsVisible(true);
-  }, [compareStateObj]);
-
-  let renderedTab;
-
-  switch (currentTab) {
-    case "summary":
-      renderedTab = <SummaryTab traceLog={stepTrace} />;
-      break;
-    case "response":
-      renderedTab = <ResponseTab traceLog={stepTrace} />;
-      break;
-    case "logs":
-      renderedTab = <LogsTab traceLog={stepTrace} />;
-      break;
-    default:
-      renderedTab = <LogsTab traceLog={stepTrace} />;
-  }
 
   return (
-    <Grid container height="100%">
-      <Grid
-        item
-        container
-        direction="column"
-        height="100%"
-        width="50%"
-        gap={2}
-        flexWrap="nowrap"
-      >
-        <Grid item>
-          <StateResponseTab
-            currentTab={currentTab}
-            setCurrentTab={setCurrentTab}
-          />
-        </Grid>
-        <Grid item flex={1}>
-          <T1Container
-            sx={{
-              border: `1px solid ${muiTheme.palette.line}`,
-              textAlign: "left",
-              "> .T1Container-content": {
-                p: 1,
-              },
-            }}
-          >
-            {renderedTab}
-          </T1Container>
-        </Grid>
-      </Grid>
-      <Grid
-        item
-        container
-        direction="column"
-        height="100%"
-        width="50%"
-        gap={2}
-        flexWrap="nowrap"
-        sx={{ pl: 1 }}
-      >
-        <Grid item>
-          <StateTab isVisible={isVisible} setIsVisible={setIsVisible} />
-        </Grid>
-        <Grid item flex={1}>
-          {isVisible ? (
-            <OutputCard
-              beforeState={compareStateObj.state1}
-              afterState={compareStateObj.state2}
-              isVisible={isVisible}
-              placeholder="Your state diff will appear here."
-            />
-          ) : (
-            <OutputCard
-              response={currentJSON}
-              placeholder="Your state will appear here."
-            />
-          )}
-        </Grid>
-      </Grid>
+    <Grid container height="100%" gap={1}>
+      <Half>
+        <T1Tabs ContentContainer={Content}>
+          <T1Tab label="Summary">
+            <SummaryTab traceLog={stepTrace} />
+          </T1Tab>
+          <T1Tab label="Response">
+            <ResponseTab traceLog={stepTrace} />
+          </T1Tab>
+          <T1Tab label="Logs">
+            <LogsTab traceLog={stepTrace} />
+          </T1Tab>
+        </T1Tabs>
+      </Half>
+      <Half>
+        <T1Tabs ContentContainer={Content}>
+          <T1Tab label="State">
+            <StateTab />
+          </T1Tab>
+          <T1Tab label="Query">
+            <Typography variant="body2" sx={{ textAlign: 'center', fontStyle: 'italic' }}>
+              Under construction
+            </Typography>
+          </T1Tab>
+          <T1Tab label="Watch">
+            <Typography variant="body2" sx={{ textAlign: 'center', fontStyle: 'italic' }}>
+              Under construction
+            </Typography>
+          </T1Tab>
+        </T1Tabs>
+      </Half>
     </Grid>
   );
 };
+
+function Half({ children }: PropsWithChildren) {
+  return (
+    <Grid
+      item
+      container
+      direction="column"
+      height="100%"
+      flex={1}
+      gap={2}
+      flexWrap="nowrap"
+    >
+      {children}
+    </Grid>
+  )
+}
+
+const Content = styled(T1Container)(({theme}) => ({
+  border: `1px solid ${theme.palette.line}`,
+  '> .T1Container-content': {
+    padding: theme.spacing(1),
+  },
+}));

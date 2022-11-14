@@ -1,34 +1,41 @@
-import { Grid, Tabs, Tab } from "@mui/material";
-import React, {useState} from "react";
+import Box from "@mui/material/Box";
+import { useAtomValue } from "jotai";
+import React, {useEffect, useState} from "react";
+import { blockState, compareStates } from "../../atoms/simulationPageAtoms";
 import CloseDiff from "./CloseDiff";
+import { OutputCard } from "./OutputCard";
 
-interface IProps {
-  setIsVisible: (val: boolean) => void;
-  isVisible: boolean;
-}
+interface IProps {}
 
-export const StateTab = ({ isVisible, setIsVisible }: IProps) => {
+export const StateTab = ({}: IProps) => {
+  const compareStateObj = useAtomValue(compareStates);
+  const currentJSON = useAtomValue(blockState);
+  const [isDiff, setIsDiff] = useState(false);
 
-  const [currState, setCurrState] = useState('state');
-  const onChangeHandler = (event: React.SyntheticEvent, newValue: string) => {
-    setCurrState(
-      (newValue === "state") ? "state" : "query"
+  useEffect(() => {
+    if (compareStateObj.state1 !== '' && compareStateObj.state2 !== '')
+      setIsDiff(true);
+  }, [compareStateObj]);
+
+  if (isDiff) {
+    return (
+      <Box>
+        <CloseDiff onClick={() => {setIsDiff(false)}} />
+        <OutputCard
+          beforeState={compareStateObj.state1}
+          afterState={compareStateObj.state2}
+          isVisible
+          placeholder="Your state diff will appear here."
+        />
+      </Box>
     )
-  };
-
-  return (
-    <Grid container justifyContent="space-between" alignItems="center">
-      <Grid item>
-        <Tabs value={currState} onChange={onChangeHandler} aria-label="State Tab">
-          <Tab value="state" label="State" />
-          <Tab value={"query"} label={"Query"} />
-        </Tabs>
-      </Grid>
-      {isVisible && (
-        <Grid item>
-          <CloseDiff isVisible={isVisible} setIsVisible={setIsVisible} />
-        </Grid>
-      )}
-    </Grid>
-  );
+  }
+  else {
+    return (
+      <OutputCard
+        response={currentJSON}
+        placeholder="Your state will appear here."
+      />
+    )
+  }
 };

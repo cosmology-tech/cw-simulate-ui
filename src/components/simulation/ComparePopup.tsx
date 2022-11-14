@@ -2,10 +2,7 @@ import { Grid, Button, Popover, TextField, Typography } from "@mui/material";
 import DifferenceOutlinedIcon from "@mui/icons-material/DifferenceOutlined";
 import React from "react";
 import { useAtom } from "jotai";
-import {
-  compareStates,
-  stateResponseTabState,
-} from "../../atoms/simulationPageAtoms";
+import { compareStates } from "../../atoms/simulationPageAtoms";
 import { TraceLog } from "@terran-one/cw-simulate";
 
 interface IProps {
@@ -14,7 +11,6 @@ interface IProps {
 }
 export const ComparePopup = ({ currentActiveState, trace }: IProps) => {
   const [_, setCompareStates] = useAtom(compareStates);
-  const [__, setStateResponseTab] = useAtom(stateResponseTabState);
   const [error, setError] = React.useState("");
   const [anchorEl, setAnchorEl] =
     React.useState<HTMLButtonElement | null>(null);

@@ -13,7 +13,6 @@ import { useAtomValue, useSetAtom } from "jotai";
 import {
   blockState,
   currentStateNumber,
-  stateResponseTabState,
   stepRequestState,
   stepResponseState,
   stepTraceState,
@@ -135,12 +134,12 @@ function getTreeItemLabel(trace: TraceLog) {
 }
 
 function renderTreeItems(
-  traces?: TraceLog[],
+  traces: TraceLog[],
   depth: number = 0,
   prefix: string = ""
 ) {
-  return traces?.map((trace: TraceLog, index: number) => {
-    if (trace.trace?.length === 0) {
+  return traces?.map((trace, index) => {
+    if (!trace.trace?.length) {
       return (
         <StyledTreeItem
           sx={{ ml: depth * 2 }}
@@ -184,7 +183,6 @@ interface IProps {
 }
 
 export default function StateStepper({ contractAddress }: IProps) {
-  const setCurrentTab = useSetAtom(stateResponseTabState);
   const setStepTrace = useSetAtom(stepTraceState);
   const setStepState = useSetAtom(blockState);
   const stepRequestObj = useSetAtom(stepRequestState);
@@ -216,7 +214,6 @@ export default function StateStepper({ contractAddress }: IProps) {
   };
   const handleClick = (e: SyntheticEvent, nodeId: string) => {
     setActiveStep(nodeId);
-    setCurrentTab("summary");
   };
   useEffect(() => {
     const executionStep = getTrace(activeStep.split("-"), traces);
