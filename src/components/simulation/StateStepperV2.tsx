@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { SyntheticEvent, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import TreeView from '@mui/lab/TreeView';
@@ -8,9 +9,13 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 import { TraceLog } from "@terran-one/cw-simulate/dist/types";
-import { useAtomValue } from "jotai";
-import { traceState } from "../../atoms/simulationPageAtoms";
-import { Create, NoteAdd, QuestionMark, Reply } from "@mui/icons-material";
+import { useAtomValue, useSetAtom } from "jotai";
+import {
+  currentStateNumber,
+  stateResponseTabState,
+  traceState
+} from "../../atoms/simulationPageAtoms";
+import useMuiTheme from "@mui/material/styles/useTheme";
 
 declare module 'react' {
   interface CSSProperties {
@@ -22,7 +27,7 @@ declare module 'react' {
 type StyledTreeItemProps = TreeItemProps & {
   bgColor?: string;
   color?: string;
-  labelIcon: React.ElementType<SvgIconProps>;
+  labelIcon: JSX.Element;
   labelInfo?: string;
   labelText: string;
 };
@@ -62,7 +67,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   const {
     bgColor,
     color,
-    labelIcon: LabelIcon,
+    labelIcon,
     labelInfo,
     labelText,
     ...other
@@ -72,12 +77,11 @@ function StyledTreeItem(props: StyledTreeItemProps) {
     <StyledTreeItemRoot
       label={
         <Box sx={{display: 'flex', alignItems: 'center', p: 0.5, pr: 0}}>
-          <Box component={LabelIcon} color="inherit" sx={{mr: 1}}/>
+          <Box sx={{p: 1}}>
+            {labelIcon}
+          </Box>
           <Typography variant="body2" sx={{fontWeight: 'inherit', flexGrow: 1}}>
             {labelText}
-          </Typography>
-          <Typography variant="caption" color="inherit">
-            {labelInfo}
           </Typography>
         </Box>
       }
@@ -90,18 +94,27 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   );
 }
 
+type NumberIconProps = SvgIconProps & {
+  number: number;
+}
 
-function getTreeItemIcon(trace: TraceLog) {
-  switch (trace.type) {
-    case "execute":
-      return Create;
-    case "instantiate":
-      return NoteAdd;
-    case "reply":
-      return Reply;
-    default:
-      return QuestionMark;
-  }
+function NumberIcon<SvgIconComponent>({number}: NumberIconProps) {
+  const theme = useMuiTheme();
+  return (
+    <Box sx={{
+      width: 24,
+      height: 24,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: '50%',
+      bgcolor: theme.palette.grey[900],
+    }}>
+      <Typography variant="body2" sx={{color: theme.palette.common.white, fontWeight: 'inherit'}}>
+        {number}
+      </Typography>
+    </Box>
+  )
 }
 
 function getTreeItemLabel(trace: TraceLog) {
@@ -117,20 +130,21 @@ function getTreeItemLabel(trace: TraceLog) {
   }
 }
 
+const generateRandomId = () => Math.random().toString(36).substring(2, 12);
+
 function renderTreeItems(traces?: TraceLog[], depth: number = 0) {
-  console.log(depth);
-  return traces?.map((trace) => {
+  return traces?.map((trace: TraceLog, index: number) => {
     if (trace.trace?.length === 0) {
       return (
-        <StyledTreeItem sx={{ml: depth > 1 ? depth * 2 : 0}}
-                        nodeId={Math.random().toString(36).substr(2, 9)}
-                        labelIcon={getTreeItemIcon(trace)}
+        <StyledTreeItem sx={{ml: depth * 2}}
+                        nodeId={generateRandomId()}
+                        labelIcon={<NumberIcon number={index + 1}/>}
                         labelText={getTreeItemLabel(trace)}/>
       )
     } else {
       return (
-        <StyledTreeItem nodeId={Math.random().toString(36).substr(2, 9)}
-                        labelIcon={getTreeItemIcon(trace)}
+        <StyledTreeItem nodeId={generateRandomId()}
+                        labelIcon={<NumberIcon number={index + 1}/>}
                         labelText={getTreeItemLabel(trace)}>
           {renderTreeItems(trace.trace, depth + 1)}
         </StyledTreeItem>
@@ -140,7 +154,17 @@ function renderTreeItems(traces?: TraceLog[], depth: number = 0) {
 }
 
 export default function StateStepperV2() {
+  const setCurrentTab = useSetAtom(stateResponseTabState)
   const traces = useAtomValue(traceState);
+  const currentState = useAtomValue(currentStateNumber);
+  const handleClick = (e: SyntheticEvent, nodeId: string) => {
+    setCurrentTab("response");
+  }
+
+  useEffect(() => {
+
+  }, [currentState]);
+
   return (
     <TreeView
       aria-label="StateStepper"
@@ -149,6 +173,7 @@ export default function StateStepperV2() {
       defaultExpandIcon={<ArrowRightIcon/>}
       defaultEndIcon={<div style={{width: 24}}/>}
       sx={{height: 264, flexGrow: 1, maxWidth: '100%', overflowY: 'auto'}}
+      onNodeSelect={handleClick}
     >
       {renderTreeItems(traces)}
     </TreeView>
