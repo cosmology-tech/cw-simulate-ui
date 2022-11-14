@@ -183,7 +183,7 @@ interface IProps {
   contractAddress: string;
 }
 
-export default function StateStepperV2({ contractAddress }: IProps) {
+export default function StateStepper({ contractAddress }: IProps) {
   const setCurrentTab = useSetAtom(stateResponseTabState);
   const setStepTrace = useSetAtom(stepTraceState);
   const setStepState = useSetAtom(blockState);

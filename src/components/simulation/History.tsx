@@ -5,7 +5,7 @@ import Widget from "./Widget";
 import Row from "./Row";
 import { fileUploadedState } from "../../atoms/fileUploadedState";
 import { StateRenderer } from "./StateRenderer";
-import StateStepperV2 from "./StateStepperV2";
+import StateStepper from "./StateStepper";
 
 interface IHistoryProps {
   contractAddress: string;
@@ -49,7 +49,7 @@ export default function ({contractAddress}: IHistoryProps) {
           }}
         >
           <Row xs={4}>
-            <StateStepperV2 contractAddress={contractAddress!}/>
+            <StateStepper contractAddress={contractAddress!}/>
           </Row>
           <Row xs={8}>
             <StateRenderer isFileUploaded={isFileUploaded}/>

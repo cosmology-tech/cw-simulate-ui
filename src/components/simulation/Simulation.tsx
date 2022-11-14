@@ -18,7 +18,7 @@ import T1Container from "../grid/T1Container";
 import { ExecuteQuery } from "./ExecuteQuery";
 import { StateRenderer } from "./StateRenderer";
 import CollapsibleIcon from "../CollapsibleIcon";
-import StateStepperV2 from "./StateStepperV2";
+import StateStepper from "./StateStepper";
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   ...theme.typography.body2,
@@ -33,7 +33,7 @@ const Simulation = () => {
       <Column xs={4} className="T1Simulation-left">
         <CollapsibleExecuteQuery contractAddress={contractAddress!}/>
         <Divider sx={{my: 1}}/>
-        <StateStepperV2 contractAddress={contractAddress!}/>
+        <StateStepper contractAddress={contractAddress!}/>
       </Column>
       <Column xs={8} className="T1Simulation-right">
         <Widget>
