@@ -110,7 +110,7 @@ function NumberIcon<SvgIconComponent>({number}: NumberIconProps) {
       borderRadius: '50%',
       bgcolor: theme.palette.grey[900],
     }}>
-      <Typography variant="body2" sx={{color: theme.palette.common.white, fontWeight: 'inherit'}}>
+      <Typography variant="body2" sx={{color: theme.palette.common.white, fontWeight: 'bold'}}>
         {number}
       </Typography>
     </Box>
