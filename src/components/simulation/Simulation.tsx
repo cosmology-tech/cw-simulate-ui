@@ -14,7 +14,7 @@ import { useSetAtom } from "jotai";
 import { responseState } from "../../atoms/simulationPageAtoms";
 import { GridSizeProps } from "../../utils/typeUtils";
 import T1Container from "../grid/T1Container";
-import { ExecuteQuery } from "./ExecuteQuery";
+import Executor from "./Executor";
 import { StateRenderer } from "./StateRenderer";
 import CollapsibleIcon from "../CollapsibleIcon";
 import StateStepper from "./StateStepper";
@@ -29,7 +29,7 @@ const Simulation = () => {
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
-        <CollapsibleExecuteQuery contractAddress={contractAddress!}/>
+        <CollapsibleExecutor contractAddress={contractAddress!}/>
         <Divider sx={{my: 1}}/>
         <StateStepper contractAddress={contractAddress!}/>
       </Column>
@@ -133,16 +133,15 @@ function Widget({
   );
 }
 
-interface ICollapsibleExecuteQueryProps {
+interface ICollapsibleExecutorProps {
   contractAddress: string;
 }
 
-function CollapsibleExecuteQuery({
+function CollapsibleExecutor({
   contractAddress,
-}: ICollapsibleExecuteQueryProps) {
+}: ICollapsibleExecutorProps) {
   const theme = useTheme();
-  const setResponse = useSetAtom(responseState);
-  const [showExecuteQuery, setShowExecuteQuery] = useState(true);
+  const [show, setShow] = useState(true);
 
   return (
     <Box sx={{borderRadius: 1, overflow: "hidden", pb: 0.5}}>
@@ -156,15 +155,14 @@ function CollapsibleExecuteQuery({
           py: 0.5,
           px: 1,
         }}
-        onClick={() => setShowExecuteQuery((curr) => !curr)}
+        onClick={() => setShow((curr) => !curr)}
       >
-        <CollapsibleIcon expanded={showExecuteQuery}/>
+        <CollapsibleIcon expanded={show}/>
         <Typography sx={{fontSize: "1.1rem"}}>Execute</Typography>
       </Box>
-      <Collapse in={showExecuteQuery}>
+      <Collapse in={show}>
         <Box sx={{height: 280}}>
-          <ExecuteQuery
-            setResponse={setResponse}
+          <Executor
             contractAddress={contractAddress!}
           />
         </Box>

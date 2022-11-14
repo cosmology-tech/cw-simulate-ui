@@ -128,32 +128,6 @@ export function useQuery() {
 }
 
 /**
- * This hook is used to execute sub message in the simulation state.
- */
-export function useExecuteSubMsg() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
-  const [trace, setTrace] = useAtom(traceState);
-  return useCallback(async (contractAddress: string, message: any) => {
-    const result = await app.wasm.executeSubmsg(contractAddress, message, trace);
-    setSimulateApp({app});
-    setTrace(trace);
-    return result;
-  }, [app]);
-}
-
-/**
- * This hook is used to call reply in the simulation state.
- */
-export function useReply() {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
-  return useCallback(async (contractAddress: string, replyMessage: any, trace: any) => {
-    const result = await app.wasm.reply(contractAddress, replyMessage, trace);
-    setSimulateApp({app});
-    return result;
-  }, [app]);
-}
-
-/**
  * This hook is used to delete code in the simulation state.
  */
 export function useDeleteCode() {
