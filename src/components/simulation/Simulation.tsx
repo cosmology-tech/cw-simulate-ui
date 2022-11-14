@@ -10,14 +10,13 @@ import useTheme from "@mui/material/styles/useTheme";
 import type { SxProps } from "@mui/system/styleFunctionSx";
 import React, { ReactNode, useState } from "react";
 import { useParams } from "react-router-dom";
-import { useSetAtom } from "jotai";
-import { responseState } from "../../atoms/simulationPageAtoms";
 import { GridSizeProps } from "../../utils/typeUtils";
 import T1Container from "../grid/T1Container";
 import Executor from "./Executor";
 import { StateRenderer } from "./StateRenderer";
 import CollapsibleIcon from "../CollapsibleIcon";
 import StateStepper from "./StateStepper";
+import { joinSx } from "src/utils/reactUtils";
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   ...theme.typography.body2,
@@ -117,14 +116,14 @@ function Widget({
   return (
     <Grid
       item
-      sx={[
+      sx={joinSx(
         {
           p: 2,
           height: `${(100 * size) / 12}%`,
-          overflow: "auto",
+          overflow: 'auto',
         },
-        ...(Array.isArray(sx) ? sx : [sx]),
-      ]}
+        sx,
+      )}
       className={`T1Widget-root ${className}`}
       {...props}
     >
