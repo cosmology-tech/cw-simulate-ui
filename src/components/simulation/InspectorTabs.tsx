@@ -199,12 +199,15 @@ const CallListItem = ({
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography fontFamily={"JetBrains Mono"}>
+        <Typography
+          fontFamily={"JetBrains Mono"}
+          sx={{ wordWrap: "break-word" }}
+        >
           [{ix}] {call.fn}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <table>
+        <table style={{ wordBreak: "break-word" }}>
           <ObjectInspector
             theme={INSPECTOR_THEME}
             data={call.args}
@@ -213,9 +216,11 @@ const CallListItem = ({
         </table>
         <h4>Result</h4>
         {call.result ? (
-          <pre>{JSON.stringify(call.result, null, 2)}</pre>
+          <Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+            {JSON.stringify(call.result, null, 2)}
+          </Typography>
         ) : (
-          <pre>None</pre>
+          <Typography variant="body2">None</Typography>
         )}
       </AccordionDetails>
     </Accordion>
