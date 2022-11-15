@@ -40,7 +40,7 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
     setOpenResetSimulationDialog(false);
     navigate('/accounts');
   };
-  setStepTrace([]);
+  setStepTrace(undefined);
 
   const handleSaveConfig = () => {
     const { chainId, bech32Prefix } = chainConfigFormValues;
@@ -58,10 +58,6 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
     const {name, value} = e.target;
     setChainConfigFormValues({...chainConfigFormValues, [name]: value});
   }
-
-  const handleClose = () => {
-    setOpenResetSimulationDialog(false);
-  };
 
   return (
     <>

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import {
-  currentStateNumber,
   jsonErrorState,
   responseState,
 } from "../../atoms/simulationPageAtoms";
@@ -24,7 +23,6 @@ export default function Executor({contractAddress}: IProps) {
   const [sender, funds] = Object.entries(useAccounts(sim))[0] ?? [];
   
   const [payload, setPayload] = useState("");
-  const setCurrentState = useSetAtom(currentStateNumber);
   const jsonError = useAtomValue(jsonErrorState);
   
   const setResponse = useSetAtom(responseState);
@@ -51,7 +49,6 @@ export default function Executor({contractAddress}: IProps) {
       });
       console.error(err);
     }
-    setCurrentState(curr => curr + 1);
   };
 
   React.useEffect(() => {

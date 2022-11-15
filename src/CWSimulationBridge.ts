@@ -20,11 +20,13 @@ declare module "@terran-one/cw-simulate" {
 type Watcher = {
   filter(app: CWSimulateApp): unknown;
   compare(last: unknown, curr: unknown): boolean;
+  commit(state: unknown): unknown;
   dispatch(next: unknown): void;
   last: unknown;
 }
 
 export type WatcherComparator<T = unknown> = (last: T, curr: T) => boolean;
+export type WatcherCommitter<T = unknown> = (raw: T) => T;
 
 export default class CWSimulationBridge {
   private app = new CWSimulateApp(defaults.chains.terra);
@@ -117,6 +119,8 @@ export default class CWSimulationBridge {
     filter: (app: CWSimulateApp) => T,
     /** Whether last stored value is equal to current */
     compare: WatcherComparator<T> = compareStrict,
+    /** Optional committer. Creates a non-mutable snapshot of the given state. */
+    commit: WatcherCommitter<T> = val => val,
     deps: DependencyList = [],
   ) {
     const init = filter(this.app);
@@ -136,14 +140,16 @@ export default class CWSimulationBridge {
       this.watchers[id] = {
         filter,
         compare,
+        commit,
         dispatch,
-        last: init,
+        last: commit(init),
       }
     }
     else {
       this.watchers[id] = {
         filter,
         compare,
+        commit,
         dispatch,
         last: this.watchers[id].last,
       }
@@ -191,12 +197,14 @@ export default class CWSimulationBridge {
     const {
       filter,
       compare,
+      commit,
       dispatch,
       last,
     } = watcher;
     
-    const next = filter(this.app);
+    let next = filter(this.app);
     if (!compare(last, next)) {
+      next = commit(next);
       watcher.last = next;
       dispatch(next);
     }
@@ -231,10 +239,10 @@ export function useCodes(bridge: CWSimulationBridge) {
 
 export function useContracts(
   bridge: CWSimulationBridge,
-  compare: WatcherComparator<Record<string, ContractInfo>> = compareShallowObject,
+  compare: WatcherComparator<Record<string, ContractInfo>> = compareDeep,
 ) {
   return bridge.useWatcher(
-    app => (app.store.getIn(['wasm', 'contracts']) as Map<string, ContractInfo>).toObject(),
+    app => (app.store.getIn(['wasm', 'contracts']) as Map<string, ContractInfo> ?? Map()).toObject(),
     compare,
   )
 }
@@ -244,9 +252,11 @@ export function useContractTrace(
   contractAddress: string,
   compare: WatcherComparator<TraceLog[]> = compareShallowArray,
 ) {
+  // Trace is currently not persistent, but we can just commit clones for comparison
   return bridge.useWatcher(
     () => bridge.getContract(contractAddress)?.trace ?? [],
     compare,
+    trace => trace.slice(),
     [contractAddress],
   );
 }
