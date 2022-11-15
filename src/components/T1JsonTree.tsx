@@ -31,7 +31,7 @@ export interface IT1JsonTreeProps {
 
 const T1JsonTree = React.memo(({ data }: IT1JsonTreeProps) => {
   const muiTheme = useTheme();
-  
+
   return (
     <Box sx={{
       '& > *': {
@@ -42,6 +42,7 @@ const T1JsonTree = React.memo(({ data }: IT1JsonTreeProps) => {
         data={data}
         theme={theme}
         invertTheme={muiTheme.palette.mode === 'dark'}
+        shouldExpandNode={() => true}
       />
     </Box>
   )

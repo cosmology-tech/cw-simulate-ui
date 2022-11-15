@@ -9,7 +9,7 @@ declare module "@terran-one/cw-simulate" {
     name: string;
     hidden: boolean;
   }
-  
+
   class ContractInfo {
     address: string;
     trace: TraceLog[];
@@ -32,38 +32,38 @@ export default class CWSimulationBridge {
   private app = new CWSimulateApp(defaults.chains.terra);
   private watchers: Record<string, Watcher> = {};
   private updatePending = false;
-  
+
   recreate(options: CWSimulateAppOptions) {
     this.app = new CWSimulateApp(options);
     this.sync();
     return this;
   }
-  
+
   updateChainConfig(chainId: string, bech32Prefix: string) {
     this.app.chainId = chainId;
     this.app.bech32Prefix = bech32Prefix;
     this.sync();
     return this;
   }
-  
+
   getCode(codeId: number): CodeInfo | undefined {
     return this.app.wasm.getCodeInfo(codeId);
   }
-  
+
   storeCode(sender: string, name: string, content: Buffer, funds: Coin[] = []) {
     // TODO: use funds for `create`
     const codeId = this.app.wasm.create(sender, content);
-    
+
     // augment code with UI-only data
     const codeInfo = this.getCode(codeId)!;
     codeInfo.codeId = codeId;
     codeInfo.name = name;
     codeInfo.hidden = false;
-    
+
     this.sync();
     return codeId;
   }
-  
+
   hideCode(codeId: number) {
     const info = this.getCode(codeId);
     if (!info) throw new Error(`No such codeId: ${codeId}`);
@@ -71,18 +71,18 @@ export default class CWSimulationBridge {
     this.sync();
     return this;
   }
-  
+
   getContract(address: string) {
     return this.app.wasm.getContractInfo(address);
   }
-  
+
   async instantiate(sender: string, codeId: number, msg: any, funds: Coin[] = []) {
     if (!this.getCode(codeId)) throw new Error(`Invalid codeId ${codeId}`);
-    
+
     const trace: TraceLog[] = [];
     const result = await this.app.wasm.instantiateContract(sender, funds, codeId, msg, trace);
     const response = result.unwrap();
-    
+
     const evt = response.events[0];
     if (evt.type !== 'instantiate') throw new Error('Expected instantiation event');
     const address = evt.attributes.find(attr => attr.key === '_contract_address')?.value;
@@ -90,16 +90,16 @@ export default class CWSimulationBridge {
       console.error('Failed to instantiate. Response:', response);
       throw new Error('Failed to instantiate. See logs for details');
     }
-    
+
     const info = this.getContract(address)!;
     info.address = address;
     info.trace = trace;
     info.hidden = false;
-    
+
     this.sync();
     return info;
   }
-  
+
   hideContract(address: string) {
     const info = this.getContract(address);
     if (info) {
@@ -108,13 +108,13 @@ export default class CWSimulationBridge {
     }
     return this;
   }
-  
+
   setBalance(account: string, balance: Coin[]) {
     this.app.bank.setBalance(account, balance);
     this.sync();
     return this;
   }
-  
+
   useWatcher<T>(
     filter: (app: CWSimulateApp) => T,
     /** Whether last stored value is equal to current */
@@ -124,7 +124,7 @@ export default class CWSimulationBridge {
     deps: DependencyList = [],
   ) {
     const init = filter(this.app);
-    
+
     // fuck you eslint
     /* eslint-disable react-hooks/rules-of-hooks */
     const id = useId();
@@ -135,7 +135,7 @@ export default class CWSimulationBridge {
       },
       init,
     );
-    
+
     if (!this.watchers[id]) {
       this.watchers[id] = {
         filter,
@@ -154,45 +154,45 @@ export default class CWSimulationBridge {
         last: this.watchers[id].last,
       }
     }
-    
+
     useEffect(() => {
       this.watchers[id] && this.evaluateWatcher(this.watchers[id]);
     }, deps);
-    
+
     useEffect(() => {
       return () => {
         delete this.watchers[id];
       }
     }, []);
-    
+
     return value;
   }
-  
+
   async execute(sender: string, contractAddress: string, msg: any, funds: Coin[] = []) {
     const info = this.getContract(contractAddress);
     if (!info) throw new Error(`No such contract with address ${contractAddress}`);
-    
+
     const result = await this.app.wasm.executeContract(sender, funds, info.address, msg, info.trace);
     this.sync();
     return result;
   }
-  
+
   async query(contractAddress: string, msg: any) {
     const info = this.getContract(contractAddress);
     if (!info) throw new Error(`No such contract with address ${contractAddress}`);
     return await this.app.wasm.query(contractAddress, msg);
   }
-  
+
   sync() {
     if (this.updatePending) return;
     this.updatePending = true;
-    
+
     setTimeout(() => {
       this.updatePending = false;
       Object.values(this.watchers).forEach(this.evaluateWatcher);
     }, 0);
   }
-  
+
   private evaluateWatcher = (watcher: Watcher) => {
     const {
       filter,
@@ -201,7 +201,7 @@ export default class CWSimulationBridge {
       dispatch,
       last,
     } = watcher;
-    
+
     let next = filter(this.app);
     if (!compare(last, next)) {
       next = commit(next);
@@ -209,11 +209,11 @@ export default class CWSimulationBridge {
       dispatch(next);
     }
   }
-  
+
   get accounts() {
     return this.app.bank.getBalances().toObject();
   }
-  
+
   get chainId() {
     return this.app.chainId;
   }
@@ -231,7 +231,7 @@ export function useAccounts(bridge: CWSimulationBridge) {
 
 export function useCodes(bridge: CWSimulationBridge) {
   return bridge.useWatcher(
-    app => (app.store.getIn(['wasm', 'codes']) as Map<number, CodeInfo>).toObject(),
+    app => (app.store.getIn(['wasm', 'codes']) as Map<number, CodeInfo>)?.toObject(),
     // TODO: we need cleaner storage. CodeInfo is NOT persistent
     () => false,
   )
@@ -285,7 +285,7 @@ export function compareDeep(lhs: any, rhs: any): boolean {
     return true;
   if (typeof lhs !== 'object' || typeof rhs !== 'object')
     return lhs === rhs;
-  
+
   // assert both objects have same keys
   const lKeys = new Set(Object.keys(lhs));
   const rKeys = new Set(Object.keys(rhs));
@@ -293,7 +293,7 @@ export function compareDeep(lhs: any, rhs: any): boolean {
     if (!rKeys.has(key)) return false;
   for (const key of rKeys)
     if (!lKeys.has(key)) return false;
-  
+
   // recurse
   for (const key in lhs) {
     if (!compareDeep(lhs[key], rhs[key]))

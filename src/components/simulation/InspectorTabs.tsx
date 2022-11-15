@@ -1,30 +1,23 @@
 import React from "react";
 import YAML from "yaml";
 import { TraceLog } from "@terran-one/cw-simulate";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, } from "@mui/material";
 import T1Container from "../grid/T1Container";
 import TableLayout from "../chains/TableLayout";
-import { useTheme } from "../../configs/theme";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { chromeDark, ObjectInspector } from "react-inspector";
+import CollapsibleWidget from "../CollapsibleWidget";
 
 export interface InspectorTabProps {
   traceLog: TraceLog | undefined;
 }
 
-export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
-  const muiTheme = useTheme();
+export const ResponseTab = ({traceLog}: InspectorTabProps) => {
   if (!traceLog) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
-  let { response, contractAddress } = traceLog as TraceLog;
+  let {response, contractAddress} = traceLog as TraceLog;
 
   if ("error" in response) {
     return (
@@ -35,7 +28,7 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
     );
   }
 
-  let { messages, attributes, events, data } = response.ok;
+  let {messages, events, attributes, data} = response.ok;
   const attributesRowData = attributes.map((attribute, index) => {
     return {
       id: `${index}`,
@@ -43,80 +36,29 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
       value: attribute.value,
     };
   });
+
+  const eventsRowData = events.map((event, index) => {
+    return {
+      id: `${index}`,
+      type: event.type,
+      attributes: event.attributes.map((attribute) => {
+        return attribute.key + ": " + attribute.value;
+      }).join(", "),
+    };
+  });
+
   const messagesRowData = messages.map((message, index) => {
     return {
       sno: `${index}`,
       id: `${message.id}`,
-      content: YAML.stringify(message.msg, { indent: 2 }),
+      content: YAML.stringify(message.msg, {indent: 2}),
       reply_on: message.reply_on,
     };
   });
-  return (
-    <Grid sx={{ height: "100%" }}>
-      <Grid
-        item
-        flex={1}
-        sx={{
-          height: "33%",
-          mt: 1,
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          variant="subtitle1"
-          sx={{
-            background: `${muiTheme.palette.common.black}`,
-            textAlign: "center",
-            color: muiTheme.palette.common.white,
-          }}
-        >
-          Data
-        </Typography>
-        {data ? (
-          <Typography variant="body2">{data}</Typography>
-        ) : (
-          <Typography variant="body2">No Data to show</Typography>
-        )}
-      </Grid>
-      <Grid item flex={1} sx={{ height: "33%", mt: 1, textAlign: "center" }}>
-        <Typography
-          variant="subtitle1"
-          sx={{
-            background: `${muiTheme.palette.common.black}`,
-            textAlign: "center",
-            color: muiTheme.palette.common.white,
-          }}
-        >
-          Attributes
-        </Typography>
-        {attributesRowData.length > 0 ? (
-          <T1Container>
-            <TableLayout
-              rows={attributesRowData}
-              columns={{
-                id: "#",
-                key: "KEY",
-                value: "VALUE",
-              }}
-              inspectorTable={true}
-            />
-          </T1Container>
-        ) : (
-          <Typography variant="body2">No attributes to show</Typography>
-        )}
-      </Grid>
 
-      <Grid item flex={1} sx={{ height: "33%", mt: 1, textAlign: "center" }}>
-        <Typography
-          variant="subtitle1"
-          sx={{
-            background: `${muiTheme.palette.common.black}`,
-            textAlign: "center",
-            color: muiTheme.palette.common.white,
-          }}
-        >
-          Messages
-        </Typography>
+  return (
+    <Grid sx={{height: "100%"}}>
+      <CollapsibleWidget title={'Messages'} collapsed={messagesRowData.length !== 0}>
         {messagesRowData.length > 0 ? (
           <T1Container>
             <TableLayout
@@ -131,30 +73,74 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
             />
           </T1Container>
         ) : (
-          <Typography variant="body2">No messages to show</Typography>
+          <Typography variant="body2" sx={{textAlign: 'center', p: 5}}>No Messages to
+            show</Typography>
         )}
-      </Grid>
+      </CollapsibleWidget>
+      <CollapsibleWidget title={'Events'} collapsed={eventsRowData.length !== 0}>
+        {eventsRowData.length > 0 ? (
+          <T1Container>
+            <TableLayout
+              rows={eventsRowData}
+              columns={{
+                id: "#",
+                type: "Type",
+                attributes: "Attributes",
+              }}
+              inspectorTable={true}
+            />
+          </T1Container>
+        ) : (
+          <Typography variant="body2" sx={{textAlign: 'center', p: 5}}>No Events to
+            show</Typography>
+        )}
+      </CollapsibleWidget>
+      <CollapsibleWidget title={'Attributes'} collapsed={attributesRowData.length !== 0}>
+        {attributesRowData.length > 0 ? (
+          <T1Container>
+            <TableLayout
+              rows={attributesRowData}
+              columns={{
+                id: "#",
+                key: "KEY",
+                value: "VALUE",
+              }}
+              inspectorTable={true}
+            />
+          </T1Container>
+        ) : (
+          <Typography variant="body2" sx={{textAlign: 'center', p: 5}}>No Attributes to
+            show</Typography>
+        )}
+      </CollapsibleWidget>
+      <CollapsibleWidget title={'Data'} collapsed={!!data}>
+        {data ? (
+          <Typography variant="body2">{data}</Typography>
+        ) : (
+          <Typography variant="body2" sx={{textAlign: 'center', p: 5}}>No Data to show</Typography>
+        )}
+      </CollapsibleWidget>
     </Grid>
   );
 };
 
-export const SummaryTab = ({ traceLog }: InspectorTabProps) => {
+export const SummaryTab = ({traceLog}: InspectorTabProps) => {
   if (!traceLog) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
-  let { type, msg, env, response, contractAddress, result } =
+  let {type, msg, env, response, contractAddress, result} =
     traceLog as TraceLog;
 
   return (
     <Grid>
-      <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+      <Typography variant="h5" sx={{fontWeight: "bold"}}>
         wasm/execute
       </Typography>
-      <Grid item flex={1} sx={{ height: "10vh", maxHeight: "20vh", mt: 1 }}>
+      <Grid item flex={1} sx={{height: "10vh", maxHeight: "20vh", mt: 1}}>
         <T1Container>
           <TableLayout
-            rows={[{ id: "1", sender: contractAddress, funds: "10000uluna" }]}
+            rows={[{id: "1", sender: contractAddress, funds: "10000uluna"}]}
             columns={{
               sender: "Sender",
               funds: "Funds",
@@ -194,28 +180,28 @@ const CallListItem = ({
   return (
     <Accordion>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
+        expandIcon={<ExpandMoreIcon/>}
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
         <Typography
           fontFamily={"JetBrains Mono"}
-          sx={{ wordWrap: "break-word" }}
+          sx={{wordWrap: "break-word"}}
         >
           [{ix}] {call.fn}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <table style={{ wordBreak: "break-word" }}>
+        <table style={{wordBreak: "break-word"}}>
           <ObjectInspector
             theme={INSPECTOR_THEME}
             data={call.args}
-            style={{ backgroundColor: "transparent" }}
+            style={{backgroundColor: "transparent"}}
           />
         </table>
         <h4>Result</h4>
         {call.result ? (
-          <Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+          <Typography variant="body2" sx={{wordBreak: "break-word"}}>
             {JSON.stringify(call.result, null, 2)}
           </Typography>
         ) : (
@@ -226,7 +212,7 @@ const CallListItem = ({
   );
 };
 
-export const LogsTab = ({ traceLog }: InspectorTabProps) => {
+export const LogsTab = ({traceLog}: InspectorTabProps) => {
   if (!traceLog) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
@@ -234,7 +220,7 @@ export const LogsTab = ({ traceLog }: InspectorTabProps) => {
   let combinedLogs = combineLogs(traceLog).filter((log) => log.type === "call");
 
   return (
-    <Grid sx={{ height: "100%", width: "100%" }}>
+    <Grid sx={{height: "100%", width: "100%"}}>
       {combinedLogs.length === 0 ? (
         <Grid
           sx={{
@@ -249,7 +235,7 @@ export const LogsTab = ({ traceLog }: InspectorTabProps) => {
         </Grid>
       ) : (
         combinedLogs.map((log, index) => (
-          <CallListItem ix={index} key={`a-${index}`} call={log} />
+          <CallListItem ix={index} key={`a-${index}`} call={log}/>
         ))
       )}
     </Grid>

@@ -1,7 +1,6 @@
 import { json } from "@codemirror/lang-json";
 import { Grid, Typography } from "@mui/material";
 import ReactCodeMirror from "@uiw/react-codemirror";
-import { useAtom } from "jotai";
 import React, { useState } from "react";
 import { useTheme } from "../configs/theme";
 import { validateJSON } from "../utils/fileUtils";
@@ -10,7 +9,9 @@ import T1Container from "./grid/T1Container";
 interface IJsonCodeMirrorEditorProps {
   jsonValue: string;
   placeholder?: any;
+
   onChange?(val: string): void;
+
   onValidate?(valid: boolean): void;
 }
 
@@ -21,9 +22,9 @@ export const JsonCodeMirrorEditor = ({
   onValidate,
 }: IJsonCodeMirrorEditorProps) => {
   const defaultPlaceholder = placeholder || {
-    json: "Enter your json here",
+    JSON: "Enter your JSON here",
   };
-  
+
   const [validationError, setValidationError] = useState('');
   const theme = useTheme();
 
@@ -59,7 +60,7 @@ export const JsonCodeMirrorEditor = ({
             }}
             theme={theme.palette.mode}
             placeholder={JSON.stringify(defaultPlaceholder, null, 2)}
-            style={{ border: "none", height: "100%" }}
+            style={{border: "none", height: "100%"}}
           />
         </T1Container>
       </Grid>
