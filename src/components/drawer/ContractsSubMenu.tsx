@@ -1,3 +1,4 @@
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import UploadIcon from "@mui/icons-material/Upload";
 import {
@@ -23,9 +24,8 @@ import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import UploadModal from "../upload/UploadModal";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
-import { DeleteForever } from "@mui/icons-material";
 import useSimulation from "../../hooks/useSimulation";
-import { compareDeep, useAccounts, useCodes } from "../../CWSimulationBridge";
+import { useAccounts, useCodes } from "../../CWSimulationBridge";
 
 export interface IContractsSubMenuProps {
 }
@@ -104,9 +104,9 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
             }}
           />
         </MenuItem>,
-        <MenuItem key={"delete"} onClick={() => setOpenDelete(true)}>
+        <MenuItem key="delete" onClick={() => setOpenDelete(true)}>
           <ListItemIcon>
-            <DeleteForever/>
+            <DeleteForeverIcon />
           </ListItemIcon>
           <ListItemText>
             Delete
