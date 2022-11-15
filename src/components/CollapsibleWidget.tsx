@@ -5,15 +5,18 @@ import useTheme from "@mui/material/styles/useTheme";
 
 export interface ICollabsibleWidgetProps {
   title: string;
+  collapsed?: boolean;
+  height?: number;
   children?: ReactNode;
 }
 
 function CollapsibleWidget({
   title,
+  height,
   children,
 }: ICollabsibleWidgetProps) {
   const theme = useTheme();
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState<boolean>(true);
   return (
     <Box sx={{borderRadius: 1, overflow: "hidden", pb: 0.5}}>
       <Box

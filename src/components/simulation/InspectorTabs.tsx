@@ -73,7 +73,8 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
             />
           </T1Container>
         ) : (
-          <Typography variant="body2">No Messages to show</Typography>
+          <Typography variant="body2" sx={{textAlign: 'center', p: 5}}>No Messages to
+            show</Typography>
         )}
       </CollapsibleWidget>
       <CollapsibleWidget title={'Events'}>
@@ -90,7 +91,8 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
             />
           </T1Container>
         ) : (
-          <Typography variant="body2">No Events to show</Typography>
+          <Typography variant="body2" sx={{textAlign: 'center', p: 5}}>No Events to
+            show</Typography>
         )}
       </CollapsibleWidget>
       <CollapsibleWidget title={'Attributes'}>
@@ -107,14 +109,15 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
             />
           </T1Container>
         ) : (
-          <Typography variant="body2">No Attributes to show</Typography>
+          <Typography variant="body2" sx={{textAlign: 'center', p: 5}}>No Attributes to
+            show</Typography>
         )}
       </CollapsibleWidget>
       <CollapsibleWidget title={'Data'}>
         {data ? (
           <Typography variant="body2">{data}</Typography>
         ) : (
-          <Typography variant="body2">No Data to show</Typography>
+          <Typography variant="body2" sx={{textAlign: 'center', p: 5}}>No Data to show</Typography>
         )}
       </CollapsibleWidget>
     </Grid>

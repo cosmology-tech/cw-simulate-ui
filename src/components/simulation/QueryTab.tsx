@@ -30,7 +30,7 @@ export default function QueryTab({contractAddress}: IProps) {
         gap: 2,
       }}
     >
-      <CollapsibleWidget title={'Query'}>
+      <CollapsibleWidget title={'Query @<state>'}>
         <Query contractAddress={contractAddress} onHandleQuery={onHandleQuery}/>
       </CollapsibleWidget>
       <Divider sx={{my: 1}}/>
