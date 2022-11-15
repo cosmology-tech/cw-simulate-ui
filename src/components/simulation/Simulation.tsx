@@ -18,13 +18,13 @@ import { StateRenderer } from "./StateRenderer";
 import CollapsibleIcon from "../CollapsibleIcon";
 import StateStepper from "./StateStepper";
 
-const StyledPaper = styled(Paper)(({theme}) => ({
+const StyledPaper = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(1),
 }));
 
 const Simulation = () => {
-  const {instanceAddress: contractAddress} = useParams();
+  const { instanceAddress: contractAddress } = useParams();
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
@@ -48,7 +48,7 @@ interface ISplitViewProps {
   className?: string;
 }
 
-function SplitView({children, ...props}: ISplitViewProps) {
+function SplitView({ children, ...props }: ISplitViewProps) {
   return (
     <Grid
       container
@@ -69,7 +69,7 @@ interface IColumnProps extends GridSizeProps {
   className?: string;
 }
 
-function Column({children, ...props}: IColumnProps) {
+function Column({ children, ...props }: IColumnProps) {
   const theme = useTheme();
 
   return (
@@ -143,7 +143,7 @@ function CollapsibleExecutor({
   const [show, setShow] = useState(true);
 
   return (
-    <Box sx={{borderRadius: 1, overflow: "hidden", pb: 0.5}}>
+    <Box sx={{ borderRadius: 1, overflow: "hidden", pb: 0.5 }}>
       <Box
         sx={{
           display: "flex",

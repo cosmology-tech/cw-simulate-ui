@@ -6,8 +6,8 @@ import TreeItem, { treeItemClasses, TreeItemProps } from "@mui/lab/TreeItem";
 import Typography from "@mui/material/Typography";
 import { SvgIconProps } from "@mui/material/SvgIcon";
 import { TraceLog } from "@terran-one/cw-simulate/dist/types";
+import { useSetAtom } from "jotai";
 import { Map } from "immutable";
-import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { SyntheticEvent, useEffect, useMemo, useState } from "react";
 import {
   blockState,
@@ -224,8 +224,8 @@ function renderTreeItems(
     if (!trace.trace?.length) {
       return (
         <StyledTreeItem
-          key={index}
-          sx={{ml: depth >= 1 ? depth * 2 : 0}}
+          key={`${trace.type}_${index}`}
+          sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
           nodeId={
             `${prefix ? `${prefix}-` : ''}${index}-${depth}`
           }
@@ -236,8 +236,8 @@ function renderTreeItems(
     } else {
       return (
         <StyledTreeItem
-          key={index}
-          sx={{ml: depth >= 1 ? depth * 2 : 0}}
+          key={`${trace.type}_${index}`}
+          sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
           nodeId={
             `${prefix ? `${prefix}-` : ''}${index}-${depth}`
           }

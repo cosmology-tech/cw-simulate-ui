@@ -22,6 +22,4 @@ export const compareStates = atom<{ state1: string; state2: string }>({
   state2: "",
 });
 export const jsonErrorState = atom<string>("");
-export const responseState = atom<JSON | undefined>(undefined);
 export const stepTraceState = atom<TraceLog | undefined>(undefined);
-export const stepRequestState = atom<IRequest | undefined>(undefined);

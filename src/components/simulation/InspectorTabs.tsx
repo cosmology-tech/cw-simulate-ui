@@ -52,70 +52,87 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
     };
   });
   return (
-    <Grid>
-      {data && (
-        <>
-          <Typography
-            variant="subtitle1"
-            sx={{
-              background: `${muiTheme.palette.common.black}`,
-              textAlign: "center",
-              color: muiTheme.palette.common.white,
-            }}
-          >
-            Data
-          </Typography>
-          <Typography variant="body2">{data}</Typography>
-        </>
-      )}
-      <Typography
-        variant="subtitle1"
+    <Grid sx={{ height: "100%" }}>
+      <Grid
+        item
+        flex={1}
         sx={{
-          background: `${muiTheme.palette.common.black}`,
+          height: "33%",
+          mt: 1,
           textAlign: "center",
-          color: muiTheme.palette.common.white,
         }}
       >
-        Attributes
-      </Typography>
-      <Grid item flex={1} sx={{ height: "10vh", maxHeight: "20vh", mt: 1 }}>
-        <T1Container>
-          <TableLayout
-            rows={attributesRowData}
-            columns={{
-              id: "#",
-              key: "KEY",
-              value: "VALUE",
-            }}
-            inspectorTable={true}
-          />
-        </T1Container>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            background: `${muiTheme.palette.common.black}`,
+            textAlign: "center",
+            color: muiTheme.palette.common.white,
+          }}
+        >
+          Data
+        </Typography>
+        {data ? (
+          <Typography variant="body2">{data}</Typography>
+        ) : (
+          <Typography variant="body2">No Data to show</Typography>
+        )}
+      </Grid>
+      <Grid item flex={1} sx={{ height: "33%", mt: 1, textAlign: "center" }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            background: `${muiTheme.palette.common.black}`,
+            textAlign: "center",
+            color: muiTheme.palette.common.white,
+          }}
+        >
+          Attributes
+        </Typography>
+        {attributesRowData.length > 0 ? (
+          <T1Container>
+            <TableLayout
+              rows={attributesRowData}
+              columns={{
+                id: "#",
+                key: "KEY",
+                value: "VALUE",
+              }}
+              inspectorTable={true}
+            />
+          </T1Container>
+        ) : (
+          <Typography variant="body2">No attributes to show</Typography>
+        )}
       </Grid>
 
-      <Typography
-        variant="subtitle1"
-        sx={{
-          background: `${muiTheme.palette.common.black}`,
-          textAlign: "center",
-          color: muiTheme.palette.common.white,
-        }}
-      >
-        Messages
-      </Typography>
-
-      <Grid item flex={1} sx={{ height: "20vh", maxHeight: "20vh", mt: 1 }}>
-        <T1Container>
-          <TableLayout
-            rows={messagesRowData}
-            columns={{
-              sno: "#",
-              id: "ID",
-              content: "Content",
-              reply_on: "Reply On",
-            }}
-            inspectorTable={true}
-          />
-        </T1Container>
+      <Grid item flex={1} sx={{ height: "33%", mt: 1, textAlign: "center" }}>
+        <Typography
+          variant="subtitle1"
+          sx={{
+            background: `${muiTheme.palette.common.black}`,
+            textAlign: "center",
+            color: muiTheme.palette.common.white,
+          }}
+        >
+          Messages
+        </Typography>
+        {messagesRowData.length > 0 ? (
+          <T1Container>
+            <TableLayout
+              rows={messagesRowData}
+              columns={{
+                sno: "#",
+                id: "ID",
+                content: "Content",
+                reply_on: "Reply On",
+              }}
+              inspectorTable={true}
+            />
+          </T1Container>
+        ) : (
+          <Typography variant="body2">No messages to show</Typography>
+        )}
       </Grid>
     </Grid>
   );
@@ -181,12 +198,15 @@ const CallListItem = ({
         aria-controls="panel1a-content"
         id="panel1a-header"
       >
-        <Typography fontFamily={"JetBrains Mono"}>
+        <Typography
+          fontFamily={"JetBrains Mono"}
+          sx={{ wordWrap: "break-word" }}
+        >
           [{ix}] {call.fn}
         </Typography>
       </AccordionSummary>
       <AccordionDetails>
-        <table>
+        <table style={{ wordBreak: "break-word" }}>
           <ObjectInspector
             theme={INSPECTOR_THEME}
             data={call.args}
@@ -195,9 +215,11 @@ const CallListItem = ({
         </table>
         <h4>Result</h4>
         {call.result ? (
-          <pre>{JSON.stringify(call.result, null, 2)}</pre>
+          <Typography variant="body2" sx={{ wordBreak: "break-word" }}>
+            {JSON.stringify(call.result, null, 2)}
+          </Typography>
         ) : (
-          <pre>None</pre>
+          <Typography variant="body2">None</Typography>
         )}
       </AccordionDetails>
     </Accordion>
@@ -212,10 +234,24 @@ export const LogsTab = ({ traceLog }: InspectorTabProps) => {
   let combinedLogs = combineLogs(traceLog).filter((log) => log.type === "call");
 
   return (
-    <Grid>
-      {combinedLogs.map((log, index) => (
-        <CallListItem ix={index} key={`a-${index}`} call={log} />
-      ))}
+    <Grid sx={{ height: "100%", width: "100%" }}>
+      {combinedLogs.length === 0 ? (
+        <Grid
+          sx={{
+            height: "100%",
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Typography variant="caption">No Logs to show.</Typography>
+        </Grid>
+      ) : (
+        combinedLogs.map((log, index) => (
+          <CallListItem ix={index} key={`a-${index}`} call={log} />
+        ))
+      )}
     </Grid>
   );
 };
