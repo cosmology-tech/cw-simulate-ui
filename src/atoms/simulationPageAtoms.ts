@@ -17,8 +17,8 @@ export interface IRequest {
 }
 
 export const blockState = atom<JSON | undefined>(undefined);
-export const compareStates = atom<{ state1: string; state2: string }>({
-  state1: "",
-  state2: "",
+export const compareStates = atom<{ state1: { [k: string]: string; }; state2: { [k: string]: string; } }>({
+  state1: {},
+  state2: {},
 });
 export const stepTraceState = atom<TraceLog | undefined>(undefined);

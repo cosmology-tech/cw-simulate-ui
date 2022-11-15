@@ -1,16 +1,20 @@
 import { Grid, Button, Popover, TextField, Typography } from "@mui/material";
-import DifferenceOutlinedIcon from "@mui/icons-material/DifferenceOutlined";
 import React from "react";
 import { useAtom } from "jotai";
 import { compareStates } from "../../atoms/simulationPageAtoms";
-import { TraceLog } from "@terran-one/cw-simulate";
-
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import useSimulation from "../../hooks/useSimulation";
+import { useContractTrace } from "../../CWSimulationBridge";
+import { useParams } from "react-router-dom";
+import { extractState } from "./StateStepper";
 interface IProps {
-  currentActiveState: number;
-  trace: TraceLog[];
+  currentActiveStep: number;
 }
-export const ComparePopup = ({ currentActiveState, trace }: IProps) => {
+export const ComparePopup = ({ currentActiveStep }: IProps) => {
   const [_, setCompareStates] = useAtom(compareStates);
+  const { instanceAddress: contractAddress } = useParams();
+  const sim = useSimulation();
+  const traces = useContractTrace(sim, contractAddress!);
   const [error, setError] = React.useState("");
   const [anchorEl, setAnchorEl] =
     React.useState<HTMLButtonElement | null>(null);
@@ -21,25 +25,28 @@ export const ComparePopup = ({ currentActiveState, trace }: IProps) => {
   const handleDiffClose = () => {
     setAnchorEl(null);
   };
-  const getStateString = (stateObj: any) => {
-    const entries =
-      stateObj?._root.entries[0][1]?._root?.entries[2][1]?._root?.entries[0][1]
-        ?._root?.entries;
-    return window.atob(entries[0][1]);
-  };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   const keyDownHandler = (e: any) => {
     if (e.key == "Enter") {
       const toCompareState = e.target.value;
-      if (toCompareState > trace.length || toCompareState < 0) {
+      if (toCompareState > traces.length || toCompareState < 0) {
         setError("Invalid State");
         return;
       }
+
       setCompareStates({
-        state1: getStateString(trace[currentActiveState].storeSnapshot),
-        state2: getStateString(trace[e.target.value - 1].storeSnapshot),
+        state1: extractState(
+          traces[currentActiveStep].storeSnapshot,
+          contractAddress!
+        ),
+        state2: extractState(
+          traces[toCompareState - 1].storeSnapshot,
+          contractAddress!
+        ),
       });
+
       setError("");
       e.preventDefault();
     }
@@ -47,7 +54,7 @@ export const ComparePopup = ({ currentActiveState, trace }: IProps) => {
   return (
     <Grid>
       <Button aria-describedby={id} onClick={handleDiffClick}>
-        <DifferenceOutlinedIcon sx={{ height: "0.8em" }} />
+        <MoreVertIcon />
       </Button>
       <Popover
         id={id}

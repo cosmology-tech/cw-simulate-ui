@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import ReactDiffViewer from "@terran-one/react-diff-viewer";
 import { useAtomValue } from "jotai";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { blockState, compareStates } from "../../atoms/simulationPageAtoms";
 import T1JsonTree from "../T1JsonTree";
 import CloseDiff from "./CloseDiff";
@@ -12,25 +12,30 @@ export const StateTab = ({}: IStateTabProps) => {
   const compareStateObj = useAtomValue(compareStates);
   const currentJSON = useAtomValue(blockState);
   const [isDiff, setIsDiff] = useState(false);
-
+  console.log(compareStateObj);
   useEffect(() => {
-    setIsDiff(compareStateObj.state1 !== '' && compareStateObj.state2 !== '');
+    setIsDiff(
+      Object.keys(compareStateObj.state1).length !== 0 &&
+        Object.keys(compareStateObj.state2).length !== 0
+    );
   }, [compareStateObj]);
 
   if (isDiff) {
     return (
       <Box>
-        <CloseDiff onClick={() => {setIsDiff(false)}} />
+        <CloseDiff
+          onClick={() => {
+            setIsDiff(false);
+          }}
+        />
         <ReactDiffViewer
-          oldValue={compareStateObj.state1}
-          newValue={compareStateObj.state2}
+          oldValue={JSON.stringify(compareStateObj.state1)}
+          newValue={JSON.stringify(compareStateObj.state2)}
+          splitView={false}
         />
       </Box>
-    )
+    );
+  } else {
+    return <T1JsonTree data={currentJSON ?? {}} />;
   }
-  else {
-    return (
-      <T1JsonTree data={currentJSON ?? {}} />
-    )
-  }
-}
+};
