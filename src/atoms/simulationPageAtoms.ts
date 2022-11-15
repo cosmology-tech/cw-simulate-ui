@@ -24,7 +24,8 @@ export const compareStates = atom<{ state1: string; state2: string }>({
   state1: "",
   state2: "",
 });
-export const currentStateNumber = atom<number>(0);
+export const activeStepState = atom<string>('');
+export const updateStepperState = atom<number>(0);
 export const executeQueryTabState = atom<string>("execute");
 export const jsonErrorState = atom<string>("");
 export const responseState = atom<JSON | undefined>(undefined);

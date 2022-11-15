@@ -9,15 +9,16 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { SvgIconProps } from "@mui/material/SvgIcon";
 import { TraceLog } from "@terran-one/cw-simulate/dist/types";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom, useAtom } from "jotai";
 import {
   blockState,
-  currentStateNumber,
+  activeStepState,
   stateResponseTabState,
   stepRequestState,
   stepResponseState,
   stepTraceState,
   traceState,
+  updateStepperState,
 } from "../../atoms/simulationPageAtoms";
 import useMuiTheme from "@mui/material/styles/useTheme";
 import { Map } from "immutable";
@@ -143,23 +144,25 @@ function renderTreeItems(
     if (trace.trace?.length === 0) {
       return (
         <StyledTreeItem
-          sx={{ml: depth >= 1 ? depth * 2 : 0}}
+          sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
           nodeId={
             prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
           }
           labelIcon={<NumberIcon number={index + 1} />}
           labelText={getTreeItemLabel(trace)}
+          key={`${trace.type}_${index}`}
         />
       );
     } else {
       return (
         <StyledTreeItem
-          sx={{ml: depth >= 1 ? depth * 2 : 0}}
+          sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
           nodeId={
             prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
           }
           labelIcon={<NumberIcon number={index + 1} />}
           labelText={getTreeItemLabel(trace)}
+          key={`${trace.type}_${index}`}
         >
           {renderTreeItems(
             trace.trace,
@@ -191,8 +194,8 @@ export default function StateStepper({ contractAddress }: IProps) {
   const stepRequestObj = useSetAtom(stepRequestState);
   const stepResponseObj = useSetAtom(stepResponseState);
   const traces = useAtomValue(traceState);
-  const [activeStep, setActiveStep] = useState("");
-  const currentState = useAtomValue(currentStateNumber);
+  const [activeStep, setActiveStep] = useAtom(activeStepState);
+  const updateStepper = useAtomValue(updateStepperState);
 
   const handleStateView = (state: Map<string, any>) => {
     const entries =
@@ -232,7 +235,7 @@ export default function StateStepper({ contractAddress }: IProps) {
     setStepTrace(executionStep);
   }, [activeStep, contractAddress]);
 
-  useEffect(() => {}, [currentState]);
+  useEffect(() => {}, [updateStepper]);
 
   return (
     <TreeView

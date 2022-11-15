@@ -3,14 +3,19 @@ import ExecuteQueryTab from "./ExecuteQueryTab";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import {
-  currentStateNumber,
+  activeStepState,
   executeQueryTabState,
   jsonErrorState,
+  updateStepperState,
 } from "../../atoms/simulationPageAtoms";
-import { Button, Grid } from "@mui/material";
+import { Button, Chip, Grid, Typography } from "@mui/material";
 import { useAtom, useAtomValue } from "jotai";
 import T1Container from "../grid/T1Container";
-import { getAddressAndFunds, useExecute, useQuery } from "../../utils/simulationUtils";
+import {
+  getAddressAndFunds,
+  useExecute,
+  useQuery,
+} from "../../utils/simulationUtils";
 import cwSimulateAppState from "../../atoms/cwSimulateAppState";
 
 interface IProps {
@@ -18,16 +23,25 @@ interface IProps {
   contractAddress: string;
 }
 
-export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
+export const ExecuteQuery = ({ setResponse, contractAddress }: IProps) => {
   const [payload, setPayload] = useState("");
   const executeQueryTab = useAtomValue(executeQueryTabState);
-  const [currentState, setCurrentState] = useAtom(currentStateNumber);
+  const [updateStepper, setUpdateStepper] = useAtom(updateStepperState);
+  const activeStep = useAtomValue(activeStepState);
   const jsonError = useAtomValue(jsonErrorState);
-  const {app} = useAtomValue(cwSimulateAppState);
+  const { app } = useAtomValue(cwSimulateAppState);
   const addressAndFunds = getAddressAndFunds(app.chainId);
   const setNotification = useNotification();
   const execute = useExecute();
   const query = useQuery();
+  const getFormattedStep = (step: string) => {
+    const activeStepArr = step.split("-");
+    let formattedStep = "";
+    for (let i = 0; i < activeStepArr.length - 1; i++) {
+      formattedStep += `${Number(activeStepArr[i]) + 1}.`;
+    }
+    return formattedStep.slice(0, formattedStep.length - 1);
+  };
   const handleExecute = async () => {
     try {
       const res: any = await execute(
@@ -37,7 +51,7 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
         JSON.parse(payload)
       );
       const response = res.err
-        ? ({error: res.val} as unknown as JSON)
+        ? ({ error: res.val } as unknown as JSON)
         : (res.unwrap() as JSON);
       setResponse(response);
       if (res.err) {
@@ -50,7 +64,7 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
       });
       console.log(err);
     }
-    setCurrentState(currentState + 1);
+    setUpdateStepper(updateStepper + 1);
   };
   const handleQuery = async () => {
     try {
@@ -99,7 +113,15 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
           />
         </T1Container>
       </Grid>
-      <Grid item flexShrink={0} sx={{display: "flex"}}>
+      <Grid
+        item
+        flexShrink={0}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         <Button
           variant="contained"
           onClick={onRunHandler}
@@ -107,6 +129,13 @@ export const ExecuteQuery = ({setResponse, contractAddress}: IProps) => {
         >
           Run
         </Button>
+        <Chip
+          label={
+            <Typography variant="caption">
+              Current Active Step : {getFormattedStep(activeStep)}
+            </Typography>
+          }
+        />
       </Grid>
     </Grid>
   );
