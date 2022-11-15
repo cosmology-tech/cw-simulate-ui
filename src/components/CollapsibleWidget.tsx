@@ -1,6 +1,6 @@
 import CollapsibleIcon from "./CollapsibleIcon";
 import { Box, Collapse, Typography } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import useTheme from "@mui/material/styles/useTheme";
 
 export interface ICollabsibleWidgetProps {
@@ -12,11 +12,18 @@ export interface ICollabsibleWidgetProps {
 
 function CollapsibleWidget({
   title,
+  collapsed,
   height,
   children,
 }: ICollabsibleWidgetProps) {
   const theme = useTheme();
-  const [show, setShow] = useState<boolean>(true);
+  const expanded = collapsed === undefined ? true : collapsed;
+  const [show, setShow] = useState<boolean>(expanded);
+
+  useEffect(() => {
+    setShow(expanded);
+  }, [collapsed]);
+
   return (
     <Box sx={{borderRadius: 1, overflow: "hidden", pb: 0.5}}>
       <Box
@@ -35,7 +42,7 @@ function CollapsibleWidget({
         <Typography sx={{fontSize: "1.1rem"}}>{title}</Typography>
       </Box>
       <Collapse in={show}>
-        <Box sx={{height: 280}}>
+        <Box sx={{height: expanded ? 280 : 'fit-content'}}>
           {children}
         </Box>
       </Collapse>

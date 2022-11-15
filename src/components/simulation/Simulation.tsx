@@ -141,7 +141,7 @@ function CollapsibleExecutor({
   contractAddress,
 }: ICollapsibleExecutorProps) {
   return (
-    <CollapsibleWidget title={'Execute'}>
+    <CollapsibleWidget title={'Execute'} height={280}>
       <Executor contractAddress={contractAddress!}/>
     </CollapsibleWidget>
   )

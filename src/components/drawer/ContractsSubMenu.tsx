@@ -32,9 +32,9 @@ export interface IContractsSubMenuProps {
 
 export default function ContractsSubMenu(props: IContractsSubMenuProps) {
   const sim = useSimulation();
-  
+
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
-  const codes = Object.values(useCodes(sim)).filter(c => !c.hidden);
+  const codes = Object.values(useCodes(sim) || {}).filter(c => !c.hidden);
 
   return (
     <>
@@ -153,7 +153,7 @@ function DeleteDialog(props: IDeleteDialogProps) {
   const {code, open, onClose} = props;
   const sim = useSimulation();
   const setNotification = useNotification();
-  
+
   const handleDeleteContract = () => {
     sim.hideCode(code.codeId);
     setNotification("Successfully deleted contract");
@@ -197,15 +197,15 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
-  
+
   const [payload, setPayload] = useState("");
   const placeholder = {
     "count": 0
   }
-  
+
   const accounts = useAccounts(sim);
   const [account, setAccount] = useState(Object.keys(accounts)[0]);
-  
+
   const handleInstantiate = useCallback(async () => {
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
 
@@ -215,7 +215,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         setNotification("Please select an account", {severity: "error"});
         return;
       }
-      
+
       const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, funds);
       navigate(`/instances/${contract.address}`);
       onClose();

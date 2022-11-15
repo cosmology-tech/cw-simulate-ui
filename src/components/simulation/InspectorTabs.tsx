@@ -58,7 +58,7 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
 
   return (
     <Grid sx={{height: "100%"}}>
-      <CollapsibleWidget title={'Messages'}>
+      <CollapsibleWidget title={'Messages'} collapsed={messagesRowData.length !== 0}>
         {messagesRowData.length > 0 ? (
           <T1Container>
             <TableLayout
@@ -77,7 +77,7 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
             show</Typography>
         )}
       </CollapsibleWidget>
-      <CollapsibleWidget title={'Events'}>
+      <CollapsibleWidget title={'Events'} collapsed={eventsRowData.length !== 0}>
         {eventsRowData.length > 0 ? (
           <T1Container>
             <TableLayout
@@ -95,7 +95,7 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
             show</Typography>
         )}
       </CollapsibleWidget>
-      <CollapsibleWidget title={'Attributes'}>
+      <CollapsibleWidget title={'Attributes'} collapsed={attributesRowData.length !== 0}>
         {attributesRowData.length > 0 ? (
           <T1Container>
             <TableLayout
@@ -113,7 +113,7 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
             show</Typography>
         )}
       </CollapsibleWidget>
-      <CollapsibleWidget title={'Data'}>
+      <CollapsibleWidget title={'Data'} collapsed={!!data}>
         {data ? (
           <Typography variant="body2">{data}</Typography>
         ) : (
