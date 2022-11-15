@@ -141,7 +141,7 @@ function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
             {row[key]}
           </TableCell>
         ) : (
-          <StyledTableCell align="center" component="th" scope="row" key={key}>
+          <StyledTableCell key={key} align="center" component="th" scope="row">
             {row[key]}
           </StyledTableCell>
         )

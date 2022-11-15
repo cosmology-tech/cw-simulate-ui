@@ -1,46 +1,56 @@
 import { Coin } from "@terran-one/cw-simulate";
 
-export const DEFAULT_CHAIN = 'phoenix-1';
-export const DEFAULT_TERRA_ADDRESS = 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6';
-export const DEFAULT_JUNO_ADDRESS = 'juno1l6asmnfusqja55359zgl4hnredggxq3vmy474a';
-export const DEFAULT_INJECTIVE_ADDRESS = 'inj1akxycslq8cjt0uffw4rjmfm3echchptu52a2da';
-export const DEFAULT_OSMOSIS_ADDRESS = 'osmo1l267dmlmprhu4p5aqslf50f495vjqlg340e5ya';
-export const DEFAULT_TERRA_FUNDS: Coin[] = [
-  {denom: "uluna", amount: "1000"},
-  {denom: "uust", amount: "1000"},
-];
+export const CHAINS = ['terra', 'injective', 'juno', 'osmosis'] as const;
+export type Chains = typeof CHAINS[number];
 
-export const DEFAULT_JUNO_FUNDS: Coin[] = [
-  {denom: "ujuno", amount: "1000"},
-  {denom: "juno", amount: "1000"},
-];
-
-export const DEFAULT_INJECTIVE_FUNDS: Coin[] = [
-  {denom: "uinj", amount: "1000"},
-  {denom: "inj", amount: "1000"},
-];
-
-export const DEFAULT_OSMOSIS_FUNDS: Coin[] = [
-  {denom: "uosmo", amount: "1000"},
-  {denom: "osmo", amount: "1000"},
-];
-
-export const TerraConfig = {
-  chainId: DEFAULT_CHAIN,
-  bech32Prefix: 'terra',
-};
-
-export const OsmosisConfig = {
-  chainId: 'osmosis-1',
-  bech32Prefix: 'osmo',
-};
-
-export const InjectiveConfig = {
-  chainId: 'injective-1',
-  bech32Prefix: 'inj',
-};
-
-export const JunoConfig = {
-  chainId: 'juno-1',
-  bech32Prefix: 'juno',
+export type Defaults = {
+  chains: {
+    [chain in Chains]: {
+      chainId: string;
+      bech32Prefix: string;
+      sender: string;
+      funds: Coin[];
+    };
+  };
 }
+
+export const defaults: Defaults = {
+  chains: {
+    terra: {
+      chainId: 'phoenix-1',
+      bech32Prefix: 'terra',
+      sender: 'terra1f44ddca9awepv2rnudztguq5rmrran2m20zzd6',
+      funds: [
+        { denom: 'uluna', amount: '1000' },
+        { denom: 'uust', amount: '1000' },
+      ],
+    },
+    
+    juno: {
+      chainId: 'juno-1',
+      bech32Prefix: 'juno',
+      sender: 'juno1l6asmnfusqja55359zgl4hnredggxq3vmy474a',
+      funds: [
+        { denom: 'ujuno', amount: '1000' },
+      ]
+    },
+    
+    osmosis: {
+      chainId: 'osmosis-1',
+      bech32Prefix: 'osmo',
+      sender: 'osmo1l267dmlmprhu4p5aqslf50f495vjqlg340e5ya',
+      funds: [
+        { denom: 'uosmo', amount: '1000' },
+      ]
+    },
+    
+    injective: {
+      chainId: 'injective-1',
+      bech32Prefix: 'inj',
+      sender: 'inj1akxycslq8cjt0uffw4rjmfm3echchptu52a2da',
+      funds: [
+        { denom: 'uinj', amount: '1000' },
+      ]
+    },
+  },
+};

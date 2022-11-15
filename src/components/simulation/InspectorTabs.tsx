@@ -15,12 +15,12 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { chromeDark, ObjectInspector } from "react-inspector";
 
 export interface InspectorTabProps {
-  traceLog: TraceLog | {};
+  traceLog: TraceLog | undefined;
 }
 
 export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
   const muiTheme = useTheme();
-  if (!("type" in traceLog)) {
+  if (!traceLog) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
@@ -139,8 +139,7 @@ export const ResponseTab = ({ traceLog }: InspectorTabProps) => {
 };
 
 export const SummaryTab = ({ traceLog }: InspectorTabProps) => {
-  const muiTheme = useTheme();
-  if (!("type" in traceLog)) {
+  if (!traceLog) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
@@ -228,7 +227,7 @@ const CallListItem = ({
 };
 
 export const LogsTab = ({ traceLog }: InspectorTabProps) => {
-  if (!("type" in traceLog)) {
+  if (!traceLog) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
 
