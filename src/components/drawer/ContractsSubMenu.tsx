@@ -251,7 +251,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
           <JsonCodeMirrorEditor
             jsonValue={""}
             placeholder={placeholder}
-            setPayload={(val) => setPayload(val)}
+            onChange={setPayload}
           />
         </T1Container>
       </DialogContent>

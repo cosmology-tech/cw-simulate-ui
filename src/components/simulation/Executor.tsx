@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { jsonErrorState } from "../../atoms/simulationPageAtoms";
 import { Button, Grid } from "@mui/material";
 import { useAtomValue } from "jotai";
 import T1Container from "../grid/T1Container";
@@ -20,7 +19,7 @@ export default function Executor({contractAddress}: IProps) {
   const [sender, funds] = Object.entries(useAccounts(sim))[0] ?? [];
   
   const [payload, setPayload] = useState("");
-  const jsonError = useAtomValue(jsonErrorState);
+  const [isValid, setIsValid] = useState(true);
   
   const handleExecute = async () => {
     try {
@@ -59,7 +58,8 @@ export default function Executor({contractAddress}: IProps) {
         <T1Container>
           <JsonCodeMirrorEditor
             jsonValue={payload}
-            setPayload={setPayload}
+            onChange={setPayload}
+            onValidate={setIsValid}
           />
         </T1Container>
       </Grid>
@@ -67,7 +67,7 @@ export default function Executor({contractAddress}: IProps) {
         <Button
           variant="contained"
           onClick={handleExecute}
-          disabled={!payload.length || jsonError.length > 0}
+          disabled={!payload.length || !isValid}
         >
           Run
         </Button>

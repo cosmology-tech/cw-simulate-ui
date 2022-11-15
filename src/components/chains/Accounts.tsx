@@ -79,10 +79,6 @@ const Accounts = () => {
     setNotification("Account successfully removed");
   };
 
-  const handleSetPayload = (payload: string) => {
-    setPayload(payload);
-  };
-
   return (
     <>
       <Grid item container sx={{mb: 2}}>
@@ -128,7 +124,7 @@ const Accounts = () => {
           <T1Container sx={{width: 400, height: 220}}>
             <JsonCodeMirrorEditor
               jsonValue={DEFAULT_VALUE}
-              setPayload={handleSetPayload}
+              onChange={setPayload}
             />
           </T1Container>
         </DialogContent>

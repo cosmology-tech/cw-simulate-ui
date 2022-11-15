@@ -2,8 +2,7 @@ import { json } from "@codemirror/lang-json";
 import { Grid, Typography } from "@mui/material";
 import ReactCodeMirror from "@uiw/react-codemirror";
 import { useAtom } from "jotai";
-import React from "react";
-import { jsonErrorState } from "../atoms/simulationPageAtoms";
+import React, { useState } from "react";
 import { useTheme } from "../configs/theme";
 import { validateJSON } from "../utils/fileUtils";
 import T1Container from "./grid/T1Container";
@@ -11,19 +10,21 @@ import T1Container from "./grid/T1Container";
 interface IJsonCodeMirrorEditorProps {
   jsonValue: string;
   placeholder?: any;
-  setPayload: (val: string) => void;
+  onChange?(val: string): void;
+  onValidate?(valid: boolean): void;
 }
 
 export const JsonCodeMirrorEditor = ({
   jsonValue,
   placeholder,
-  setPayload,
+  onChange,
+  onValidate,
 }: IJsonCodeMirrorEditorProps) => {
   const defaultPlaceholder = placeholder || {
     json: "Enter your json here",
   };
-  const [jsonError, setJsonError] = useAtom(jsonErrorState);
-
+  
+  const [validationError, setValidationError] = useState('');
   const theme = useTheme();
 
   return (
@@ -39,21 +40,21 @@ export const JsonCodeMirrorEditor = ({
             value={jsonValue}
             extensions={[json()]}
             onChange={(val: string) => {
-              setPayload(val);
+              onChange?.(val);
               if (val.length === 0) {
-                setJsonError("");
+                onValidate?.(true);
                 return;
               }
               try {
                 const parsedJSON = JSON.parse(val);
                 if (!validateJSON(parsedJSON, {})) {
                   //TODO: Show correct error message when validate message functionality changes.
-                  setJsonError("Invalid JSON");
+                  setValidationError("Invalid JSON");
                 } else {
-                  setJsonError("");
+                  setValidationError("");
                 }
               } catch {
-                setJsonError("Invalid JSON");
+                setValidationError("Invalid JSON");
               }
             }}
             theme={theme.palette.mode}
@@ -62,10 +63,10 @@ export const JsonCodeMirrorEditor = ({
           />
         </T1Container>
       </Grid>
-      {jsonError && (
+      {validationError && (
         <Grid item>
           <Typography variant="body2" color="red">
-            Invalid JSON
+            {validationError}
           </Typography>
         </Grid>
       )}
