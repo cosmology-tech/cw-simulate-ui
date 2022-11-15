@@ -1,11 +1,8 @@
-import { atom, useAtom } from "jotai";
+import { atom } from "jotai";
 import {
-  ExecuteTraceLog,
-  ReplyTraceLog,
-  TraceLog,
   Coin,
   ExecuteEnv,
-  ContractResponse,
+  TraceLog,
 } from "@terran-one/cw-simulate/dist/types";
 
 export interface IRequest {
@@ -24,14 +21,7 @@ export const compareStates = atom<{ state1: string; state2: string }>({
   state1: "",
   state2: "",
 });
-export const currentStateNumber = atom<number>(0);
-export const executeQueryTabState = atom<string>("execute");
 export const jsonErrorState = atom<string>("");
 export const responseState = atom<JSON | undefined>(undefined);
-export const stateResponseTabState =
-  atom<"summary" | "response" | "logs">("summary");
-export const stepTraceState = atom<ExecuteTraceLog | ReplyTraceLog | {}>({});
-export const traceState = atom<TraceLog[]>([]);
+export const stepTraceState = atom<TraceLog | undefined>(undefined);
 export const stepRequestState = atom<IRequest | undefined>(undefined);
-export const stepResponseState =
-  atom<{ ok: ContractResponse } | { error: any } | undefined>(undefined);

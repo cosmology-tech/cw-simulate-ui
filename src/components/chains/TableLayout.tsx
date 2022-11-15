@@ -80,7 +80,7 @@ export default function TableLayout<T extends DataSet>(
             {[
               ...labels.map((label, idx) =>
                 inspectorTable ? (
-                  <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                  <TableCell key={keys[idx]} align="center" sx={{ fontWeight: "bold" }}>
                     {label}
                   </TableCell>
                 ) : (
@@ -133,11 +133,11 @@ function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
     <StyledTableRow>
       {keys.map((key) =>
         inspectorTable ? (
-          <TableCell align="center" sx={{ p: 1 }}>
+          <TableCell key={key} align="center" sx={{ p: 1 }}>
             {row[key]}
           </TableCell>
         ) : (
-          <StyledTableCell align="center" component="th" scope="row" key={key}>
+          <StyledTableCell key={key} align="center" component="th" scope="row">
             {row[key]}
           </StyledTableCell>
         )

@@ -1,26 +1,23 @@
-import * as React from "react";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { fromBase64, fromUtf8 } from "@cosmjs/encoding";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import TreeView from "@mui/lab/TreeView";
 import TreeItem, { treeItemClasses, TreeItemProps } from "@mui/lab/TreeItem";
 import Typography from "@mui/material/Typography";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { SvgIconProps } from "@mui/material/SvgIcon";
 import { TraceLog } from "@terran-one/cw-simulate/dist/types";
-import { useAtomValue, useSetAtom } from "jotai";
+import { Map } from "immutable";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { SyntheticEvent, useEffect, useMemo, useState } from "react";
 import {
   blockState,
-  currentStateNumber,
-  stateResponseTabState,
-  stepRequestState,
-  stepResponseState,
   stepTraceState,
-  traceState,
 } from "../../atoms/simulationPageAtoms";
 import useMuiTheme from "@mui/material/styles/useTheme";
-import { Map } from "immutable";
+import { useNotification } from "../../atoms/snackbarNotificationState";
+import { useContractTrace } from "../../CWSimulationBridge";
+import useSimulation from "../../hooks/useSimulation";
+import CollapsibleIcon from "../CollapsibleIcon";
 
 declare module "react" {
   interface CSSProperties {
@@ -134,18 +131,103 @@ function getTreeItemLabel(trace: TraceLog) {
   }
 }
 
+interface IProps {
+  contractAddress: string;
+}
+
+export default function StateStepper({ contractAddress }: IProps) {
+  const sim = useSimulation();
+  const traces = useContractTrace(sim, contractAddress);
+  const setNotification = useNotification();
+  
+  const defaultExpanded = useMemo(() => getLastStepId(traces), []);
+  const [activeStep, setActiveStep] = useState(getLastStepId(traces));
+  const setStepTrace = useSetAtom(stepTraceState);
+  const setStepState = useSetAtom(blockState);
+  
+  const handleClick = (e: SyntheticEvent, nodeId: string) => {
+    setActiveStep(nodeId);
+  };
+  
+  useEffect(() => {
+    setActiveStep(getLastStepId(traces));
+  }, [traces]);
+  
+  useEffect(() => {
+    const executionStep = getNestedTrace(activeStep.split("-").map(Number), traces);
+    setStepTrace(executionStep);
+    if (!executionStep) {
+      setNotification("No trace found for this step. This is likely an error.", {severity: 'warning'});
+      return;
+    }
+    
+    try {
+      const state = extractState(executionStep.storeSnapshot, contractAddress);
+      setStepState(state as any);
+    }
+    catch (err: any) {
+      console.error(err);
+      setNotification("Something went wrong during execution step processing. See console for details.", {severity: 'error'});
+    }
+  }, [traces, activeStep, contractAddress]);
+
+  return (
+    <TreeView
+      aria-label="State Stepper"
+      selected={activeStep}
+      defaultExpanded={[defaultExpanded]}
+      defaultCollapseIcon={<CollapsibleIcon expanded />}
+      defaultExpandIcon={<CollapsibleIcon />}
+      defaultEndIcon={<div style={{ width: 24 }} />}
+      sx={{ height: 264, flexGrow: 1, maxWidth: "100%", overflowY: "auto" }}
+      onNodeSelect={handleClick}
+    >
+      {renderTreeItems(traces)}
+    </TreeView>
+  );
+}
+
+const getLastStepId = (traces: TraceLog[]) => `${Math.max(0, traces.length-1)}-0`;
+
+function extractState(store: Map<string, any>, contractAddress: string) {
+  const storage = store?.getIn(['wasm', 'contractStorage', contractAddress]) as Map<string, string> ?? Map();
+  const pairs = Object.entries(storage.toObject())
+    .map(([key, value]) => [
+      fromUtf8(fromBase64(key)),
+      JSON.parse(fromUtf8(fromBase64(value)))
+    ] as [string, string]);
+  return Object.fromEntries(pairs);
+}
+
+function getNestedTrace(tracePath: number[], traces: TraceLog[]) {
+  if (!traces.length) return undefined;
+  
+  let traceObj: TraceLog = traces[tracePath[0]];
+  for (let i = 1; i < tracePath.length - 1; i++) {
+    if (traceObj.trace) {
+      traceObj = traceObj.trace[tracePath[i]];
+    }
+    else {
+      console.error(`Invalid trace path ${tracePath.join('-')}`);
+      return undefined;
+    }
+  }
+  return traceObj;
+}
+
 function renderTreeItems(
-  traces?: TraceLog[],
+  traces: TraceLog[],
   depth: number = 0,
   prefix: string = ""
 ) {
-  return traces?.map((trace: TraceLog, index: number) => {
-    if (trace.trace?.length === 0) {
+  return traces?.map((trace, index) => {
+    if (!trace.trace?.length) {
       return (
         <StyledTreeItem
+          key={index}
           sx={{ml: depth >= 1 ? depth * 2 : 0}}
           nodeId={
-            prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
+            `${prefix ? `${prefix}-` : ''}${index}-${depth}`
           }
           labelIcon={<NumberIcon number={index + 1} />}
           labelText={getTreeItemLabel(trace)}
@@ -154,9 +236,10 @@ function renderTreeItems(
     } else {
       return (
         <StyledTreeItem
+          key={index}
           sx={{ml: depth >= 1 ? depth * 2 : 0}}
           nodeId={
-            prefix !== "" ? `${prefix}-${index}-${depth}` : `${index}-${depth}`
+            `${prefix ? `${prefix}-` : ''}${index}-${depth}`
           }
           labelIcon={<NumberIcon number={index + 1} />}
           labelText={getTreeItemLabel(trace)}
@@ -164,87 +247,10 @@ function renderTreeItems(
           {renderTreeItems(
             trace.trace,
             depth + 1,
-            prefix !== "" ? `${prefix}-${index}` : `${index}`
+            `${prefix ? `${prefix}-` : ''}${index}`
           )}
         </StyledTreeItem>
       );
     }
   });
-}
-const getTrace = (locArray: string[], traces: TraceLog[]) => {
-  let traceObj: TraceLog = traces[Number(locArray[0])];
-  for (let i = 1; i < locArray.length - 1; i++) {
-    if (traceObj.trace) {
-      traceObj = traceObj.trace[Number(locArray[i])];
-    }
-  }
-  return traceObj;
-};
-interface IProps {
-  contractAddress: string;
-}
-
-export default function StateStepper({ contractAddress }: IProps) {
-  const setCurrentTab = useSetAtom(stateResponseTabState);
-  const setStepTrace = useSetAtom(stepTraceState);
-  const setStepState = useSetAtom(blockState);
-  const stepRequestObj = useSetAtom(stepRequestState);
-  const stepResponseObj = useSetAtom(stepResponseState);
-  const traces = useAtomValue(traceState);
-  const [activeStep, setActiveStep] = useState("");
-  const currentState = useAtomValue(currentStateNumber);
-
-  const handleStateView = (state: Map<string, any>) => {
-    const entries =
-      //@ts-ignore
-      state?._root.entries[0][1]?._root?.entries[2][1]?._root?.entries[0][1]
-        ?._root?.entries;
-    setStepState(
-      JSON.parse(
-        `{\"${window.atob(entries[0][0])}\":${window.atob(entries[0][1])}}`
-      )
-    );
-  };
-  const getRequestObject = (currentTrace: TraceLog) => {
-    const { env, type, msg } = currentTrace;
-    const responseObj = {
-      env: env,
-      info:
-        type === "execute" || type === "instantiate" ? currentTrace.info : {},
-      executeMsg: type === "instantiate" ? { instantiate: msg } : msg,
-    };
-    return responseObj;
-  };
-  const handleClick = (e: SyntheticEvent, nodeId: string) => {
-    setActiveStep(nodeId);
-    setCurrentTab("summary");
-  };
-  useEffect(() => {
-    const executionStep = getTrace(activeStep.split("-"), traces);
-    handleStateView(executionStep?.storeSnapshot);
-    stepRequestObj(getRequestObject(executionStep));
-    //@ts-ignore
-    const resp = executionStep?.response.error
-      ? //@ts-ignore
-        { error: executionStep?.response.error }
-      : executionStep?.response;
-    stepResponseObj(resp);
-    setStepTrace(executionStep);
-  }, [activeStep, contractAddress]);
-
-  useEffect(() => {}, [currentState]);
-
-  return (
-    <TreeView
-      aria-label="StateStepper"
-      defaultExpanded={["3"]}
-      defaultCollapseIcon={<ArrowDropDownIcon />}
-      defaultExpandIcon={<ArrowRightIcon />}
-      defaultEndIcon={<div style={{ width: 24 }} />}
-      sx={{ height: 264, flexGrow: 1, maxWidth: "100%", overflowY: "auto" }}
-      onNodeSelect={handleClick}
-    >
-      {renderTreeItems(traces)}
-    </TreeView>
-  );
 }

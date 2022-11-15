@@ -2,7 +2,6 @@ import { Validator } from 'jsonschema';
 import * as validSimulationSchema from './jsonSchema/validSimulationSchema.json';
 import * as validConfigSchema from './jsonSchema/validConfigSchema.json';
 import * as validAccountSchema from './jsonSchema/validAccountSchema.json';
-import type { ChainConfig } from './simulationUtils';
 
 /**
  * Read the upload wasm file and convert to ArrayBuffer
@@ -91,7 +90,7 @@ export const validateSimulationJSON = (simulationJSON: any): boolean => {
  * validate the config JSON with JSON schema
  * @param configJSON
  */
-export const validateConfigJSON = (configJSON: any): configJSON is ChainConfig => {
+export const validateConfigJSON = (configJSON: any): boolean => {
   return validateJSON(configJSON, validConfigSchema);
 }
 

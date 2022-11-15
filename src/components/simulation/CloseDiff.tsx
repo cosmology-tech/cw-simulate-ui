@@ -1,22 +1,18 @@
-import React from "react";
-import { Button, Tooltip } from "@mui/material";
 import CancelSharpIcon from "@mui/icons-material/CancelSharp";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import React from "react";
 
 interface IProps {
-  isVisible: boolean;
-  setIsVisible: (val: boolean) => void;
+  onClick?(): void;
 }
 
-const CloseDiff = ({ isVisible, setIsVisible }: IProps) => {
-  const onClickHandler = () => {
-    setIsVisible(!isVisible);
-  };
-
+const CloseDiff = ({ onClick }: IProps) => {
   return (
     <Tooltip placement="top" title="Close compare states">
-      <Button onClick={onClickHandler}>
+      <IconButton onClick={onClick}>
         <CancelSharpIcon />
-      </Button>
+      </IconButton>
     </Tooltip>
   );
 };

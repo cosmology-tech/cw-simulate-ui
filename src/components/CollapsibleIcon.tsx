@@ -1,7 +1,7 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 export interface ICollapsibleIconProps {
-  expanded: boolean;
+  expanded?: boolean;
 }
 
 /** Icon for indicating collapsed/expanded state w/ built-in simple CSS animation */
