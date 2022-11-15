@@ -1,5 +1,4 @@
-import * as React from "react";
-import { SyntheticEvent, useEffect, useState } from "react";
+import { fromBase64, fromUtf8 } from "@cosmjs/encoding";
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import TreeView from "@mui/lab/TreeView";
@@ -9,17 +8,19 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { SvgIconProps } from "@mui/material/SvgIcon";
 import { TraceLog } from "@terran-one/cw-simulate/dist/types";
+import { Map } from "immutable";
 import { useAtomValue, useSetAtom } from "jotai";
+import { SyntheticEvent, useEffect, useState } from "react";
 import {
   blockState,
   currentStateNumber,
   stepRequestState,
   stepResponseState,
   stepTraceState,
-  traceState,
 } from "../../atoms/simulationPageAtoms";
 import useMuiTheme from "@mui/material/styles/useTheme";
-import { Map } from "immutable";
+import useSimulation from "../../hooks/useSimulation";
+import { useContractTrace } from "../../CWSimulationBridge";
 
 declare module "react" {
   interface CSSProperties {
@@ -185,24 +186,26 @@ interface IProps {
 }
 
 export default function StateStepper({ contractAddress }: IProps) {
+  const sim = useSimulation();
+  const traces = useContractTrace(sim, contractAddress);
+  
   const setStepTrace = useSetAtom(stepTraceState);
   const setStepState = useSetAtom(blockState);
   const stepRequestObj = useSetAtom(stepRequestState);
   const stepResponseObj = useSetAtom(stepResponseState);
-  const traces = useAtomValue(traceState);
   const [activeStep, setActiveStep] = useState("");
-  const currentState = useAtomValue(currentStateNumber);
+  
+  // used to listen to updates to selected state number
+  useAtomValue(currentStateNumber);
 
-  const handleStateView = (state: Map<string, any>) => {
-    const entries =
-      //@ts-ignore
-      state?._root.entries[0][1]?._root?.entries[2][1]?._root?.entries[0][1]
-        ?._root?.entries;
-    setStepState(
-      JSON.parse(
-        `{\"${window.atob(entries[0][0])}\":${window.atob(entries[0][1])}}`
-      )
-    );
+  const handleStateView = (store: Map<string, any>) => {
+    const storage = store?.getIn(['wasm', 'contractStorage', contractAddress]) as Map<string, string> ?? Map();
+    const pairs = Object.entries(storage.toObject())
+      .map(([key, value]) => [
+        fromUtf8(fromBase64(key)),
+        JSON.parse(fromUtf8(fromBase64(value)))
+      ]);
+    setStepState(Object.fromEntries(pairs) as any);
   };
   
   const getRequestObject = (currentTrace: TraceLog) => {
@@ -231,9 +234,7 @@ export default function StateStepper({ contractAddress }: IProps) {
       : executionStep?.response;
     stepResponseObj(resp);
     setStepTrace(executionStep);
-  }, [activeStep, contractAddress]);
-
-  useEffect(() => {}, [currentState]);
+  }, [traces, activeStep, contractAddress]);
 
   return (
     <TreeView

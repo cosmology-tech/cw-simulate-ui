@@ -14,41 +14,27 @@ import {
   MenuItem,
   TextField
 } from "@mui/material";
-import { useAtom, useAtomValue } from "jotai";
+import type { CodeInfo } from "@terran-one/cw-simulate";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import cwSimulateAppState from "../../atoms/cwSimulateAppState";
-import simulationMetadataState, { Code, Codes } from "../../atoms/simulationMetadataState";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import {
-  getAddressAndFunds,
-  useDeleteCode,
-  useInstantiateContract
-} from "../../utils/simulationUtils";
 import T1Container from "../grid/T1Container";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import UploadModal from "../upload/UploadModal";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
-import { Coin } from "@terran-one/cw-simulate/dist/types";
 import { DeleteForever } from "@mui/icons-material";
+import useSimulation from "../../hooks/useSimulation";
+import { compareDeep, useAccounts, useCodes } from "../../CWSimulationBridge";
 
 export interface IContractsSubMenuProps {
 }
 
 export default function ContractsSubMenu(props: IContractsSubMenuProps) {
-  const {app} = useAtomValue(cwSimulateAppState);
-  const {metadata} = useAtomValue(simulationMetadataState);
+  const sim = useSimulation();
+  
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
-  //@ts-ignore
-  const codesFromStore = app.store.getIn(["wasm", "codes"])?.toObject() ?? {};
-  const codes = {} as Codes;
-  for (const key of Object.keys(codesFromStore)) {
-    const fileName = metadata.codes[parseInt(key)]?.name;
-    if (fileName) {
-      codes[parseInt(key)] = {codeId: parseInt(key), name: fileName};
-    }
-  }
+  const codes = Object.values(useCodes(sim)).filter(c => !c.hidden);
 
   return (
     <>
@@ -69,7 +55,6 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
         ]}
         optionsExtras={({close}) => <>
           <UploadModal
-            chainId={app.chainId}
             variant="contract"
             open={openUploadDialog}
             onClose={() => {
@@ -80,15 +65,15 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
         </>}
       />
 
-      {Object.values(codes).map((code) => (
-        <CodeMenuItem key={code?.codeId} code={code}/>
+      {Object.entries(codes).map(([codeId, info]) => (
+        <CodeMenuItem key={codeId} code={info} />
       ))}
     </>
   );
 }
 
 interface ICodeMenuItemProps {
-  code: Code;
+  code: CodeInfo;
 }
 
 function CodeMenuItem({code}: ICodeMenuItemProps) {
@@ -159,18 +144,20 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
 }
 
 interface IDeleteDialogProps {
-  code: Code;
+  code: CodeInfo;
   open: boolean;
   onClose: () => void;
 }
 
 function DeleteDialog(props: IDeleteDialogProps) {
   const {code, open, onClose} = props;
-  const deleteCode = useDeleteCode();
+  const sim = useSimulation();
   const setNotification = useNotification();
+  
   const handleDeleteContract = () => {
-    deleteCode(code.codeId);
+    sim.hideCode(code.codeId);
     setNotification("Successfully deleted contract");
+    onClose?.();
   }
 
   return (
@@ -199,7 +186,7 @@ function DeleteDialog(props: IDeleteDialogProps) {
 }
 
 interface IInstantiateDialogProps {
-  code: Code;
+  code: CodeInfo;
   open: boolean;
 
   onClose(): void;
@@ -207,41 +194,33 @@ interface IInstantiateDialogProps {
 
 function InstantiateDialog(props: IInstantiateDialogProps) {
   const {code, open, onClose} = props;
+  const sim = useSimulation();
   const navigate = useNavigate();
-  const [payload, setPayload] = useState<string>("");
+  const setNotification = useNotification();
+  
+  const [payload, setPayload] = useState("");
   const placeholder = {
     "count": 0
   }
-  const contractName = code.name;
-  const setNotification = useNotification();
-  const createContractInstance = useInstantiateContract();
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
-  const accounts = app.bank.getBalances().toArray();
-  const accountList = accounts.map((balance: [string, Coin[]]) => balance[0]);
-  const addressAndFunds = getAddressAndFunds(app.chainId);
-  const [account, setAccount] = useState<string>(addressAndFunds.address);
+  
+  const accounts = useAccounts(sim);
+  const [account, setAccount] = useState(Object.keys(accounts)[0]);
+  
   const handleInstantiate = useCallback(async () => {
-    if (!code) {
-      setNotification("Internal error. Please check logs.", {severity: "error"});
-      console.error(`No contract found with name ${contractName}`);
-      return;
-    }
-
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
 
     try {
-      const [sender, funds] = accounts.find((balance: [string, Coin[]]) => balance[0] === account) ?? [undefined, []];
+      const [sender, funds] = Object.entries(accounts).find(([addr, funds]) => addr === account) ?? [undefined, []];
       if (!sender) {
         setNotification("Please select an account", {severity: "error"});
         return;
       }
-      const instance = await createContractInstance(sender, funds, app.wasm.lastCodeId, instantiateMsg);
-      // @ts-ignore
-      const contractAddress: string = instance?.unwrap().events[0].attributes[0].value;
-      setNotification(`Successfully instantiated ${contractName} with address ${contractAddress}`);
+      
+      const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, funds);
+      navigate(`/instances/${contract.address}`);
       onClose();
-      navigate(`/instances/${contractAddress}`);
-    } catch (e: any) {
+    }
+    catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
       console.error(e);
     }
@@ -255,12 +234,14 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
           Pick an account to instantiate the contract with.
         </DialogContentText>
         <Autocomplete
-          onInputChange={(event, value) => setAccount(value)}
+          onInputChange={(_, value) => setAccount(value)}
           sx={{width: "100%"}}
-          defaultValue={addressAndFunds.address}
+          defaultValue={Object.keys(accounts)[0]}
           renderInput={(params: AutocompleteRenderInputParams) =>
-            <TextField {...params} label={"Sender"}/>}
-          options={accountList}/>
+            <TextField {...params} label="Sender" />
+          }
+          options={Object.keys(accounts)}
+        />
       </DialogContent>
       <DialogContent>
         <DialogContentText>

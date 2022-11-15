@@ -1,26 +1,25 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
-import { useAtomValue } from "jotai";
+import { ContractInfo } from "@terran-one/cw-simulate";
 import { useCallback } from "react";
-import cwSimulateAppState from "../../atoms/cwSimulateAppState";
+import { useContracts, compareDeep } from "../../CWSimulationBridge";
+import useSimulation from "../../hooks/useSimulation";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
-import simulationMetadataState from "../../atoms/simulationMetadataState";
 
 export interface IInstancesSubMenuProps {}
 
 export default function InstancesSubMenu(props: IInstancesSubMenuProps) {
-  const {app} = useAtomValue(cwSimulateAppState);
-  // @ts-ignore
-  const instances = app.store.getIn(["wasm", "contractStorage"])?.toArray().map(i => i[0]);
-  const simulationMetadata = useAtomValue(simulationMetadataState);
+  const sim = useSimulation();
+  const instances = Object.values(useContracts(sim, compareDeep));
+  
   return (
     <>
       <SubMenuHeader title="Instances" />
-      {instances && instances.map((instance: string) => (
+      {instances && instances.map(info => (
         <InstanceMenuItem
-          key={instance}
-          instance={instance}
+          key={info.address}
+          instance={info}
         />
       ))}
     </>
@@ -28,7 +27,7 @@ export default function InstancesSubMenu(props: IInstancesSubMenuProps) {
 }
 
 interface IInstanceMenuItemProps {
-  instance: string;
+  instance: ContractInfo;
 }
 
 function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
@@ -37,15 +36,15 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
 
   return (
     <T1MenuItem
-      label={instance}
+      label={instance.address}
       textEllipsis
-      link={`/instances/${instance}`}
-      tooltip={`${""} ${instance}`}
+      link={`/instances/${instance.address}`}
+      tooltip={`${""} ${instance.address}`}
       options={({close}) => [
         <MenuItem
           key="copy-address"
           onClick={() => {
-            copyToClipboard(instance);
+            copyToClipboard(instance.address);
             close();
           }}
           disabled={!navigator.clipboard}

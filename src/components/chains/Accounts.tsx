@@ -12,17 +12,16 @@ import {
   Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import TableLayout from "./TableLayout";
-import React, { useState } from "react";
-import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { useNotification } from "../../atoms/snackbarNotificationState";
-import T1Container from "../grid/T1Container";
-import { useAtomValue } from "jotai";
-import cwSimulateAppState from "../../atoms/cwSimulateAppState";
-import { defaults } from "../../configs/constants";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
+import React, { useState } from "react";
+import { useNotification } from "../../atoms/snackbarNotificationState";
+import { defaults } from "../../configs/constants";
+import useSimulation from "../../hooks/useSimulation";
+import { useAccounts } from "../../CWSimulationBridge";
 import { validateAccountJSON } from "../../utils/fileUtils";
-import { useSetBalance } from "../../utils/simulationUtils";
+import T1Container from "../grid/T1Container";
+import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
+import TableLayout from "./TableLayout";
 
 const DEFAULT_VALUE = JSON.stringify(
   {
@@ -34,22 +33,21 @@ const DEFAULT_VALUE = JSON.stringify(
 );
 
 const Accounts = () => {
+  const sim = useSimulation();
+  const accounts = Object.entries(useAccounts(sim) ?? {});
+  const setNotification = useNotification();
+  
   const [openDialog, setOpenDialog] = useState(false);
   const [payload, setPayload] = useState(DEFAULT_VALUE);
-  const setNotification = useNotification();
-  const setBalance = useSetBalance();
-  const {app} = useAtomValue(cwSimulateAppState);
-  const accounts = app.bank.getBalances().toArray();
   const handleClickOpen = () => {
     setOpenDialog(true);
     setPayload(DEFAULT_VALUE);
   };
 
-  const data = accounts.map((account) => {
+  const data = accounts.map(([address, balances]) => {
     return {
-      id: account[0],
-      address: account[0],
-      balances: account[1].map((c: Coin) => `${c.amount} ${c.denom}`).join(", "),
+      address,
+      balances: balances.map((c: Coin) => `${c.amount} ${c.denom}`).join(", "),
     };
   });
 
@@ -72,7 +70,7 @@ const Accounts = () => {
       return;
     }
 
-    setBalance(json.sender, json.coins);
+    sim.setBalance(json.sender, json.coins);
     setNotification("Account added successfully");
     setOpenDialog(false);
   };
@@ -101,6 +99,7 @@ const Accounts = () => {
         <T1Container>
           <TableLayout
             rows={data}
+            keyField="address"
             columns={{
               address: "Account Address",
               balances: "Balances",

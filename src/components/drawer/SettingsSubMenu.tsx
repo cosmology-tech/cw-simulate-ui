@@ -1,5 +1,4 @@
-import { useAtom, useSetAtom } from "jotai";
-import cwSimulateAppState from "../../atoms/cwSimulateAppState";
+import { useSetAtom } from "jotai";
 import SubMenuHeader from "./SubMenuHeader";
 import {
   Box,
@@ -14,10 +13,10 @@ import {
 } from "@mui/material";
 import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { CWSimulateApp } from "@terran-one/cw-simulate";
 import { defaults } from "../../configs/constants";
 import { useNavigate } from "react-router-dom";
-import { stepTraceState, traceState } from "../../atoms/simulationPageAtoms";
+import { stepTraceState } from "../../atoms/simulationPageAtoms";
+import useSimulation from "../../hooks/useSimulation";
 
 export interface ISettingsSubMenuProps {
 }
@@ -28,28 +27,31 @@ interface IChainConfigFormValues {
 }
 
 export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
-  const [{app}, setSimulateApp] = useAtom(cwSimulateAppState);
-  const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({} as IChainConfigFormValues);
+  const sim = useSimulation();
   const setNotification = useNotification();
-  const [openResetSimulationDialog, setOpenResetSimulationDialog] = useState(false);
   const navigate = useNavigate();
+  
+  const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({} as IChainConfigFormValues);
+  const [openResetSimulationDialog, setOpenResetSimulationDialog] = useState(false);
   const setStepTrace = useSetAtom(stepTraceState);
-  const setTraces = useSetAtom(traceState);
+  
   const handleResetSimulation = (e: any) => {
-    setSimulateApp({
-      app: new CWSimulateApp(defaults.chains.terra)
-    });
+    sim.recreate(defaults.chains.terra);
     setOpenResetSimulationDialog(false);
     navigate('/accounts');
   };
   setStepTrace([]);
-  setTraces([]);
 
   const handleSaveConfig = () => {
-    app.chainId = chainConfigFormValues.chainId;
-    app.bech32Prefix = chainConfigFormValues.bech32Prefix;
-    setSimulateApp({app});
-    setNotification("Chain config saved successfully");
+    const { chainId, bech32Prefix } = chainConfigFormValues;
+    try {
+      sim.updateChainConfig(chainId, bech32Prefix);
+      setNotification("Chain config saved successfully");
+    }
+    catch (err: any) {
+      console.log(err);
+      setNotification("Something went wrong while reconfiguring chain.", {severity: 'error'});
+    }
   };
 
   const handleOnChangeChainConfig = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -64,29 +66,40 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
   return (
     <>
       <SubMenuHeader title="Settings"/>
-      <SettingSubMenu title={'Chain Configuration'}>
-        <TextField sx={{width: '90%'}} helperText={'Chain Id'}
-                   id="chainId"
-                   defaultValue={app.chainId}
-                   variant={'standard'}
-                   name={'chainId'}
-                   onChange={handleOnChangeChainConfig}/>
-        <TextField sx={{width: '90%'}} helperText={'Bech32 Prefix'}
-                   id="bech32Prefix"
-                   variant={'standard'}
-                   name={'bech32Prefix'}
-                   defaultValue={app.bech32Prefix}
-                   onChange={handleOnChangeChainConfig}/>
-        <Button sx={{width: '90%'}} onClick={handleSaveConfig} variant={'contained'}>Save</Button>
+      <SettingSubMenu title="Chain Configuration">
+        <TextField
+          sx={{width: '90%'}}
+          helperText="Chain ID"
+          id="chainId"
+          defaultValue={sim.chainId}
+          variant="standard"
+          name="chainId"
+          onChange={handleOnChangeChainConfig}
+        />
+        <TextField
+          sx={{width: '90%'}}
+          helperText="Bech32 Prefix"
+          id="bech32Prefix"
+          variant="standard"
+          name="bech32Prefix"
+          defaultValue={sim.bech32Prefix}
+          onChange={handleOnChangeChainConfig}
+        />
+        <Button sx={{width: '90%'}} onClick={handleSaveConfig} variant="contained">Save</Button>
       </SettingSubMenu>
-      <SettingSubMenu title={'Simulation'}>
-        <Button sx={{width: '90%'}} variant={'contained'}
-                onClick={() => setOpenResetSimulationDialog(true)}>
+      <SettingSubMenu title="Simulation">
+        <Button
+          sx={{width: '90%'}}
+          variant="contained"
+          onClick={() => setOpenResetSimulationDialog(true)}
+        >
           Reset Simulation
         </Button>
-        <ResetSimulationDialog open={openResetSimulationDialog}
-                               onClose={() => setOpenResetSimulationDialog(false)}
-                               onReset={handleResetSimulation}/>
+        <ResetSimulationDialog
+          open={openResetSimulationDialog}
+          onClose={() => setOpenResetSimulationDialog(false)}
+          onReset={handleResetSimulation}
+        />
       </SettingSubMenu>
     </>
   )

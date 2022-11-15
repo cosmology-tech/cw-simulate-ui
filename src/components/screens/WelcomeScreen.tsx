@@ -8,19 +8,11 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { To, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { Chains, defaults } from "../../configs/constants";
-import {
-  getAddressAndFunds,
-  SimulationJSON,
-  useCreateNewSimulateApp,
-  useSetupCwSimulateAppJson,
-  useStoreCode,
-} from "../../utils/simulationUtils";
+import useSimulation from "../../hooks/useSimulation";
 import FileUpload from "../upload/FileUpload";
-import simulationMetadataState from "../../atoms/simulationMetadataState";
-import { useAtom } from "jotai";
 import FileUploadPaper from "../upload/FileUploadPaper";
 import { ReactComponent as TerraIcon } from "@public/luna.svg";
 import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
@@ -30,16 +22,14 @@ import JunoSvgIcon from "./JunoIcon";
 const getChainConfig = (chain: Chains) => defaults.chains[chain];
 
 export default function WelcomeScreen() {
+  const sim = useSimulation();
+  
   const [file, setFile] =
     useState<{ filename: string; fileContent: Buffer | JSON } | undefined>(
       undefined
     );
   const setNotification = useNotification();
-  const [, setSimulationMetadata] = useAtom(simulationMetadataState);
   const navigate = useNavigate();
-  const createSimulateApp = useCreateNewSimulateApp();
-  const storeCode = useStoreCode();
-  const setupSimulationJSON = useSetupCwSimulateAppJson();
   const theme = useTheme();
   const [chain, setChain] = useState<Chains>('terra');
 
@@ -50,14 +40,19 @@ export default function WelcomeScreen() {
       });
       return;
     }
+    
     if (file.filename.endsWith(".wasm")) {
-      const app = createSimulateApp(getChainConfig(chain));
-      storeCode(getAddressAndFunds(app.chainId), file);
-    } else if (file.filename.endsWith(".json")) {
-      const json = file.fileContent as unknown as SimulationJSON;
-      setupSimulationJSON(json);
+      const chainConfig = getChainConfig(chain);
+      sim.recreate(chainConfig);
+      sim.setBalance(chainConfig.sender, chainConfig.funds);
+      sim.storeCode(chainConfig.sender, file.filename, file.fileContent as Buffer, chainConfig.funds);
     }
-  }, [file, storeCode, setNotification, setSimulationMetadata, chain]);
+    else if (file.filename.endsWith(".json")) {
+      // TODO: rehydrate from JSON
+      // const json = file.fileContent as unknown;
+      sim.recreate(defaults.chains.terra);
+    }
+  }, [sim, file, chain]);
 
   const onAcceptFile = useCallback(
     async (filename: string, fileContent: Buffer | JSON) => {
