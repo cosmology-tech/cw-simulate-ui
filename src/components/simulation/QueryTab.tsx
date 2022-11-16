@@ -10,11 +10,12 @@ import CollapsibleWidget from "../CollapsibleWidget";
 import { useAtomValue } from "jotai";
 import { activeStepState } from "../../atoms/simulationPageAtoms";
 import { getFormattedStep } from "./Executor";
+
 interface IProps {
   contractAddress: string;
 }
 
-export default function QueryTab({ contractAddress }: IProps) {
+export default function QueryTab({contractAddress}: IProps) {
   const [response, setResponse] = useState("");
   const activeStep = useAtomValue(activeStepState);
   const onHandleQuery = (res: string) => {
@@ -41,10 +42,10 @@ export default function QueryTab({ contractAddress }: IProps) {
           onHandleQuery={onHandleQuery}
         />
       </CollapsibleWidget>
-      <Divider sx={{ my: 1 }} />
+      <Divider sx={{my: 1}}/>
       <Grid item flex={1} position="relative">
         <T1Container>
-          <T1JsonTree data={response} />
+          {response && <T1JsonTree data={response}/>}
         </T1Container>
       </Grid>
     </Grid>
@@ -56,7 +57,7 @@ interface IQuery {
   onHandleQuery: (payload: string) => void;
 }
 
-function Query({ contractAddress, onHandleQuery }: IQuery) {
+function Query({contractAddress, onHandleQuery}: IQuery) {
   const sim = useSimulation();
   const setNotification = useNotification();
   const [payload, setPayload] = useState("");
