@@ -9,15 +9,13 @@ import { TraceLog } from "@terran-one/cw-simulate/dist/types";
 import { useSetAtom } from "jotai";
 import { Map } from "immutable";
 import { SyntheticEvent, useEffect, useMemo, useState } from "react";
-import {
-  blockState,
-  stepTraceState,
-} from "../../atoms/simulationPageAtoms";
+import { blockState, stepTraceState } from "../../atoms/simulationPageAtoms";
 import useMuiTheme from "@mui/material/styles/useTheme";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useContractTrace } from "../../CWSimulationBridge";
 import useSimulation from "../../hooks/useSimulation";
 import CollapsibleIcon from "../CollapsibleIcon";
+import { ComparePopup } from "./ComparePopup";
 
 declare module "react" {
   interface CSSProperties {
@@ -32,6 +30,8 @@ type StyledTreeItemProps = TreeItemProps & {
   labelIcon: JSX.Element;
   labelInfo?: string;
   labelText: string;
+  nodeId: string;
+  activeStep: string;
 };
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
@@ -67,7 +67,7 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 
 function StyledTreeItem(props: StyledTreeItemProps) {
   const { bgColor, color, labelIcon, labelInfo, labelText, ...other } = props;
-
+  const currentActiveStep = Number(props.activeStep.split("-")[0]);
   return (
     <StyledTreeItemRoot
       label={
@@ -79,6 +79,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
           >
             {labelText}
           </Typography>
+          <ComparePopup currentActiveStep={currentActiveStep} />
         </Box>
       }
       style={{
@@ -130,6 +131,21 @@ function getTreeItemLabel(trace: TraceLog) {
       return "unknown";
   }
 }
+export function extractState(store: Map<string, any>, contractAddress: string) {
+  const storage =
+    (store?.getIn(["wasm", "contractStorage", contractAddress]) as Map<
+      string,
+      string
+    >) ?? Map();
+  const pairs = Object.entries(storage.toObject()).map(
+    ([key, value]) =>
+      [fromUtf8(fromBase64(key)), JSON.parse(fromUtf8(fromBase64(value)))] as [
+        string,
+        string
+      ]
+  );
+  return Object.fromEntries(pairs);
+}
 
 interface IProps {
   contractAddress: string;
@@ -139,35 +155,43 @@ export default function StateStepper({ contractAddress }: IProps) {
   const sim = useSimulation();
   const traces = useContractTrace(sim, contractAddress);
   const setNotification = useNotification();
-  
+
   const defaultExpanded = useMemo(() => getLastStepId(traces), []);
   const [activeStep, setActiveStep] = useState(getLastStepId(traces));
   const setStepTrace = useSetAtom(stepTraceState);
   const setStepState = useSetAtom(blockState);
-  
+
   const handleClick = (e: SyntheticEvent, nodeId: string) => {
     setActiveStep(nodeId);
   };
-  
+
   useEffect(() => {
     setActiveStep(getLastStepId(traces));
   }, [traces]);
-  
+
   useEffect(() => {
-    const executionStep = getNestedTrace(activeStep.split("-").map(Number), traces);
+    const executionStep = getNestedTrace(
+      activeStep.split("-").map(Number),
+      traces
+    );
     setStepTrace(executionStep);
     if (!executionStep) {
-      setNotification("No trace found for this step. This is likely an error.", {severity: 'warning'});
+      setNotification(
+        "No trace found for this step. This is likely an error.",
+        { severity: "warning" }
+      );
       return;
     }
-    
+
     try {
       const state = extractState(executionStep.storeSnapshot, contractAddress);
       setStepState(state as any);
-    }
-    catch (err: any) {
+    } catch (err: any) {
       console.error(err);
-      setNotification("Something went wrong during execution step processing. See console for details.", {severity: 'error'});
+      setNotification(
+        "Something went wrong during execution step processing. See console for details.",
+        { severity: "error" }
+      );
     }
   }, [traces, activeStep, contractAddress]);
 
@@ -182,33 +206,23 @@ export default function StateStepper({ contractAddress }: IProps) {
       sx={{ height: 264, flexGrow: 1, maxWidth: "100%", overflowY: "auto" }}
       onNodeSelect={handleClick}
     >
-      {renderTreeItems(traces)}
+      {renderTreeItems(traces, activeStep)}
     </TreeView>
   );
 }
 
-const getLastStepId = (traces: TraceLog[]) => `${Math.max(0, traces.length-1)}-0`;
-
-function extractState(store: Map<string, any>, contractAddress: string) {
-  const storage = store?.getIn(['wasm', 'contractStorage', contractAddress]) as Map<string, string> ?? Map();
-  const pairs = Object.entries(storage.toObject())
-    .map(([key, value]) => [
-      fromUtf8(fromBase64(key)),
-      JSON.parse(fromUtf8(fromBase64(value)))
-    ] as [string, string]);
-  return Object.fromEntries(pairs);
-}
+const getLastStepId = (traces: TraceLog[]) =>
+  `${Math.max(0, traces.length - 1)}-0`;
 
 function getNestedTrace(tracePath: number[], traces: TraceLog[]) {
   if (!traces.length) return undefined;
-  
+
   let traceObj: TraceLog = traces[tracePath[0]];
   for (let i = 1; i < tracePath.length - 1; i++) {
     if (traceObj.trace) {
       traceObj = traceObj.trace[tracePath[i]];
-    }
-    else {
-      console.error(`Invalid trace path ${tracePath.join('-')}`);
+    } else {
+      console.error(`Invalid trace path ${tracePath.join("-")}`);
       return undefined;
     }
   }
@@ -217,6 +231,7 @@ function getNestedTrace(tracePath: number[], traces: TraceLog[]) {
 
 function renderTreeItems(
   traces: TraceLog[],
+  activeStep: string,
   depth: number = 0,
   prefix: string = ""
 ) {
@@ -226,11 +241,10 @@ function renderTreeItems(
         <StyledTreeItem
           key={`${trace.type}_${index}`}
           sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
-          nodeId={
-            `${prefix ? `${prefix}-` : ''}${index}-${depth}`
-          }
+          nodeId={`${prefix ? `${prefix}-` : ""}${index}-${depth}`}
           labelIcon={<NumberIcon number={index + 1} />}
           labelText={getTreeItemLabel(trace)}
+          activeStep={activeStep}
         />
       );
     } else {
@@ -238,16 +252,16 @@ function renderTreeItems(
         <StyledTreeItem
           key={`${trace.type}_${index}`}
           sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
-          nodeId={
-            `${prefix ? `${prefix}-` : ''}${index}-${depth}`
-          }
+          nodeId={`${prefix ? `${prefix}-` : ""}${index}-${depth}`}
           labelIcon={<NumberIcon number={index + 1} />}
           labelText={getTreeItemLabel(trace)}
+          activeStep={activeStep}
         >
           {renderTreeItems(
             trace.trace,
+            activeStep,
             depth + 1,
-            `${prefix ? `${prefix}-` : ''}${index}`
+            `${prefix ? `${prefix}-` : ""}${index}`
           )}
         </StyledTreeItem>
       );
