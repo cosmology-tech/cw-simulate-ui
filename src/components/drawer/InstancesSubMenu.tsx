@@ -1,6 +1,10 @@
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { ListItemIcon, ListItemText, MenuItem } from "@mui/material";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import MenuItem from "@mui/material/MenuItem";
+import { tooltipClasses } from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
 import { ContractInfo } from "@terran-one/cw-simulate";
 import { useCallback } from "react";
 import { useContracts, compareDeep } from "../../CWSimulationBridge";
@@ -36,7 +40,19 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
   
-  // TODO: find contract name from instance
+  const code = sim.useWatcher(
+    ({ wasm }) => {
+      const contractInfo = wasm.getContractInfo(instance.address);
+      if (!contractInfo) return null;
+      
+      const code = wasm.getCodeInfo(contractInfo.codeId);
+      if (!code || code.hidden) return null;
+      return code;
+    },
+    compareDeep,
+    undefined,
+    [instance.address],
+  );
   const copyToClipboard = useCallback((data: string) => navigator.clipboard?.writeText(data), []);
 
   return (
@@ -44,7 +60,30 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
       label={instance.address}
       textEllipsis
       link={`/instances/${instance.address}`}
-      tooltip={`${""} ${instance.address}`}
+      tooltip={
+        <>
+          {code
+          ? <Typography variant="body2" fontWeight="bold">
+              {code.name} ({code.codeId})
+            </Typography>
+          : <Typography variant="body2" fontStyle="italic">
+              {'<'}Deleted Code{'>'}
+            </Typography>
+          }
+          <Typography variant="caption">
+            {instance.address}
+          </Typography>
+        </>
+      }
+      tooltipProps={{
+        componentsProps: {
+          tooltip: {
+            style: {
+              maxWidth: 'none',
+            },
+          },
+        },
+      }}
       options={({close}) => [
         <MenuItem
           key="copy-address"
