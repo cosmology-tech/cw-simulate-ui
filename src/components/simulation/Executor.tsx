@@ -1,37 +1,43 @@
 import React, { useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { Button, Grid } from "@mui/material";
+import { Button, Chip, Grid, Typography } from "@mui/material";
 import { useAtomValue } from "jotai";
 import T1Container from "../grid/T1Container";
 import useSimulation from "../../hooks/useSimulation";
 import { useAccounts } from "../../CWSimulationBridge";
+import { activeStepState } from "../../atoms/simulationPageAtoms";
 
 interface IProps {
   contractAddress: string;
 }
 
-export default function Executor({contractAddress}: IProps) {
+export default function Executor({ contractAddress }: IProps) {
   const sim = useSimulation();
   const setNotification = useNotification();
-  
+
   // TODO: customize sender & funds
   const [sender, funds] = Object.entries(useAccounts(sim))[0] ?? [];
-  
+  const activeStep = useAtomValue(activeStepState);
   const [payload, setPayload] = useState("");
   const [isValid, setIsValid] = useState(true);
-  
+  const getFormattedStep = (step: string) => {
+    const activeStepArr = step.split("-").map((ele) => Number(ele) + 1);
+    let formattedStep = activeStepArr
+      .slice(0, activeStepArr.length - 1)
+      .join(".");
+    return formattedStep;
+  };
   const handleExecute = async () => {
     try {
       const res = await sim.execute(
         sender,
         contractAddress,
         JSON.parse(payload),
-        funds,
+        funds
       );
       res.unwrap();
-    }
-    catch (err) {
+    } catch (err) {
       setNotification("Something went wrong while executing.", {
         severity: "error",
       });
@@ -63,7 +69,7 @@ export default function Executor({contractAddress}: IProps) {
           />
         </T1Container>
       </Grid>
-      <Grid item container flexShrink={0}>
+      <Grid item container flexShrink={0} justifyContent="space-between">
         <Button
           variant="contained"
           onClick={handleExecute}
@@ -71,7 +77,14 @@ export default function Executor({contractAddress}: IProps) {
         >
           Run
         </Button>
+        <Chip
+          label={
+            <Typography variant="caption">
+              Current Active Step : {getFormattedStep(activeStep)}
+            </Typography>
+          }
+        />
       </Grid>
     </Grid>
   );
-};
+}

@@ -6,10 +6,14 @@ import TreeItem, { treeItemClasses, TreeItemProps } from "@mui/lab/TreeItem";
 import Typography from "@mui/material/Typography";
 import { SvgIconProps } from "@mui/material/SvgIcon";
 import { TraceLog } from "@terran-one/cw-simulate/dist/types";
-import { useSetAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 import { Map } from "immutable";
 import { SyntheticEvent, useEffect, useMemo, useState } from "react";
-import { blockState, stepTraceState } from "../../atoms/simulationPageAtoms";
+import {
+  activeStepState,
+  blockState,
+  stepTraceState,
+} from "../../atoms/simulationPageAtoms";
 import useMuiTheme from "@mui/material/styles/useTheme";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useContractTrace } from "../../CWSimulationBridge";
@@ -157,7 +161,7 @@ export default function StateStepper({ contractAddress }: IProps) {
   const setNotification = useNotification();
 
   const defaultExpanded = useMemo(() => getLastStepId(traces), []);
-  const [activeStep, setActiveStep] = useState(getLastStepId(traces));
+  const [activeStep, setActiveStep] = useAtom(activeStepState);
   const setStepTrace = useSetAtom(stepTraceState);
   const setStepState = useSetAtom(blockState);
 

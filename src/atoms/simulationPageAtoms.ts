@@ -22,3 +22,4 @@ export const compareStates = atom<{ state1: { [k: string]: string; }; state2: { 
   state2: {},
 });
 export const stepTraceState = atom<TraceLog | undefined>(undefined);
+export const activeStepState = atom<string>('');
