@@ -13,7 +13,8 @@ import {
   ListItemIcon,
   ListItemText,
   MenuItem,
-  TextField
+  TextField,
+  Typography
 } from "@mui/material";
 import type { CodeInfo } from "@terran-one/cw-simulate";
 import { useCallback, useState } from "react";
@@ -84,6 +85,9 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
     <T1MenuItem
       label={code.name}
       textEllipsis
+      tooltip={
+        <Typography variant="body2">{code.name} ({code.codeId})</Typography>
+      }
       options={({close}) => [
         <MenuItem
           key="instantiate"

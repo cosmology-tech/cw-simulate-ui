@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
-import Tooltip from "@mui/material/Tooltip";
+import Tooltip, { TooltipProps } from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import type { SxProps, Theme } from "@mui/material";
 import { MouseEvent, ReactNode, useCallback, useMemo, useState } from "react";
@@ -20,7 +20,8 @@ export interface IT1MenuItemProps {
   icon?: ReactNode;
   sx?: SxProps<Theme>;
   menuRef?: React.Ref<HTMLUListElement>;
-  tooltip?: string;
+  tooltip?: ILabelProps['tooltip'];
+  tooltipProps?: ILabelProps['tooltipProps'];
   onClick?(e: MouseEvent): void;
 }
 
@@ -40,6 +41,7 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
     sx,
     menuRef,
     tooltip,
+    tooltipProps,
     onClick: _onClick,
     ...rest
   } = props;
@@ -103,7 +105,7 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
         onClick={onClick}
         {...rest}
       >
-        <Label ellipsis={textEllipsis} tooltip={tooltip}>{label}</Label>
+        <Label ellipsis={textEllipsis} tooltip={tooltip} tooltipProps={tooltipProps}>{label}</Label>
       </ListItemButton>
     </ListItem>
   )
@@ -112,7 +114,8 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
 interface ILabelProps {
   children: NonNullable<ReactNode>;
   ellipsis: boolean;
-  tooltip?: string | undefined;
+  tooltip?: ReactNode;
+  tooltipProps?: Omit<TooltipProps, 'children' | 'title'>;
 }
 
 function Label(props: ILabelProps) {
@@ -120,15 +123,16 @@ function Label(props: ILabelProps) {
     children,
     ellipsis,
     tooltip,
+    tooltipProps,
   } = props;
 
   if (!ellipsis) {
     return (
-      <Typography variant="body1">{children}</Typography>
+      <Typography variant="body1" className="T1MenuItem-label">{children}</Typography>
     )
   }
   return (
-    <Tooltip title={tooltip === undefined ? children : tooltip} placement="right">
+    <Tooltip title={tooltip === undefined ? children : tooltip} placement="right" arrow {...tooltipProps}>
       <Typography
         variant="body1"
         sx={{
