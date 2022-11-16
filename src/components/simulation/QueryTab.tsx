@@ -7,17 +7,19 @@ import useSimulation from "../../hooks/useSimulation";
 import Divider from "@mui/material/Divider";
 import T1JsonTree from "../T1JsonTree";
 import CollapsibleWidget from "../CollapsibleWidget";
-
+import { useAtomValue } from "jotai";
+import { activeStepState } from "../../atoms/simulationPageAtoms";
+import { getFormattedStep } from "./Executor";
 interface IProps {
   contractAddress: string;
 }
 
-export default function QueryTab({contractAddress}: IProps) {
+export default function QueryTab({ contractAddress }: IProps) {
   const [response, setResponse] = useState("");
-
+  const activeStep = useAtomValue(activeStepState);
   const onHandleQuery = (res: string) => {
     setResponse(res);
-  }
+  };
 
   return (
     <Grid
@@ -30,25 +32,31 @@ export default function QueryTab({contractAddress}: IProps) {
         gap: 2,
       }}
     >
-      <CollapsibleWidget title={'Query @<state>'} height={280}>
-        <Query contractAddress={contractAddress} onHandleQuery={onHandleQuery}/>
+      <CollapsibleWidget
+        title={`Query @${getFormattedStep(activeStep)}`}
+        height={280}
+      >
+        <Query
+          contractAddress={contractAddress}
+          onHandleQuery={onHandleQuery}
+        />
       </CollapsibleWidget>
-      <Divider sx={{my: 1}}/>
+      <Divider sx={{ my: 1 }} />
       <Grid item flex={1} position="relative">
         <T1Container>
-          <T1JsonTree data={response}/>
+          <T1JsonTree data={response} />
         </T1Container>
       </Grid>
     </Grid>
   );
-};
+}
 
 interface IQuery {
   contractAddress: string;
   onHandleQuery: (payload: string) => void;
 }
 
-function Query({contractAddress, onHandleQuery}: IQuery) {
+function Query({ contractAddress, onHandleQuery }: IQuery) {
   const sim = useSimulation();
   const setNotification = useNotification();
   const [payload, setPayload] = useState("");
@@ -93,10 +101,11 @@ function Query({contractAddress, onHandleQuery}: IQuery) {
         <Button
           variant="contained"
           onClick={handleQuery}
-          disabled={!payload.length || !isValid}>
+          disabled={!payload.length || !isValid}
+        >
           Run
         </Button>
       </Grid>
     </Grid>
-  )
+  );
 }
