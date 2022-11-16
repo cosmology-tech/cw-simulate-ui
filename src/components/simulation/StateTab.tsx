@@ -12,7 +12,6 @@ export const StateTab = ({}: IStateTabProps) => {
   const compareStateObj = useAtomValue(compareStates);
   const currentJSON = useAtomValue(blockState);
   const [isDiff, setIsDiff] = useState(false);
-  console.log(compareStateObj);
   useEffect(() => {
     setIsDiff(
       Object.keys(compareStateObj.state1).length !== 0 &&

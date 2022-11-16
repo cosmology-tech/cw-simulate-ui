@@ -231,9 +231,9 @@ export function useAccounts(bridge: CWSimulationBridge) {
 
 export function useCodes(bridge: CWSimulationBridge) {
   return bridge.useWatcher(
-    app => (app.store.getIn(['wasm', 'codes']) as Map<number, CodeInfo>)?.toObject(),
-    // TODO: we need cleaner storage. CodeInfo is NOT persistent
-    () => false,
+    app => (app.store.getIn(['wasm', 'codes']) as Map<number, CodeInfo>)?.toObject() ?? {},
+    compareDeep,
+    cloneCodes,
   )
 }
 
@@ -283,7 +283,7 @@ export function compareDeep(lhs: any, rhs: any): boolean {
   // easy cases
   if (lhs === rhs)
     return true;
-  if (typeof lhs !== 'object' || typeof rhs !== 'object')
+  if ([rhs, lhs].find(v => !v || typeof v !== 'object'))
     return lhs === rhs;
 
   // assert both objects have same keys
@@ -300,4 +300,12 @@ export function compareDeep(lhs: any, rhs: any): boolean {
       return false;
   }
   return true;
+}
+
+function cloneCodes(codes: Record<number, CodeInfo>): Record<number, CodeInfo> {
+  return Object.fromEntries(
+    Object.entries(codes).map(
+      ([codeId, info]) => [codeId, {...info}]
+    )
+  )
 }
