@@ -35,7 +35,7 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
   const sim = useSimulation();
 
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
-  const codes = Object.values(useCodes(sim) || {}).filter(c => !c.hidden);
+  const codes = Object.values(useCodes(sim)).filter(c => !c.hidden);
 
   return (
     <>

@@ -49,7 +49,7 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
       setNotification("Chain config saved successfully");
     }
     catch (err: any) {
-      console.log(err);
+      console.error(err);
       setNotification("Something went wrong while reconfiguring chain.", {severity: 'error'});
     }
   };
