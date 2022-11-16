@@ -11,6 +11,13 @@ import { activeStepState } from "../../atoms/simulationPageAtoms";
 interface IProps {
   contractAddress: string;
 }
+export const getFormattedStep = (step: string) => {
+  const activeStepArr = step.split("-").map((ele) => Number(ele) + 1);
+  let formattedStep = activeStepArr
+    .slice(0, activeStepArr.length - 1)
+    .join(".");
+  return formattedStep;
+};
 
 export default function Executor({ contractAddress }: IProps) {
   const sim = useSimulation();
@@ -21,13 +28,7 @@ export default function Executor({ contractAddress }: IProps) {
   const activeStep = useAtomValue(activeStepState);
   const [payload, setPayload] = useState("");
   const [isValid, setIsValid] = useState(true);
-  const getFormattedStep = (step: string) => {
-    const activeStepArr = step.split("-").map((ele) => Number(ele) + 1);
-    let formattedStep = activeStepArr
-      .slice(0, activeStepArr.length - 1)
-      .join(".");
-    return formattedStep;
-  };
+
   const handleExecute = async () => {
     try {
       const res = await sim.execute(

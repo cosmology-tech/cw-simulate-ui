@@ -13,7 +13,7 @@ interface IProps {
   contractAddress: string;
 }
 
-export const StateRenderer = ({contractAddress}: IProps) => {
+export const StateRenderer = ({ contractAddress }: IProps) => {
   const stepTrace = useAtomValue(stepTraceState);
 
   return (
@@ -21,28 +21,23 @@ export const StateRenderer = ({contractAddress}: IProps) => {
       <Half>
         <T1Tabs ContentContainer={Content}>
           <T1Tab label="Summary">
-            <SummaryTab traceLog={stepTrace}/>
+            <SummaryTab traceLog={stepTrace} />
           </T1Tab>
           <T1Tab label="Response">
-            <ResponseTab traceLog={stepTrace}/>
+            <ResponseTab traceLog={stepTrace} />
           </T1Tab>
           <T1Tab label="Logs">
-            <LogsTab traceLog={stepTrace}/>
+            <LogsTab traceLog={stepTrace} />
           </T1Tab>
         </T1Tabs>
       </Half>
       <Half>
         <T1Tabs ContentContainer={Content}>
           <T1Tab label="State">
-            <StateTab/>
+            <StateTab />
           </T1Tab>
           <T1Tab label="Query">
-            <QueryTab contractAddress={contractAddress}/>
-          </T1Tab>
-          <T1Tab label="Watch">
-            <Typography variant="body2" sx={{textAlign: 'center', fontStyle: 'italic'}}>
-              Under construction
-            </Typography>
+            <QueryTab contractAddress={contractAddress} />
           </T1Tab>
         </T1Tabs>
       </Half>
@@ -50,7 +45,7 @@ export const StateRenderer = ({contractAddress}: IProps) => {
   );
 };
 
-function Half({children}: PropsWithChildren) {
+function Half({ children }: PropsWithChildren) {
   return (
     <Grid
       item
@@ -63,12 +58,12 @@ function Half({children}: PropsWithChildren) {
     >
       {children}
     </Grid>
-  )
+  );
 }
 
-const Content = styled(T1Container)(({theme}) => ({
+const Content = styled(T1Container)(({ theme }) => ({
   border: `1px solid ${theme.palette.line}`,
-  '> .T1Container-content': {
+  "> .T1Container-content": {
     padding: theme.spacing(1),
   },
 }));
