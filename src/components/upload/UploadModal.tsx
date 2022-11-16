@@ -30,10 +30,10 @@ export default function UploadModal(props: IUploadModalProps) {
   } = props;
   const sim = useSimulation();
   const navigate = useNavigate();
-  
+
   const [file, setFile] = useState<{ filename: string, fileContent: Buffer | JSON } | undefined>();
   const setNotification = useNotification();
-  
+
   const handleAdd = useCallback(async () => {
     if (!file) {
       setNotification("Internal error. Please check logs.", {severity: "error"});
@@ -48,7 +48,7 @@ export default function UploadModal(props: IUploadModalProps) {
         navigate("/accounts");
         return;
       }
-      
+
       sim.storeCode(sender, file.filename, file.fileContent as Buffer);
     }
     else if (variant === 'simulation') {
@@ -71,7 +71,7 @@ export default function UploadModal(props: IUploadModalProps) {
       <DialogContent sx={{ width: '50vw', maxWidth: 600 }}>
         <FileUploadPaper sx={{ width: '100%', minHeight: 180 }}>
           <FileUpload
-            dropzoneText={dropzoneText ?? "Click to upload a contract binary or Drag & drop a file here"}
+            dropzoneText={dropzoneText ?? "Upload or drop a .wasm contract binary here."}
             variant={variant ?? 'contract'}
             onAccept={(filename: string, fileContent: Buffer | JSON) => {
               setFile({filename, fileContent});
