@@ -28,7 +28,7 @@ const FileUpload = ({
 }: IProps) => {
   const [filename, setFilename] = useState('');
 
-  const text = dropzoneText || "Click to upload a simulation file or contract binary, or drop a file here";
+  const text = dropzoneText || "Upload or drop a .wasm contract binary here to get started.";
   const setNotification = useNotification();
 
   const handleDropzoneClick = (event: any) => {
@@ -116,7 +116,7 @@ const FileUpload = ({
     onDrop: handleOnFileDrop,
     accept: buildAcceptProp(variant),
   });
-  
+
   return (
     <Suspense fallback={<Fallback/>}>
       <div

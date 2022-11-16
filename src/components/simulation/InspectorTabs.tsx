@@ -125,6 +125,7 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
 };
 
 export const SummaryTab = ({traceLog}: InspectorTabProps) => {
+
   if (!traceLog) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }

@@ -1,7 +1,7 @@
-# CW-DEBUG-UI
+# CW-SIMULATE-UI
 
 A web-based interface for debugging and testing the CosmWasm contract
-without the need for setting up the Rust dev toolchain or a local dev testnet node.
+without the need for setting up the Rust dev toolchains or a local dev testnet node.
 
 ## Installing and running locally
 

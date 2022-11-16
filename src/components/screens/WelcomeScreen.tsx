@@ -15,15 +15,13 @@ import useSimulation from "../../hooks/useSimulation";
 import FileUpload from "../upload/FileUpload";
 import FileUploadPaper from "../upload/FileUploadPaper";
 import { ReactComponent as TerraIcon } from "@public/luna.svg";
-import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
-import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 import JunoSvgIcon from "./JunoIcon";
 
 const getChainConfig = (chain: Chains) => defaults.chains[chain];
 
 export default function WelcomeScreen() {
   const sim = useSimulation();
-  
+
   const [file, setFile] =
     useState<{ filename: string; fileContent: Buffer | JSON } | undefined>(
       undefined
@@ -40,14 +38,13 @@ export default function WelcomeScreen() {
       });
       return;
     }
-    
+
     if (file.filename.endsWith(".wasm")) {
       const chainConfig = getChainConfig(chain);
       sim.recreate(chainConfig);
       sim.setBalance(chainConfig.sender, chainConfig.funds);
       sim.storeCode(chainConfig.sender, file.filename, file.fileContent as Buffer, chainConfig.funds);
-    }
-    else if (file.filename.endsWith(".json")) {
+    } else if (file.filename.endsWith(".json")) {
       // TODO: rehydrate from JSON
       // const json = file.fileContent as unknown;
       sim.recreate(defaults.chains.terra);
@@ -95,39 +92,50 @@ export default function WelcomeScreen() {
             CosmWasm Simulator
           </Typography>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={11} lg={7} md={8} sx={{mb: 4, width: "60%"}}>
           <Typography variant="h6" textAlign="center">
             Select a configuration
           </Typography>
+          <FileUploadPaper sx={{minHeight: 200}}>
+            <WelcomeNavIcons>
+              <SvgIconWrapper
+                IconComponent={TerraIcon}
+                label="Terra"
+                isSelected={chain === 'terra'}
+                onClick={() => {
+                  setChain('terra')
+                }}
+              />
+              <SvgIconWrapper
+                IconComponent={JunoSvgIcon}
+                label="Juno"
+                isSelected={chain === 'juno'}
+                onClick={() => {
+                  setChain('juno')
+                }}
+              />
+              {/*TODO: Only support LUNA and JUNO for now*/}
+              {/*<SvgIconWrapper*/}
+              {/*  IconComponent={OsmosisIcon}*/}
+              {/*  label="Osmosis"*/}
+              {/*  isSelected={chain === 'osmosis'}*/}
+              {/*  onClick={() => {*/}
+              {/*    setChain('osmosis')*/}
+              {/*  }}*/}
+              {/*/>*/}
+              {/*<SvgIconWrapper*/}
+              {/*  IconComponent={InjectiveIcon}*/}
+              {/*  label="Injective"*/}
+              {/*  isSelected={chain === 'injective'}*/}
+              {/*  onClick={() => {*/}
+              {/*    setChain('injective')*/}
+              {/*  }}*/}
+              {/*/>*/}
+            </WelcomeNavIcons>
+          </FileUploadPaper>
         </Grid>
-        <WelcomeNavIcons>
-          <SvgIconWrapper
-            IconComponent={TerraIcon}
-            label="Terra"
-            isSelected={chain === 'terra'}
-            onClick={() => {setChain('terra')}}
-          />
-          <SvgIconWrapper
-            IconComponent={JunoSvgIcon}
-            label="Juno"
-            isSelected={chain === 'juno'}
-            onClick={() => {setChain('juno')}}
-          />
-          <SvgIconWrapper
-            IconComponent={OsmosisIcon}
-            label="Osmosis"
-            isSelected={chain === 'osmosis'}
-            onClick={() => {setChain('osmosis')}}
-          />
-          <SvgIconWrapper
-            IconComponent={InjectiveIcon}
-            label="Injective"
-            isSelected={chain === 'injective'}
-            onClick={() => {setChain('injective')}}
-          />
-        </WelcomeNavIcons>
         <Grid item xs={11} lg={7} md={8} sx={{mb: 4, width: "60%"}}>
-          <FileUploadPaper sx={{minHeight: 280}}>
+          <FileUploadPaper sx={{minHeight: 200}}>
             <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
           </FileUploadPaper>
         </Grid>

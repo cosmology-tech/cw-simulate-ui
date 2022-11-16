@@ -23,25 +23,26 @@ import T1Container from "../grid/T1Container";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import TableLayout from "./TableLayout";
 
-const DEFAULT_VALUE = JSON.stringify(
-  {
-    sender: defaults.chains.terra.sender,
-    coins: defaults.chains.terra.funds,
-  },
-  null,
-  2
-);
+const getDefaultAccount = (chainId: string) => {
+  const result = Object.entries(defaults.chains).map(([_, config]) => {
+    if (config.chainId === chainId) {
+      return {sender: config.sender, "coins": config.funds};
+    }
+  }).filter((x) => x !== undefined)[0];
+
+  return JSON.stringify(result, null, 2);
+}
 
 const Accounts = () => {
   const sim = useSimulation();
   const accounts = Object.entries(useAccounts(sim) ?? {});
   const setNotification = useNotification();
-  
+
   const [openDialog, setOpenDialog] = useState(false);
-  const [payload, setPayload] = useState(DEFAULT_VALUE);
+  const [payload, setPayload] = useState(getDefaultAccount(sim.chainId));
   const handleClickOpen = () => {
     setOpenDialog(true);
-    setPayload(DEFAULT_VALUE);
+    setPayload(getDefaultAccount(sim.chainId));
   };
 
   const data = accounts.map(([address, balances]) => {
@@ -63,7 +64,7 @@ const Accounts = () => {
       return;
     }
 
-    if (accounts.find((acc: [string, Coin[]]) => acc[0] === json.address)) {
+    if (accounts.find((acc: [string, Coin[]]) => acc[0] === json.sender)) {
       setNotification("An account with this address already exists", {
         severity: "error",
       });
@@ -123,7 +124,7 @@ const Accounts = () => {
           </DialogContentText>
           <T1Container sx={{width: 400, height: 220}}>
             <JsonCodeMirrorEditor
-              jsonValue={DEFAULT_VALUE}
+              jsonValue={getDefaultAccount(sim.chainId)}
               onChange={setPayload}
             />
           </T1Container>
