@@ -1,5 +1,13 @@
-import { Grid, Button, Popover, TextField, Typography } from "@mui/material";
-import React from "react";
+import {
+  Grid,
+  Button,
+  Popover,
+  TextField,
+  Typography,
+  Autocomplete,
+  AutocompleteRenderInputParams,
+} from "@mui/material";
+import React, { useState } from "react";
 import { useAtom } from "jotai";
 import { compareStates } from "../../atoms/simulationPageAtoms";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
@@ -14,6 +22,7 @@ interface IProps {
 export const ComparePopup = ({ currentActiveStep }: IProps) => {
   const [_, setCompareStates] = useAtom(compareStates);
   const { instanceAddress: contractAddress } = useParams();
+  const [compareWith, setCompareWith] = useState<string>();
   const sim = useSimulation();
   const muiTheme = useTheme();
   const traces = useContractTrace(sim, contractAddress!);
@@ -30,29 +39,27 @@ export const ComparePopup = ({ currentActiveStep }: IProps) => {
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  const keyDownHandler = (e: any) => {
-    if (e.key == "Enter") {
-      const toCompareState = e.target.value;
-      if (toCompareState > traces.length || toCompareState < 0) {
-        setError("Invalid State");
-        return;
-      }
-
-      setCompareStates({
-        state1: extractState(
-          traces[currentActiveStep].storeSnapshot,
-          contractAddress!
-        ),
-        state2: extractState(
-          traces[toCompareState - 1].storeSnapshot,
-          contractAddress!
-        ),
-      });
-
-      setError("");
-      e.preventDefault();
+  const onChangeHandler = (value: string) => {
+    const toCompareState = Number(value);
+    if (toCompareState > traces.length || toCompareState < 0) {
+      setError("Invalid State");
+      return;
     }
+
+    setCompareStates({
+      state1: extractState(
+        traces[currentActiveStep].storeSnapshot,
+        contractAddress!
+      ),
+      state2: extractState(
+        traces[toCompareState - 1].storeSnapshot,
+        contractAddress!
+      ),
+    });
+    setCompareWith(value);
+    setError("");
   };
+
   return (
     <Grid>
       <Button
@@ -81,7 +88,31 @@ export const ComparePopup = ({ currentActiveStep }: IProps) => {
         }}
       >
         <Grid item sx={{ p: 1 }}>
-          <TextField
+          <Autocomplete
+            onInputChange={(_, value) => onChangeHandler(value)}
+            sx={{
+              width: "10vw",
+            }}
+            defaultValue={compareWith}
+            renderInput={(params: AutocompleteRenderInputParams) => (
+              <TextField
+                {...params}
+                label="Compare with other parent"
+                sx={{
+                  "& .css-88setu-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
+                    {
+                      borderColor: "#6b5f5f",
+                    },
+                }}
+              />
+            )}
+            options={[
+              ...[...Array(traces.length + 1).keys()]
+                .filter((ele) => ele !== currentActiveStep + 1 && ele !== 0)
+                .map((ele) => `${ele}`),
+            ]}
+          />
+          {/* <TextField
             id="compare-states"
             label="Compare with other parent "
             variant="standard"
@@ -90,8 +121,8 @@ export const ComparePopup = ({ currentActiveStep }: IProps) => {
               "& .css-xchuf0-MuiInputBase-root-MuiInput-root:after": {
                 borderBottom: "1px solid #6b5f5f",
               },
-            }}
-          />
+            }} 
+          />*/}
         </Grid>
         {error && (
           <Typography variant="subtitle2" color="red" sx={{ p: 1 }}>
