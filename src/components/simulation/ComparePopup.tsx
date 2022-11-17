@@ -79,8 +79,8 @@ export const ComparePopup = ({ currentActiveStep }: IProps) => {
           horizontal: "left",
         }}
         sx={{
-          "& .css-3bmhjh-MuiPaper-root-MuiPopover-paper": {
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 4px 4px",
+          "& .MuiPopover-paper ": {
+            boxShadow: "rgba(149, 157, 165, 0.2) 0px 4px 4px !important",
           },
           "& .MuiInputLabel-root.Mui-focused": {
             color: "#6b5f5f",
@@ -99,10 +99,9 @@ export const ComparePopup = ({ currentActiveStep }: IProps) => {
                 {...params}
                 label="Compare with other parent"
                 sx={{
-                  "& .css-88setu-MuiInputBase-root-MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                    {
-                      borderColor: "#6b5f5f",
-                    },
+                  "&  .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#6b5f5f !important",
+                  },
                 }}
               />
             )}
@@ -112,17 +111,6 @@ export const ComparePopup = ({ currentActiveStep }: IProps) => {
                 .map((ele) => `${ele}`),
             ]}
           />
-          {/* <TextField
-            id="compare-states"
-            label="Compare with other parent "
-            variant="standard"
-            onKeyPress={(e) => keyDownHandler(e)}
-            sx={{
-              "& .css-xchuf0-MuiInputBase-root-MuiInput-root:after": {
-                borderBottom: "1px solid #6b5f5f",
-              },
-            }} 
-          />*/}
         </Grid>
         {error && (
           <Typography variant="subtitle2" color="red" sx={{ p: 1 }}>
