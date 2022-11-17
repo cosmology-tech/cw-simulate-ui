@@ -1,13 +1,14 @@
 import styled from "@mui/material/styles/styled";
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useAtomValue } from "jotai";
 import React, { PropsWithChildren } from "react";
-import { stepTraceState } from "../../atoms/simulationPageAtoms";
+import { isDiffOpenState, stepTraceState } from "../../atoms/simulationPageAtoms";
 import T1Container from "../grid/T1Container";
 import { T1Tab, T1Tabs } from "../T1Tabs";
 import { LogsTab, ResponseTab, SummaryTab } from "./InspectorTabs";
 import { StateTab } from "./StateTab";
 import QueryTab from "./QueryTab";
+import CloseDiff from "./CloseDiff";
 
 interface IProps {
   contractAddress: string;
@@ -15,6 +16,7 @@ interface IProps {
 
 export const StateRenderer = ({ contractAddress }: IProps) => {
   const stepTrace = useAtomValue(stepTraceState);
+  const isDiffOpen = useAtomValue(isDiffOpenState);
 
   return (
     <Grid container height="100%" gap={1}>
@@ -32,7 +34,10 @@ export const StateRenderer = ({ contractAddress }: IProps) => {
         </T1Tabs>
       </Half>
       <Half>
-        <T1Tabs ContentContainer={Content}>
+        <T1Tabs
+          ContentContainer={Content}
+          right={isDiffOpen && <CloseDiff />}
+        >
           <T1Tab label="State">
             <StateTab />
           </T1Tab>
