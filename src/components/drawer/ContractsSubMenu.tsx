@@ -212,9 +212,6 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
       const [denom, amount] = f.trim().split(" ");
       return {denom, amount};
     }).filter((f: Coin) => f.denom && f.amount);
-    if (funds.length === 0) {
-      setNotification("Invalid funds format");
-    }
     setInstantiateFunds(funds);
   }, [instantiateFunds]);
 
@@ -223,6 +220,10 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
 
   const handleInstantiate = useCallback(async () => {
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
+    if (instantiateFunds.length === 0) {
+      setNotification("Invalid funds.", {severity: "error"});
+      return;
+    }
 
     try {
       const [sender, funds] = Object.entries(accounts).find(([addr, funds]) => addr === account) ?? [undefined, []];
