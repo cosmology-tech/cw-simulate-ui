@@ -1,5 +1,5 @@
 import type { GridSize } from "@mui/system";
-import type { RustResult } from "@terran-one/cw-simulate";
+import type { Coin, RustResult } from "@terran-one/cw-simulate";
 import { Err, Ok, Result } from "ts-results";
 
 export type Falsy = undefined | null | false;
@@ -45,3 +45,5 @@ export function toRustResult<T>(result: Result<T, string>): RustResult<T> {
     return { error: result.val };
   }
 }
+
+export const stringifyFunds = (funds: Coin[]) => funds.map(coin => `${coin.amount}${coin.denom}`).join(', ');

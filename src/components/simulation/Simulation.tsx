@@ -15,6 +15,7 @@ import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
 import CollapsibleWidget from "../CollapsibleWidget";
 import { Typography } from "@mui/material";
+import useSimulation from "../../hooks/useSimulation";
 
 const StyledPaper = styled(Paper)(({theme}) => ({
   ...theme.typography.body2,
@@ -22,12 +23,14 @@ const StyledPaper = styled(Paper)(({theme}) => ({
 }));
 
 const Simulation = () => {
+  const sim = useSimulation();
   const contractAddress = useParams().instanceAddress!;
+  
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
         <Typography gutterBottom sx={{fontWeight: 'bold', textAlign: 'center'}}>
-          {contractAddress}
+          {sim.shortenAddress(contractAddress)}
         </Typography>
         <CollapsibleExecutor contractAddress={contractAddress}/>
         <Divider sx={{my: 1}}/>

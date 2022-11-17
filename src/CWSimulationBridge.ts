@@ -209,6 +209,21 @@ export default class CWSimulationBridge {
       dispatch(next);
     }
   }
+  
+  shortenAddress(addr: string) {
+    const prefix = this.bech32Prefix;
+    if (!addr.startsWith(prefix)) {
+      const before = addr.substring(0, 10);
+      const after  = addr.substring(addr.length - 5);
+      return `${before}...${after}`;
+    }
+    else {
+      const prefixless = addr.substring(prefix.length);
+      const before = prefixless.substring(0, 5);
+      const after  = prefixless.substring(prefixless.length - 5);
+      return `${prefix}${before}...${after}`;
+    }
+  }
 
   get accounts() {
     return this.app.bank.getBalances().toObject();

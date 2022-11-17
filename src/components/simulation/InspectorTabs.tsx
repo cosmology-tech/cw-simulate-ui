@@ -1,12 +1,20 @@
-import React from "react";
-import YAML from "yaml";
-import { TraceLog } from "@terran-one/cw-simulate";
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Typography, } from "@mui/material";
-import T1Container from "../grid/T1Container";
-import TableLayout from "../chains/TableLayout";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import { ExecuteTraceLog, ReplyTraceLog, TraceLog } from "@terran-one/cw-simulate";
+import React from "react";
 import { chromeDark, ObjectInspector } from "react-inspector";
+import YAML from "yaml";
+import useSimulation from "../../hooks/useSimulation";
+import { stringifyFunds } from "../../utils/typeUtils";
+import TableLayout from "../chains/TableLayout";
 import CollapsibleWidget from "../CollapsibleWidget";
+import T1Container from "../grid/T1Container";
 
 export interface InspectorTabProps {
   traceLog: TraceLog | undefined;
@@ -125,36 +133,103 @@ export const ResponseTab = ({traceLog}: InspectorTabProps) => {
 };
 
 export const SummaryTab = ({traceLog}: InspectorTabProps) => {
-
   if (!traceLog) {
     return <Typography variant="caption">Nothing here to see.</Typography>;
   }
-
-  let {type, msg, env, response, contractAddress, result} =
-    traceLog as TraceLog;
-
+  
   return (
     <Grid>
-      <Typography variant="h5" sx={{fontWeight: "bold"}}>
-        wasm/execute
-      </Typography>
-      <Grid item flex={1} sx={{height: "10vh", maxHeight: "20vh", mt: 1}}>
-        <T1Container>
-          <TableLayout
-            rows={[{id: "1", sender: contractAddress, funds: "10000uluna"}]}
-            columns={{
-              sender: "Sender",
-              funds: "Funds",
-            }}
-            inspectorTable={true}
-          />
-        </T1Container>
-      </Grid>
-      <h4>ExecuteMsg</h4>
-      <pre>{YAML.stringify(msg)}</pre>
+      <SummaryHeader traceLog={traceLog} />
+      
+      {traceLog.type === 'instantiate'
+      ? <InstantiateSummary traceLog={traceLog} />
+      : traceLog.type === 'execute'
+      ? <ExecuteSummary traceLog={traceLog} />
+      : traceLog.type === 'reply'
+      ? <ReplySummary traceLog={traceLog} />
+      : null
+      }
+      
+      <Box sx={{ my: 2 }}>
+        <Typography variant="h6" my={1}>Message</Typography>
+        <Paper
+          sx={{
+            p: 1,
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            overflow: 'auto',
+            maxHeight: 250,
+          }}
+        >
+          <pre>{YAML.stringify(traceLog.msg)}</pre>
+        </Paper>
+      </Box>
     </Grid>
   );
 };
+
+function SummaryHeader({traceLog}: {traceLog: TraceLog}) {
+  const { type } = traceLog;
+  
+  let title: string;
+  switch (type) {
+    case 'instantiate':
+      title = 'wasm/instantiate';
+      break;
+    case 'execute':
+      title = 'wasm/execute';
+      break;
+    case 'reply':
+      title = 'wasm/reply';
+      break;
+  }
+  
+  return (
+    <Typography variant="h6" fontWeight="bold" mb={1}>
+      {title}
+    </Typography>
+  )
+}
+
+function InstantiateSummary({traceLog}: {traceLog: ExecuteTraceLog}) {
+  const { info } = traceLog;
+  
+  return (
+    <>
+      <SenderView info={info} />
+    </>
+  )
+}
+
+function ExecuteSummary({traceLog}: {traceLog: ExecuteTraceLog}) {
+  const { info } = traceLog;
+  
+  return (
+    <>
+      <SenderView info={info} />
+    </>
+  )
+}
+
+function ReplySummary({traceLog}: {traceLog: ReplyTraceLog}) {
+  return null;
+}
+
+function SenderView({info}: {info: ExecuteTraceLog['info']}) {
+  const sim = useSimulation();
+  
+  return (
+    <TableLayout
+      rows={[{sender: sim.shortenAddress(info.sender), funds: stringifyFunds(info.funds) }]}
+      keyField="sender"
+      columns={{
+        sender: "Sender",
+        funds: "Funds",
+      }}
+      inspectorTable
+      sx={{mb: 2}}
+    />
+  )
+}
 
 const combineLogs = (traceLog: TraceLog): any[] => {
   let res = [...traceLog.logs];
