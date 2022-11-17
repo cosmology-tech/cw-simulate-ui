@@ -17,10 +17,19 @@ export interface IRequest {
 }
 
 export const blockState = atom<JSON | undefined>(undefined);
-export const compareStates = atom<{ state1: { [k: string]: string; }; state2: { [k: string]: string; } }>({
-  state1: {},
-  state2: {},
+export const compareStates = atom<{ state1: object | undefined; state2: object | undefined }>({
+  state1: undefined,
+  state2: undefined,
 });
 export const stepTraceState = atom<TraceLog | undefined>(undefined);
 export const activeStepState = atom<string>('');
-export const stateDiffOpen = atom<boolean>(false);
+
+// ----- DERIVED ATOMS -----
+export const compareStringsState = atom(get => {
+  const { state1, state2 } = get(compareStates);
+  return [JSON.stringify(state1), JSON.stringify(state2)];
+});
+export const isDiffOpenState = atom(get => {
+  const { state1, state2 } = get(compareStates);
+  return !!(state1 || state2);
+});

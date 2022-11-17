@@ -3,7 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import type { Theme } from "@mui/system/createTheme";
 import type { SxProps } from "@mui/system/styleFunctionSx";
-import { atom, useAtom, useSetAtom, WritableAtom } from "jotai";
+import { atom, useAtom, WritableAtom } from "jotai";
 import {
   AriaAttributes,
   Children,
@@ -16,8 +16,6 @@ import {
   useRef,
 } from "react";
 import { joinSx } from "../utils/reactUtils";
-import { stateDiffOpen, compareStates } from "../atoms/simulationPageAtoms";
-import CloseDiff from "./simulation/CloseDiff";
 
 type TabAtom = WritableAtom<string | undefined, string, void>;
 
@@ -29,6 +27,7 @@ export type IT1TabsProps = AriaAttributes & {
   ContentContainer?: ComponentType<PropsWithChildren>;
   className?: string;
   sx?: SxProps<Theme>;
+  right?: ReactNode;
 };
 
 export function T1Tabs(props: IT1TabsProps) {
@@ -38,14 +37,13 @@ export function T1Tabs(props: IT1TabsProps) {
     className = "",
     sx,
     ContentContainer = ({ children }) => <>{children}</>,
+    right,
     ...rest
   } = props;
 
   const atomless = useRef<TabAtom | undefined>();
   let [current, setCurrent] = useWithAtom(atomless, withAtom);
   current = current || getFirstTab(children);
-  const [isDiffOpen, setIsDiffOpen] = useAtom(stateDiffOpen);
-  const setCompareStates = useSetAtom(compareStates);
   const tabs: ReactElement[] = [];
   let content: ReactNode = null;
 
@@ -92,17 +90,7 @@ export function T1Tabs(props: IT1TabsProps) {
         >
           {tabs}
         </Tabs>
-        {isDiffOpen && current === "State" && (
-          <CloseDiff
-            onClick={() => {
-              setIsDiffOpen(false);
-              setCompareStates({
-                state1: {},
-                state2: {},
-              });
-            }}
-          />
-        )}
+        {right}
       </Grid>
       <Grid item flex={1} className="T1Tabs-content">
         <ContentContainer>{content}</ContentContainer>
