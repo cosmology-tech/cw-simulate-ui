@@ -35,7 +35,7 @@ type StyledTreeItemProps = TreeItemProps & {
   labelInfo?: string;
   labelText: string;
   nodeId: string;
-  activeStep: string;
+  activeStep?: string;
 };
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
@@ -71,7 +71,9 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 
 function StyledTreeItem(props: StyledTreeItemProps) {
   const { bgColor, color, labelIcon, labelInfo, labelText, ...other } = props;
-  const currentActiveStep = Number(props.activeStep.split("-")[0]);
+  const currentActiveStep = props.activeStep
+    ? Number(props.activeStep.split("-")[0])
+    : undefined;
   return (
     <StyledTreeItemRoot
       label={
@@ -83,7 +85,11 @@ function StyledTreeItem(props: StyledTreeItemProps) {
           >
             {labelText}
           </Typography>
-          <ComparePopup currentActiveStep={currentActiveStep} />
+          {currentActiveStep !== undefined ? (
+            <ComparePopup currentActiveStep={currentActiveStep} />
+          ) : (
+            <></>
+          )}
         </Box>
       }
       style={{
@@ -248,7 +254,7 @@ function renderTreeItems(
           nodeId={`${prefix ? `${prefix}-` : ""}${index}-${depth}`}
           labelIcon={<NumberIcon number={index + 1} />}
           labelText={getTreeItemLabel(trace)}
-          activeStep={activeStep}
+          activeStep={depth === 0 ? activeStep : undefined}
         />
       );
     } else {
@@ -259,7 +265,7 @@ function renderTreeItems(
           nodeId={`${prefix ? `${prefix}-` : ""}${index}-${depth}`}
           labelIcon={<NumberIcon number={index + 1} />}
           labelText={getTreeItemLabel(trace)}
-          activeStep={activeStep}
+          activeStep={depth === 0 ? activeStep : undefined}
         >
           {renderTreeItems(
             trace.trace,
