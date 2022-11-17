@@ -15,9 +15,9 @@ import useSimulation from "../../hooks/useSimulation";
 import FileUpload from "../upload/FileUpload";
 import FileUploadPaper from "../upload/FileUploadPaper";
 import { ReactComponent as TerraIcon } from "@public/luna.svg";
-import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
+import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 
 const getChainConfig = (chain: Chains) => defaults.chains[chain];
 
