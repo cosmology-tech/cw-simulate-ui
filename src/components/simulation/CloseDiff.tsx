@@ -6,13 +6,14 @@ import React, { MouseEvent, useCallback } from "react";
 import { compareStates } from "../../atoms/simulationPageAtoms";
 
 interface IProps {
-  onClick?(): void;
+  onClick?(e: MouseEvent): void;
 }
 
 const CloseDiff = ({ onClick: _onClick }: IProps) => {
   const setCompareStates = useSetAtom(compareStates);
   
   const onClick = useCallback((e: MouseEvent) => {
+    _onClick?.(e);
     if (!e.isDefaultPrevented()) {
       setCompareStates({
         state1: undefined,
