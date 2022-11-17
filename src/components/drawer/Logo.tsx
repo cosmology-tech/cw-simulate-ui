@@ -20,7 +20,7 @@ const Logo = React.memo((props: ILogoProps) => {
       <img
         src={white ? "/T1_White.png" : "/T1.png"}
         height={25}
-        alt={"Terran One"}
+        alt={"CwSimulate"}
       />
       <div
         style={{
@@ -30,7 +30,7 @@ const Logo = React.memo((props: ILogoProps) => {
           marginLeft: 10,
         }}
       >
-        Terran One
+        CWSimulate
       </div>
     </LinkComponent>
   );

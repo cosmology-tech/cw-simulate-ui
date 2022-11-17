@@ -86,12 +86,13 @@ export default function WelcomeScreen() {
           border: `1px solid ${theme.palette.line}`,
           borderRadius: "10px",
           width: "60%",
+          py: 10
         }}
         className="outerGrid"
       >
         <Grid item xs={12} sx={{my: 4}}>
           <Typography variant="h2" fontWeight={600} textAlign="center">
-            CosmWasm Simulator
+            CWSimulate
           </Typography>
         </Grid>
         <Grid item xs={11} lg={7} md={8} sx={{mb: 4, width: "60%"}}>
