@@ -7,8 +7,8 @@ import {
   blockState,
   compareStringsState,
   isDiffOpenState,
-} from "../../atoms/simulationPageAtoms";
-import T1JsonTree from "../T1JsonTree";
+} from "../../../atoms/simulationPageAtoms";
+import T1JsonTree from "../../T1JsonTree";
 
 export interface IStateTabProps {}
 
