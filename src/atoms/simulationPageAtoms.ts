@@ -27,7 +27,7 @@ export const activeStepState = atom<string>('');
 // ----- DERIVED ATOMS -----
 export const compareStringsState = atom(get => {
   const { state1, state2 } = get(compareStates);
-  return [JSON.stringify(state1), JSON.stringify(state2)];
+  return [state1, state2];
 });
 export const isDiffOpenState = atom(get => {
   const { state1, state2 } = get(compareStates);
