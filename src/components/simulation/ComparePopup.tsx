@@ -89,11 +89,12 @@ export const ComparePopup = ({ currentActiveStep }: IProps) => {
       >
         <Grid item sx={{ p: 1 }}>
           <Autocomplete
-            onInputChange={(_, value) => onChangeHandler(value)}
+            onInputChange={(_, value) =>
+              value.length > 0 && onChangeHandler(value)
+            }
             sx={{
               width: "10vw",
             }}
-            defaultValue={compareWith}
             renderInput={(params: AutocompleteRenderInputParams) => (
               <TextField
                 {...params}
