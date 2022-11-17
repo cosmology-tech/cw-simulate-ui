@@ -1,6 +1,6 @@
 import { ComponentType, useId, useMemo, useRef, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { styled } from "@mui/material/styles";
+import { styled, SxProps } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -9,11 +9,18 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { IconButton, Menu } from "@mui/material";
+import { Theme } from "@mui/system";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+interface IStyledTableCellProps {
+  inspectorTable?: boolean;
+}
+
+const StyledTableCell = styled(TableCell)<IStyledTableCellProps>(({ theme, inspectorTable }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
+    fontWeight: inspectorTable ? 'bold' : undefined,
+    padding: inspectorTable ? theme.spacing(1) : undefined,
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
@@ -33,6 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export type ITableLayoutProps<T extends DataSet> = {
   RowMenu?: ComponentType<ITableLayoutRowMenuProps<T>>;
   inspectorTable?: boolean;
+  sx?: SxProps<Theme>;
 } & (
   | {
       rows: T[];
@@ -63,7 +71,7 @@ type ColumnMap<T extends DataSet> = {
 export default function TableLayout<T extends DataSet>(
   props: ITableLayoutProps<T>
 ) {
-  const { rows, columns, RowMenu, inspectorTable } = props;
+  const { rows, columns, RowMenu, inspectorTable, sx } = props;
   const keyField = "keyField" in props ? props.keyField : ("id" as keyof T);
 
   const keys = useMemo(
@@ -73,26 +81,20 @@ export default function TableLayout<T extends DataSet>(
   const labels = useMemo(() => Object.values(columns) as string[], [columns]);
 
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} sx={sx}>
       <Table sx={{ width: "100%" }} aria-label="customized table">
         <TableHead>
           <TableRow>
             {[
-              ...labels.map((label, idx) =>
-                inspectorTable ? (
-                  <TableCell
-                    align="center"
-                    key={keys[idx]}
-                    sx={{ fontWeight: "bold" }}
-                  >
-                    {label}
-                  </TableCell>
-                ) : (
-                  <StyledTableCell key={keys[idx]} align="center">
-                    {label}
-                  </StyledTableCell>
-                )
-              ),
+              ...labels.map((label, idx) => (
+                <StyledTableCell
+                  key={keys[idx]}
+                  align="center"
+                  inspectorTable={inspectorTable}
+                >
+                  {label}
+                </StyledTableCell>
+              )),
               ...(RowMenu ? [<StyledTableCell key="t1rowmenu" />] : []),
             ]}
           </TableRow>
