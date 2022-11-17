@@ -16,7 +16,6 @@ export const StateTab = ({}: IStateTabProps) => {
   const isDiff = useAtomValue(isDiffOpenState);
   const [state1, state2] = useAtomValue(compareStringsState);
   const currentJSON = useAtomValue(blockState);
-  console.log(state1, state2)
 
   if (isDiff) {
     if (state1 === state2) {
