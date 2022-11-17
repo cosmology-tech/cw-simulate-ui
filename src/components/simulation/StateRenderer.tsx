@@ -5,9 +5,11 @@ import React, { PropsWithChildren } from "react";
 import { isDiffOpenState, stepTraceState } from "../../atoms/simulationPageAtoms";
 import T1Container from "../grid/T1Container";
 import { T1Tab, T1Tabs } from "../T1Tabs";
-import { LogsTab, ResponseTab, SummaryTab } from "./InspectorTabs";
-import { StateTab } from "./StateTab";
-import QueryTab from "./QueryTab";
+import LogsTab from "./tabs/LogsTab";
+import ResponseTab from "./tabs/ResponseTab";
+import SummaryTab from "./tabs/SummaryTab";
+import { StateTab } from "./tabs/StateTab";
+import QueryTab from "./tabs/QueryTab";
 import CloseDiff from "./CloseDiff";
 
 interface IProps {

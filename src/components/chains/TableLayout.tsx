@@ -1,4 +1,4 @@
-import { ComponentType, useId, useMemo, useRef, useState } from "react";
+import { ComponentType, ReactNode, useId, useMemo, useRef, useState } from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { styled, SxProps } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -24,6 +24,7 @@ const StyledTableCell = styled(TableCell)<IStyledTableCellProps>(({ theme, inspe
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
+    padding: inspectorTable ? theme.spacing(1) : undefined,
   },
 }));
 
@@ -60,7 +61,7 @@ export interface ITableLayoutRowMenuProps<T extends DataSet> {
 }
 
 type DataSet = {
-  [key: PropertyKey]: string;
+  [key: PropertyKey]: ReactNode;
 };
 
 /** Mapping from keys of T to display values/labels. */
@@ -73,6 +74,10 @@ export default function TableLayout<T extends DataSet>(
 ) {
   const { rows, columns, RowMenu, inspectorTable, sx } = props;
   const keyField = "keyField" in props ? props.keyField : ("id" as keyof T);
+  
+  if (rows.find(row => typeof row[keyField] !== 'string')) {
+    console.warn(`TableLayout keyField ${keyField.toString()} is not a string and will likely cause issues. To avoid this warning, extract a string key from the field.`);
+  }
 
   const keys = useMemo(
     () => Object.keys(columns) as (keyof T & string)[],
@@ -109,7 +114,7 @@ export default function TableLayout<T extends DataSet>(
                 keys,
                 RowMenu,
               }}
-              key={row[keyField]}
+              key={`${row[keyField]}`}
               inspectorTable={inspectorTable}
             />
           ))}
@@ -138,15 +143,9 @@ function T1TableRow<T extends DataSet>(props: T1TableRowProps<T>) {
   return (
     <StyledTableRow>
       {keys.map((key) =>
-        inspectorTable ? (
-          <TableCell align="center" sx={{ p: 1 }} key={key}>
-            {row[key]}
-          </TableCell>
-        ) : (
-          <StyledTableCell key={key} align="center" component="th" scope="row">
-            {row[key]}
-          </StyledTableCell>
-        )
+        <StyledTableCell key={key} align="center" component="th" scope="row" inspectorTable>
+          {row[key]}
+        </StyledTableCell>
       )}
       {RowMenu && (
         <StyledTableCell align="center" component="th" scope="row">

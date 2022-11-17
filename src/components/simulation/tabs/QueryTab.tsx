@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
-import { useNotification } from "../../atoms/snackbarNotificationState";
+import { JsonCodeMirrorEditor } from "../../JsonCodeMirrorEditor";
+import { useNotification } from "../../../atoms/snackbarNotificationState";
 import { Button, Grid } from "@mui/material";
-import T1Container from "../grid/T1Container";
-import useSimulation from "../../hooks/useSimulation";
+import T1Container from "../../grid/T1Container";
+import useSimulation from "../../../hooks/useSimulation";
 import Divider from "@mui/material/Divider";
-import T1JsonTree from "../T1JsonTree";
-import CollapsibleWidget from "../CollapsibleWidget";
+import T1JsonTree from "../../T1JsonTree";
+import CollapsibleWidget from "../../CollapsibleWidget";
 import { useAtomValue } from "jotai";
-import { activeStepState } from "../../atoms/simulationPageAtoms";
-import { getFormattedStep } from "./Executor";
+import { activeStepState } from "../../../atoms/simulationPageAtoms";
+import { getFormattedStep } from "../Executor";
 
 interface IProps {
   contractAddress: string;

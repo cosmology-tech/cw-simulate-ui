@@ -1,20 +1,31 @@
-import CollapsibleIcon from "./CollapsibleIcon";
-import { Box, Collapse, Typography } from "@mui/material";
+import { Theme } from "@mui/material/styles/createTheme";
+import Box from "@mui/material/Box";
+import Collapse from "@mui/material/Collapse";
+import Typography from "@mui/material/Typography";
+import { SxProps } from "@mui/system/styleFunctionSx";
 import { ReactNode, useEffect, useState } from "react";
-import useTheme from "@mui/material/styles/useTheme";
+import { useTheme } from "../configs/theme";
+import { joinSx } from "../utils/reactUtils";
+import CollapsibleIcon from "./CollapsibleIcon";
 
 export interface ICollabsibleWidgetProps {
   title: string;
   collapsed?: boolean;
   height?: number;
+  minHeight?: number;
+  maxHeight?: number;
   children?: ReactNode;
+  sx?: SxProps<Theme>;
 }
 
 function CollapsibleWidget({
   title,
   collapsed,
   height,
+  minHeight,
+  maxHeight,
   children,
+  sx,
 }: ICollabsibleWidgetProps) {
   const theme = useTheme();
   const expanded = collapsed === undefined ? true : collapsed;
@@ -25,7 +36,7 @@ function CollapsibleWidget({
   }, [collapsed]);
 
   return (
-    <Box sx={{borderRadius: 1, overflow: "hidden", pb: 0.5}}>
+    <Box sx={joinSx({borderRadius: 1, overflow: "hidden", pb: 0.5}, sx)}>
       <Box
         sx={{
           display: "flex",
@@ -42,7 +53,7 @@ function CollapsibleWidget({
         <Typography sx={{fontSize: "1.1rem"}}>{title}</Typography>
       </Box>
       <Collapse in={show}>
-        <Box sx={{height: expanded ? 280 : 'fit-content'}}>
+        <Box sx={{minHeight, maxHeight, height}}>
           {children}
         </Box>
       </Collapse>
