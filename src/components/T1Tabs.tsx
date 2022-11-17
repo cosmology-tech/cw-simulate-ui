@@ -3,7 +3,7 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import type { Theme } from "@mui/system/createTheme";
 import type { SxProps } from "@mui/system/styleFunctionSx";
-import { atom, useAtom, WritableAtom } from "jotai";
+import { atom, useAtom, useSetAtom, WritableAtom } from "jotai";
 import {
   AriaAttributes,
   Children,
@@ -16,6 +16,8 @@ import {
   useRef,
 } from "react";
 import { joinSx } from "../utils/reactUtils";
+import { stateDiffOpen, compareStates } from "../atoms/simulationPageAtoms";
+import CloseDiff from "./simulation/CloseDiff";
 
 type TabAtom = WritableAtom<string | undefined, string, void>;
 
@@ -27,63 +29,86 @@ export type IT1TabsProps = AriaAttributes & {
   ContentContainer?: ComponentType<PropsWithChildren>;
   className?: string;
   sx?: SxProps<Theme>;
-}
+};
 
 export function T1Tabs(props: IT1TabsProps) {
   const {
     children,
     withAtom,
-    className = '',
+    className = "",
     sx,
-    ContentContainer = ({children}) => <>{children}</>,
+    ContentContainer = ({ children }) => <>{children}</>,
     ...rest
   } = props;
-  
+
   const atomless = useRef<TabAtom | undefined>();
   let [current, setCurrent] = useWithAtom(atomless, withAtom);
   current = current || getFirstTab(children);
-  
+  const [isDiffOpen, setIsDiffOpen] = useAtom(stateDiffOpen);
+  const setCompareStates = useSetAtom(compareStates);
   const tabs: ReactElement[] = [];
   let content: ReactNode = null;
-  
-  Children.forEach(children, child => {
+
+  Children.forEach(children, (child) => {
     if (!isValidElement(child)) return;
-    
+
     let { value, label } = child.props;
     value ??= label;
-    
-    tabs.push(<Tab key={value} {...{value, label}} />);
+
+    tabs.push(<Tab key={value} {...{ value, label }} />);
     if (current === value) {
       content = child;
     }
   });
-  
+
   return (
     <Grid
       container
       direction="column"
       gap={2}
       className={`T1Tabs-root ${className}`}
-      sx={joinSx({
-        height: '100%',
-      }, sx)}
+      sx={joinSx(
+        {
+          height: "100%",
+        },
+        sx
+      )}
       {...rest}
     >
-      <Grid item className="T1Tabs-tabs">
+      <Grid
+        item
+        className="T1Tabs-tabs"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
         <Tabs
           value={current}
-          onChange={(_, value) => {setCurrent(value)}}
+          onChange={(_, value) => {
+            setCurrent(value);
+          }}
         >
           {tabs}
         </Tabs>
+        {isDiffOpen && current === "State" && (
+          <CloseDiff
+            onClick={() => {
+              setIsDiffOpen(false);
+              setCompareStates({
+                state1: {},
+                state2: {},
+              });
+            }}
+          />
+        )}
       </Grid>
       <Grid item flex={1} className="T1Tabs-content">
-        <ContentContainer>
-          {content}
-        </ContentContainer>
+        <ContentContainer>{content}</ContentContainer>
       </Grid>
     </Grid>
-  )
+  );
 }
 
 export interface IT1TabProps<T extends string = string> {
@@ -93,7 +118,7 @@ export interface IT1TabProps<T extends string = string> {
 }
 
 export function T1Tab<T extends string = string>({ children }: IT1TabProps<T>) {
-  return <>{children}</>
+  return <>{children}</>;
 }
 
 function useWithAtom(
@@ -106,17 +131,16 @@ function useWithAtom(
       atomless.current = atom<string | undefined>(undefined);
     }
     feck = atomless.current!;
-  }
-  else {
+  } else {
     feck = withAtom;
   }
   return useAtom(feck);
 }
 
 function getFirstTab(children: T1TabsChildren | undefined) {
-  const all = Children.map(children, child => {
+  const all = Children.map(children, (child) => {
     if (!isValidElement(child)) return null;
     return child.props.value || child.props.label;
-  })?.filter(v => !!v);
+  })?.filter((v) => !!v);
   if (all && all.length) return all[0];
 }
