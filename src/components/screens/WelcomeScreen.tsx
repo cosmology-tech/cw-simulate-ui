@@ -15,7 +15,9 @@ import useSimulation from "../../hooks/useSimulation";
 import FileUpload from "../upload/FileUpload";
 import FileUploadPaper from "../upload/FileUploadPaper";
 import { ReactComponent as TerraIcon } from "@public/luna.svg";
+import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
+import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 
 const getChainConfig = (chain: Chains) => defaults.chains[chain];
 
@@ -114,23 +116,16 @@ export default function WelcomeScreen() {
                   setChain('juno')
                 }}
               />
-              {/*TODO: Only support LUNA and JUNO for now*/}
-              {/*<SvgIconWrapper*/}
-              {/*  IconComponent={OsmosisIcon}*/}
-              {/*  label="Osmosis"*/}
-              {/*  isSelected={chain === 'osmosis'}*/}
-              {/*  onClick={() => {*/}
-              {/*    setChain('osmosis')*/}
-              {/*  }}*/}
-              {/*/>*/}
-              {/*<SvgIconWrapper*/}
-              {/*  IconComponent={InjectiveIcon}*/}
-              {/*  label="Injective"*/}
-              {/*  isSelected={chain === 'injective'}*/}
-              {/*  onClick={() => {*/}
-              {/*    setChain('injective')*/}
-              {/*  }}*/}
-              {/*/>*/}
+              <SvgIconWrapper
+                IconComponent={OsmosisIcon}
+                label="Osmosis"
+                subLabel="Coming soon"
+              />
+              <SvgIconWrapper
+                IconComponent={InjectiveIcon}
+                label="Injective"
+                subLabel="Coming soon"
+              />
             </WelcomeNavIcons>
           </FileUploadPaper>
         </Grid>
@@ -148,15 +143,17 @@ interface ISvgIconWrapperProps {
   IconComponent: ComponentType;
   fontSize?: number;
   label: string;
-  isSelected: boolean;
+  subLabel?: string;
+  isSelected?: boolean;
   backgroundColor?: string;
-  onClick: (e: MouseEvent) => void;
+  onClick?: (e: MouseEvent) => void;
 }
 
 const SvgIconWrapper = ({
   IconComponent,
   fontSize,
   label,
+  subLabel,
   isSelected,
   onClick,
 }: ISvgIconWrapperProps) => {
@@ -168,8 +165,10 @@ const SvgIconWrapper = ({
           borderRadius: "50%",
           display: "flex",
           flexDirection: "column",
+          opacity: onClick ? 1 : 0.5,
+          cursor: onClick ? "pointer" : "default",
         }}
-        onClick={(event) => onClick(event)}
+        onClick={(event) => onClick ? onClick(event) : undefined}
       >
         <Box
           sx={{
@@ -189,6 +188,7 @@ const SvgIconWrapper = ({
         <Typography fontWeight={300} textAlign="center">
           {label}
         </Typography>
+        {subLabel && (<Typography fontSize={10} textAlign="center">{subLabel}</Typography>)}
       </Box>
     </>
   );
