@@ -6,12 +6,10 @@ import YAML from 'yaml';
 import useSimulation from "../../../hooks/useSimulation";
 import { stringifyFunds } from "../../../utils/typeUtils";
 import TableLayout from "../../chains/TableLayout";
-import { IInspectorTabProps, TabHeader, TabPaper } from "./Common";
+import { EmptyTab, IInspectorTabProps, TabHeader, TabPaper } from "./Common";
 
 export default function SummaryTab({traceLog}: IInspectorTabProps) {
-  if (!traceLog) {
-    return <Typography variant="caption">Nothing here to see.</Typography>;
-  }
+  if (!traceLog) return <EmptyTab />
   
   return (
     <Grid>

@@ -1,5 +1,5 @@
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
+import Typography, { TypographyProps } from "@mui/material/Typography";
 import styled from "@mui/material/styles/styled";
 import { TraceLog } from "@terran-one/cw-simulate";
 import React, { PropsWithChildren } from "react";
@@ -24,3 +24,11 @@ export const TabHeader = React.memo(({ children }: PropsWithChildren) => {
     </Typography>
   )
 });
+
+export const EmptyTab = styled(({ children = 'Nothing to see here.', ...props }: TypographyProps) => (
+  <Typography variant="body2" {...props}>{children}</Typography>
+))(({ theme }) => ({
+  textAlign: 'center',
+  fontStyle: 'italic',
+  color: theme.palette.grey[500],
+}));

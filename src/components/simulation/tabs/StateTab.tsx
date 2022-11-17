@@ -1,14 +1,15 @@
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
 import ReactDiffViewer from "@terran-one/react-diff-viewer";
 import { useAtomValue } from "jotai";
 import React from "react";
+import { compareDeep } from "../../../CWSimulationBridge";
 import {
   blockState,
   compareStringsState,
   isDiffOpenState,
 } from "../../../atoms/simulationPageAtoms";
 import T1JsonTree from "../../T1JsonTree";
+import { EmptyTab } from "./Common";
 
 export interface IStateTabProps {}
 
@@ -18,29 +19,20 @@ export const StateTab = ({}: IStateTabProps) => {
   const currentJSON = useAtomValue(blockState);
 
   if (isDiff) {
-    if (state1 === state2) {
-      return (
-        <Typography
-          variant="body2"
-          fontStyle="italic"
-          color="GrayText"
-          textAlign="center"
-        >
-          No difference between selected states.
-        </Typography>
-      );
-    } else {
-      return (
-        <Box>
-          <ReactDiffViewer
-            oldValue={JSON.stringify(state1)}
-            newValue={JSON.stringify(state2)}
-            splitView={false}
-          />
-        </Box>
-      );
+    if (compareDeep(state1, state2)) {
+      return <EmptyTab>No difference between selected states.</EmptyTab>
     }
+    return (
+      <Box>
+        <ReactDiffViewer
+          oldValue={JSON.stringify(state1)}
+          newValue={JSON.stringify(state2)}
+          splitView={false}
+        />
+      </Box>
+    );
   } else {
-    return <T1JsonTree data={currentJSON ?? {}} />;
+    if (!currentJSON) return <EmptyTab />
+    return <T1JsonTree data={currentJSON} />;
   }
 };

@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { TraceLog } from "@terran-one/cw-simulate";
 import { chromeDark, ObjectInspector } from "react-inspector";
-import { IInspectorTabProps } from "./Common";
+import { EmptyTab, IInspectorTabProps } from "./Common";
 
 const INSPECTOR_THEME: any = {
   ...chromeDark,
@@ -14,9 +14,7 @@ const INSPECTOR_THEME: any = {
 };
 
 export default function LogsTab({traceLog}: IInspectorTabProps) {
-  if (!traceLog) {
-    return <Typography variant="caption">Nothing here to see.</Typography>;
-  }
+  if (!traceLog) return <EmptyTab />
 
   let combinedLogs = combineLogs(traceLog).filter((log) => log.type === "call");
 

@@ -6,7 +6,7 @@ import TableLayout from "../../chains/TableLayout";
 import CollapsibleWidget from "../../CollapsibleWidget";
 import T1Container from "../../grid/T1Container";
 import BlockQuote from "../../BlockQuote";
-import { TabHeader } from "./Common";
+import { EmptyTab, TabHeader } from "./Common";
 
 export interface IResponseTabProps {
   traceLog: TraceLog | undefined;
@@ -31,6 +31,9 @@ export default function ResponseTab({ traceLog }: IResponseTabProps) {
   }
 
   let {messages, events, attributes, data} = response.ok;
+  if (!messages.length && !events.length && !attributes.length && !data) {
+    return <EmptyTab />
+  }
   return (
     <Grid sx={{position: 'relative', height: "100%"}}>
       <T1Container>
