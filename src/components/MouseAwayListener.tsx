@@ -1,6 +1,5 @@
 import React, { ReactElement, Ref, SyntheticEvent, useEffect, useRef } from "react";
-import { isChildOf } from "src/utils/reactUtils";
-import { Falsy } from "../utils/typeUtils";
+import { isChildOf } from "../utils/reactUtils";
 
 export interface IMouseAwayListenerProps {
   children?: ReactElement<{ ref: Ref<HTMLElement> }>;
