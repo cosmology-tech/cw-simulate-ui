@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import styled from "@mui/material/styles/styled";
 import { Theme } from "@mui/material/styles/createTheme";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -8,22 +7,12 @@ import { Coin } from "@terran-one/cw-simulate";
 import { ComponentType, PropsWithChildren, ReactNode, useRef, useState } from "react";
 import useDebounce from "../hooks/useDebounce";
 
-const StyledCode = styled('code')(({ theme }) => ({
-  borderRadius: 4,
-  background: theme.palette.mode === 'dark'
-    ? 'rgba(255, 255, 255, 0.08)'
-    : 'rgba(0, 0, 0, 0.08)',
-  marginLeft: theme.spacing(0.5),
-  marginRight: theme.spacing(0.5),
-  padding: 2,
-}));
-
 export interface IFundsProps {
   text?: ReactNode;
   TextComponent?: ComponentType<PropsWithChildren<{ sx?: SxProps<Theme> }>>;
   hideError?: boolean;
   onChange?(funds: Coin[]): void;
-  onError?(err: unknown): void;
+  onValidate?(valid: boolean): void;
   sx?: SxProps<Theme>;
 }
 
@@ -33,7 +22,7 @@ export default function Funds(props: IFundsProps) {
     text,
     hideError,
     onChange,
-    onError,
+    onValidate,
     ...boxProps
   } = props;
   
@@ -47,13 +36,14 @@ export default function Funds(props: IFundsProps) {
         if (ref.current.value.trim()) {
           onChange(parseCoins(ref.current.value));
         }
+        onValidate?.(true);
         setErr('');
       } catch (err: any) {
         if ('message' in err)
           setErr(err.message);
-        onError?.(err);
+        onValidate?.(false);
       }
-  }, 500, [onChange, onError]);
+  }, 500, [onChange, onValidate]);
   
   return (
     <Box {...boxProps}>
