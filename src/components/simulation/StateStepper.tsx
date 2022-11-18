@@ -103,9 +103,10 @@ function StyledTreeItem(props: StyledTreeItemProps) {
 
 type NumberIconProps = SvgIconProps & {
   number: number;
+  error: string | undefined;
 };
 
-function NumberIcon<SvgIconComponent>({ number }: NumberIconProps) {
+function NumberIcon<SvgIconComponent>({ number, error }: NumberIconProps) {
   const theme = useMuiTheme();
   return (
     <Box
@@ -116,7 +117,7 @@ function NumberIcon<SvgIconComponent>({ number }: NumberIconProps) {
         alignItems: "center",
         justifyContent: "center",
         borderRadius: "50%",
-        bgcolor: theme.palette.grey[900],
+        bgcolor: error ? theme.palette.error.light : theme.palette.grey[900],
       }}
     >
       <Typography
@@ -252,7 +253,14 @@ function renderTreeItems(
           key={`${trace.type}_${index}`}
           sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
           nodeId={`${prefix ? `${prefix}-` : ""}${index}-${depth}`}
-          labelIcon={<NumberIcon number={index + 1} />}
+          labelIcon={
+            <NumberIcon
+              number={index + 1}
+              error={
+                "error" in trace.response ? trace.response.error : undefined
+              }
+            />
+          }
           labelText={getTreeItemLabel(trace)}
           activeStep={depth === 0 ? activeStep : undefined}
         />
@@ -263,7 +271,15 @@ function renderTreeItems(
           key={`${trace.type}_${index}`}
           sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
           nodeId={`${prefix ? `${prefix}-` : ""}${index}-${depth}`}
-          labelIcon={<NumberIcon number={index + 1} />}
+          labelIcon={
+            //@ts-ignore
+            <NumberIcon
+              number={index + 1}
+              error={
+                "error" in trace.response ? trace.response.error : undefined
+              }
+            />
+          }
           labelText={getTreeItemLabel(trace)}
           activeStep={depth === 0 ? activeStep : undefined}
         >
