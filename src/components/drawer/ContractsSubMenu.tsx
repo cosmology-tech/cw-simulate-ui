@@ -256,6 +256,9 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         />
       </DialogContent>
       <DialogContent>
+        <DialogContentText>
+          Funds should be comma separated of amount denom.
+        </DialogContentText>
         <TextField label={"Funds"} sx={{width: '100%'}}
                    onChange={(e) => handleSetInstantiateFunds(e)}/>
       </DialogContent>
