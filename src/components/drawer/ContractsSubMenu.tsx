@@ -209,9 +209,10 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
 
   const handleSetInstantiateFunds = useCallback((e: any) => {
     const funds = e.target.value.split(",").map((f: string) => {
-      const [denom, amount] = f.trim().split(" ");
-      return {denom, amount};
+      const [amount, denom] = f.trim().split(" ");
+      return {amount, denom};
     }).filter((f: Coin) => f.denom && f.amount);
+    console.log(funds);
     setInstantiateFunds(funds);
   }, [instantiateFunds]);
 
@@ -232,7 +233,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         return;
       }
 
-      const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, funds);
+      const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, instantiateFunds);
       navigate(`/instances/${contract.address}`);
       onClose();
     } catch (e: any) {

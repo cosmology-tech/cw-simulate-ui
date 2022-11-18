@@ -32,7 +32,7 @@ export default function SummaryTab({traceLog}: IInspectorTabProps) {
         <Grid item container flexShrink={0} justifyContent="space-between">
           <Typography variant="h6" my={1}>Message</Typography>
           <Box flexDirection={'row'} display={'flex'} alignItems={'center'}>
-            <Typography variant="body2" mr={1}>{checked ? 'Show JSON' : 'Show YAML'}</Typography>
+            <Typography variant="body2" mr={1}>{checked ? 'JSON' : 'YAML'}</Typography>
             <Switch checked={checked} onChange={() => setChecked(state => !state)}/>
           </Box>
         </Grid>
