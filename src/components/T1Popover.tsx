@@ -1,62 +1,65 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useId, useState } from "react";
 import { Box, Popover, Typography } from "@mui/material";
 import { Info } from "@mui/icons-material";
+import MouseAwayListener from "./MouseAwayListener";
 
 export interface IPopoverProps {
   children?: ReactNode;
-  text: string;
+  text: ReactNode;
 }
 
 function T1Popover({children, text}: IPopoverProps) {
-  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
-  const handlePopoverOpen = (event: any) => {
-    setAnchorEl(event.currentTarget);
+  const id = useId();
+  const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
+  const [open, setOpen] = useState(false);
+  
+  const handlePopoverOpen = () => {
+    setOpen(true);
   };
 
   const handlePopoverClose = () => {
-    setAnchorEl(null);
+    setOpen(false);
   };
 
-  // @ts-ignore
-  const open = Boolean(anchorEl);
-
   return (
-    <Box flexDirection='row'
-         sx={{
-           alignItems: 'center',
-           display: 'flex',
-           textAlign: 'center',
-           justifyContent: 'center'
-         }}>
-      {children}
-      <Info
-        sx={{fontSize: '1.2rem', ml: 0.5, pb: 0.2}}
-        aria-owns={open ? 'mouse-over-popover' : undefined}
-        aria-haspopup="true"
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}/>
-      <Popover
-        id="mouse-over-popover"
-        sx={{
-          pointerEvents: 'none',
-        }}
-        open={open}
-        anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        onClose={handlePopoverClose}
-        disableRestoreFocus
-      >
-        <Typography sx={{p: 1}}>{text}</Typography>
-      </Popover>
-    </Box>
+    <MouseAwayListener onMouseAway={handlePopoverClose}>
+      <Box flexDirection='row'
+          sx={{
+            alignItems: 'center',
+            display: 'flex',
+            textAlign: 'center',
+            justifyContent: 'center'
+          }}>
+        {children}
+        <Info
+          ref={setAnchorEl}
+          sx={{fontSize: '1.2rem', ml: 0.5, pb: 0.2}}
+          aria-owns={open ? id : undefined}
+          aria-haspopup="true"
+          onMouseEnter={handlePopoverOpen}
+        />
+        <Popover
+          id={id}
+          sx={{
+            pointerEvents: 'none',
+          }}
+          open={open}
+          anchorEl={anchorEl}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          onClose={handlePopoverClose}
+          disableRestoreFocus
+        >
+          <Typography sx={{p: 1}}>{text}</Typography>
+        </Popover>
+      </Box>
+    </MouseAwayListener>
   )
 }
 
