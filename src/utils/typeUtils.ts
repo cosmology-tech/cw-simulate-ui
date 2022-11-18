@@ -4,6 +4,8 @@ import { Err, Ok, Result } from "ts-results";
 
 export type Falsy = undefined | null | false;
 
+export type MaybeError<E = string> = { error?: E };
+
 export type Defined<T> = T extends null | undefined ? never : T;
 
 export type AsJSON<T> = T extends JSONifiable

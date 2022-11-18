@@ -18,6 +18,7 @@ import useMuiTheme from "@mui/material/styles/useTheme";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useContractTrace } from "../../CWSimulationBridge";
 import useSimulation from "../../hooks/useSimulation";
+import { MaybeError } from "../../utils/typeUtils";
 import CollapsibleIcon from "../CollapsibleIcon";
 import { ComparePopup } from "./ComparePopup";
 
@@ -256,9 +257,7 @@ function renderTreeItems(
           labelIcon={
             <NumberIcon
               number={index + 1}
-              error={
-                "error" in trace.response ? trace.response.error : undefined
-              }
+              error={(trace.response as MaybeError).error}
             />
           }
           labelText={getTreeItemLabel(trace)}
@@ -272,12 +271,9 @@ function renderTreeItems(
           sx={{ ml: depth >= 1 ? depth * 2 : 0 }}
           nodeId={`${prefix ? `${prefix}-` : ""}${index}-${depth}`}
           labelIcon={
-            //@ts-ignore
             <NumberIcon
               number={index + 1}
-              error={
-                "error" in trace.response ? trace.response.error : undefined
-              }
+              error={(trace.response as MaybeError).error}
             />
           }
           labelText={getTreeItemLabel(trace)}
