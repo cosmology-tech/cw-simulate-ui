@@ -212,7 +212,6 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
       const [amount, denom] = f.trim().split(" ");
       return {amount, denom};
     }).filter((f: Coin) => f.denom && f.amount);
-    console.log(funds);
     setInstantiateFunds(funds);
   }, [instantiateFunds]);
 
@@ -227,7 +226,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     }
 
     try {
-      const [sender, funds] = Object.entries(accounts).find(([addr, funds]) => addr === account) ?? [undefined, []];
+      const [sender, _] = Object.entries(accounts).find(([addr, _]) => addr === account) ?? [undefined, []];
       if (!sender) {
         setNotification("Please select an account", {severity: "error"});
         return;
