@@ -1,20 +1,20 @@
 {
-  "short_name": "CW Debug",
-  "name": "CW Debugger",
+  "short_name": "CW Sim",
+  "name": "CW Simulate",
   "icons": [
     {
       "src": "T1.svg",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/svg"
     },
     {
       "src": "T1.svg",
-      "type": "image/png",
+      "type": "image/svg",
       "sizes": "192x192"
     },
     {
       "src": "T1.svg",
-      "type": "image/png",
+      "type": "image/svg",
       "sizes": "512x512"
     }
   ],
