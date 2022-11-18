@@ -203,6 +203,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const navigate = useNavigate();
   const setNotification = useNotification();
   const [funds, setFunds] = useState<Coin[]>([]);
+  const [isFundsValid, setFundsValid] = useState(true);
   const [payload, setPayload] = useState("");
   const placeholder = {
     "count": 0
@@ -228,7 +229,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
       console.error(e);
     }
-  }, [account, payload, onClose]);
+  }, [account, funds, payload, onClose]);
 
   return (
     <Dialog open={open} onClose={() => onClose()}>
@@ -246,6 +247,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         <Funds
           TextComponent={DialogContentText}
           onChange={setFunds}
+          onValidate={setFundsValid}
           sx={{ mt: 2 }}
         />
       </DialogContent>
@@ -270,7 +272,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         </Button>
         <Button
           variant="contained"
-          disabled={!payload}
+          disabled={!payload || !isFundsValid}
           onClick={handleInstantiate}
         >
           Instantiate

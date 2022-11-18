@@ -30,19 +30,18 @@ export default function Funds(props: IFundsProps) {
   const [err, setErr] = useState('');
   
   const update = useDebounce(() => {
-    if (!onChange || !ref.current) return;
+    const value = ref.current?.value.trim() ?? '';
     
     try {
-        if (ref.current.value.trim()) {
-          onChange(parseCoins(ref.current.value));
-        }
-        onValidate?.(true);
-        setErr('');
-      } catch (err: any) {
-        if ('message' in err)
-          setErr(err.message);
-        onValidate?.(false);
+      if (value) {
+        onChange?.(parseCoins(value));
       }
+      onValidate?.(true);
+      setErr('');
+    } catch (err: any) {
+      setErr(err.message || 'Failed to parse funds');
+      onValidate?.(false);
+    }
   }, 500, [onChange, onValidate]);
   
   return (
