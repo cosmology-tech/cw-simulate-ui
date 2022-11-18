@@ -7,36 +7,47 @@ import useSimulation from "../../../hooks/useSimulation";
 import { stringifyFunds } from "../../../utils/typeUtils";
 import TableLayout from "../../chains/TableLayout";
 import { EmptyTab, IInspectorTabProps, TabHeader, TabPaper } from "./Common";
+import Switch from "@mui/material/Switch";
+import { useState } from "react";
+import T1JsonTree from "../../T1JsonTree";
 
 export default function SummaryTab({traceLog}: IInspectorTabProps) {
-  if (!traceLog) return <EmptyTab />
-  
+  const [checked, setChecked] = useState<boolean>(false);
+  if (!traceLog) return <EmptyTab/>;
+
   return (
     <Grid>
-      <SummaryHeader traceLog={traceLog} />
-      
+      <SummaryHeader traceLog={traceLog}/>
+
       {traceLog.type === 'instantiate'
-      ? <InstantiateSummary traceLog={traceLog} />
-      : traceLog.type === 'execute'
-      ? <ExecuteSummary traceLog={traceLog} />
-      : traceLog.type === 'reply'
-      ? <ReplySummary traceLog={traceLog} />
-      : null
+        ? <InstantiateSummary traceLog={traceLog}/>
+        : traceLog.type === 'execute'
+          ? <ExecuteSummary traceLog={traceLog}/>
+          : traceLog.type === 'reply'
+            ? <ReplySummary traceLog={traceLog}/>
+            : null
       }
-      
-      <Box sx={{ my: 2 }}>
-        <Typography variant="h6" my={1}>Message</Typography>
+
+      <Box sx={{my: 2}}>
+        <Grid item container flexShrink={0} justifyContent="space-between">
+          <Typography variant="h6" my={1}>Message</Typography>
+          <Box flexDirection={'row'} display={'flex'} alignItems={'center'}>
+            <Typography variant="body2" mr={1}>{checked ? 'JSON' : 'YAML'}</Typography>
+            <Switch checked={checked} onChange={() => setChecked(state => !state)}/>
+          </Box>
+        </Grid>
         <TabPaper>
-          <pre>{YAML.stringify(traceLog.msg)}</pre>
+          {checked ? (<T1JsonTree data={traceLog.msg}/>) : (
+            <pre>{YAML.stringify(traceLog.msg)}</pre>)}
         </TabPaper>
       </Box>
     </Grid>
   );
 };
 
-function SummaryHeader({traceLog}: {traceLog: TraceLog}) {
-  const { type } = traceLog;
-  
+function SummaryHeader({traceLog}: { traceLog: TraceLog }) {
+  const {type} = traceLog;
+
   let title: string;
   switch (type) {
     case 'instantiate':
@@ -49,40 +60,40 @@ function SummaryHeader({traceLog}: {traceLog: TraceLog}) {
       title = 'wasm/reply';
       break;
   }
-  
+
   return <TabHeader>{title}</TabHeader>
 }
 
-function InstantiateSummary({traceLog}: {traceLog: ExecuteTraceLog}) {
-  const { info } = traceLog;
-  
+function InstantiateSummary({traceLog}: { traceLog: ExecuteTraceLog }) {
+  const {info} = traceLog;
+
   return (
     <>
-      <SenderView info={info} />
+      <SenderView info={info}/>
     </>
   )
 }
 
-function ExecuteSummary({traceLog}: {traceLog: ExecuteTraceLog}) {
-  const { info } = traceLog;
-  
+function ExecuteSummary({traceLog}: { traceLog: ExecuteTraceLog }) {
+  const {info} = traceLog;
+
   return (
     <>
-      <SenderView info={info} />
+      <SenderView info={info}/>
     </>
   )
 }
 
-function ReplySummary({traceLog}: {traceLog: ReplyTraceLog}) {
+function ReplySummary({traceLog}: { traceLog: ReplyTraceLog }) {
   return null;
 }
 
-function SenderView({info}: {info: ExecuteTraceLog['info']}) {
+function SenderView({info}: { info: ExecuteTraceLog['info'] }) {
   const sim = useSimulation();
-  
+
   return (
     <TableLayout
-      rows={[{sender: sim.shortenAddress(info.sender), funds: stringifyFunds(info.funds) }]}
+      rows={[{sender: sim.shortenAddress(info.sender), funds: stringifyFunds(info.funds)}]}
       keyField="sender"
       columns={{
         sender: "Sender",

@@ -14,7 +14,7 @@ export const TabPaper = styled(Paper)(({theme}) => ({
     ? 'rgba(255, 255, 255, 0.08)'
     : 'rgba(0, 0, 0, 0.08)',
   overflow: 'auto',
-  maxHeight: 250,
+  maxHeight: '100%',
 }));
 
 export const TabHeader = React.memo(({ children }: PropsWithChildren) => {

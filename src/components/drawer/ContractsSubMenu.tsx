@@ -16,7 +16,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import type { CodeInfo } from "@terran-one/cw-simulate";
+import type { CodeInfo, Coin } from "@terran-one/cw-simulate";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
@@ -67,7 +67,7 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
       />
 
       {Object.entries(codes).map(([codeId, info]) => (
-        <CodeMenuItem key={codeId} code={info} />
+        <CodeMenuItem key={codeId} code={info}/>
       ))}
     </>
   );
@@ -110,7 +110,7 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
         </MenuItem>,
         <MenuItem key="delete" onClick={() => setOpenDelete(true)}>
           <ListItemIcon>
-            <DeleteForeverIcon />
+            <DeleteForeverIcon/>
           </ListItemIcon>
           <ListItemText>
             Delete
@@ -201,30 +201,41 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
-
+  const [instantiateFunds, setInstantiateFunds] = useState<Coin[]>([]);
   const [payload, setPayload] = useState("");
   const placeholder = {
     "count": 0
   }
+
+  const handleSetInstantiateFunds = useCallback((e: any) => {
+    const funds = e.target.value.split(",").map((f: string) => {
+      const [amount, denom] = f.trim().split(" ");
+      return {amount, denom};
+    }).filter((f: Coin) => f.denom && f.amount);
+    setInstantiateFunds(funds);
+  }, [instantiateFunds]);
 
   const accounts = useAccounts(sim);
   const [account, setAccount] = useState(Object.keys(accounts)[0]);
 
   const handleInstantiate = useCallback(async () => {
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
+    if (instantiateFunds.length === 0) {
+      setNotification("Invalid funds.", {severity: "error"});
+      return;
+    }
 
     try {
-      const [sender, funds] = Object.entries(accounts).find(([addr, funds]) => addr === account) ?? [undefined, []];
+      const [sender, _] = Object.entries(accounts).find(([addr, _]) => addr === account) ?? [undefined, []];
       if (!sender) {
         setNotification("Please select an account", {severity: "error"});
         return;
       }
 
-      const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, funds);
+      const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, instantiateFunds);
       navigate(`/instances/${contract.address}`);
       onClose();
-    }
-    catch (e: any) {
+    } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
       console.error(e);
     }
@@ -233,19 +244,23 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   return (
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Instantiate Contract</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Pick an account to instantiate the contract with.
-        </DialogContentText>
+      <DialogContent sx={{pt: '5px !important'}}>
         <Autocomplete
           onInputChange={(_, value) => setAccount(value)}
           sx={{width: "100%"}}
           defaultValue={Object.keys(accounts)[0]}
           renderInput={(params: AutocompleteRenderInputParams) =>
-            <TextField {...params} label="Sender" />
+            <TextField {...params} label="Sender"/>
           }
           options={Object.keys(accounts)}
         />
+      </DialogContent>
+      <DialogContent>
+        <DialogContentText>
+          Funds should be comma separated of amount denom.
+        </DialogContentText>
+        <TextField label={"Funds"} sx={{width: '100%'}}
+                   onChange={(e) => handleSetInstantiateFunds(e)}/>
       </DialogContent>
       <DialogContent>
         <DialogContentText>
