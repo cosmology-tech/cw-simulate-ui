@@ -10,15 +10,18 @@ import CollapsibleWidget from "../../CollapsibleWidget";
 import { useAtomValue } from "jotai";
 import { activeStepState } from "../../../atoms/simulationPageAtoms";
 import { getFormattedStep } from "../Executor";
+import { Result } from "ts-results/result";
+import { TabHeader } from "./Common";
+import BlockQuote from "../../BlockQuote";
 
 interface IProps {
   contractAddress: string;
 }
 
-export default function QueryTab({contractAddress}: IProps) {
-  const [response, setResponse] = useState("");
+export default function QueryTab({ contractAddress }: IProps) {
+  const [response, setResponse] = useState<Result<any, string>>();
   const activeStep = useAtomValue(activeStepState);
-  const onHandleQuery = (res: string) => {
+  const onHandleQuery = (res: Result<any, string>) => {
     setResponse(res);
   };
 
@@ -42,10 +45,17 @@ export default function QueryTab({contractAddress}: IProps) {
           onHandleQuery={onHandleQuery}
         />
       </CollapsibleWidget>
-      <Divider sx={{my: 1}}/>
+      <Divider sx={{ my: 1 }} />
       <Grid item flex={1} position="relative">
         <T1Container>
-          {response && <T1JsonTree data={response}/>}
+          {response?.err ? (
+            <>
+              <TabHeader>Query Error</TabHeader>
+              <BlockQuote>{response.val}</BlockQuote>
+            </>
+          ) : (
+            <T1JsonTree data={response?.val} />
+          )}
         </T1Container>
       </Grid>
     </Grid>
@@ -54,10 +64,10 @@ export default function QueryTab({contractAddress}: IProps) {
 
 interface IQuery {
   contractAddress: string;
-  onHandleQuery: (payload: string) => void;
+  onHandleQuery: (payload: Result<any, string>) => void;
 }
 
-function Query({contractAddress, onHandleQuery}: IQuery) {
+function Query({ contractAddress, onHandleQuery }: IQuery) {
   const sim = useSimulation();
   const setNotification = useNotification();
   const [payload, setPayload] = useState("");
@@ -66,12 +76,14 @@ function Query({contractAddress, onHandleQuery}: IQuery) {
   const handleQuery = async () => {
     try {
       const res = await sim.query(contractAddress, JSON.parse(payload));
-      onHandleQuery(res.unwrap());
-    } catch (err) {
-      setNotification("Something went wrong while querying.", {
+      onHandleQuery(res);
+      if (res.err) {
+        throw new Error("Something went wrong while querying.");
+      }
+    } catch (err: any) {
+      setNotification(err.message, {
         severity: "error",
       });
-      console.error(err);
     }
   };
 
