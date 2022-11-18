@@ -27,6 +27,7 @@ import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
 import useSimulation from "../../hooks/useSimulation";
 import { useAccounts, useCodes } from "../../CWSimulationBridge";
+import Funds from "../Funds";
 
 export interface IContractsSubMenuProps {
 }
@@ -201,38 +202,26 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
-  const [instantiateFunds, setInstantiateFunds] = useState<Coin[]>([]);
+  const [funds, setFunds] = useState<Coin[]>([]);
   const [payload, setPayload] = useState("");
   const placeholder = {
     "count": 0
   }
-
-  const handleSetInstantiateFunds = useCallback((e: any) => {
-    const funds = e.target.value.split(",").map((f: string) => {
-      const [amount, denom] = f.trim().split(" ");
-      return {amount, denom};
-    }).filter((f: Coin) => f.denom && f.amount);
-    setInstantiateFunds(funds);
-  }, [instantiateFunds]);
 
   const accounts = useAccounts(sim);
   const [account, setAccount] = useState(Object.keys(accounts)[0]);
 
   const handleInstantiate = useCallback(async () => {
     const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
-    if (instantiateFunds.length === 0) {
-      setNotification("Invalid funds.", {severity: "error"});
-      return;
-    }
 
     try {
-      const [sender, _] = Object.entries(accounts).find(([addr, _]) => addr === account) ?? [undefined, []];
+      const [sender] = Object.entries(accounts).find(([addr]) => addr === account) ?? [undefined, []];
       if (!sender) {
         setNotification("Please select an account", {severity: "error"});
         return;
       }
 
-      const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, instantiateFunds);
+      const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, funds);
       navigate(`/instances/${contract.address}`);
       onClose();
     } catch (e: any) {
@@ -254,13 +243,11 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
           }
           options={Object.keys(accounts)}
         />
-      </DialogContent>
-      <DialogContent>
-        <DialogContentText>
-          Funds should be comma separated of amount denom.
-        </DialogContentText>
-        <TextField label={"Funds"} sx={{width: '100%'}}
-                   onChange={(e) => handleSetInstantiateFunds(e)}/>
+        <Funds
+          TextComponent={DialogContentText}
+          onChange={setFunds}
+          sx={{ mt: 2 }}
+        />
       </DialogContent>
       <DialogContent>
         <DialogContentText>
