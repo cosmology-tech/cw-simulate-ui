@@ -8,7 +8,7 @@ import { SvgIconProps } from "@mui/material/SvgIcon";
 import { TraceLog } from "@terran-one/cw-simulate/dist/types";
 import { useAtom, useSetAtom } from "jotai";
 import { Map } from "immutable";
-import { SyntheticEvent, useEffect, useMemo, useState } from "react";
+import { SyntheticEvent, useEffect, useMemo } from "react";
 import {
   activeStepState,
   blockState,
@@ -107,7 +107,7 @@ type NumberIconProps = SvgIconProps & {
   error: string | undefined;
 };
 
-function NumberIcon<SvgIconComponent>({ number, error }: NumberIconProps) {
+function NumberIcon({ number, error }: NumberIconProps) {
   const theme = useMuiTheme();
   return (
     <Box
@@ -215,7 +215,7 @@ export default function StateStepper({ contractAddress }: IProps) {
       defaultCollapseIcon={<CollapsibleIcon expanded />}
       defaultExpandIcon={<CollapsibleIcon />}
       defaultEndIcon={<div style={{ width: 24 }} />}
-      sx={{ height: 264, flexGrow: 1, maxWidth: "100%", overflowY: "auto" }}
+      sx={{ flexGrow: 1, maxWidth: "100%", overflowY: "auto" }}
       onNodeSelect={handleClick}
     >
       {renderTreeItems(traces, activeStep)}
