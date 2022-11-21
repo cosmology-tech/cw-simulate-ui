@@ -261,7 +261,11 @@ function renderTreeItems(
             />
           }
           labelText={getTreeItemLabel(trace)}
-          activeStep={depth === 0 ? activeStep : undefined}
+          activeStep={
+            depth === 0 && !(trace.response as MaybeError).error
+              ? activeStep
+              : undefined
+          }
         />
       );
     } else {
@@ -277,7 +281,11 @@ function renderTreeItems(
             />
           }
           labelText={getTreeItemLabel(trace)}
-          activeStep={depth === 0 ? activeStep : undefined}
+          activeStep={
+            depth === 0 && !(trace.response as MaybeError).error
+              ? activeStep
+              : undefined
+          }
         >
           {renderTreeItems(
             trace.trace,
