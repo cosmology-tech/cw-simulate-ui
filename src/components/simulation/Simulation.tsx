@@ -30,14 +30,22 @@ const Simulation = () => {
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
-        <T1Popover text={contractAddress}>
-          <Typography gutterBottom sx={{fontWeight: 'bold', textAlign: 'center'}}>
-            {sim.shortenAddress(contractAddress)}
-          </Typography>
-        </T1Popover>
-        <CollapsibleExecutor contractAddress={contractAddress}/>
-        <Divider sx={{my: 1}}/>
-        <StateStepper contractAddress={contractAddress}/>
+        <Grid container direction="column">
+          <Grid item>
+            <T1Popover text={contractAddress}>
+              <Typography gutterBottom sx={{fontWeight: 'bold', textAlign: 'center'}}>
+                {sim.shortenAddress(contractAddress)}
+              </Typography>
+            </T1Popover>
+            <CollapsibleExecutor contractAddress={contractAddress}/>
+          </Grid>
+          <Divider sx={{my: 1}}/>
+          <Grid item flex={1} sx={{ display: 'relative' }}>
+            <T1Container>
+              <StateStepper contractAddress={contractAddress}/>
+            </T1Container>
+          </Grid>
+        </Grid>
       </Column>
       <Column xs={8} className="T1Simulation-right">
         <Widget>
