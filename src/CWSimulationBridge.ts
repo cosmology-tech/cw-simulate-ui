@@ -239,7 +239,7 @@ export default class CWSimulationBridge {
 
 export function useAccounts(bridge: CWSimulationBridge) {
   return bridge.useWatcher(
-    app => app.bank.getBalances().toObject(),
+    app => app.bank.getBalances().toObject() ?? {},
     compareShallowObject,
   );
 }
