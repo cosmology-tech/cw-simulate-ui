@@ -11,6 +11,7 @@ export interface IFundsProps {
   text?: ReactNode;
   TextComponent?: ComponentType<PropsWithChildren<{ sx?: SxProps<Theme> }>>;
   hideError?: boolean;
+  defaultValue?: string;
   onChange?(funds: Coin[]): void;
   onValidate?(valid: boolean): void;
   sx?: SxProps<Theme>;
@@ -21,6 +22,7 @@ export default function Funds(props: IFundsProps) {
     TextComponent = Typography,
     text,
     hideError,
+    defaultValue,
     onChange,
     onValidate,
     ...boxProps
@@ -51,6 +53,7 @@ export default function Funds(props: IFundsProps) {
         inputRef={ref}
         label="Funds"
         onKeyUp={update}
+        defaultValue={defaultValue}
         placeholder={'1000 uluna, 4000 uust, ...'}
         sx={{width: '100%'}}
       />
