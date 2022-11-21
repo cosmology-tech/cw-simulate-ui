@@ -215,7 +215,7 @@ export default function StateStepper({ contractAddress }: IProps) {
       defaultCollapseIcon={<CollapsibleIcon expanded />}
       defaultExpandIcon={<CollapsibleIcon />}
       defaultEndIcon={<div style={{ width: 24 }} />}
-      sx={{ height: 264, flexGrow: 1, maxWidth: "100%", overflowY: "auto" }}
+      sx={{ flexGrow: 1, maxWidth: "100%", overflowY: "auto" }}
       onNodeSelect={handleClick}
     >
       {renderTreeItems(traces, activeStep)}

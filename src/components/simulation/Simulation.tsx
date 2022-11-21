@@ -30,7 +30,7 @@ const Simulation = () => {
   return (
     <SplitView className="T1Simulation-root">
       <Column xs={4} className="T1Simulation-left">
-        <Grid container direction="column">
+        <Grid container direction="column" height="100%">
           <Grid item>
             <T1Popover text={contractAddress}>
               <Typography gutterBottom sx={{fontWeight: 'bold', textAlign: 'center'}}>
