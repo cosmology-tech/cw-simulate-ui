@@ -25,7 +25,7 @@ export const JsonCodeMirrorEditor = ({
     JSON: "Enter your JSON here",
   };
 
-  const [validationError, setValidationError] = useState('');
+  const [validationError, setValidationError] = useState("");
   const theme = useTheme();
 
   return (
@@ -51,16 +51,19 @@ export const JsonCodeMirrorEditor = ({
                 if (!validateJSON(parsedJSON, {})) {
                   //TODO: Show correct error message when validate message functionality changes.
                   setValidationError("Invalid JSON");
+                  onValidate?.(false);
                 } else {
+                  onValidate?.(true);
                   setValidationError("");
                 }
               } catch {
                 setValidationError("Invalid JSON");
+                onValidate?.(false);
               }
             }}
             theme={theme.palette.mode}
             placeholder={JSON.stringify(defaultPlaceholder, null, 2)}
-            style={{border: "none", height: "100%"}}
+            style={{ border: "none", height: "100%" }}
           />
         </T1Container>
       </Grid>
