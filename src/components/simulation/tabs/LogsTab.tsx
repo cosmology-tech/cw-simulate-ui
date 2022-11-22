@@ -34,7 +34,7 @@ export default function LogsTab({ traceLog }: IInspectorTabProps) {
             ix={index}
             key={`a-${index}`}
             call={log}
-            islastItem={index === combinedLogs.length - 1}
+            isLastItem={index === combinedLogs.length - 1}
           />
         ))
       )}
@@ -45,11 +45,11 @@ export default function LogsTab({ traceLog }: IInspectorTabProps) {
 const CallListItem = ({
   call,
   ix,
-  islastItem,
+  isLastItem,
 }: {
   call: { args: { [k: string]: any }; result: any; fn: string };
   ix: number;
-  islastItem: boolean;
+  isLastItem: boolean;
 }) => {
   const theme = useTheme();
   return (
@@ -57,7 +57,7 @@ const CallListItem = ({
       sx={{
         "&.Mui-expanded": {
           margin: "0px",
-          borderBottom: !islastItem ? "1px solid #bccabc" : "",
+          borderBottom: !isLastItem ? "1px solid #bccabc" : "",
         },
       }}
     >
