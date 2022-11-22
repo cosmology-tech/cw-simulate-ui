@@ -1,8 +1,7 @@
-import React, { Suspense, useContext, useState } from "react";
+import React, { Suspense, useState } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { base64ToArrayBuffer } from "../../utils/fileUtils";
-import { useSetAtom } from "jotai";
 import { useDropzone } from 'react-dropzone';
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -28,7 +27,7 @@ const FileUpload = ({
 }: IProps) => {
   const [filename, setFilename] = useState('');
 
-  const text = dropzoneText || "Upload or drop a .wasm contract binary here to get started.";
+  const text = dropzoneText || "Upload or drop a .wasm contract binary here to get started";
   const setNotification = useNotification();
 
   const handleDropzoneClick = (event: any) => {
@@ -120,13 +119,13 @@ const FileUpload = ({
   return (
     <Suspense fallback={<Fallback/>}>
       <div
-        {...getRootProps({ onClick: handleDropzoneClick })}
+        {...getRootProps({onClick: handleDropzoneClick})}
         style={{cursor: 'pointer', padding: '8px'}}
       >
         <input {...getInputProps()} />
         {
           filename
-          ? <>
+            ? <>
               <AttachFileIcon fontSize="large"/>
               <Box>
                 <Typography fontSize="24px">{filename}</Typography>
@@ -137,8 +136,8 @@ const FileUpload = ({
                 />
               </Box>
             </>
-          : <>
-              <Typography fontSize="24px">{text}</Typography>
+            : <>
+              <Typography fontSize="20px" sx={{fontWeight: 'bold'}}>{text}</Typography>
               <UploadFileIcon fontSize="large"/>
             </>
         }
