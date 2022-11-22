@@ -1,11 +1,12 @@
+import BrushOutlinedIcon from "@mui/icons-material/BrushOutlined";
+import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
+import Tooltip from "@mui/material/Tooltip";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import styled from "@mui/material/styles/styled";
 import { TraceLog } from "@terran-one/cw-simulate";
+import beautify from "json-beautify";
 import React, { PropsWithChildren } from "react";
-import BrushOutlinedIcon from "@mui/icons-material/BrushOutlined";
-import { IconButton, Tooltip } from "@mui/material";
-const beautify = require("json-beautify");
 
 export interface IInspectorTabProps {
   traceLog: TraceLog | undefined;
