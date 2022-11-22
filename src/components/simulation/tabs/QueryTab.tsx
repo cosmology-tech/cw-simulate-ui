@@ -11,7 +11,7 @@ import { useAtomValue } from "jotai";
 import { activeStepState } from "../../../atoms/simulationPageAtoms";
 import { getFormattedStep } from "../Executor";
 import { Result } from "ts-results/result";
-import { EmptyTab, TabHeader } from "./Common";
+import { BeautifyJSON, EmptyTab, TabHeader } from "./Common";
 import BlockQuote from "../../BlockQuote";
 
 interface IProps {
@@ -120,6 +120,11 @@ function Query({ contractAddress, onHandleQuery }: IQuery) {
         >
           Run
         </Button>
+        <BeautifyJSON
+          payload={payload}
+          setPayload={setPayload}
+          isValid={isValid}
+        />
       </Grid>
     </Grid>
   );
