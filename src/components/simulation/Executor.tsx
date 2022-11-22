@@ -7,6 +7,7 @@ import T1Container from "../grid/T1Container";
 import useSimulation from "../../hooks/useSimulation";
 import { useAccounts } from "../../CWSimulationBridge";
 import { activeStepState } from "../../atoms/simulationPageAtoms";
+import { BeautifyJSON } from "./tabs/Common";
 
 interface IProps {
   contractAddress: string;
@@ -71,13 +72,20 @@ export default function Executor({ contractAddress }: IProps) {
         </T1Container>
       </Grid>
       <Grid item container flexShrink={0} justifyContent="space-between">
-        <Button
-          variant="contained"
-          onClick={handleExecute}
-          disabled={!payload.length || !isValid}
-        >
-          Run
-        </Button>
+        <Grid item>
+          <Button
+            variant="contained"
+            onClick={handleExecute}
+            disabled={!payload.length || !isValid}
+          >
+            Run
+          </Button>
+          <BeautifyJSON
+            payload={payload}
+            setPayload={setPayload}
+            isValid={isValid}
+          />
+        </Grid>
         <Chip
           label={
             <Typography variant="caption">
