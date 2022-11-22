@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { JsonCodeMirrorEditor } from "../../JsonCodeMirrorEditor";
 import { useNotification } from "../../../atoms/snackbarNotificationState";
-import { Button, Grid, Typography, useTheme } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import T1Container from "../../grid/T1Container";
 import useSimulation from "../../../hooks/useSimulation";
 import Divider from "@mui/material/Divider";
@@ -24,7 +24,6 @@ export default function QueryTab({ contractAddress }: IProps) {
   const onHandleQuery = (res: Result<any, string>) => {
     setResponse(res);
   };
-  const theme = useTheme();
   return (
     <Grid
       item
