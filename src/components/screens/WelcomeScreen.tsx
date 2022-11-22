@@ -27,16 +27,17 @@ import { ReactComponent as TerraIcon } from "@public/luna.svg";
 import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
 import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
+import { useR2S3ListObjects } from "../../utils/r2S3Utils";
 
 export interface ISampleContract {
   name: string;
-  url: string;
+  id: string;
 }
 
 const getChainConfig = (chain: Chains) => defaults.chains[chain];
 
 const SAMPLE_CONTRACTS: ISampleContract[] = [
-  {name: "Terra Swap", url: "https://40a63308c02f256b791fd74fc33c02b3.r2.cloudflarestorage.com/cw-simulate-examples/terra-swap"},
+  {name: "Terra Swap", id: "terra-swap"},
 ];
 
 export default function WelcomeScreen() {
@@ -51,15 +52,12 @@ export default function WelcomeScreen() {
   const theme = useTheme();
   const [chain, setChain] = useState<Chains>('terra');
   const [sampleContract, setSampleContract] = useState<string>(SAMPLE_CONTRACTS.map((c) => c.name)[0]);
-
+  const listS3Objects = useR2S3ListObjects();
   const handleLoadSampleContract = useCallback(async () => {
     const contract = SAMPLE_CONTRACTS.find((c) => c.name === sampleContract);
     console.log(contract);
-    if (contract) {
-      const response = await fetch(contract.url);
-      const fileContent = await response.json();
-      setFile({filename: contract.name, fileContent});
-    }
+    const result = await listS3Objects('cw-simulate-examples', "terra-swap");
+    console.log(result);
   }, [sampleContract]);
 
   const onCreateNewEnvironment = useCallback(async () => {
