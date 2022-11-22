@@ -100,14 +100,6 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
           <ListItemText>
             Instantiate
           </ListItemText>
-          <InstantiateDialog
-            code={code}
-            open={openInstantiate}
-            onClose={() => {
-              setOpenInstantiate(false);
-              close();
-            }}
-          />
         </MenuItem>,
         <MenuItem key="delete" onClick={() => setOpenDelete(true)}>
           <ListItemIcon>
@@ -116,14 +108,6 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
           <ListItemText>
             Delete
           </ListItemText>
-          <DeleteDialog
-            code={code}
-            open={openDelete}
-            onClose={() => {
-              setOpenDelete(false);
-              close();
-            }}
-          />
         </MenuItem>
       ]}
       optionsExtras={({close}) => <>
