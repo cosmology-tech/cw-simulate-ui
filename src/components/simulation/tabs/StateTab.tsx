@@ -20,7 +20,7 @@ export const StateTab = ({}: IStateTabProps) => {
 
   if (isDiff) {
     if (compareDeep(state1, state2)) {
-      return <EmptyTab>No difference between selected states.</EmptyTab>
+      return <EmptyTab>No difference between selected states.</EmptyTab>;
     }
     return (
       <Box>
@@ -32,7 +32,7 @@ export const StateTab = ({}: IStateTabProps) => {
       </Box>
     );
   } else {
-    if (!currentJSON) return <EmptyTab />
+    if (!currentJSON) return <EmptyTab />;
     return <T1JsonTree data={currentJSON} />;
   }
 };

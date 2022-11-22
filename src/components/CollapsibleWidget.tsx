@@ -16,6 +16,7 @@ export interface ICollabsibleWidgetProps {
   maxHeight?: number;
   children?: ReactNode;
   sx?: SxProps<Theme>;
+  isCollapsible?: boolean;
 }
 
 function CollapsibleWidget({
@@ -26,6 +27,7 @@ function CollapsibleWidget({
   maxHeight,
   children,
   sx,
+  isCollapsible = true,
 }: ICollabsibleWidgetProps) {
   const theme = useTheme();
   const expanded = collapsed === undefined ? true : collapsed;
@@ -36,7 +38,7 @@ function CollapsibleWidget({
   }, [collapsed]);
 
   return (
-    <Box sx={joinSx({borderRadius: 1, overflow: "hidden", pb: 0.5}, sx)}>
+    <Box sx={joinSx({ borderRadius: 1, overflow: "hidden", pb: 0.5 }, sx)}>
       <Box
         sx={{
           display: "flex",
@@ -47,15 +49,13 @@ function CollapsibleWidget({
           py: 0.5,
           px: 1,
         }}
-        onClick={() => setShow((curr) => !curr)}
+        onClick={isCollapsible ? () => setShow((curr) => !curr) : undefined}
       >
-        <CollapsibleIcon expanded={show}/>
-        <Typography sx={{fontSize: "1.1rem"}}>{title}</Typography>
+        {isCollapsible && <CollapsibleIcon expanded={show} />}
+        <Typography sx={{ fontSize: "1.1rem" }}>{title}</Typography>
       </Box>
       <Collapse in={show}>
-        <Box sx={{minHeight, maxHeight, height}}>
-          {children}
-        </Box>
+        <Box sx={{ minHeight, maxHeight, height }}>{children}</Box>
       </Collapse>
     </Box>
   );

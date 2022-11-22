@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { JsonCodeMirrorEditor } from "../../JsonCodeMirrorEditor";
 import { useNotification } from "../../../atoms/snackbarNotificationState";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, Typography, useTheme } from "@mui/material";
 import T1Container from "../../grid/T1Container";
 import useSimulation from "../../../hooks/useSimulation";
 import Divider from "@mui/material/Divider";
@@ -11,7 +11,7 @@ import { useAtomValue } from "jotai";
 import { activeStepState } from "../../../atoms/simulationPageAtoms";
 import { getFormattedStep } from "../Executor";
 import { Result } from "ts-results/result";
-import { TabHeader } from "./Common";
+import { EmptyTab, TabHeader } from "./Common";
 import BlockQuote from "../../BlockQuote";
 
 interface IProps {
@@ -24,7 +24,7 @@ export default function QueryTab({ contractAddress }: IProps) {
   const onHandleQuery = (res: Result<any, string>) => {
     setResponse(res);
   };
-
+  const theme = useTheme();
   return (
     <Grid
       item
@@ -39,6 +39,7 @@ export default function QueryTab({ contractAddress }: IProps) {
       <CollapsibleWidget
         title={`Query @${getFormattedStep(activeStep)}`}
         height={280}
+        isCollapsible={false}
       >
         <Query
           contractAddress={contractAddress}
@@ -53,8 +54,10 @@ export default function QueryTab({ contractAddress }: IProps) {
               <TabHeader>Query Error</TabHeader>
               <BlockQuote>{response.val}</BlockQuote>
             </>
-          ) : (
+          ) : response ? (
             <T1JsonTree data={response?.val} />
+          ) : (
+            <EmptyTab>Your query output will appear here</EmptyTab>
           )}
         </T1Container>
       </Grid>
