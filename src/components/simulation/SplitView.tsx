@@ -11,7 +11,7 @@ export default function SplitView({ children, ...props }: ISplitViewProps) {
     <Grid
       container
       direction="column"
-      spacing={2}
+      spacing={1}
       sx={{
         height: "100%",
         width: "100%",

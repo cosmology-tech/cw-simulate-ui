@@ -1,5 +1,14 @@
 import useTheme from "@mui/material/styles/useTheme";
-import { Box, Grid, SvgIcon, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  Box,
+  Button,
+  Grid,
+  SvgIcon,
+  TextField,
+  Typography
+} from "@mui/material";
 import React, {
   ComponentType,
   MouseEvent,
@@ -19,7 +28,16 @@ import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
 import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 
+export interface ISampleContract {
+  name: string;
+  url: string;
+}
+
 const getChainConfig = (chain: Chains) => defaults.chains[chain];
+
+const SAMPLE_CONTRACTS: ISampleContract[] = [
+  {name: "Terra Swap", url: "https://40a63308c02f256b791fd74fc33c02b3.r2.cloudflarestorage.com/cw-simulate-examples/terra-swap"},
+];
 
 export default function WelcomeScreen() {
   const sim = useSimulation();
@@ -32,6 +50,17 @@ export default function WelcomeScreen() {
   const navigate = useNavigate();
   const theme = useTheme();
   const [chain, setChain] = useState<Chains>('terra');
+  const [sampleContract, setSampleContract] = useState<string>(SAMPLE_CONTRACTS.map((c) => c.name)[0]);
+
+  const handleLoadSampleContract = useCallback(async () => {
+    const contract = SAMPLE_CONTRACTS.find((c) => c.name === sampleContract);
+    console.log(contract);
+    if (contract) {
+      const response = await fetch(contract.url);
+      const fileContent = await response.json();
+      setFile({filename: contract.name, fileContent});
+    }
+  }, [sampleContract]);
 
   const onCreateNewEnvironment = useCallback(async () => {
     if (!file) {
@@ -132,7 +161,35 @@ export default function WelcomeScreen() {
         </Grid>
         <Grid item xs={11} lg={7} md={8} sx={{mb: 4, width: "60%"}}>
           <FileUploadPaper sx={{minHeight: 200}}>
-            <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
+            <Grid container direction="row" height="100%">
+              <Grid item sx={{width: '50%'}}>
+                <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
+              </Grid>
+              <Grid item sx={{
+                width: '50%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+              }}>
+                <Typography variant="h6" textAlign="center">
+                  Load from a sample contract.
+                </Typography>
+                <Autocomplete
+                  onInputChange={(_, value) => setSampleContract(value)}
+                  sx={{width: "80%", mt: 2}}
+                  defaultValue={SAMPLE_CONTRACTS.map((c) => c.name)[0]}
+                  renderInput={(params: AutocompleteRenderInputParams) =>
+                    <TextField {...params} label="Contract"/>
+                  }
+                  options={SAMPLE_CONTRACTS.map((c) => c.name)}
+                />
+                <Button variant={'contained'} sx={{mt: 2}} onClick={handleLoadSampleContract}>
+                  Load
+                </Button>
+              </Grid>
+            </Grid>
           </FileUploadPaper>
         </Grid>
       </Grid>
