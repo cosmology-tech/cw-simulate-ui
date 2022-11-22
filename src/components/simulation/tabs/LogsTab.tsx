@@ -6,14 +6,8 @@ import AccordionSummary from "@mui/material/AccordionSummary";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { TraceLog } from "@terran-one/cw-simulate";
-import { chromeDark } from "react-inspector";
 import T1JsonTree from "../../T1JsonTree";
 import { EmptyTab, IInspectorTabProps } from "./Common";
-
-const INSPECTOR_THEME: any = {
-  ...chromeDark,
-  BASE_BACKGROUND_COLOR: "transparent",
-};
 
 export default function LogsTab({ traceLog }: IInspectorTabProps) {
   if (!traceLog) return <EmptyTab />;
