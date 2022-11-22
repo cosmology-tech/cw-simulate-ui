@@ -1,4 +1,5 @@
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import DownloadIcon from "@mui/icons-material/Download";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import UploadIcon from "@mui/icons-material/Upload";
 import {
@@ -27,6 +28,7 @@ import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
 import useSimulation from "../../hooks/useSimulation";
 import { useAccounts, useCodes } from "../../CWSimulationBridge";
+import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
 
 export interface IContractsSubMenuProps {
@@ -81,6 +83,10 @@ interface ICodeMenuItemProps {
 function CodeMenuItem({code}: ICodeMenuItemProps) {
   const [openInstantiate, setOpenInstantiate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  
+  const download = useCallback(() => {
+    downloadWasm(code.wasmCode, code.name);
+  }, [code]);
 
   return (
     <T1MenuItem
@@ -101,6 +107,14 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
             Instantiate
           </ListItemText>
         </MenuItem>,
+        <MenuItem key="download" onClick={download}>
+          <ListItemIcon>
+            <DownloadIcon />
+          </ListItemIcon>
+          <ListItemText>
+            Download Source
+          </ListItemText>
+        </MenuItem>,
         <MenuItem key="delete" onClick={() => setOpenDelete(true)}>
           <ListItemIcon>
             <DeleteForeverIcon/>
@@ -108,7 +122,7 @@ function CodeMenuItem({code}: ICodeMenuItemProps) {
           <ListItemText>
             Delete
           </ListItemText>
-        </MenuItem>
+        </MenuItem>,
       ]}
       optionsExtras={({close}) => <>
         <InstantiateDialog
