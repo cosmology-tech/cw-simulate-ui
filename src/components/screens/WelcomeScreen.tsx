@@ -1,5 +1,14 @@
 import useTheme from "@mui/material/styles/useTheme";
-import { Box, Grid, SvgIcon, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  Box,
+  Button,
+  Grid,
+  SvgIcon,
+  TextField,
+  Typography
+} from "@mui/material";
 import React, {
   ComponentType,
   MouseEvent,
@@ -12,65 +21,117 @@ import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { Chains, defaults } from "../../configs/constants";
 import useSimulation from "../../hooks/useSimulation";
-import FileUpload from "../upload/FileUpload";
+import FileUpload, { extractByteCode } from "../upload/FileUpload";
 import FileUploadPaper from "../upload/FileUploadPaper";
 import { ReactComponent as TerraIcon } from "@public/luna.svg";
 import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
 import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
+import { useR2S3GeneratePresignedUrl } from "../../utils/r2S3Utils";
+import axios from "axios";
+
+export interface ISampleContract {
+  name: string;
+  id: string;
+  chain: string;
+  keys: string[];
+}
 
 const getChainConfig = (chain: Chains) => defaults.chains[chain];
 
+const SAMPLE_CONTRACTS: ISampleContract[] = [
+  {
+    name: "Terra Swap",
+    id: "terra-swap",
+    chain: "terra",
+    keys: ["terraswap_factory.wasm", "terraswap_pair.wasm", "terraswap_router.wasm", "terraswap_token.wasm"]
+  },
+];
+
+interface SimulationFileType {
+  filename: string;
+  fileContent: Buffer | JSON;
+}
+
+const getSampleContractsForChain = (chain: string) => {
+  return SAMPLE_CONTRACTS.filter((c) => c.chain === chain).map((c) => c.name);
+};
+
 export default function WelcomeScreen() {
   const sim = useSimulation();
-
-  const [file, setFile] =
-    useState<{ filename: string; fileContent: Buffer | JSON } | undefined>(
-      undefined
-    );
+  const [files, setFiles] = useState<SimulationFileType[]>([]);
   const setNotification = useNotification();
   const navigate = useNavigate();
   const theme = useTheme();
   const [chain, setChain] = useState<Chains>('terra');
+  const [sampleContract, setSampleContract] = useState<string>('');
+  const generatePresignedUrl = useR2S3GeneratePresignedUrl();
+  const handleLoadSampleContract = useCallback(async () => {
+    const contract = SAMPLE_CONTRACTS.find((c) => c.name === sampleContract && c.chain === chain);
+    if (!contract) {
+      setNotification("Contract not found", {severity: "error"});
+      return;
+    }
+
+    let wasmFiles: SimulationFileType[] = [];
+    for (const key of contract.keys) {
+      const presignedUrl = await generatePresignedUrl("cw-simulate-examples", `${contract.id}/${key}`);
+      try {
+        const response = await axios.get(presignedUrl, {responseType: "arraybuffer"});
+        const wasmFile = Buffer.from(extractByteCode(response.data));
+        const newFile = {
+          filename: key,
+          fileContent: wasmFile
+        };
+        wasmFiles.push(newFile);
+      } catch (e) {
+        console.error(e);
+        setNotification("Failed to load sample contract", {severity: "error"});
+      }
+    }
+    setFiles(wasmFiles);
+  }, [sampleContract]);
 
   const onCreateNewEnvironment = useCallback(async () => {
-    if (!file) {
+    if (!files) {
       setNotification("Internal error. Please check logs.", {
         severity: "error",
       });
       return;
     }
 
-    if (file.filename.endsWith(".wasm")) {
+    if (files[0].filename.endsWith(".wasm")) {
       const chainConfig = getChainConfig(chain);
       sim.recreate(chainConfig);
       sim.setBalance(chainConfig.sender, chainConfig.funds);
-      sim.storeCode(chainConfig.sender, file.filename, file.fileContent as Buffer, chainConfig.funds);
-    } else if (file.filename.endsWith(".json")) {
+      for (const file of files) {
+        sim.storeCode(chainConfig.sender, file.filename, file.fileContent as Buffer, chainConfig.funds);
+      }
+    } else if (files[0].filename.endsWith(".json")) {
       // TODO: rehydrate from JSON
-      // const json = file.fileContent as unknown;
+      // const json = files.fileContent as unknown;
       sim.recreate(defaults.chains.terra);
     }
-  }, [sim, file, chain]);
+  }, [sim, files, chain]);
 
   const onAcceptFile = useCallback(
     async (filename: string, fileContent: Buffer | JSON) => {
-      setFile({filename, fileContent});
+      setFiles(prevFiles => [...prevFiles, {filename, fileContent}]);
     },
     []
   );
 
   const onClearFile = useCallback(() => {
-    setFile(undefined);
+    setFiles([]);
   }, []);
 
   useEffect(() => {
-    if (file) {
+    if (files.length > 0) {
       onCreateNewEnvironment().then((r) => {
         navigate("/accounts");
       });
     }
-  }, [file]);
+  }, [files]);
 
   return (
     <Grid container item flex={1} alignItems="center" justifyContent="center">
@@ -132,7 +193,34 @@ export default function WelcomeScreen() {
         </Grid>
         <Grid item xs={11} lg={7} md={8} sx={{mb: 4, width: "60%"}}>
           <FileUploadPaper sx={{minHeight: 200}}>
-            <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
+            <Grid container direction="row" height="100%">
+              <Grid item sx={{width: '50%'}}>
+                <FileUpload onAccept={onAcceptFile} onClear={onClearFile}/>
+              </Grid>
+              <Grid item sx={{
+                width: '50%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+              }}>
+                <Typography textAlign="center" sx={{fontWeight: 'bold'}}>
+                  Load from sample contracts
+                </Typography>
+                <Autocomplete
+                  onInputChange={(_, value) => setSampleContract(value)}
+                  sx={{width: "80%", mt: 2}}
+                  renderInput={(params: AutocompleteRenderInputParams) =>
+                    <TextField {...params} label="Contract"/>
+                  }
+                  options={getSampleContractsForChain(chain)}
+                />
+                <Button variant={'contained'} sx={{mt: 2}} onClick={handleLoadSampleContract}>
+                  Load
+                </Button>
+              </Grid>
+            </Grid>
           </FileUploadPaper>
         </Grid>
       </Grid>

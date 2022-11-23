@@ -71,7 +71,7 @@ export default function UploadModal(props: IUploadModalProps) {
       <DialogContent sx={{ width: '50vw', maxWidth: 600 }}>
         <FileUploadPaper sx={{ width: '100%', minHeight: 180 }}>
           <FileUpload
-            dropzoneText={dropzoneText ?? "Upload or drop a .wasm contract binary here."}
+            dropzoneText={dropzoneText ?? "Upload or drop a .wasm contract binary here"}
             variant={variant ?? 'contract'}
             onAccept={(filename: string, fileContent: Buffer | JSON) => {
               setFile({filename, fileContent});
