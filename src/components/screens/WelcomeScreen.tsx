@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { Chains, defaults } from "../../configs/constants";
 import useSimulation from "../../hooks/useSimulation";
-import FileUpload from "../upload/FileUpload";
+import FileUpload, { extractByteCode } from "../upload/FileUpload";
 import FileUploadPaper from "../upload/FileUploadPaper";
 import { ReactComponent as TerraIcon } from "@public/luna.svg";
 import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
@@ -77,10 +77,11 @@ export default function WelcomeScreen() {
     for (const key of contract.keys) {
       const presignedUrl = await generatePresignedUrl("cw-simulate-examples", `${contract.id}/${key}`);
       try {
-        const response = await axios.get(presignedUrl);
+        const response = await axios.get(presignedUrl, {responseType: "arraybuffer"});
+        const wasmFile = Buffer.from(extractByteCode(response.data));
         const newFile = {
           filename: key,
-          fileContent: Buffer.from(response.data),
+          fileContent: wasmFile
         };
         wasmFiles.push(newFile);
       } catch (e) {

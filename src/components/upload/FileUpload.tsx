@@ -174,7 +174,7 @@ function buildAcceptProp(variant: IProps['variant']): Record<string, string[]> {
   return Object.fromEntries(filetypes.map(t => [t, []]));
 }
 
-function extractByteCode(contents: string | ArrayBuffer): ArrayBuffer {
+export function extractByteCode(contents: string | ArrayBuffer): ArrayBuffer {
   if (typeof contents !== 'string')
     return contents;
   const prefixes = ['data:application/wasm;base64,', 'data:application/octet-stream;base64,'];
