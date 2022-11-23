@@ -2,6 +2,9 @@ import { GetObjectCommand, ListObjectsV2Command, S3Client } from "@aws-sdk/clien
 import { useCallback } from "react";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+/**
+ * Create new S3 client
+ */
 export function useR2S3Client() {
   return useCallback(() => {
     return new S3Client({
@@ -27,6 +30,9 @@ export function useR2S3ListObjects() {
   }, [getClient]);
 }
 
+/**
+ * Generate presigned URL for a given S3 object
+ */
 export function useR2S3GeneratePresignedUrl() {
   const getClient = useR2S3Client();
 

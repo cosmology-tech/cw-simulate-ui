@@ -33,6 +33,7 @@ import axios from "axios";
 export interface ISampleContract {
   name: string;
   id: string;
+  chain: string;
   keys: string[];
 }
 
@@ -42,6 +43,7 @@ const SAMPLE_CONTRACTS: ISampleContract[] = [
   {
     name: "Terra Swap",
     id: "terra-swap",
+    chain: "terra",
     keys: ["terraswap_factory.wasm", "terraswap_pair.wasm", "terraswap_router.wasm", "terraswap_token.wasm"]
   },
 ];
@@ -51,24 +53,27 @@ interface SimulationFileType {
   fileContent: Buffer | JSON;
 }
 
+const getSampleContractsForChain = (chain: string) => {
+  return SAMPLE_CONTRACTS.filter((c) => c.chain === chain).map((c) => c.name);
+};
+
 export default function WelcomeScreen() {
   const sim = useSimulation();
-
   const [files, setFiles] = useState<SimulationFileType[]>([]);
   const setNotification = useNotification();
   const navigate = useNavigate();
   const theme = useTheme();
   const [chain, setChain] = useState<Chains>('terra');
-  const [sampleContract, setSampleContract] = useState<string>(SAMPLE_CONTRACTS.map((c) => c.name)[0]);
+  const [sampleContract, setSampleContract] = useState<string>('');
   const generatePresignedUrl = useR2S3GeneratePresignedUrl();
   const handleLoadSampleContract = useCallback(async () => {
-    const contract = SAMPLE_CONTRACTS.find((c) => c.name === sampleContract);
+    const contract = SAMPLE_CONTRACTS.find((c) => c.name === sampleContract && c.chain === chain);
     if (!contract) {
       setNotification("Contract not found", {severity: "error"});
       return;
     }
 
-    let files: SimulationFileType[] = [];
+    let wasmFiles: SimulationFileType[] = [];
     for (const key of contract.keys) {
       const presignedUrl = await generatePresignedUrl("cw-simulate-examples", `${contract.id}/${key}`);
       try {
@@ -77,13 +82,13 @@ export default function WelcomeScreen() {
           filename: key,
           fileContent: Buffer.from(response.data),
         };
-        files.push(newFile);
+        wasmFiles.push(newFile);
       } catch (e) {
         console.error(e);
         setNotification("Failed to load sample contract", {severity: "error"});
       }
     }
-    setFiles(files);
+    setFiles(wasmFiles);
   }, [sampleContract]);
 
   const onCreateNewEnvironment = useCallback(async () => {
@@ -205,11 +210,10 @@ export default function WelcomeScreen() {
                 <Autocomplete
                   onInputChange={(_, value) => setSampleContract(value)}
                   sx={{width: "80%", mt: 2}}
-                  defaultValue={SAMPLE_CONTRACTS.map((c) => c.name)[0]}
                   renderInput={(params: AutocompleteRenderInputParams) =>
                     <TextField {...params} label="Contract"/>
                   }
-                  options={SAMPLE_CONTRACTS.map((c) => c.name)}
+                  options={getSampleContractsForChain(chain)}
                 />
                 <Button variant={'contained'} sx={{mt: 2}} onClick={handleLoadSampleContract}>
                   Load
