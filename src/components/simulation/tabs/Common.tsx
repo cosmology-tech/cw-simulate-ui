@@ -45,13 +45,11 @@ export const EmptyTab = styled(
 }));
 
 export const BeautifyJSON = ({
-  payload,
-  setPayload,
-  isValid,
+  onChange,
+  disabled,
 }: {
-  payload: string;
-  setPayload: (val: string) => void;
-  isValid: boolean;
+  onChange: any;
+  disabled: boolean;
 }) => {
   const theme = useMuiTheme();
   return (
@@ -59,9 +57,11 @@ export const BeautifyJSON = ({
       aria-label="beautify"
       color="primary"
       onClick={() => {
-        setPayload(beautify(JSON.parse(payload), null, 2, 10));
+        onChange((payload: string) =>
+          beautify(JSON.parse(payload), null, 2, 10)
+        );
       }}
-      disabled={!payload.length || !isValid}
+      disabled={disabled}
       sx={{ ml: 1 }}
     >
       <SegmentIcon sx={{ color: theme.palette.common.white }} />

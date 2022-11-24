@@ -17,11 +17,8 @@ export interface ICollabsibleWidgetProps {
   maxHeight?: number;
   children?: ReactNode;
   sx?: SxProps<Theme>;
-  payload?: string;
-  setPayload?: (val: string) => void;
-  isValid?: boolean;
-  isCollapsible?: boolean;
-  isJSONEditor?: boolean;
+  right?: ReactNode;
+  collapsible?: boolean;
 }
 
 function CollapsibleWidget({
@@ -32,11 +29,8 @@ function CollapsibleWidget({
   maxHeight,
   children,
   sx,
-  payload,
-  setPayload,
-  isValid,
-  isJSONEditor = false,
-  isCollapsible = true,
+  right,
+  collapsible = true,
 }: ICollabsibleWidgetProps) {
   const theme = useTheme();
   const expanded = collapsed === undefined ? true : collapsed;
@@ -61,22 +55,13 @@ function CollapsibleWidget({
         }}
       >
         <Box
-          sx={{ width: `${isJSONEditor ? "90%" : "100%"}`, display: "flex" }}
-          onClick={isCollapsible ? () => setShow((curr) => !curr) : undefined}
+          sx={{ width: `${right ? "90%" : "100%"}`, display: "flex" }}
+          onClick={collapsible ? () => setShow((curr) => !curr) : undefined}
         >
-          {isCollapsible && <CollapsibleIcon expanded={show} />}
+          {collapsible && <CollapsibleIcon expanded={show} />}
           <Typography sx={{ fontSize: "1.1rem" }}>{title}</Typography>
         </Box>
-        {isJSONEditor &&
-          payload !== undefined &&
-          setPayload !== undefined &&
-          isValid !== undefined && (
-            <BeautifyJSON
-              payload={payload}
-              setPayload={setPayload}
-              isValid={isValid}
-            />
-          )}
+        {right}
       </Box>
       <Collapse in={show}>
         <Box sx={{ minHeight, maxHeight, height }}>{children}</Box>

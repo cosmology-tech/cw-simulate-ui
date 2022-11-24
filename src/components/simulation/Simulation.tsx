@@ -13,7 +13,6 @@ import T1Container from "../grid/T1Container";
 import Executor from "./Executor";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
-import CollapsibleWidget from "../CollapsibleWidget";
 import { Typography } from "@mui/material";
 import useSimulation from "../../hooks/useSimulation";
 import T1Popover from "../T1Popover";
@@ -40,7 +39,7 @@ const Simulation = () => {
                 {sim.shortenAddress(contractAddress)}
               </Typography>
             </T1Popover>
-            <CollapsibleExecutor contractAddress={contractAddress} />
+            <Executor contractAddress={contractAddress} />
           </Grid>
           <Divider sx={{ my: 1 }} />
           <Grid item flex={1} sx={{ display: "relative" }}>
@@ -147,32 +146,5 @@ function Widget({
     >
       <T1Container>{children}</T1Container>
     </Grid>
-  );
-}
-
-interface ICollapsibleExecutorProps {
-  contractAddress: string;
-}
-
-function CollapsibleExecutor({ contractAddress }: ICollapsibleExecutorProps) {
-  const [payload, setPayload] = useState("");
-  const [isValid, setIsValid] = useState(true);
-  return (
-    <CollapsibleWidget
-      title={"Execute"}
-      height={280}
-      payload={payload}
-      setPayload={setPayload}
-      isValid={isValid}
-      isJSONEditor={true}
-    >
-      <Executor
-        contractAddress={contractAddress!}
-        payload={payload}
-        setPayload={setPayload}
-        isValid={isValid}
-        setIsValid={setIsValid}
-      />
-    </CollapsibleWidget>
   );
 }

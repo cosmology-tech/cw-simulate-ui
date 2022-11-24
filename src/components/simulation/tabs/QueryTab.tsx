@@ -20,9 +20,6 @@ interface IProps {
 
 export default function QueryTab({ contractAddress }: IProps) {
   const [response, setResponse] = useState<Result<any, string>>();
-  const activeStep = useAtomValue(activeStepState);
-  const [payload, setPayload] = useState("");
-  const [isValid, setIsValid] = useState(true);
   const onHandleQuery = (res: Result<any, string>) => {
     setResponse(res);
   };
@@ -37,24 +34,8 @@ export default function QueryTab({ contractAddress }: IProps) {
         gap: 2,
       }}
     >
-      <CollapsibleWidget
-        title={`Query @${getFormattedStep(activeStep)}`}
-        height={280}
-        isCollapsible={false}
-        isJSONEditor={true}
-        payload={payload}
-        setPayload={setPayload}
-        isValid={isValid}
-      >
-        <Query
-          contractAddress={contractAddress}
-          onHandleQuery={onHandleQuery}
-          payload={payload}
-          setPayload={setPayload}
-          isValid={isValid}
-          setIsValid={setIsValid}
-        />
-      </CollapsibleWidget>
+      <Query contractAddress={contractAddress} onHandleQuery={onHandleQuery} />
+
       <Divider sx={{ my: 1 }} />
       <Grid item flex={1} position="relative">
         <T1Container>
@@ -77,23 +58,14 @@ export default function QueryTab({ contractAddress }: IProps) {
 interface IQuery {
   contractAddress: string;
   onHandleQuery: (payload: Result<any, string>) => void;
-  payload: string;
-  setPayload: (val: string) => void;
-  isValid: boolean;
-  setIsValid: (val: boolean) => void;
 }
 
-function Query({
-  contractAddress,
-  onHandleQuery,
-  payload,
-  setPayload,
-  isValid,
-  setIsValid,
-}: IQuery) {
+function Query({ contractAddress, onHandleQuery }: IQuery) {
   const sim = useSimulation();
   const setNotification = useNotification();
-
+  const activeStep = useAtomValue(activeStepState);
+  const [payload, setPayload] = useState("");
+  const [isValid, setIsValid] = useState(true);
   const handleQuery = async () => {
     try {
       const res = await sim.query(contractAddress, JSON.parse(payload));
@@ -112,34 +84,46 @@ function Query({
     setPayload("");
   }, [contractAddress]);
   return (
-    <Grid
-      item
-      container
-      direction="column"
-      flexWrap="nowrap"
-      sx={{
-        height: "100%",
-        gap: 2,
-      }}
-    >
-      <Grid item flex={1} position="relative">
-        <T1Container>
-          <JsonCodeMirrorEditor
-            jsonValue={payload}
-            onChange={setPayload}
-            onValidate={setIsValid}
-          />
-        </T1Container>
-      </Grid>
-      <Grid item container flexShrink={0}>
-        <Button
-          variant="contained"
-          onClick={handleQuery}
+    <CollapsibleWidget
+      title={`Query @${getFormattedStep(activeStep)}`}
+      height={280}
+      collapsible={false}
+      right={
+        <BeautifyJSON
+          onChange={setPayload}
           disabled={!payload.length || !isValid}
-        >
-          Run
-        </Button>
+        />
+      }
+    >
+      <Grid
+        item
+        container
+        direction="column"
+        flexWrap="nowrap"
+        sx={{
+          height: "100%",
+          gap: 2,
+        }}
+      >
+        <Grid item flex={1} position="relative">
+          <T1Container>
+            <JsonCodeMirrorEditor
+              jsonValue={payload}
+              onChange={setPayload}
+              onValidate={setIsValid}
+            />
+          </T1Container>
+        </Grid>
+        <Grid item container flexShrink={0}>
+          <Button
+            variant="contained"
+            onClick={handleQuery}
+            disabled={!payload.length || !isValid}
+          >
+            Run
+          </Button>
+        </Grid>
       </Grid>
-    </Grid>
+    </CollapsibleWidget>
   );
 }
