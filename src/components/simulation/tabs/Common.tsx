@@ -1,12 +1,14 @@
 import BrushOutlinedIcon from "@mui/icons-material/BrushOutlined";
+import SegmentIcon from "@mui/icons-material/Segment";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Tooltip from "@mui/material/Tooltip";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import styled from "@mui/material/styles/styled";
 import { TraceLog } from "@terran-one/cw-simulate";
-import beautify from "json-beautify";
+import beautify from "json-beautify-fix";
 import React, { PropsWithChildren } from "react";
+import useMuiTheme from "@mui/material/styles/useTheme";
 
 export interface IInspectorTabProps {
   traceLog: TraceLog | undefined;
@@ -51,19 +53,25 @@ export const BeautifyJSON = ({
   setPayload: (val: string) => void;
   isValid: boolean;
 }) => {
+  const theme = useMuiTheme();
   return (
-    <Tooltip title="Beautify JSON">
-      <IconButton
-        aria-label="beautify"
-        color="primary"
-        onClick={() => {
-          setPayload(beautify(JSON.parse(payload), null, 2, 100));
-        }}
-        disabled={!payload.length || !isValid}
+    <IconButton
+      aria-label="beautify"
+      color="primary"
+      onClick={() => {
+        setPayload(beautify(JSON.parse(payload), null, 2, 10));
+      }}
+      disabled={!payload.length || !isValid}
+      sx={{ ml: 1 }}
+    >
+      <SegmentIcon sx={{ color: theme.palette.common.white }} />
+      <Typography
+        variant="body2"
+        color={theme.palette.common.white}
         sx={{ ml: 1 }}
       >
-        <BrushOutlinedIcon />
-      </IconButton>
-    </Tooltip>
+        Tidy
+      </Typography>
+    </IconButton>
   );
 };

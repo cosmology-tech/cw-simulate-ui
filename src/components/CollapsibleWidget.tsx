@@ -7,6 +7,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useTheme } from "../configs/theme";
 import { joinSx } from "../utils/reactUtils";
 import CollapsibleIcon from "./CollapsibleIcon";
+import { BeautifyJSON } from "./simulation/tabs/Common";
 
 export interface ICollabsibleWidgetProps {
   title: string;
@@ -16,7 +17,11 @@ export interface ICollabsibleWidgetProps {
   maxHeight?: number;
   children?: ReactNode;
   sx?: SxProps<Theme>;
+  payload?: string;
+  setPayload?: (val: string) => void;
+  isValid?: boolean;
   isCollapsible?: boolean;
+  isJSONEditor?: boolean;
 }
 
 function CollapsibleWidget({
@@ -27,6 +32,10 @@ function CollapsibleWidget({
   maxHeight,
   children,
   sx,
+  payload,
+  setPayload,
+  isValid,
+  isJSONEditor = false,
   isCollapsible = true,
 }: ICollabsibleWidgetProps) {
   const theme = useTheme();
@@ -43,16 +52,31 @@ function CollapsibleWidget({
         sx={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           background: theme.palette.common.black,
           color: theme.palette.common.white,
           cursor: "pointer",
           py: 0.5,
           px: 1,
         }}
-        onClick={isCollapsible ? () => setShow((curr) => !curr) : undefined}
       >
-        {isCollapsible && <CollapsibleIcon expanded={show} />}
-        <Typography sx={{ fontSize: "1.1rem" }}>{title}</Typography>
+        <Box
+          sx={{ width: `${isJSONEditor ? "90%" : "100%"}`, display: "flex" }}
+          onClick={isCollapsible ? () => setShow((curr) => !curr) : undefined}
+        >
+          {isCollapsible && <CollapsibleIcon expanded={show} />}
+          <Typography sx={{ fontSize: "1.1rem" }}>{title}</Typography>
+        </Box>
+        {isJSONEditor &&
+          payload !== undefined &&
+          setPayload !== undefined &&
+          isValid !== undefined && (
+            <BeautifyJSON
+              payload={payload}
+              setPayload={setPayload}
+              isValid={isValid}
+            />
+          )}
       </Box>
       <Collapse in={show}>
         <Box sx={{ minHeight, maxHeight, height }}>{children}</Box>

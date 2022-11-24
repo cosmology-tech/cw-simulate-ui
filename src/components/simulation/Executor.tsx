@@ -11,6 +11,10 @@ import { BeautifyJSON } from "./tabs/Common";
 
 interface IProps {
   contractAddress: string;
+  payload: string;
+  setPayload: (val: string) => void;
+  isValid: boolean;
+  setIsValid: (val: boolean) => void;
 }
 export const getFormattedStep = (step: string) => {
   const activeStepArr = step.split("-").map((ele) => Number(ele) + 1);
@@ -20,15 +24,19 @@ export const getFormattedStep = (step: string) => {
   return formattedStep;
 };
 
-export default function Executor({ contractAddress }: IProps) {
+export default function Executor({
+  contractAddress,
+  payload,
+  setPayload,
+  isValid,
+  setIsValid,
+}: IProps) {
   const sim = useSimulation();
   const setNotification = useNotification();
 
   // TODO: customize sender & funds
   const [sender, funds] = Object.entries(useAccounts(sim))[0] ?? [];
   const activeStep = useAtomValue(activeStepState);
-  const [payload, setPayload] = useState("");
-  const [isValid, setIsValid] = useState(true);
 
   const handleExecute = async () => {
     try {
@@ -80,11 +88,6 @@ export default function Executor({ contractAddress }: IProps) {
           >
             Run
           </Button>
-          <BeautifyJSON
-            payload={payload}
-            setPayload={setPayload}
-            isValid={isValid}
-          />
         </Grid>
         <Chip
           label={

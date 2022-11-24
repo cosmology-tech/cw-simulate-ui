@@ -21,6 +21,8 @@ interface IProps {
 export default function QueryTab({ contractAddress }: IProps) {
   const [response, setResponse] = useState<Result<any, string>>();
   const activeStep = useAtomValue(activeStepState);
+  const [payload, setPayload] = useState("");
+  const [isValid, setIsValid] = useState(true);
   const onHandleQuery = (res: Result<any, string>) => {
     setResponse(res);
   };
@@ -39,10 +41,18 @@ export default function QueryTab({ contractAddress }: IProps) {
         title={`Query @${getFormattedStep(activeStep)}`}
         height={280}
         isCollapsible={false}
+        isJSONEditor={true}
+        payload={payload}
+        setPayload={setPayload}
+        isValid={isValid}
       >
         <Query
           contractAddress={contractAddress}
           onHandleQuery={onHandleQuery}
+          payload={payload}
+          setPayload={setPayload}
+          isValid={isValid}
+          setIsValid={setIsValid}
         />
       </CollapsibleWidget>
       <Divider sx={{ my: 1 }} />
@@ -67,13 +77,22 @@ export default function QueryTab({ contractAddress }: IProps) {
 interface IQuery {
   contractAddress: string;
   onHandleQuery: (payload: Result<any, string>) => void;
+  payload: string;
+  setPayload: (val: string) => void;
+  isValid: boolean;
+  setIsValid: (val: boolean) => void;
 }
 
-function Query({ contractAddress, onHandleQuery }: IQuery) {
+function Query({
+  contractAddress,
+  onHandleQuery,
+  payload,
+  setPayload,
+  isValid,
+  setIsValid,
+}: IQuery) {
   const sim = useSimulation();
   const setNotification = useNotification();
-  const [payload, setPayload] = useState("");
-  const [isValid, setIsValid] = useState(true);
 
   const handleQuery = async () => {
     try {
@@ -120,11 +139,6 @@ function Query({ contractAddress, onHandleQuery }: IQuery) {
         >
           Run
         </Button>
-        <BeautifyJSON
-          payload={payload}
-          setPayload={setPayload}
-          isValid={isValid}
-        />
       </Grid>
     </Grid>
   );
