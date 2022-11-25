@@ -8,6 +8,7 @@ import useSimulation from "../../hooks/useSimulation";
 import { useAccounts } from "../../CWSimulationBridge";
 import { activeStepState } from "../../atoms/simulationPageAtoms";
 import { BeautifyJSON } from "./tabs/Common";
+import CollapsibleWidget from "../CollapsibleWidget";
 
 interface IProps {
   contractAddress: string;
@@ -23,12 +24,11 @@ export const getFormattedStep = (step: string) => {
 export default function Executor({ contractAddress }: IProps) {
   const sim = useSimulation();
   const setNotification = useNotification();
-
+  const [payload, setPayload] = useState("");
+  const [isValid, setIsValid] = useState(true);
   // TODO: customize sender & funds
   const [sender, funds] = Object.entries(useAccounts(sim))[0] ?? [];
   const activeStep = useAtomValue(activeStepState);
-  const [payload, setPayload] = useState("");
-  const [isValid, setIsValid] = useState(true);
 
   const handleExecute = async () => {
     try {
@@ -52,48 +52,54 @@ export default function Executor({ contractAddress }: IProps) {
   }, [contractAddress]);
 
   return (
-    <Grid
-      item
-      container
-      direction="column"
-      flexWrap="nowrap"
-      sx={{
-        height: "100%",
-        gap: 2,
-      }}
+    <CollapsibleWidget
+      title={"Execute"}
+      height={280}
+      right={
+        <BeautifyJSON
+          onChange={setPayload}
+          disabled={!payload.length || !isValid}
+        />
+      }
     >
-      <Grid item flex={1} position="relative">
-        <T1Container>
-          <JsonCodeMirrorEditor
-            jsonValue={payload}
-            onChange={setPayload}
-            onValidate={setIsValid}
-          />
-        </T1Container>
-      </Grid>
-      <Grid item container flexShrink={0} justifyContent="space-between">
-        <Grid item>
-          <Button
-            variant="contained"
-            onClick={handleExecute}
-            disabled={!payload.length || !isValid}
-          >
-            Run
-          </Button>
-          <BeautifyJSON
-            payload={payload}
-            setPayload={setPayload}
-            isValid={isValid}
+      <Grid
+        item
+        container
+        direction="column"
+        flexWrap="nowrap"
+        sx={{
+          height: "100%",
+          gap: 2,
+        }}
+      >
+        <Grid item flex={1} position="relative">
+          <T1Container>
+            <JsonCodeMirrorEditor
+              jsonValue={payload}
+              onChange={setPayload}
+              onValidate={setIsValid}
+            />
+          </T1Container>
+        </Grid>
+        <Grid item container flexShrink={0} justifyContent="space-between">
+          <Grid item>
+            <Button
+              variant="contained"
+              onClick={handleExecute}
+              disabled={!payload.length || !isValid}
+            >
+              Run
+            </Button>
+          </Grid>
+          <Chip
+            label={
+              <Typography variant="caption">
+                Current Active Step : {getFormattedStep(activeStep)}
+              </Typography>
+            }
           />
         </Grid>
-        <Chip
-          label={
-            <Typography variant="caption">
-              Current Active Step : {getFormattedStep(activeStep)}
-            </Typography>
-          }
-        />
       </Grid>
-    </Grid>
+    </CollapsibleWidget>
   );
 }
