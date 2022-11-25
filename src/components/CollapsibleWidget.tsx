@@ -55,7 +55,7 @@ function CollapsibleWidget({
         }}
       >
         <Box
-          sx={{ width: `${right ? "90%" : "100%"}`, display: "flex" }}
+          sx={{ display: "flex", flex: 1 }}
           onClick={collapsible ? () => setShow((curr) => !curr) : undefined}
         >
           {collapsible && <CollapsibleIcon expanded={show} />}
