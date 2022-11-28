@@ -1,12 +1,10 @@
-import CopyIcon from "@mui/icons-material/ContentCopy";
 import Box from "@mui/material/Box";
 import Tooltip from "@mui/material/Tooltip";
 import Typography, { TypographyProps } from "@mui/material/Typography";
-import { IconButton } from "@mui/material";
-import { useCallback } from "react";
 import useSimulation from "../../hooks/useSimulation";
-import { joinSx, useCopyToClipboard } from "../../utils/reactUtils";
+import { joinSx } from "../../utils/reactUtils";
 import { SxProps } from "../../utils/typeUtils";
+import CopyToClipBoard from "../simulation/CopyToClipBoard";
 
 type PickedProps = Pick<TypographyProps,
   | 'fontFamily'
@@ -26,10 +24,6 @@ export type AddressProps = PickedProps & {
 
 export default function Address({ address, gutterBottom, long, className, sx, ...props }: AddressProps) {
   const sim = useSimulation();
-  const copyToClipboard = useCopyToClipboard();
-  const onClick = useCallback(() => {
-    copyToClipboard(address);
-  }, [address]);
   
   const title = (
     <Typography variant="body2">{address}</Typography>
@@ -57,9 +51,7 @@ export default function Address({ address, gutterBottom, long, className, sx, ..
         >
           {long ? address : sim.shortenAddress(address)}
         </Typography>
-        <IconButton onClick={onClick} className="T1Address-copy" disabled={!navigator.clipboard}>
-          <CopyIcon fontSize="small" />
-        </IconButton>
+        <CopyToClipBoard data={address} title="Copy address" />
       </Box>
     </Tooltip>
   )

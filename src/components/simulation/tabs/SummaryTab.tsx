@@ -10,7 +10,7 @@ import Switch from "@mui/material/Switch";
 import { useState } from "react";
 import Address from "../../chains/Address";
 import T1JsonTree from "../../T1JsonTree";
-import { CopyToClipBoard } from "../CopyToClipBoard";
+import CopyToClipBoard from "../CopyToClipBoard";
 
 export default function SummaryTab({ traceLog }: IInspectorTabProps) {
   const [checked, setChecked] = useState<boolean>(false);

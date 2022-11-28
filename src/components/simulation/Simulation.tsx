@@ -13,7 +13,6 @@ import T1Container from "../grid/T1Container";
 import Executor from "./Executor";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
-import useSimulation from "../../hooks/useSimulation";
 import Address from "../chains/Address";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
