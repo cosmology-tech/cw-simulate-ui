@@ -1,4 +1,6 @@
 import type { SxProps } from "@mui/system/styleFunctionSx";
+import { useCallback } from "react";
+import { useNotification } from "../atoms/snackbarNotificationState";
 import type { Falsy } from "./typeUtils";
 
 export function joinSx<T extends {}>(...sxs: (SxProps<T> | Falsy)[]): SxProps<T> {
@@ -21,4 +23,19 @@ export function isChildOf(root: HTMLElement, child: HTMLElement | Falsy, log = f
     curr = curr.parentElement;
   }
   return curr === root;
+}
+
+export function useCopyToClipboard() {
+  const setNotification = useNotification();
+  return useCallback((data: string) => {
+    // clipboard can be undefined when the browser does not trust the
+    // website, e.g. when it has no SSL certificate
+    if (!navigator.clipboard) {
+      setNotification("Clipboard not available", { severity: "error" });
+    }
+    else {
+      navigator.clipboard.writeText(data);
+      setNotification("Copied to clipboard");
+    }
+  }, [setNotification]);
 }

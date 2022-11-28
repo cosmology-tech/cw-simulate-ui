@@ -5,7 +5,7 @@ import type { Theme } from "@mui/material/styles/createTheme";
 import styled from "@mui/material/styles/styled";
 import useTheme from "@mui/material/styles/useTheme";
 import type { SxProps } from "@mui/system/styleFunctionSx";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode } from "react";
 import { useParams } from "react-router-dom";
 import { joinSx } from "../../utils/reactUtils";
 import { GridSizeProps } from "../../utils/typeUtils";
@@ -13,9 +13,8 @@ import T1Container from "../grid/T1Container";
 import Executor from "./Executor";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
-import { Typography } from "@mui/material";
 import useSimulation from "../../hooks/useSimulation";
-import T1Popover from "../T1Popover";
+import Address from "../chains/Address";
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
@@ -23,7 +22,6 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
 }));
 
 const Simulation = () => {
-  const sim = useSimulation();
   const contractAddress = useParams().instanceAddress!;
 
   return (
@@ -31,14 +29,13 @@ const Simulation = () => {
       <Column xs={4} className="T1Simulation-left">
         <Grid container direction="column" height="100%">
           <Grid item>
-            <T1Popover text={contractAddress}>
-              <Typography
-                gutterBottom
-                sx={{ fontWeight: "bold", textAlign: "center" }}
-              >
-                {sim.shortenAddress(contractAddress)}
-              </Typography>
-            </T1Popover>
+            <Address
+              address={contractAddress}
+              gutterBottom
+              fontWeight="bold"
+              textAlign="center"
+              sx={{ display: 'flex', justifyContent: 'center' }}
+            />
             <Executor contractAddress={contractAddress} />
           </Grid>
           <Divider sx={{ my: 1 }} />

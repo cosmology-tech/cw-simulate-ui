@@ -3,12 +3,11 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
-import { tooltipClasses } from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { ContractInfo } from "@terran-one/cw-simulate";
-import { useCallback } from "react";
 import { useContracts, compareDeep } from "../../CWSimulationBridge";
 import useSimulation from "../../hooks/useSimulation";
+import { useCopyToClipboard } from "../../utils/reactUtils";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
 import { useNavigate } from "react-router-dom";
@@ -53,7 +52,7 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
     undefined,
     [instance.address],
   );
-  const copyToClipboard = useCallback((data: string) => navigator.clipboard?.writeText(data), []);
+  const copyToClipboard = useCopyToClipboard();
 
   return (
     <T1MenuItem

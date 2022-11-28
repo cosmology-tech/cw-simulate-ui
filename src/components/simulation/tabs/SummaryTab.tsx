@@ -3,12 +3,12 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import { ExecuteTraceLog, ReplyTraceLog, TraceLog } from "@terran-one/cw-simulate";
 import YAML from 'yaml';
-import useSimulation from "../../../hooks/useSimulation";
 import { stringifyFunds } from "../../../utils/typeUtils";
 import TableLayout from "../../chains/TableLayout";
 import { EmptyTab, IInspectorTabProps, TabHeader, TabPaper } from "./Common";
 import Switch from "@mui/material/Switch";
 import { useState } from "react";
+import Address from "../../chains/Address";
 import T1JsonTree from "../../T1JsonTree";
 
 export default function SummaryTab({traceLog}: IInspectorTabProps) {
@@ -89,11 +89,12 @@ function ReplySummary({traceLog}: { traceLog: ReplyTraceLog }) {
 }
 
 function SenderView({info}: { info: ExecuteTraceLog['info'] }) {
-  const sim = useSimulation();
-
   return (
     <TableLayout
-      rows={[{sender: sim.shortenAddress(info.sender), funds: stringifyFunds(info.funds)}]}
+      rows={[{
+        sender: <Address address={info.sender} fontSize="small" />,
+        funds: stringifyFunds(info.funds)}
+      ]}
       keyField="sender"
       columns={{
         sender: "Sender",

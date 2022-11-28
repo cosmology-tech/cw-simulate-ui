@@ -23,6 +23,7 @@ import { stringifyFunds } from "../../utils/typeUtils";
 import T1Container from "../grid/T1Container";
 import TableLayout from "./TableLayout";
 import Funds from "../Funds";
+import Address from "./Address";
 
 const getDefaultAccount = (chainId: string) =>
   Object.values(defaults.chains).find(config => config.chainId === chainId) ?? defaults.chains.terra;
@@ -36,7 +37,7 @@ const Accounts = () => {
 
   const data = accounts.map(([address, balances]) => {
     return {
-      address,
+      address: <Address address={address} long />,
       balances: balances.map((c: Coin) => `${c.amount} ${c.denom}`).join(", "),
     };
   });
@@ -69,7 +70,7 @@ const Accounts = () => {
             RowMenu={(props) => (
               <>
                 <MenuItem
-                  onClick={() => handleDeleteAccount(props.row.address)}
+                  onClick={() => handleDeleteAccount(props.row.address.props.address)}
                 >
                   <ListItemIcon>
                     <DeleteIcon fontSize="small"/>
