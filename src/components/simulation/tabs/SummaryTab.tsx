@@ -10,81 +10,102 @@ import Switch from "@mui/material/Switch";
 import { useState } from "react";
 import Address from "../../chains/Address";
 import T1JsonTree from "../../T1JsonTree";
+import { CopyToClipBoard } from "../CopyToClipBoard";
 
-export default function SummaryTab({traceLog}: IInspectorTabProps) {
+export default function SummaryTab({ traceLog }: IInspectorTabProps) {
   const [checked, setChecked] = useState<boolean>(false);
-  if (!traceLog) return <EmptyTab/>;
+  if (!traceLog) return <EmptyTab />;
 
   return (
     <Grid>
-      <SummaryHeader traceLog={traceLog}/>
+      <SummaryHeader traceLog={traceLog} />
 
-      {traceLog.type === 'instantiate'
-        ? <InstantiateSummary traceLog={traceLog}/>
-        : traceLog.type === 'execute'
-          ? <ExecuteSummary traceLog={traceLog}/>
-          : traceLog.type === 'reply'
-            ? <ReplySummary traceLog={traceLog}/>
-            : null
-      }
+      {traceLog.type === "instantiate" ? (
+        <InstantiateSummary traceLog={traceLog} />
+      ) : traceLog.type === "execute" ? (
+        <ExecuteSummary traceLog={traceLog} />
+      ) : traceLog.type === "reply" ? (
+        <ReplySummary traceLog={traceLog} />
+      ) : null}
 
-      <Box sx={{my: 2}}>
+      <Box sx={{ my: 2 }}>
         <Grid item container flexShrink={0} justifyContent="space-between">
-          <Typography variant="h6" my={1}>Message</Typography>
-          <Box flexDirection={'row'} display={'flex'} alignItems={'center'}>
-            <Typography variant="body2" mr={1}>{checked ? 'JSON' : 'YAML'}</Typography>
-            <Switch checked={checked} onChange={() => setChecked(state => !state)}/>
+          <Grid item sx={{ display: "flex" }}>
+            <Typography variant="h6" my={1}>
+              Message
+            </Typography>
+            <CopyToClipBoard
+              data={
+                checked
+                  ? JSON.stringify(traceLog.msg)
+                  : YAML.stringify(traceLog.msg)
+              }
+              title="Copy Message"
+            />
+          </Grid>
+          <Box flexDirection={"row"} display={"flex"} alignItems={"center"}>
+            <Typography variant="body2" mr={1}>
+              {checked ? "JSON" : "YAML"}
+            </Typography>
+            <Switch
+              checked={checked}
+              onChange={() => setChecked((state) => !state)}
+            />
           </Box>
         </Grid>
+
         <TabPaper>
-          {checked ? (<T1JsonTree data={traceLog.msg}/>) : (
-            <pre>{YAML.stringify(traceLog.msg)}</pre>)}
+          {checked ? (
+            <T1JsonTree data={traceLog.msg} />
+          ) : (
+            <pre>{YAML.stringify(traceLog.msg)}</pre>
+          )}
         </TabPaper>
       </Box>
     </Grid>
   );
-};
+}
 
-function SummaryHeader({traceLog}: { traceLog: TraceLog }) {
-  const {type} = traceLog;
+function SummaryHeader({ traceLog }: { traceLog: TraceLog }) {
+  const { type } = traceLog;
 
   let title: string;
   switch (type) {
-    case 'instantiate':
-      title = 'wasm/instantiate';
+    case "instantiate":
+      title = "wasm/instantiate";
       break;
-    case 'execute':
-      title = 'wasm/execute';
+    case "execute":
+      title = "wasm/execute";
       break;
-    case 'reply':
-      title = 'wasm/reply';
+    case "reply":
+      title = "wasm/reply";
       break;
   }
 
-  return <TabHeader>{title}</TabHeader>
+  return <TabHeader>{title}</TabHeader>;
 }
 
-function InstantiateSummary({traceLog}: { traceLog: ExecuteTraceLog }) {
-  const {info} = traceLog;
+function InstantiateSummary({ traceLog }: { traceLog: ExecuteTraceLog }) {
+  const { info } = traceLog;
 
   return (
     <>
-      <SenderView info={info}/>
+      <SenderView info={info} />
     </>
-  )
+  );
 }
 
-function ExecuteSummary({traceLog}: { traceLog: ExecuteTraceLog }) {
-  const {info} = traceLog;
+function ExecuteSummary({ traceLog }: { traceLog: ExecuteTraceLog }) {
+  const { info } = traceLog;
 
   return (
     <>
-      <SenderView info={info}/>
+      <SenderView info={info} />
     </>
-  )
+  );
 }
 
-function ReplySummary({traceLog}: { traceLog: ReplyTraceLog }) {
+function ReplySummary({ traceLog }: { traceLog: ReplyTraceLog }) {
   return null;
 }
 
@@ -101,7 +122,7 @@ function SenderView({info}: { info: ExecuteTraceLog['info'] }) {
         funds: "Funds",
       }}
       inspectorTable
-      sx={{mb: 2}}
+      sx={{ mb: 2 }}
     />
-  )
+  );
 }
