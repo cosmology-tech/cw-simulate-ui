@@ -45,6 +45,12 @@ const SAMPLE_CONTRACTS: ISampleContract[] = [
     chain: "terra",
     keys: ["terraswap_factory.wasm", "terraswap_pair.wasm", "terraswap_router.wasm", "terraswap_token.wasm"]
   },
+  {
+    name: "Wasm Swap",
+    id: "wasm-swap",
+    chain: "juno",
+    keys: ["cw20-base.wasm", "cw20-stake.wasm", "wasmswap.wasm", "cw-stake-external-rewards.wasm"]
+  }
 ];
 
 interface SimulationFileType {
