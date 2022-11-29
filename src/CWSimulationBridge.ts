@@ -1,6 +1,8 @@
+import { sha256 } from "@cosmjs/crypto";
+import { toBase64, toUtf8 } from "@cosmjs/encoding";
 import { CodeInfo, Coin, ContractInfo, CWSimulateApp, CWSimulateAppOptions, TraceLog } from "@terran-one/cw-simulate";
 import { Map } from "immutable";
-import { DependencyList, useCallback, useEffect, useId, useReducer } from "react";
+import { DependencyList, useEffect, useReducer } from "react";
 import { defaults } from "./configs/constants";
 
 declare module "@terran-one/cw-simulate" {
@@ -17,12 +19,18 @@ declare module "@terran-one/cw-simulate" {
   }
 }
 
-type Watcher = {
+type Filter = {
+  id: string;
   filter(app: CWSimulateApp): unknown;
   compare(last: unknown, curr: unknown): boolean;
   commit(state: unknown): unknown;
-  dispatch(next: unknown): void;
   last: unknown;
+  watchers: Watcher[];
+}
+
+type Watcher = {
+  dispatch(value: unknown): void;
+  debug?: string;
 }
 
 export type WatcherComparator<T = unknown> = (last: T, curr: T) => boolean;
@@ -30,7 +38,7 @@ export type WatcherCommitter<T = unknown> = (raw: T) => T;
 
 export default class CWSimulationBridge {
   private app = new CWSimulateApp(defaults.chains.terra);
-  private watchers: Record<string, Watcher> = {};
+  private filters: Record<string, Filter> = {};
   private updatePending = false;
 
   recreate(options: CWSimulateAppOptions) {
@@ -122,12 +130,13 @@ export default class CWSimulationBridge {
     /** Optional committer. Creates a non-mutable snapshot of the given state. */
     commit: WatcherCommitter<T> = val => val,
     deps: DependencyList = [],
+    debug?: string,
   ) {
-    const init = filter(this.app);
+    const init = commit(filter(this.app));
 
     // fuck you eslint
     /* eslint-disable react-hooks/rules-of-hooks */
-    const id = useId();
+    const id = generateId(filter, compare, commit);
     /* eslint-disable react-hooks/rules-of-hooks */
     const [value, dispatch] = useReducer(
       (prev: T, next: T) => {
@@ -135,35 +144,37 @@ export default class CWSimulationBridge {
       },
       init,
     );
-
-    if (!this.watchers[id]) {
-      this.watchers[id] = {
+    
+    useEffect(() => {
+      const data = this.filters[id] = {
+        id,
         filter,
         compare,
         commit,
+        last: this.filters[id]?.last ?? init,
+        watchers: this.filters[id]?.watchers ?? [],
+      };
+      
+      const watcher: Watcher = {
         dispatch,
-        last: commit(init),
-      }
-    }
-    else {
-      this.watchers[id] = {
-        filter,
-        compare,
-        commit,
-        dispatch,
-        last: this.watchers[id].last,
-      }
-    }
-
-    useEffect(() => {
-      this.watchers[id] && this.evaluateWatcher(this.watchers[id]);
-    }, deps);
-
-    useEffect(() => {
+        debug,
+      };
+      data.watchers.push(watcher);
+      
+      debug && console.log(debug, 'mounting', id);
       return () => {
-        delete this.watchers[id];
+        debug && console.log(debug, 'dismounting', id)
+        data.watchers = data.watchers.filter(w => w !== watcher);
+        setTimeout(() => {
+          if (!data.watchers.length)
+            delete this.filters[id];
+        }, 30000);
       }
-    }, []);
+    }, [filter, dispatch, compare, commit, debug, ...deps]);
+
+    useEffect(() => {
+      this.sync();
+    }, deps);
 
     return value;
   }
@@ -188,25 +199,35 @@ export default class CWSimulationBridge {
     this.updatePending = true;
 
     setTimeout(() => {
+      console.log(`we have ${Object.keys(this.filters).length} filters`);
       this.updatePending = false;
-      Object.values(this.watchers).forEach(this.evaluateWatcher);
+      Object.values(this.filters).forEach(this.evaluateFilter);
     }, 0);
   }
 
-  private evaluateWatcher = (watcher: Watcher) => {
+  private evaluateFilter = (inst: Filter) => {
     const {
       filter,
       compare,
       commit,
-      dispatch,
       last,
-    } = watcher;
-
+      watchers,
+    } = inst;
+    
     let next = filter(this.app);
     if (!compare(last, next)) {
       next = commit(next);
-      watcher.last = next;
-      dispatch(next);
+      inst.last = next;
+      
+      watchers.forEach(watcher => {
+        const {
+          dispatch,
+          debug,
+        } = watcher;
+        
+        debug && console.log(`update ${debug}`);
+        dispatch(next);
+      });
     }
   }
   
@@ -323,4 +344,12 @@ function cloneCodes(codes: Record<number, CodeInfo>): Record<number, CodeInfo> {
       ([codeId, info]) => [codeId, {...info}]
     )
   )
+}
+
+function generateId(
+  filter: Filter['filter'],
+  compare: Filter['compare'],
+  commit: Filter['commit'],
+): string {
+  return toBase64(sha256(toUtf8(filter.toString() + compare.toString() + commit.toString())));
 }

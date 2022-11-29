@@ -3,15 +3,15 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
-import { tooltipClasses } from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { ContractInfo } from "@terran-one/cw-simulate";
-import { useCallback } from "react";
+import copy from "copy-to-clipboard";
+import { useNavigate } from "react-router-dom";
+import { useNotification } from "../../atoms/snackbarNotificationState";
 import { useContracts, compareDeep } from "../../CWSimulationBridge";
 import useSimulation from "../../hooks/useSimulation";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
-import { useNavigate } from "react-router-dom";
 
 export interface IInstancesSubMenuProps {}
 
@@ -39,6 +39,7 @@ interface IInstanceMenuItemProps {
 function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
+  const setNotification = useNotification();
   
   const code = sim.useWatcher(
     ({ wasm }) => {
@@ -53,7 +54,6 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
     undefined,
     [instance.address],
   );
-  const copyToClipboard = useCallback((data: string) => navigator.clipboard?.writeText(data), []);
 
   return (
     <T1MenuItem
@@ -88,10 +88,10 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
         <MenuItem
           key="copy-address"
           onClick={() => {
-            copyToClipboard(instance.address);
+            copy(instance.address);
+            setNotification("Copied to clipboard", { severity: "info" });
             close();
           }}
-          disabled={!navigator.clipboard}
         >
           <ListItemIcon>
             <ContentCopyIcon />

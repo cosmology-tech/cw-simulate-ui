@@ -1,4 +1,6 @@
 import type { GridSize } from "@mui/system";
+import type { Theme as MuiTheme } from "@mui/material/styles/createTheme";
+import type { SxProps as MuiSxProps } from "@mui/system/styleFunctionSx";
 import type { Coin, RustResult } from "@terran-one/cw-simulate";
 import { Err, Ok, Result } from "ts-results";
 
@@ -23,6 +25,9 @@ export type AsJSON<T> = T extends JSONifiable
 type JSONifiable = {
   toJSON(): any;
 }
+
+export type Theme = MuiTheme;
+export type SxProps = MuiSxProps<Theme>;
 
 type GridSizeName = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 

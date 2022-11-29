@@ -7,6 +7,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useTheme } from "../configs/theme";
 import { joinSx } from "../utils/reactUtils";
 import CollapsibleIcon from "./CollapsibleIcon";
+import { BeautifyJSON } from "./simulation/tabs/Common";
 
 export interface ICollabsibleWidgetProps {
   title: string;
@@ -16,7 +17,8 @@ export interface ICollabsibleWidgetProps {
   maxHeight?: number;
   children?: ReactNode;
   sx?: SxProps<Theme>;
-  isCollapsible?: boolean;
+  right?: ReactNode;
+  collapsible?: boolean;
 }
 
 function CollapsibleWidget({
@@ -27,7 +29,8 @@ function CollapsibleWidget({
   maxHeight,
   children,
   sx,
-  isCollapsible = true,
+  right,
+  collapsible = true,
 }: ICollabsibleWidgetProps) {
   const theme = useTheme();
   const expanded = collapsed === undefined ? true : collapsed;
@@ -43,16 +46,22 @@ function CollapsibleWidget({
         sx={{
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           background: theme.palette.common.black,
           color: theme.palette.common.white,
           cursor: "pointer",
           py: 0.5,
           px: 1,
         }}
-        onClick={isCollapsible ? () => setShow((curr) => !curr) : undefined}
       >
-        {isCollapsible && <CollapsibleIcon expanded={show} />}
-        <Typography sx={{ fontSize: "1.1rem" }}>{title}</Typography>
+        <Box
+          sx={{ display: "flex", flex: 1 }}
+          onClick={collapsible ? () => setShow((curr) => !curr) : undefined}
+        >
+          {collapsible && <CollapsibleIcon expanded={show} />}
+          <Typography sx={{ fontSize: "1.1rem" }}>{title}</Typography>
+        </Box>
+        {right}
       </Box>
       <Collapse in={show}>
         <Box sx={{ minHeight, maxHeight, height }}>{children}</Box>
