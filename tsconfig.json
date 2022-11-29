@@ -21,11 +21,11 @@
     "isolatedModules": true,
     "noEmit": true,
     "watch": true,
-    "jsx": "preserve",
-    "types": [
-      "@cloudflare/workers-types"
-    ]
+    "jsx": "preserve"
   },
+  "exclude": [
+    "functions/**/*"
+  ],
   "include": [
     "src"
   ]
