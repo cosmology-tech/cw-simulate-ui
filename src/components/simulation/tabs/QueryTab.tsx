@@ -20,7 +20,6 @@ interface IProps {
 
 export default function QueryTab({ contractAddress }: IProps) {
   const [response, setResponse] = useState<Result<any, string>>();
-  const activeStep = useAtomValue(activeStepState);
   const onHandleQuery = (res: Result<any, string>) => {
     setResponse(res);
   };
@@ -35,16 +34,8 @@ export default function QueryTab({ contractAddress }: IProps) {
         gap: 2,
       }}
     >
-      <CollapsibleWidget
-        title={`Query @${getFormattedStep(activeStep)}`}
-        height={280}
-        isCollapsible={false}
-      >
-        <Query
-          contractAddress={contractAddress}
-          onHandleQuery={onHandleQuery}
-        />
-      </CollapsibleWidget>
+      <Query contractAddress={contractAddress} onHandleQuery={onHandleQuery} />
+
       <Divider sx={{ my: 1 }} />
       <Grid item flex={1} position="relative">
         <T1Container>
@@ -72,9 +63,9 @@ interface IQuery {
 function Query({ contractAddress, onHandleQuery }: IQuery) {
   const sim = useSimulation();
   const setNotification = useNotification();
+  const activeStep = useAtomValue(activeStepState);
   const [payload, setPayload] = useState("");
   const [isValid, setIsValid] = useState(true);
-
   const handleQuery = async () => {
     try {
       const res = await sim.query(contractAddress, JSON.parse(payload));
@@ -93,39 +84,46 @@ function Query({ contractAddress, onHandleQuery }: IQuery) {
     setPayload("");
   }, [contractAddress]);
   return (
-    <Grid
-      item
-      container
-      direction="column"
-      flexWrap="nowrap"
-      sx={{
-        height: "100%",
-        gap: 2,
-      }}
-    >
-      <Grid item flex={1} position="relative">
-        <T1Container>
-          <JsonCodeMirrorEditor
-            jsonValue={payload}
-            onChange={setPayload}
-            onValidate={setIsValid}
-          />
-        </T1Container>
-      </Grid>
-      <Grid item container flexShrink={0}>
-        <Button
-          variant="contained"
-          onClick={handleQuery}
-          disabled={!payload.length || !isValid}
-        >
-          Run
-        </Button>
+    <CollapsibleWidget
+      title={`Query @${getFormattedStep(activeStep)}`}
+      height={280}
+      collapsible={false}
+      right={
         <BeautifyJSON
-          payload={payload}
-          setPayload={setPayload}
-          isValid={isValid}
+          onChange={setPayload}
+          disabled={!payload.length || !isValid}
         />
+      }
+    >
+      <Grid
+        item
+        container
+        direction="column"
+        flexWrap="nowrap"
+        sx={{
+          height: "100%",
+          gap: 2,
+        }}
+      >
+        <Grid item flex={1} position="relative">
+          <T1Container>
+            <JsonCodeMirrorEditor
+              jsonValue={payload}
+              onChange={setPayload}
+              onValidate={setIsValid}
+            />
+          </T1Container>
+        </Grid>
+        <Grid item container flexShrink={0}>
+          <Button
+            variant="contained"
+            onClick={handleQuery}
+            disabled={!payload.length || !isValid}
+          >
+            Run
+          </Button>
+        </Grid>
       </Grid>
-    </Grid>
+    </CollapsibleWidget>
   );
 }

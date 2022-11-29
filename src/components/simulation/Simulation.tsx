@@ -13,18 +13,14 @@ import T1Container from "../grid/T1Container";
 import Executor from "./Executor";
 import { StateRenderer } from "./StateRenderer";
 import StateStepper from "./StateStepper";
-import CollapsibleWidget from "../CollapsibleWidget";
-import { Typography } from "@mui/material";
-import useSimulation from "../../hooks/useSimulation";
-import T1Popover from "../T1Popover";
+import Address from "../chains/Address";
 
-const StyledPaper = styled(Paper)(({theme}) => ({
+const StyledPaper = styled(Paper)(({ theme }) => ({
   ...theme.typography.body2,
   padding: theme.spacing(1),
 }));
 
 const Simulation = () => {
-  const sim = useSimulation();
   const contractAddress = useParams().instanceAddress!;
 
   return (
@@ -32,24 +28,26 @@ const Simulation = () => {
       <Column xs={4} className="T1Simulation-left">
         <Grid container direction="column" height="100%">
           <Grid item>
-            <T1Popover text={contractAddress}>
-              <Typography gutterBottom sx={{fontWeight: 'bold', textAlign: 'center'}}>
-                {sim.shortenAddress(contractAddress)}
-              </Typography>
-            </T1Popover>
-            <CollapsibleExecutor contractAddress={contractAddress}/>
+            <Address
+              address={contractAddress}
+              gutterBottom
+              fontWeight="bold"
+              textAlign="center"
+              sx={{ display: 'flex', justifyContent: 'center' }}
+            />
+            <Executor contractAddress={contractAddress} />
           </Grid>
-          <Divider sx={{my: 1}}/>
-          <Grid item flex={1} sx={{ display: 'relative' }}>
+          <Divider sx={{ my: 1 }} />
+          <Grid item flex={1} sx={{ display: "relative" }}>
             <T1Container>
-              <StateStepper contractAddress={contractAddress}/>
+              <StateStepper contractAddress={contractAddress} />
             </T1Container>
           </Grid>
         </Grid>
       </Column>
       <Column xs={8} className="T1Simulation-right">
         <Widget>
-          <StateRenderer contractAddress={contractAddress}/>
+          <StateRenderer contractAddress={contractAddress} />
         </Widget>
       </Column>
     </SplitView>
@@ -63,7 +61,7 @@ interface ISplitViewProps {
   className?: string;
 }
 
-function SplitView({children, ...props}: ISplitViewProps) {
+function SplitView({ children, ...props }: ISplitViewProps) {
   return (
     <Grid
       container
@@ -84,7 +82,7 @@ interface IColumnProps extends GridSizeProps {
   className?: string;
 }
 
-function Column({children, ...props}: IColumnProps) {
+function Column({ children, ...props }: IColumnProps) {
   const theme = useTheme();
 
   return (
@@ -135,9 +133,9 @@ function Widget({
         {
           p: 2,
           height: `${(100 * size) / 12}%`,
-          overflow: 'auto',
+          overflow: "auto",
         },
-        sx,
+        sx
       )}
       className={`T1Widget-root ${className}`}
       {...props}
@@ -145,18 +143,4 @@ function Widget({
       <T1Container>{children}</T1Container>
     </Grid>
   );
-}
-
-interface ICollapsibleExecutorProps {
-  contractAddress: string;
-}
-
-function CollapsibleExecutor({
-  contractAddress,
-}: ICollapsibleExecutorProps) {
-  return (
-    <CollapsibleWidget title={'Execute'} height={280}>
-      <Executor contractAddress={contractAddress!}/>
-    </CollapsibleWidget>
-  )
 }

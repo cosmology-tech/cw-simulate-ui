@@ -15,7 +15,7 @@ import {
   ListItemText,
   MenuItem,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import type { CodeInfo, Coin } from "@terran-one/cw-simulate";
 import { useCallback, useState } from "react";
@@ -31,14 +31,13 @@ import { useAccounts, useCodes } from "../../CWSimulationBridge";
 import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
 
-export interface IContractsSubMenuProps {
-}
+export interface IContractsSubMenuProps {}
 
 export default function ContractsSubMenu(props: IContractsSubMenuProps) {
   const sim = useSimulation();
 
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
-  const codes = Object.values(useCodes(sim)).filter(c => !c.hidden);
+  const codes = Object.values(useCodes(sim)).filter((c) => !c.hidden);
 
   return (
     <>
@@ -50,27 +49,27 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
             onClick={() => setOpenUploadDialog(true)}
           >
             <ListItemIcon>
-              <UploadIcon/>
+              <UploadIcon />
             </ListItemIcon>
-            <ListItemText>
-              Upload new contract
-            </ListItemText>
-          </MenuItem>
+            <ListItemText>Upload new contract</ListItemText>
+          </MenuItem>,
         ]}
-        optionsExtras={({close}) => <>
-          <UploadModal
-            variant="contract"
-            open={openUploadDialog}
-            onClose={() => {
-              setOpenUploadDialog(false);
-              close();
-            }}
-          />
-        </>}
+        optionsExtras={({ close }) => (
+          <>
+            <UploadModal
+              variant="contract"
+              open={openUploadDialog}
+              onClose={() => {
+                setOpenUploadDialog(false);
+                close();
+              }}
+            />
+          </>
+        )}
       />
 
       {Object.entries(codes).map(([codeId, info]) => (
-        <CodeMenuItem key={codeId} code={info}/>
+        <CodeMenuItem key={codeId} code={info} />
       ))}
     </>
   );
@@ -80,68 +79,58 @@ interface ICodeMenuItemProps {
   code: CodeInfo;
 }
 
-function CodeMenuItem({code}: ICodeMenuItemProps) {
+function CodeMenuItem({ code }: ICodeMenuItemProps) {
   const [openInstantiate, setOpenInstantiate] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  
+
   const download = useCallback(() => {
     downloadWasm(code.wasmCode, code.name);
   }, [code]);
 
   return (
     <T1MenuItem
-      label={code.name}
+      label={`${code.codeId}_${code.name}`}
       textEllipsis
-      tooltip={
-        <Typography variant="body2">{code.name} ({code.codeId})</Typography>
-      }
-      options={({close}) => [
-        <MenuItem
-          key="instantiate"
-          onClick={() => setOpenInstantiate(true)}
-        >
+      options={({ close }) => [
+        <MenuItem key="instantiate" onClick={() => setOpenInstantiate(true)}>
           <ListItemIcon>
-            <RocketLaunchIcon/>
+            <RocketLaunchIcon />
           </ListItemIcon>
-          <ListItemText>
-            Instantiate
-          </ListItemText>
+          <ListItemText>Instantiate</ListItemText>
         </MenuItem>,
         <MenuItem key="download" onClick={download}>
           <ListItemIcon>
             <DownloadIcon />
           </ListItemIcon>
-          <ListItemText>
-            Download Source
-          </ListItemText>
+          <ListItemText>Download Source</ListItemText>
         </MenuItem>,
         <MenuItem key="delete" onClick={() => setOpenDelete(true)}>
           <ListItemIcon>
-            <DeleteForeverIcon/>
+            <DeleteForeverIcon />
           </ListItemIcon>
-          <ListItemText>
-            Delete
-          </ListItemText>
+          <ListItemText>Delete</ListItemText>
         </MenuItem>,
       ]}
-      optionsExtras={({close}) => <>
-        <InstantiateDialog
-          code={code}
-          open={openInstantiate}
-          onClose={() => {
-            setOpenInstantiate(false);
-            close();
-          }}
-        />
-        <DeleteDialog
-          code={code}
-          open={openDelete}
-          onClose={() => {
-            setOpenDelete(false);
-            close();
-          }}
-        />
-      </>}
+      optionsExtras={({ close }) => (
+        <>
+          <InstantiateDialog
+            code={code}
+            open={openInstantiate}
+            onClose={() => {
+              setOpenInstantiate(false);
+              close();
+            }}
+          />
+          <DeleteDialog
+            code={code}
+            open={openDelete}
+            onClose={() => {
+              setOpenDelete(false);
+              close();
+            }}
+          />
+        </>
+      )}
     />
   );
 }
@@ -153,7 +142,7 @@ interface IDeleteDialogProps {
 }
 
 function DeleteDialog(props: IDeleteDialogProps) {
-  const {code, open, onClose} = props;
+  const { code, open, onClose } = props;
   const sim = useSimulation();
   const setNotification = useNotification();
 
@@ -161,31 +150,22 @@ function DeleteDialog(props: IDeleteDialogProps) {
     sim.hideCode(code.codeId);
     setNotification("Successfully deleted contract");
     onClose?.();
-  }
+  };
 
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-    >
-      <DialogTitle>
-        Delete contract
-      </DialogTitle>
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Delete contract</DialogTitle>
       <DialogContent>
         <DialogContentText>
           Are you sure you want to delete this contract?
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>
-          Cancel
-        </Button>
-        <Button onClick={handleDeleteContract}>
-          Delete
-        </Button>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleDeleteContract}>Delete</Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }
 
 interface IInstantiateDialogProps {
@@ -196,7 +176,7 @@ interface IInstantiateDialogProps {
 }
 
 function InstantiateDialog(props: IInstantiateDialogProps) {
-  const {code, open, onClose} = props;
+  const { code, open, onClose } = props;
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
@@ -204,27 +184,37 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const [isFundsValid, setFundsValid] = useState(true);
   const [payload, setPayload] = useState("");
   const placeholder = {
-    "count": 0
-  }
+    count: 0,
+  };
 
   const accounts = useAccounts(sim);
   const [account, setAccount] = useState(Object.keys(accounts)[0]);
 
   const handleInstantiate = useCallback(async () => {
-    const instantiateMsg = payload.length === 0 ? placeholder : JSON.parse(payload);
+    const instantiateMsg =
+      payload.length === 0 ? placeholder : JSON.parse(payload);
 
     try {
-      const [sender] = Object.entries(accounts).find(([addr]) => addr === account) ?? [undefined, []];
+      const [sender] = Object.entries(accounts).find(
+        ([addr]) => addr === account
+      ) ?? [undefined, []];
       if (!sender) {
-        setNotification("Please select an account", {severity: "error"});
+        setNotification("Please select an account", { severity: "error" });
         return;
       }
 
-      const contract = await sim.instantiate(sender, code.codeId, instantiateMsg, funds);
+      const contract = await sim.instantiate(
+        sender,
+        code.codeId,
+        instantiateMsg,
+        funds
+      );
       navigate(`/instances/${contract.address}`);
       onClose();
     } catch (e: any) {
-      setNotification(`Unable to instantiate with error: ${e.message}`, {severity: "error"});
+      setNotification(`Unable to instantiate with error: ${e.message}`, {
+        severity: "error",
+      });
       console.error(e);
     }
   }, [account, funds, payload, onClose]);
@@ -232,14 +222,14 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   return (
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Instantiate Contract</DialogTitle>
-      <DialogContent sx={{pt: '5px !important'}}>
+      <DialogContent sx={{ pt: "5px !important" }}>
         <Autocomplete
           onInputChange={(_, value) => setAccount(value)}
-          sx={{width: "100%"}}
+          sx={{ width: "100%" }}
           defaultValue={Object.keys(accounts)[0]}
-          renderInput={(params: AutocompleteRenderInputParams) =>
-            <TextField {...params} label="Sender"/>
-          }
+          renderInput={(params: AutocompleteRenderInputParams) => (
+            <TextField {...params} label="Sender" />
+          )}
           options={Object.keys(accounts)}
         />
         <Funds
@@ -250,10 +240,8 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         />
       </DialogContent>
       <DialogContent>
-        <DialogContentText>
-          InstantiateMsg
-        </DialogContentText>
-        <T1Container sx={{width: 400, height: 220}}>
+        <DialogContentText>InstantiateMsg</DialogContentText>
+        <T1Container sx={{ width: 400, height: 220 }}>
           <JsonCodeMirrorEditor
             jsonValue={""}
             placeholder={placeholder}
@@ -262,10 +250,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         </T1Container>
       </DialogContent>
       <DialogActions>
-        <Button
-          variant="outlined"
-          onClick={() => onClose()}
-        >
+        <Button variant="outlined" onClick={() => onClose()}>
           Cancel
         </Button>
         <Button
