@@ -65,6 +65,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20221111.1",
     "@storybook/addon-actions": "^6.5.10",
     "@storybook/addon-essentials": "^6.5.10",
     "@storybook/addon-interactions": "^6.5.10",
