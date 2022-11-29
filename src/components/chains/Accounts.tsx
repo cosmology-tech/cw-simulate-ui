@@ -26,7 +26,8 @@ import Funds from "../Funds";
 import Address from "./Address";
 
 const getDefaultAccount = (chainId: string) =>
-  Object.values(defaults.chains).find(config => config.chainId === chainId) ?? defaults.chains.terra;
+  Object.values(defaults.chains).find((config) => config.chainId === chainId) ??
+  defaults.chains.terra;
 
 const Accounts = () => {
   const sim = useSimulation();
@@ -43,12 +44,13 @@ const Accounts = () => {
   });
 
   const handleDeleteAccount = (address: string) => {
+    sim.deleteBalance(address);
     setNotification("Account successfully removed");
   };
 
   return (
     <>
-      <Grid item container sx={{mb: 2}}>
+      <Grid item container sx={{ mb: 2 }}>
         <Grid item flex={1}>
           <Typography variant="h6">Accounts</Typography>
         </Grid>
@@ -70,10 +72,12 @@ const Accounts = () => {
             RowMenu={(props) => (
               <>
                 <MenuItem
-                  onClick={() => handleDeleteAccount(props.row.address.props.address)}
+                  onClick={() =>
+                    handleDeleteAccount(props.row.address.props.address)
+                  }
                 >
                   <ListItemIcon>
-                    <DeleteIcon fontSize="small"/>
+                    <DeleteIcon fontSize="small" />
                   </ListItemIcon>
                   <ListItemText>Delete</ListItemText>
                 </MenuItem>
@@ -82,7 +86,10 @@ const Accounts = () => {
           />
         </T1Container>
       </Grid>
-      <AddAccountDialog open={openAddDialog} onClose={() => setOpenAddDialog(false)} />
+      <AddAccountDialog
+        open={openAddDialog}
+        onClose={() => setOpenAddDialog(false)}
+      />
     </>
   );
 };
@@ -98,32 +105,38 @@ function AddAccountDialog({ open, onClose }: DialogProps) {
   const sim = useSimulation();
   const accounts = Object.entries(useAccounts(sim));
   const defaultAccount = getDefaultAccount(sim.chainId);
-  
+
   const refAddress = useRef<HTMLInputElement | null>(null);
   const [address, setAddress] = useState(defaultAccount.sender);
   const [funds, setFunds] = useState<Coin[]>(defaultAccount.funds);
   const [isFundsValid, setFundsValid] = useState(true);
-  
+
   const setNotification = useNotification();
-  
+
   const handleChangeAddress = useCallback(() => {
-    if (refAddress.current)
-      setAddress(refAddress.current.value)
+    if (refAddress.current) setAddress(refAddress.current.value);
   }, []);
-  
+
   const addAccount = useCallback(() => {
     if (!funds.length) {
-      setNotification('Please specify funds for the new account.', { severity: 'error' });
+      setNotification("Please specify funds for the new account.", {
+        severity: "error",
+      });
       return;
     }
-    
+
     if (!isFundsValid) {
-      setNotification('Invalid funds. Please see the message underneath funds input.', { severity: 'error' });
+      setNotification(
+        "Invalid funds. Please see the message underneath funds input.",
+        { severity: "error" }
+      );
       return;
     }
-    
+
     if (accounts.find(([addr]) => addr === address)) {
-      setNotification('An account with this address already exists', { severity: 'error' });
+      setNotification("An account with this address already exists", {
+        severity: "error",
+      });
       return;
     }
 
@@ -131,9 +144,9 @@ function AddAccountDialog({ open, onClose }: DialogProps) {
     setNotification("Account added successfully");
     onClose();
   }, [accounts, address, funds, isFundsValid]);
-  
+
   const valid = isFundsValid && !!funds.length;
-  
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Add New Account</DialogTitle>
@@ -143,7 +156,7 @@ function AddAccountDialog({ open, onClose }: DialogProps) {
           label="Address"
           defaultValue={defaultAccount.sender}
           onChange={handleChangeAddress}
-          sx={{ width: '100%', my: 2 }}
+          sx={{ width: "100%", my: 2 }}
         />
         <Funds
           onChange={setFunds}
@@ -151,7 +164,11 @@ function AddAccountDialog({ open, onClose }: DialogProps) {
           hideError={!funds.length}
           defaultValue={stringifyFunds(defaultAccount.funds)}
         />
-        {!funds.length && <DialogContentText color="red" fontStyle="italic">Please enter funds.</DialogContentText>}
+        {!funds.length && (
+          <DialogContentText color="red" fontStyle="italic">
+            Please enter funds.
+          </DialogContentText>
+        )}
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
@@ -160,5 +177,5 @@ function AddAccountDialog({ open, onClose }: DialogProps) {
         </Button>
       </DialogActions>
     </Dialog>
-  )
+  );
 }

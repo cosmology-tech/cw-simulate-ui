@@ -122,7 +122,11 @@ export default class CWSimulationBridge {
     this.sync();
     return this;
   }
-
+  deleteBalance(account: string) {
+    this.app.bank.deleteBalance(account);
+    this.sync();
+    return this;
+  }
   useWatcher<T>(
     filter: (app: CWSimulateApp) => T,
     /** Whether last stored value is equal to current */
