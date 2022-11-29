@@ -27,7 +27,6 @@ import { ReactComponent as TerraIcon } from "@public/luna.svg";
 import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
 import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
-import { useR2S3GeneratePresignedUrl } from "../../utils/r2S3Utils";
 import axios from "axios";
 
 export interface ISampleContract {
@@ -41,7 +40,7 @@ const getChainConfig = (chain: Chains) => defaults.chains[chain];
 
 const SAMPLE_CONTRACTS: ISampleContract[] = [
   {
-    name: "Terra Swap",
+    name: "TerraSwap",
     id: "terra-swap",
     chain: "terra",
     keys: ["terraswap_factory.wasm", "terraswap_pair.wasm", "terraswap_router.wasm", "terraswap_token.wasm"]
@@ -65,7 +64,6 @@ export default function WelcomeScreen() {
   const theme = useTheme();
   const [chain, setChain] = useState<Chains>('terra');
   const [sampleContract, setSampleContract] = useState<string>('');
-  const generatePresignedUrl = useR2S3GeneratePresignedUrl();
   const handleLoadSampleContract = useCallback(async () => {
     const contract = SAMPLE_CONTRACTS.find((c) => c.name === sampleContract && c.chain === chain);
     if (!contract) {
@@ -75,9 +73,8 @@ export default function WelcomeScreen() {
 
     let wasmFiles: SimulationFileType[] = [];
     for (const key of contract.keys) {
-      const presignedUrl = await generatePresignedUrl("cw-simulate-examples", `${contract.id}/${key}`);
       try {
-        const response = await axios.get(presignedUrl, {responseType: "arraybuffer"});
+        const response = await axios.get(`/r2/${contract.id}/${key}`, {responseType: "arraybuffer"});
         const wasmFile = Buffer.from(extractByteCode(response.data));
         const newFile = {
           filename: key,
