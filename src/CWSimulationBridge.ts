@@ -283,7 +283,15 @@ export function useContracts(
   compare: WatcherComparator<Record<string, ContractInfo>> = compareDeep,
 ) {
   return bridge.useWatcher(
-    app => (app.store.getIn(['wasm', 'contracts']) as Map<string, ContractInfo> ?? Map()).toObject(),
+    app => {
+      const all = app.store.getIn(['wasm', 'contracts']) as Map<string, ContractInfo> ?? Map();
+      return Object.fromEntries([...all.entries()].map(([address, info]) => {
+        info.address = address;
+        info.trace = info.trace || [];
+        info.hidden = !!info.hidden;
+        return [address, info];
+      }));
+    },
     compare,
   )
 }
