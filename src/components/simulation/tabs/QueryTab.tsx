@@ -66,9 +66,14 @@ function Query({ contractAddress, onHandleQuery }: IQuery) {
   const activeStep = useAtomValue(activeStepState);
   const [payload, setPayload] = useState("");
   const [isValid, setIsValid] = useState(true);
+
   const handleQuery = async () => {
     try {
-      const res = await sim.query(contractAddress, JSON.parse(payload));
+      const res = await sim.query(
+        contractAddress,
+        JSON.parse(payload),
+        activeStep
+      );
       onHandleQuery(res);
       if (res.err) {
         throw new Error("Something went wrong while querying.");
