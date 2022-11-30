@@ -4,6 +4,7 @@ import { CodeInfo, Coin, ContractInfo, CWSimulateApp, CWSimulateAppOptions, Trac
 import { Map } from "immutable";
 import { DependencyList, useEffect, useReducer } from "react";
 import { defaults } from "./configs/constants";
+import { getStepTrace } from "./utils/commonUtils";
 
 declare module "@terran-one/cw-simulate" {
   class CodeInfo {
@@ -192,10 +193,10 @@ export default class CWSimulationBridge {
     return result;
   }
 
-  async query(contractAddress: string, msg: any) {
+  async query(contractAddress: string, msg: any, step:string) {
     const info = this.getContract(contractAddress);
     if (!info) throw new Error(`No such contract with address ${contractAddress}`);
-    return await this.app.wasm.query(contractAddress, msg);
+    return await this.app.wasm.queryTrace(getStepTrace(step, info.trace),msg);
   }
 
   sync() {
