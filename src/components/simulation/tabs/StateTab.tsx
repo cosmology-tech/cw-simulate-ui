@@ -10,6 +10,7 @@ import {
 } from "../../../atoms/simulationPageAtoms";
 import T1JsonTree from "../../T1JsonTree";
 import { EmptyTab } from "./Common";
+import { darkModeState } from "../../../atoms/uiState";
 
 export interface IStateTabProps {}
 
@@ -17,7 +18,7 @@ export const StateTab = ({}: IStateTabProps) => {
   const isDiff = useAtomValue(isDiffOpenState);
   const [state1, state2] = useAtomValue(compareStringsState);
   const currentJSON = useAtomValue(blockState);
-
+  const darkModeEnabled = useAtomValue(darkModeState);
   if (isDiff) {
     if (compareDeep(state1, state2)) {
       return <EmptyTab>No difference between selected states.</EmptyTab>;
@@ -28,6 +29,7 @@ export const StateTab = ({}: IStateTabProps) => {
           oldValue={JSON.stringify(state1)}
           newValue={JSON.stringify(state2)}
           splitView={false}
+          useDarkTheme={darkModeEnabled}
         />
       </Box>
     );
