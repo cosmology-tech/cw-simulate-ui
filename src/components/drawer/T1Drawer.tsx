@@ -10,14 +10,16 @@ import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import Slide from "@mui/material/Slide";
 import Tooltip from "@mui/material/Tooltip";
+import { useAtom } from "jotai";
 import React, { MouseEvent, ReactNode, useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { drawerSubMenuState } from "../../atoms/uiState";
 import { useTheme } from "../../configs/theme";
 import ContractsSubMenu from "./ContractsSubMenu";
 import InstancesSubMenu from "./InstancesSubMenu";
 import SettingsSubMenu from "./SettingsSubMenu";
 
-type SubMenu = 'contracts' | 'instances' | 'states' | 'accounts' | 'settings';
+export type SubMenu = 'contracts' | 'instances' | 'states' | 'accounts' | 'settings';
 
 export interface IT1Drawer {
   barWidth?: number;
@@ -31,7 +33,7 @@ const T1Drawer = (props: IT1Drawer) => {
   } = props;
 
   const navigate = useNavigate();
-  const [menu, setMenu] = useState<SubMenu | undefined>(undefined);
+  const [menu, setMenu] = useAtom(drawerSubMenuState);
 
   return (
     <ClickAwayListener onClickAway={() => setMenu(undefined)}>

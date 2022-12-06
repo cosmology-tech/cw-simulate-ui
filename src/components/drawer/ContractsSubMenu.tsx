@@ -18,9 +18,11 @@ import {
   Typography,
 } from "@mui/material";
 import type { CodeInfo, Coin } from "@terran-one/cw-simulate";
+import { useSetAtom } from "jotai";
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
+import { drawerSubMenuState } from "../../atoms/uiState";
 import T1Container from "../grid/T1Container";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import UploadModal from "../upload/UploadModal";
@@ -180,6 +182,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
+  const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
   const [funds, setFunds] = useState<Coin[]>([]);
   const [isFundsValid, setFundsValid] = useState(true);
   const [payload, setPayload] = useState("");
@@ -211,6 +214,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
       );
       navigate(`/instances/${contract.address}`);
       onClose();
+      setDrawerSubMenu(undefined);
     } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {
         severity: "error",
@@ -250,7 +254,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         </T1Container>
       </DialogContent>
       <DialogActions>
-        <Button variant="outlined" onClick={() => onClose()}>
+        <Button variant="outlined" onClick={onClose}>
           Cancel
         </Button>
         <Button
