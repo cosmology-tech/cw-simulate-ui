@@ -7,10 +7,9 @@ import { ReactNode, useEffect, useState } from "react";
 import { useTheme } from "../configs/theme";
 import { joinSx } from "../utils/reactUtils";
 import CollapsibleIcon from "./CollapsibleIcon";
-import { BeautifyJSON } from "./simulation/tabs/Common";
 
 export interface ICollabsibleWidgetProps {
-  title: string;
+  title: ReactNode;
   collapsed?: boolean;
   height?: number;
   minHeight?: number;
@@ -19,6 +18,11 @@ export interface ICollabsibleWidgetProps {
   sx?: SxProps<Theme>;
   right?: ReactNode;
   collapsible?: boolean;
+  className?: string;
+  onClick?(): void;
+  onToggle?(expanded: boolean): void;
+  onExpand?(): void;
+  onCollapse?(): void;
 }
 
 function CollapsibleWidget({
@@ -31,17 +35,32 @@ function CollapsibleWidget({
   sx,
   right,
   collapsible = true,
+  className,
+  onClick: _onClick,
+  onToggle,
+  onExpand,
+  onCollapse,
 }: ICollabsibleWidgetProps) {
   const theme = useTheme();
-  const expanded = collapsed === undefined ? true : collapsed;
-  const [show, setShow] = useState<boolean>(expanded);
+  const [expanded, setExpanded] = useState<boolean>(!collapsed);
 
   useEffect(() => {
-    setShow(expanded);
+    collapsed !== undefined && setExpanded(!collapsed);
   }, [collapsed]);
+  
+  const onClick = () => {
+    setExpanded(!expanded);
+    if (expanded) {
+      onCollapse?.();
+    } else {
+      onExpand?.();
+    }
+    onToggle?.(expanded);
+    _onClick?.();
+  };
 
   return (
-    <Box sx={joinSx({ borderRadius: 1, overflow: "hidden", pb: 0.5 }, sx)}>
+    <Box sx={joinSx({ borderRadius: 1, overflow: "hidden", pb: 0.5 }, sx)} className={`T1CollapsibleWidget-root ${className}`}>
       <Box
         sx={{
           display: "flex",
@@ -53,17 +72,19 @@ function CollapsibleWidget({
           py: 0.5,
           px: 1,
         }}
+        className="T1CollapsibleWidget-titleBar"
       >
         <Box
           sx={{ display: "flex", flex: 1 }}
-          onClick={collapsible ? () => setShow((curr) => !curr) : undefined}
+          onClick={collapsible ? onClick : undefined}
+          className="T1CollapsibleWidget-title"
         >
-          {collapsible && <CollapsibleIcon expanded={show} />}
+          {collapsible && <CollapsibleIcon expanded={expanded} />}
           <Typography sx={{ fontSize: "1.1rem" }}>{title}</Typography>
         </Box>
         {right}
       </Box>
-      <Collapse in={show}>
+      <Collapse in={expanded} className="T1CollapsibleWidget-collapse">
         <Box sx={{ minHeight, maxHeight, height }}>{children}</Box>
       </Collapse>
     </Box>
