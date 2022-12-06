@@ -95,7 +95,6 @@ function Query({ contractAddress, onHandleQuery }: IQuery) {
     <CollapsibleWidget
       title={`Query @${getFormattedStep(activeStep)}`}
       height={280}
-      collapsible={false}
       right={
         <BeautifyJSON
           onChange={setPayload}
