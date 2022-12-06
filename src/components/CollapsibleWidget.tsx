@@ -49,7 +49,7 @@ function CollapsibleWidget({
           justifyContent: "space-between",
           background: theme.palette.common.black,
           color: theme.palette.common.white,
-          cursor: "pointer",
+          cursor: collapsible ? "pointer" : undefined,
           py: 0.5,
           px: 1,
         }}
