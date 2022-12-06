@@ -8,10 +8,12 @@ import { ContractInfo } from "@terran-one/cw-simulate";
 import copy from "copy-to-clipboard";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
+import { drawerSubMenuState } from "../../atoms/uiState";
 import { useContracts, compareDeep } from "../../CWSimulationBridge";
 import useSimulation from "../../hooks/useSimulation";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
+import { useSetAtom } from "jotai";
 
 export interface IInstancesSubMenuProps {}
 
@@ -40,6 +42,7 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
+  const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
   
   const code = sim.useWatcher(
     ({ wasm }) => {
@@ -60,6 +63,7 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
       label={instance.address}
       textEllipsis
       link={`/instances/${instance.address}`}
+      onClick={() => {setDrawerSubMenu(undefined)}}
       tooltip={
         <>
           {code
