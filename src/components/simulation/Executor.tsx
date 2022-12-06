@@ -9,6 +9,7 @@ import { useAccounts } from "../../CWSimulationBridge";
 import { activeStepState } from "../../atoms/simulationPageAtoms";
 import { BeautifyJSON } from "./tabs/Common";
 import CollapsibleWidget from "../CollapsibleWidget";
+import AccountPopover from "./AccountPopover";
 
 interface IProps {
   contractAddress: string;
@@ -26,8 +27,10 @@ export default function Executor({ contractAddress }: IProps) {
   const setNotification = useNotification();
   const [payload, setPayload] = useState("");
   const [isValid, setIsValid] = useState(true);
-  // TODO: customize sender & funds
-  const [sender, funds] = Object.entries(useAccounts(sim))[0] ?? [];
+  const accounts = useAccounts(sim);
+  const [account, setAccount] = useState(Object.keys(accounts)[0]);
+  const [sender, funds] =
+    Object.entries(accounts).filter((itr) => itr[0] === account)[0] ?? [];
   const activeStep = useAtomValue(activeStepState);
 
   const handleExecute = async () => {
@@ -56,10 +59,17 @@ export default function Executor({ contractAddress }: IProps) {
       title={"Execute"}
       height={280}
       right={
-        <BeautifyJSON
-          onChange={setPayload}
-          disabled={!payload.length || !isValid}
-        />
+        <>
+          <BeautifyJSON
+            onChange={setPayload}
+            disabled={!payload.length || !isValid}
+          />
+          <AccountPopover
+            account={account}
+            changeAccount={setAccount}
+            accounts={accounts}
+          />
+        </>
       }
     >
       <Grid
