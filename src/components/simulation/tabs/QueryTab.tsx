@@ -86,6 +86,9 @@ function Query({ contractAddress, onHandleQuery }: IQuery) {
   };
 
   useEffect(() => {
+    handleQuery();
+  }, [activeStep]);
+  useEffect(() => {
     setPayload("");
   }, [contractAddress]);
   return (

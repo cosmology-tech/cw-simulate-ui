@@ -89,7 +89,7 @@ function CodeMenuItem({ code }: ICodeMenuItemProps) {
 
   return (
     <T1MenuItem
-      label={`${code.codeId}_${code.name}`}
+      label={`${code.codeId}:${code.name}`}
       textEllipsis
       options={({ close }) => [
         <MenuItem key="instantiate" onClick={() => setOpenInstantiate(true)}>
