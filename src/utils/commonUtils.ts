@@ -1,4 +1,5 @@
 import { TraceLog } from "@terran-one/cw-simulate";
+import { defaults } from '../configs/constants';
 
 export const getStepTrace = (activeStep: string, trace: TraceLog[]) => {
   const activeStepArr = activeStep.split("-").map((ele) => Number(ele));
@@ -10,3 +11,7 @@ export const getStepTrace = (activeStep: string, trace: TraceLog[]) => {
   }
   return activeTrace;
 };
+
+export const getDefaultAccount = (chainId: string) =>
+  Object.values(defaults.chains).find((config) => config.chainId === chainId) ??
+  defaults.chains.terra;

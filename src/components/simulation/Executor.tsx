@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { Button, Chip, Grid, Typography } from "@mui/material";
@@ -10,6 +10,8 @@ import { activeStepState } from "../../atoms/simulationPageAtoms";
 import { BeautifyJSON } from "./tabs/Common";
 import CollapsibleWidget from "../CollapsibleWidget";
 import AccountPopover from "./AccountPopover";
+import { getDefaultAccount } from "../../utils/commonUtils";
+import { Coin } from "@terran-one/cw-simulate/dist/types";
 
 interface IProps {
   contractAddress: string;
@@ -25,14 +27,15 @@ export const getFormattedStep = (step: string) => {
 export default function Executor({ contractAddress }: IProps) {
   const sim = useSimulation();
   const setNotification = useNotification();
+  const defaultAccount = getDefaultAccount(sim.chainId);
   const [payload, setPayload] = useState("");
   const [isValid, setIsValid] = useState(true);
   const accounts = useAccounts(sim);
   const [account, setAccount] = useState(Object.keys(accounts)[0]);
-  const [sender, funds] =
-    Object.entries(accounts).filter((itr) => itr[0] === account)[0] ?? [];
-  const activeStep = useAtomValue(activeStepState);
+  const [funds, setFunds] = useState<Coin[]>(defaultAccount.funds);
+  const sender = account;
 
+  const activeStep = useAtomValue(activeStepState);
   const handleExecute = async () => {
     try {
       const res = await sim.execute(
@@ -68,6 +71,8 @@ export default function Executor({ contractAddress }: IProps) {
             account={account}
             changeAccount={setAccount}
             accounts={accounts}
+            funds={funds}
+            changeFunds={setFunds}
           />
         </>
       }
