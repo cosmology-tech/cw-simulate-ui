@@ -50,6 +50,12 @@ const SAMPLE_CONTRACTS: ISampleContract[] = [
     id: "wasm-swap",
     chain: "juno",
     keys: ["cw20-base.wasm", "cw20-stake.wasm", "wasmswap.wasm", "cw-stake-external-rewards.wasm"]
+  },
+  {
+    name: "CWPlus",
+    id: "cw-plus",
+    chain: "terra",
+    keys: ["cw1_whitelist.wasm", "cw3_fixed_multisig.wasm", "cw3_flex_multisig.wasm", "cw4_group.wasm", "cw4_stake.wasm", "cw20_base.wasm", "cw20_ics20.wasm", "cw1_subkeys.wasm"]
   }
 ];
 
