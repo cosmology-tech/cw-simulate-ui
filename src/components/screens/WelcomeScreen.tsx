@@ -32,7 +32,7 @@ import axios from "axios";
 export interface ISampleContract {
   name: string;
   id: string;
-  chain: string;
+  chain: string[];
   keys: string[];
 }
 
@@ -42,15 +42,63 @@ const SAMPLE_CONTRACTS: ISampleContract[] = [
   {
     name: "TerraSwap",
     id: "terra-swap",
-    chain: "terra",
+    chain: ["terra"],
     keys: ["terraswap_factory.wasm", "terraswap_pair.wasm", "terraswap_router.wasm", "terraswap_token.wasm"]
   },
   {
     name: "WasmSwap",
     id: "wasm-swap",
-    chain: "juno",
+    chain: ["juno"],
     keys: ["cw20-base.wasm", "cw20-stake.wasm", "wasmswap.wasm", "cw-stake-external-rewards.wasm"]
-  }
+  },
+  {
+    name: "cw1_whitelist",
+    id: "cw1_whitelist",
+    chain: ["terra", "juno"],
+    keys: ["cw1_whitelist.wasm"]
+  },
+  {
+    name: "cw3_fixed_multisig",
+    id: "cw3_fixed_multisig",
+    chain: ["terra", "juno"],
+    keys: ["cw3_fixed_multisig.wasm"]
+  },
+  {
+    name: "cw1_subkeys",
+    id: "cw1_subkeys",
+    chain: ["terra", "juno"],
+    keys: ["cw1_subkeys.wasm"]
+  },
+  {
+    name: "cw20_ics20",
+    id: "cw20_ics20",
+    chain: ["terra", "juno"],
+    keys: ["cw20_ics20.wasm"]
+  },
+  {
+    name: "cw3_flex_multisig",
+    id: "cw3_flex_multisig",
+    chain: ["terra", "juno"],
+    keys: ["cw3_flex_multisig.wasm"]
+  },
+  {
+    name: "cw4_group",
+    id: "cw4_group",
+    chain: ["terra", "juno"],
+    keys: ["cw4_group.wasm"]
+  },
+  {
+    name: "cw20_ics20",
+    id: "cw20_ics20",
+    chain: ["terra", "juno"],
+    keys: ["cw20_ics20.wasm"]
+  },
+  {
+    name: "cw20_base",
+    id: "cw20_base",
+    chain: ["terra", "juno"],
+    keys: ["cw20_base.wasm"]
+  },
 ];
 
 interface SimulationFileType {
@@ -59,7 +107,7 @@ interface SimulationFileType {
 }
 
 const getSampleContractsForChain = (chain: string) => {
-  return SAMPLE_CONTRACTS.filter((c) => c.chain === chain).map((c) => c.name);
+  return SAMPLE_CONTRACTS.filter((c) => c.chain.includes(chain)).map((c) => c.name);
 };
 
 export default function WelcomeScreen() {
@@ -71,7 +119,7 @@ export default function WelcomeScreen() {
   const [chain, setChain] = useState<Chains>('terra');
   const [sampleContract, setSampleContract] = useState<string>('');
   const handleLoadSampleContract = useCallback(async () => {
-    const contract = SAMPLE_CONTRACTS.find((c) => c.name === sampleContract && c.chain === chain);
+    const contract = SAMPLE_CONTRACTS.find((c) => c.name === sampleContract && c.chain.includes(chain));
     if (!contract) {
       setNotification("Contract not found", {severity: "error"});
       return;

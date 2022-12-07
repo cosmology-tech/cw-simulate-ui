@@ -9,20 +9,17 @@ import {
 } from "@mui/material";
 import { Coin } from "@terran-one/cw-simulate";
 import Funds from "../Funds";
-import { stringifyFunds } from "../../utils/typeUtils";
 
 interface IProps {
   accounts: { [key: string]: Coin[] };
-  account: string;
   changeAccount: (val: string) => void;
-  funds: Coin[];
+
   changeFunds?(funds: Coin[]): void;
 }
+
 const AccountPopover = ({
-  account,
   changeAccount,
   accounts,
-  funds,
   changeFunds,
 }: IProps) => {
   const [anchorEl, setAnchorEl] =
@@ -34,13 +31,13 @@ const AccountPopover = ({
     setAnchorEl(null);
   };
 
-  const [isFundsValid, setFundsValid] = useState(true);
+  const [_, setFundsValid] = useState(true);
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   return (
     <>
       <Button aria-describedby="abcd" onClick={handleDiffClick}>
-        <AccountBalanceWalletOutlinedIcon sx={{ color: "white" }} />
+        <AccountBalanceWalletOutlinedIcon sx={{color: "white"}}/>
       </Button>
       <Popover
         id={id}
@@ -64,18 +61,16 @@ const AccountPopover = ({
       >
         <Autocomplete
           onInputChange={(_, value) => changeAccount(value)}
-          sx={{ width: "100%" }}
-          value={account}
+          sx={{width: "100%"}}
           renderInput={(params: AutocompleteRenderInputParams) => (
-            <TextField {...params} label="Sender" />
+            <TextField {...params} label="Sender"/>
           )}
           options={Object.keys(accounts)}
         />
         <Funds
-          defaultValue={stringifyFunds(funds)}
           onChange={changeFunds}
           onValidate={setFundsValid}
-          sx={{ mt: 2 }}
+          sx={{mt: 2}}
         />
       </Popover>
     </>

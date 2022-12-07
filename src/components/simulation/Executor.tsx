@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { JsonCodeMirrorEditor } from "../JsonCodeMirrorEditor";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { Button, Chip, Grid, Typography } from "@mui/material";
@@ -16,15 +16,16 @@ import { Coin } from "@terran-one/cw-simulate/dist/types";
 interface IProps {
   contractAddress: string;
 }
+
 export const getFormattedStep = (step: string) => {
   const activeStepArr = step.split("-").map((ele) => Number(ele) + 1);
   let formattedStep = activeStepArr
-    .slice(0, activeStepArr.length - 1)
-    .join(".");
+  .slice(0, activeStepArr.length - 1)
+  .join(".");
   return formattedStep;
 };
 
-export default function Executor({ contractAddress }: IProps) {
+export default function Executor({contractAddress}: IProps) {
   const sim = useSimulation();
   const setNotification = useNotification();
   const defaultAccount = getDefaultAccount(sim.chainId);
@@ -68,10 +69,8 @@ export default function Executor({ contractAddress }: IProps) {
             disabled={!payload.length || !isValid}
           />
           <AccountPopover
-            account={account}
             changeAccount={setAccount}
             accounts={accounts}
-            funds={funds}
             changeFunds={setFunds}
           />
         </>
