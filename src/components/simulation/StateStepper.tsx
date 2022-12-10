@@ -71,9 +71,9 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 }));
 
 function StyledTreeItem(props: StyledTreeItemProps) {
-  const { bgColor, color, labelIcon, labelInfo, labelText, ...other } = props;
-  const currentActiveStep = props.activeStep
-    ? Number(props.activeStep.split("-")[0])
+  const { bgColor, color, labelIcon, labelInfo, labelText, activeStep, ...other } = props;
+  const currentActiveStep = activeStep
+    ? Number(activeStep.split("-")[0])
     : undefined;
   return (
     <StyledTreeItemRoot
@@ -143,7 +143,8 @@ function getTreeItemLabel(trace: TraceLog) {
       return "unknown";
   }
 }
-export function extractState(store: Map<string, any>, contractAddress: string) {
+
+export function extractState(store: Map<any, any>, contractAddress: string) {
   const storage =
     (store?.getIn(["wasm", "contractStorage", contractAddress]) as Map<
       string,
@@ -185,7 +186,7 @@ export default function StateStepper({ contractAddress }: IProps) {
     const executionStep = getNestedTrace(
       activeStep.split("-").map(Number),
       traces
-    );
+    ) ?? traces[traces.length - 1];
     setStepTrace(executionStep);
     if (!executionStep) {
       setNotification(

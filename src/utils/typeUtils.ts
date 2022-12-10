@@ -54,3 +54,5 @@ export function toRustResult<T>(result: Result<T, string>): RustResult<T> {
 }
 
 export const stringifyFunds = (funds: Coin[]) => funds.map(coin => `${coin.amount}${coin.denom}`).join(', ');
+
+export const optional = <T>(value: T | undefined): T | undefined => value;

@@ -42,7 +42,7 @@ export default function UploadModal(props: IUploadModalProps) {
     }
 
     if (variant === 'contract') {
-      const sender = Object.keys(sim.accounts)[0];
+      const sender = Object.keys(sim.getAccounts())[0];
       if (!sender) {
         setNotification("At least one account is required to upload a contract. Please add an account.", { severity: 'error' });
         navigate("/accounts");
