@@ -11,6 +11,7 @@ import {
 import T1JsonTree from "../../T1JsonTree";
 import { EmptyTab } from "./Common";
 import { darkModeState } from "../../../atoms/uiState";
+import CopyToClipBoard from "../CopyToClipBoard";
 
 export interface IStateTabProps {}
 
@@ -35,6 +36,16 @@ export const StateTab = ({}: IStateTabProps) => {
     );
   } else {
     if (!currentJSON) return <EmptyTab />;
-    return <T1JsonTree data={currentJSON} />;
+    return (
+      <T1JsonTree
+        data={currentJSON}
+        right={
+          <CopyToClipBoard
+            data={JSON.stringify(currentJSON)}
+            title="Copy State Response"
+          />
+        }
+      />
+    );
   }
 };
