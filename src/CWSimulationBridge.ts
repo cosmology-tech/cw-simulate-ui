@@ -313,7 +313,14 @@ function useBridgeReducer<T>(app: CWSimulateApp, params: Omit<WatcherState<T>['p
 
 export function useAccounts(bridge: CWSimulationBridge) {
   return bridge.useWatcher(
-    app => app.bank.store.getObject('balances') ?? {},
+    app => {
+      const balances = app.bank.store.getObject('balances');
+      const contractAddresses = app.wasm.store.get('contracts').keys();
+      for (const contractAddress of contractAddresses) {
+        delete balances[contractAddress];
+      }
+      return balances;
+    },
     compareShallowObject,
   );
 }
