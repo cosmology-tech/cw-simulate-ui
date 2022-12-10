@@ -1,5 +1,5 @@
-import { Box } from "@mui/material";
-import React from "react";
+import { Grid } from "@mui/material";
+import React, { ReactNode } from "react";
 import { JSONTree } from "react-json-tree";
 import { useTheme } from "../configs/theme";
 
@@ -26,26 +26,38 @@ const theme = {
 
 export interface IT1JsonTreeProps {
   data: any;
+  right?: ReactNode;
 }
 
-const T1JsonTree = React.memo(({data}: IT1JsonTreeProps) => {
+const T1JsonTree = React.memo(({ data, right }: IT1JsonTreeProps) => {
   const muiTheme = useTheme();
 
   return (
-    <Box sx={{
-      '& > *': {
-        background: 'transparent !important',
-      },
-      fontFamily: 'JetBrains Mono'
-    }}>
-      <JSONTree
-        data={data}
-        theme={theme}
-        invertTheme={muiTheme.palette.mode === 'dark'}
-        shouldExpandNode={() => true}
-      />
-    </Box>
-  )
+    <Grid
+      container
+      sx={{
+        fontFamily: "JetBrains Mono",
+      }}
+    >
+      <Grid
+        item
+        flex={1}
+        sx={{
+          "& > *": {
+            background: "transparent !important",
+          },
+        }}
+      >
+        <JSONTree
+          data={data}
+          theme={theme}
+          invertTheme={muiTheme.palette.mode === "dark"}
+          shouldExpandNode={() => true}
+        />
+      </Grid>
+      <Grid item>{right}</Grid>
+    </Grid>
+  );
 });
 
 export default T1JsonTree;

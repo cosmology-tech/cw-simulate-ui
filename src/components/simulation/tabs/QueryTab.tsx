@@ -13,6 +13,7 @@ import { getFormattedStep } from "../Executor";
 import { Result } from "ts-results/result";
 import { BeautifyJSON, EmptyTab, TabHeader } from "./Common";
 import BlockQuote from "../../BlockQuote";
+import CopyToClipBoard from "../CopyToClipBoard";
 
 interface IProps {
   contractAddress: string;
@@ -45,7 +46,15 @@ export default function QueryTab({ contractAddress }: IProps) {
               <BlockQuote>{response.val}</BlockQuote>
             </>
           ) : response ? (
-            <T1JsonTree data={response?.val} />
+            <T1JsonTree
+              data={response?.val}
+              right={
+                <CopyToClipBoard
+                  data={JSON.stringify(response?.val)}
+                  title="Copy Query Response"
+                />
+              }
+            />
           ) : (
             <EmptyTab>Your query output will appear here</EmptyTab>
           )}
