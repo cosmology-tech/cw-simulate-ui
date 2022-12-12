@@ -10,7 +10,6 @@ import { activeStepState } from "../../atoms/simulationPageAtoms";
 import { BeautifyJSON } from "./tabs/Common";
 import CollapsibleWidget from "../CollapsibleWidget";
 import AccountPopover from "./AccountPopover";
-import { getDefaultAccount } from "../../utils/commonUtils";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
 
 interface IProps {
@@ -20,15 +19,14 @@ interface IProps {
 export const getFormattedStep = (step: string) => {
   const activeStepArr = step.split("-").map((ele) => Number(ele) + 1);
   let formattedStep = activeStepArr
-  .slice(0, activeStepArr.length - 1)
-  .join(".");
+    .slice(0, activeStepArr.length - 1)
+    .join(".");
   return formattedStep;
 };
 
-export default function Executor({contractAddress}: IProps) {
+export default function Executor({ contractAddress }: IProps) {
   const sim = useSimulation();
   const setNotification = useNotification();
-  const defaultAccount = getDefaultAccount(sim.chainId);
   const [payload, setPayload] = useState("");
   const [isValid, setIsValid] = useState(true);
   const accounts = useAccounts(sim);
@@ -71,6 +69,8 @@ export default function Executor({contractAddress}: IProps) {
           <AccountPopover
             changeAccount={setAccount}
             accounts={accounts}
+            account={account}
+            funds={funds}
             changeFunds={setFunds}
           />
         </>
