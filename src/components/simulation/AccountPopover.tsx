@@ -9,18 +9,22 @@ import {
 } from "@mui/material";
 import { Coin } from "@terran-one/cw-simulate";
 import Funds from "../Funds";
+import { stringifyFunds } from "../../utils/typeUtils";
 
 interface IProps {
   accounts: { [key: string]: Coin[] };
   changeAccount: (val: string) => void;
-
   changeFunds?(funds: Coin[]): void;
+  account: string;
+  funds: Coin[];
 }
 
 const AccountPopover = ({
   changeAccount,
   accounts,
   changeFunds,
+  account,
+  funds,
 }: IProps) => {
   const [anchorEl, setAnchorEl] =
     React.useState<HTMLButtonElement | null>(null);
@@ -37,7 +41,7 @@ const AccountPopover = ({
   return (
     <>
       <Button aria-describedby="abcd" onClick={handleDiffClick}>
-        <AccountBalanceWalletOutlinedIcon sx={{color: "white"}}/>
+        <AccountBalanceWalletOutlinedIcon sx={{ color: "white" }} />
       </Button>
       <Popover
         id={id}
@@ -61,16 +65,18 @@ const AccountPopover = ({
       >
         <Autocomplete
           onInputChange={(_, value) => changeAccount(value)}
-          sx={{width: "100%"}}
+          value={account}
+          sx={{ width: "100%" }}
           renderInput={(params: AutocompleteRenderInputParams) => (
-            <TextField {...params} label="Sender"/>
+            <TextField {...params} label="Sender" />
           )}
           options={Object.keys(accounts)}
         />
         <Funds
+          defaultValue={stringifyFunds(funds)}
           onChange={changeFunds}
           onValidate={setFundsValid}
-          sx={{mt: 2}}
+          sx={{ mt: 2 }}
         />
       </Popover>
     </>
