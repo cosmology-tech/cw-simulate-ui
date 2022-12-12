@@ -34,6 +34,7 @@ const Accounts = () => {
 
   const data = accounts.map(([address, balances]) => {
     return {
+      id: address,
       address: <Address address={address} long />,
       balances: balances.map((c: Coin) => `${c.amount} ${c.denom}`).join(", "),
     };
@@ -60,7 +61,6 @@ const Accounts = () => {
         <T1Container>
           <TableLayout
             rows={data}
-            keyField="address"
             columns={{
               address: "Account Address",
               balances: "Balances",

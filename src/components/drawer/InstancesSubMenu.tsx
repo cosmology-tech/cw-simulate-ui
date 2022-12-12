@@ -19,15 +19,15 @@ export interface IInstancesSubMenuProps {}
 
 export default function InstancesSubMenu(props: IInstancesSubMenuProps) {
   const sim = useSimulation();
-  const instances = Object.values(useContracts(sim, compareDeep)).filter(inst => !inst.hidden);
+  const instances = Object.keys(useContracts(sim, compareDeep));
   
   return (
     <>
       <SubMenuHeader title="Instances" />
-      {instances && instances.map(info => (
+      {instances && instances.map(address => (
         <InstanceMenuItem
-          key={info.address}
-          instance={info}
+          key={address}
+          address={address}
         />
       ))}
     </>
@@ -35,34 +35,34 @@ export default function InstancesSubMenu(props: IInstancesSubMenuProps) {
 }
 
 interface IInstanceMenuItemProps {
-  instance: ContractInfo;
+  address: string;
 }
 
-function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
+function InstanceMenuItem({ address }: IInstanceMenuItemProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
   const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
   
   const code = sim.useWatcher(
-    ({ wasm }) => {
-      const contractInfo = wasm.getContractInfo(instance.address);
-      if (!contractInfo) return null;
+    () => {
+      const contract = sim.getContract(address);
+      if (!contract || contract.hidden) return null;
       
-      const code = wasm.getCodeInfo(contractInfo.codeId);
+      const code = sim.getCode(contract.codeId);
       if (!code || code.hidden) return null;
       return code;
     },
     compareDeep,
     undefined,
-    [instance.address],
+    [address],
   );
 
   return (
     <T1MenuItem
-      label={instance.address}
+      label={address}
       textEllipsis
-      link={`/instances/${instance.address}`}
+      link={`/instances/${address}`}
       onClick={() => {setDrawerSubMenu(undefined)}}
       tooltip={
         <>
@@ -75,7 +75,7 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
             </Typography>
           }
           <Typography variant="caption">
-            {instance.address}
+            {address}
           </Typography>
         </>
       }
@@ -92,7 +92,7 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
         <MenuItem
           key="copy-address"
           onClick={() => {
-            copy(instance.address);
+            copy(address);
             setNotification("Copied to clipboard", { severity: "info" });
             close();
           }}
@@ -107,7 +107,7 @@ function InstanceMenuItem({ instance }: IInstanceMenuItemProps) {
         <MenuItem
           key="delete"
           onClick={() => {
-            sim.hideContract(instance.address);
+            sim.hideContract(address);
             navigate('/accounts');
             close();
           }}

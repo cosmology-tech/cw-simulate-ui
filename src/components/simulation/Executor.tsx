@@ -33,7 +33,7 @@ export default function Executor({contractAddress}: IProps) {
   const [isValid, setIsValid] = useState(true);
   const accounts = useAccounts(sim);
   const [account, setAccount] = useState(Object.keys(accounts)[0]);
-  const [funds, setFunds] = useState<Coin[]>(defaultAccount.funds);
+  const [funds, setFunds] = useState<Coin[]>([]);
   const sender = account;
 
   const activeStep = useAtomValue(activeStepState);

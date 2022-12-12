@@ -113,10 +113,10 @@ function SenderView({info}: { info: ExecuteTraceLog['info'] }) {
   return (
     <TableLayout
       rows={[{
+        id: info.sender,
         sender: <Address address={info.sender} fontSize="small" />,
         funds: stringifyFunds(info.funds)}
       ]}
-      keyField="sender"
       columns={{
         sender: "Sender",
         funds: "Funds",
