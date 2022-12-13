@@ -24,17 +24,27 @@ import UploadModal from "../upload/UploadModal";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
 import useSimulation from "../../hooks/useSimulation";
-import { AccountEx, useAccounts, useCode, useCodes } from "../../CWSimulationBridge";
+import {
+  AccountEx,
+  useAccounts,
+  useCode,
+  useCodes,
+} from "../../CWSimulationBridge";
 import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
+import SchemaIcon from "@mui/icons-material/Schema";
 import useDebounce from "../../hooks/useDebounce";
 import { useBind } from "../../utils/reactUtils";
 import Accounts from "../Accounts";
 import { BeautifyJSON } from "../simulation/tabs/Common";
 import useMuiTheme from "@mui/material/styles/useTheme";
 import DialogButton from "../DialogButton";
-import ConfirmDialog, { ConfirmDeleteDialog, ConfirmDialogProps } from "../dialogs/ConfirmDialog";
+import ConfirmDialog, {
+  ConfirmDeleteDialog,
+  ConfirmDialogProps,
+} from "../dialogs/ConfirmDialog";
 import T1Dialog, { T1DialogAPI } from "../dialogs/T1Dialog";
+import { SchemaForm } from "../simulation/SchemaForm";
 
 export interface IContractsSubMenuProps {}
 
@@ -89,17 +99,24 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
   const setNotification = useNotification();
   const code = useCode(sim, codeId)!;
 
+  const [openInstantiate, setOpenInstantiate] = useState(false);
+  const [openUploadDialog, setOpenUploadDialog] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+
   const download = useCallback(() => {
     downloadWasm(code.wasmCode, code.name ?? "<unnamed code>");
   }, [code]);
 
   const handleDelete = useCallback(() => {
     sim.hideCode(code.codeId);
-    setNotification('Successfully deleted contract');
+    setNotification("Successfully deleted contract");
   }, [code]);
 
   const MyInstantiateDialog = useBind(InstantiateDialog, { codeId });
-  const MyConfirmDeleteDialog = useBind(ConfirmDeleteDialog, { noun: 'contract', onConfirm: handleDelete });
+  const MyConfirmDeleteDialog = useBind(ConfirmDeleteDialog, {
+    noun: "contract",
+    onConfirm: handleDelete,
+  });
 
   return (
     <T1MenuItem
@@ -110,7 +127,9 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
           key="instantiate"
           Component={MenuItem}
           DialogComponent={MyInstantiateDialog}
-          onClose={() => {close()}}
+          onClose={() => {
+            close();
+          }}
         >
           <ListItemIcon>
             <RocketLaunchIcon />
@@ -136,7 +155,28 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
           </ListItemIcon>
           <ListItemText>Delete</ListItemText>
         </DialogButton>,
+        <MenuItem key="schema" onClick={() => setOpenUploadDialog(true)}>
+          <ListItemIcon>
+            <SchemaIcon />
+          </ListItemIcon>
+          <ListItemText>Upload schema</ListItemText>
+        </MenuItem>,
       ]}
+      optionsExtras={({ close }) => (
+        <>
+          <UploadModal
+            variant="schema"
+            codeId={codeId}
+            open={openUploadDialog}
+            onClose={() => {
+              setOpenUploadDialog(false);
+              close();
+            }}
+            dropTitle="Upload Schema"
+            dropzoneText="Upload or drop a schema file here"
+          />
+        </>
+      )}
     />
   );
 }
@@ -147,10 +187,7 @@ interface IInstantiateDialogProps {
   onClose(): void;
 }
 
-function InstantiateDialog({
-  codeId,
-  ...props
-}: IInstantiateDialogProps) {
+function InstantiateDialog({ codeId, ...props }: IInstantiateDialogProps) {
   const theme = useMuiTheme();
   const sim = useSimulation();
   const navigate = useNavigate();
@@ -159,6 +196,9 @@ function InstantiateDialog({
   const accounts = useAccounts(sim);
   const defaultAccount = Object.values(accounts)[0] || "";
   const [isJsonValid, setIsJsonValid] = useState(true);
+  const schema = code.schema;
+  // @ts-ignore
+  const instantiateSchema = schema ? schema.instantiate : {};
   const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
 
   const [funds, setFunds] = useState<Coin[]>([]);
@@ -198,31 +238,34 @@ function InstantiateDialog({
         funds,
         instancelabel
       );
+
       navigate(`/instances/${contract.address}`);
       finish();
       setDrawerSubMenu(undefined);
-    }
-    catch (e: any) {
+    } catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {
         severity: "error",
       });
       console.error(e);
     }
   };
-  
-  const ConfirmCloseDialog = useCallback((props: ConfirmDialogProps) => (
-    <ConfirmDialog
-      {...props}
-      message='Are you sure you want to cancel contract instantiation?'
-    />
-  ), []);
+
+  const ConfirmCloseDialog = useCallback(
+    (props: ConfirmDialogProps) => (
+      <ConfirmDialog
+        {...props}
+        message="Are you sure you want to cancel contract instantiation?"
+      />
+    ),
+    []
+  );
 
   return (
     <T1Dialog
       {...props}
       confirmClose
-      title='Instantiate Contract'
-      actions={api => (
+      title="Instantiate Contract"
+      actions={(api) => (
         <>
           <Button variant="outlined" onClick={() => api.cancel()}>
             Cancel
@@ -238,13 +281,16 @@ function InstantiateDialog({
       )}
       ConfirmCloseDialogComponent={ConfirmCloseDialog}
       sx={{
-        '.MuiDialogTitle-root+.MuiDialogContent-root': {
+        ".MuiDialogTitle-root+.MuiDialogContent-root": {
           pt: 1,
         },
       }}
     >
       <DialogContent>
-        <Accounts defaultAccount={defaultAccount.address} onChange={setAccount} />
+        <Accounts
+          defaultAccount={defaultAccount.address}
+          onChange={setAccount}
+        />
         <Funds
           TextComponent={DialogContentText}
           onChange={setFunds}
@@ -260,7 +306,7 @@ function InstantiateDialog({
           sx={{ mt: 2 }}
         />
       </DialogContent>
-      
+
       <DialogContent>
         <Grid
           container
@@ -268,6 +314,11 @@ function InstantiateDialog({
         >
           <DialogContentText>InstantiateMsg</DialogContentText>
           <Grid item>
+            <SchemaForm
+              schema={instantiateSchema}
+              submit={setPayload}
+              iconColor={theme.palette.common.black}
+            />
             <BeautifyJSON
               onChange={setPayload}
               disabled={!payload.length || !isJsonValid}
