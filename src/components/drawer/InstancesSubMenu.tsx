@@ -20,18 +20,16 @@ export interface IInstancesSubMenuProps {}
 export default function InstancesSubMenu(props: IInstancesSubMenuProps) {
   const sim = useSimulation();
   const instances = Object.keys(useContracts(sim, compareDeep));
-  
+
   return (
     <>
       <SubMenuHeader title="Instances" />
-      {instances && instances.map(address => (
-        <InstanceMenuItem
-          key={address}
-          address={address}
-        />
-      ))}
+      {instances &&
+        instances.map((address) => (
+          <InstanceMenuItem key={address} address={address} />
+        ))}
     </>
-  )
+  );
 }
 
 interface IInstanceMenuItemProps {
@@ -43,52 +41,54 @@ function InstanceMenuItem({ address }: IInstanceMenuItemProps) {
   const navigate = useNavigate();
   const setNotification = useNotification();
   const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
-  
-  const code = sim.useWatcher(
+
+  const codeAndLabel = sim.useWatcher(
     () => {
       const contract = sim.getContract(address);
       if (!contract || contract.hidden) return null;
-      
+      const label = contract.label;
       const code = sim.getCode(contract.codeId);
       if (!code || code.hidden) return null;
-      return code;
+      return { code, label };
     },
     compareDeep,
     undefined,
-    [address],
+    [address]
   );
+  const { code, label } = codeAndLabel || {};
 
   return (
     <T1MenuItem
-      label={address}
+      label={label ? label : address}
       textEllipsis
       link={`/instances/${address}`}
-      onClick={() => {setDrawerSubMenu(undefined)}}
+      onClick={() => {
+        setDrawerSubMenu(undefined);
+      }}
       tooltip={
         <>
-          {code
-          ? <Typography variant="body2" fontWeight="bold">
+          {code ? (
+            <Typography variant="body2" fontWeight="bold">
               {code.name} ({code.codeId})
             </Typography>
-          : <Typography variant="body2" fontStyle="italic">
-              {'<'}Deleted Code{'>'}
+          ) : (
+            <Typography variant="body2" fontStyle="italic">
+              {"<"}Deleted Code{">"}
             </Typography>
-          }
-          <Typography variant="caption">
-            {address}
-          </Typography>
+          )}
+          <Typography variant="caption">{address}</Typography>
         </>
       }
       tooltipProps={{
         componentsProps: {
           tooltip: {
             style: {
-              maxWidth: 'none',
+              maxWidth: "none",
             },
           },
         },
       }}
-      options={({close}) => [
+      options={({ close }) => [
         <MenuItem
           key="copy-address"
           onClick={() => {
@@ -100,26 +100,22 @@ function InstanceMenuItem({ address }: IInstanceMenuItemProps) {
           <ListItemIcon>
             <ContentCopyIcon />
           </ListItemIcon>
-          <ListItemText>
-            Copy address
-          </ListItemText>
+          <ListItemText>Copy address</ListItemText>
         </MenuItem>,
         <MenuItem
           key="delete"
           onClick={() => {
             sim.hideContract(address);
-            navigate('/accounts');
+            navigate("/accounts");
             close();
           }}
         >
           <ListItemIcon>
             <DeleteForeverIcon />
           </ListItemIcon>
-          <ListItemText>
-            Delete
-          </ListItemText>
-        </MenuItem>
+          <ListItemText>Delete</ListItemText>
+        </MenuItem>,
       ]}
     />
-  )
+  );
 }

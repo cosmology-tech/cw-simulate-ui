@@ -111,11 +111,11 @@ export default class CWSimulationBridge {
   }
 
   /** Create a new contract instance by `codeId` & re-sync bridge. */
-  async instantiate(sender: string, codeId: number, msg: any, funds: Coin[] = []) {
+  async instantiate(sender: string, codeId: number, msg: any, funds: Coin[] = [], label:string) {
     if (!this.getCode(codeId)) throw new Error(`Invalid codeId ${codeId}`);
 
     const trace: TraceLog[] = [];
-    const result = await this.app.wasm.instantiateContract(sender, funds, codeId, msg, trace);
+    const result = await this.app.wasm.instantiateContract(sender, funds, codeId, msg, label, trace);
     const response = result.unwrap();
 
     const evt = response.events[0];

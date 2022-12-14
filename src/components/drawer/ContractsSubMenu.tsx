@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import type { CodeInfo, Coin } from "@terran-one/cw-simulate";
 import { useSetAtom } from "jotai";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { drawerSubMenuState } from "../../atoms/uiState";
@@ -29,9 +29,15 @@ import UploadModal from "../upload/UploadModal";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
 import useSimulation from "../../hooks/useSimulation";
-import { compareDeep, useAccounts, useCode, useCodes } from "../../CWSimulationBridge";
+import {
+  compareDeep,
+  useAccounts,
+  useCode,
+  useCodes,
+} from "../../CWSimulationBridge";
 import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
+import useDebounce from "../../hooks/useDebounce";
 
 export interface IContractsSubMenuProps {}
 
@@ -39,7 +45,7 @@ export default function ContractsSubMenu(props: IContractsSubMenuProps) {
   const sim = useSimulation();
 
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
-  const codes = Object.entries(useCodes(sim)).filter(([,c]) => !c.hidden);
+  const codes = Object.entries(useCodes(sim)).filter(([, c]) => !c.hidden);
 
   return (
     <>
@@ -89,7 +95,7 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
   const [openDelete, setOpenDelete] = useState(false);
 
   const download = useCallback(() => {
-    downloadWasm(code.wasmCode, code.name ?? '<unnamed code>');
+    downloadWasm(code.wasmCode, code.name ?? "<unnamed code>");
   }, [code]);
 
   return (
@@ -190,6 +196,8 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const [funds, setFunds] = useState<Coin[]>([]);
   const [isFundsValid, setFundsValid] = useState(true);
   const [payload, setPayload] = useState("");
+  const [instancelabel, setInstanceLabel] = useState<string>("");
+  const ref = useRef<HTMLInputElement | null>();
   const placeholder = {
     count: 0,
   };
@@ -197,7 +205,14 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const accounts = useAccounts(sim);
   const code = useCode(sim, codeId)!;
   const [account, setAccount] = useState(Object.keys(accounts)[0]);
-
+  const handleLabelChange = useDebounce(
+    () => {
+      const val = ref.current?.value.trim();
+      setInstanceLabel(val ? val : "");
+    },
+    200,
+    []
+  );
   const handleInstantiate = useCallback(async () => {
     const instantiateMsg =
       payload.length === 0 ? placeholder : JSON.parse(payload);
@@ -215,7 +230,8 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         sender,
         code.codeId,
         instantiateMsg,
-        funds
+        funds,
+        instancelabel
       );
       navigate(`/instances/${contract.address}`);
       onClose();
@@ -247,7 +263,16 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
           onValidate={setFundsValid}
           sx={{ mt: 2 }}
         />
+        <TextField
+          fullWidth
+          inputRef={ref}
+          defaultValue={instancelabel}
+          onChange={handleLabelChange}
+          label="Label"
+          sx={{ mt: 2 }}
+        />
       </DialogContent>
+
       <DialogContent>
         <DialogContentText>InstantiateMsg</DialogContentText>
         <T1Container sx={{ width: 400, height: 220 }}>
