@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import {
-  Autocomplete,
-  AutocompleteRenderInputParams,
-  Button,
-  Popover,
-  TextField,
-} from "@mui/material";
+import { Button, Popover } from "@mui/material";
 import { Coin } from "@terran-one/cw-simulate";
 import Funds from "../Funds";
 import { stringifyFunds } from "../../utils/typeUtils";
+import AutoComplete from "../AutoComplete";
 
 interface IProps {
   accounts: { [key: string]: Coin[] };
@@ -63,15 +58,14 @@ const AccountPopover = ({
           },
         }}
       >
-        <Autocomplete
-          onInputChange={(_, value) => changeAccount(value)}
+        <AutoComplete
+          callback={(_, value) => changeAccount(value)}
           value={account}
           sx={{ width: "100%" }}
-          renderInput={(params: AutocompleteRenderInputParams) => (
-            <TextField {...params} label="Sender" />
-          )}
           options={Object.keys(accounts)}
+          label="Sender"
         />
+
         <Funds
           defaultValue={stringifyFunds(funds)}
           onChange={changeFunds}

@@ -3,8 +3,6 @@ import DownloadIcon from "@mui/icons-material/Download";
 import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import UploadIcon from "@mui/icons-material/Upload";
 import {
-  Autocomplete,
-  AutocompleteRenderInputParams,
   Button,
   Dialog,
   DialogActions,
@@ -29,15 +27,11 @@ import UploadModal from "../upload/UploadModal";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
 import useSimulation from "../../hooks/useSimulation";
-import {
-  compareDeep,
-  useAccounts,
-  useCode,
-  useCodes,
-} from "../../CWSimulationBridge";
+import { useAccounts, useCode, useCodes } from "../../CWSimulationBridge";
 import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
 import useDebounce from "../../hooks/useDebounce";
+import AutoComplete from "../AutoComplete";
 
 export interface IContractsSubMenuProps {}
 
@@ -248,13 +242,11 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Instantiate Contract</DialogTitle>
       <DialogContent sx={{ pt: "5px !important" }}>
-        <Autocomplete
-          onInputChange={(_, value) => setAccount(value)}
-          sx={{ width: "100%" }}
+        <AutoComplete
+          callback={(_, value) => setAccount(value)}
+          sx={{ width: "100%}" }}
           defaultValue={Object.keys(accounts)[0]}
-          renderInput={(params: AutocompleteRenderInputParams) => (
-            <TextField {...params} label="Sender" />
-          )}
+          label="Sender"
           options={Object.keys(accounts)}
         />
         <Funds
