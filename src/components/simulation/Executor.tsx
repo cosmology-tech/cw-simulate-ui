@@ -27,11 +27,13 @@ export const getFormattedStep = (step: string) => {
 export default function Executor({ contractAddress }: IProps) {
   const sim = useSimulation();
   const setNotification = useNotification();
-  const [payload, setPayload] = useState("");
-  const [isValid, setIsValid] = useState(true);
   const accounts = useAccounts(sim);
-  const [account, setAccount] = useState(Object.keys(accounts)[0]);
-  const [funds, setFunds] = useState<Coin[]>([]);
+  const defaultAccount = Object.keys(accounts)[0] || '';
+  
+  const [payload, setPayload] = useState("");
+  const [isJsonValid, setIsJsonValid] = useState(true);
+  const [isAccountValid, setIsAccountValid] = useState(!!defaultAccount);
+  const [[account, funds], setAccount] = useState<[string, Coin[]]>([defaultAccount, []]);
   const sender = account;
 
   const activeStep = useAtomValue(activeStepState);
@@ -56,6 +58,7 @@ export default function Executor({ contractAddress }: IProps) {
     setPayload("");
   }, [contractAddress]);
 
+  const isValid = isJsonValid && isAccountValid;
   return (
     <CollapsibleWidget
       title={"Execute"}
@@ -64,14 +67,13 @@ export default function Executor({ contractAddress }: IProps) {
         <>
           <BeautifyJSON
             onChange={setPayload}
-            disabled={!payload.length || !isValid}
+            disabled={!payload.length || !isJsonValid}
           />
           <AccountPopover
-            changeAccount={setAccount}
-            accounts={accounts}
             account={account}
             funds={funds}
-            changeFunds={setFunds}
+            onChange={(address, funds) => setAccount([address, funds])}
+            onValidate={setIsAccountValid}
           />
         </>
       }
@@ -91,7 +93,7 @@ export default function Executor({ contractAddress }: IProps) {
             <JsonCodeMirrorEditor
               jsonValue={payload}
               onChange={setPayload}
-              onValidate={setIsValid}
+              onValidate={setIsJsonValid}
             />
           </T1Container>
         </Grid>

@@ -1,48 +1,48 @@
-import React, { useState } from "react";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import { Button, Popover } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import Popover from "@mui/material/Popover";
 import { Coin } from "@terran-one/cw-simulate";
-import Funds from "../Funds";
+import React, { useState } from "react";
 import { stringifyFunds } from "../../utils/typeUtils";
-import AccountsDropDown from "../AccountsDropDown";
+import Accounts from "../Accounts";
+import Funds from "../Funds";
 
 interface IProps {
-  accounts: { [key: string]: Coin[] };
-  changeAccount: (val: string) => void;
-  changeFunds?(funds: Coin[]): void;
   account: string;
   funds: Coin[];
+  onChange?(account: string, funds: Coin[]): void;
+  // TODO: validate account + funds?
+  // currently only validates funds
+  onValidate?(valid: boolean): void;
 }
 
 const AccountPopover = ({
-  changeAccount,
-  accounts,
-  changeFunds,
   account,
   funds,
+  onChange,
+  onValidate,
 }: IProps) => {
   const [anchorEl, setAnchorEl] =
     React.useState<HTMLButtonElement | null>(null);
-  const handleDiffClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
+  const [open, setOpen] = useState(false);
+  
+  const onChangeAccount = (account: string, balance: Coin[]) => {
+    onChange?.(account, funds);
   };
-  const handleDiffClose = () => {
-    setAnchorEl(null);
+  
+  const onChangeFunds = (funds: Coin[]) => {
+    onChange?.(account, funds);
   };
 
-  const [_, setFundsValid] = useState(true);
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
   return (
     <>
-      <Button aria-describedby="abcd" onClick={handleDiffClick}>
-        <AccountBalanceWalletOutlinedIcon sx={{ color: "white" }} />
-      </Button>
+      <IconButton ref={setAnchorEl} onClick={() => setOpen(true)}>
+        <AccountBalanceWalletOutlinedIcon />
+      </IconButton>
       <Popover
-        id={id}
         open={open}
+        onClose={() => setOpen(false)}
         anchorEl={anchorEl}
-        onClose={handleDiffClose}
         anchorOrigin={{
           vertical: "bottom",
           horizontal: "left",
@@ -58,15 +58,11 @@ const AccountPopover = ({
           },
         }}
       >
-        <AccountsDropDown
-          onChange={changeAccount}
-          defaultValue={account}
-          accounts={accounts}
-        />
+        <Accounts defaultAccount={account} onChange={onChangeAccount} />
         <Funds
           defaultValue={stringifyFunds(funds)}
-          onChange={changeFunds}
-          onValidate={setFundsValid}
+          onChange={onChangeFunds}
+          onValidate={onValidate}
           sx={{ mt: 2 }}
         />
       </Popover>

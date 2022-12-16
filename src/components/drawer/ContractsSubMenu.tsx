@@ -31,7 +31,7 @@ import { useAccounts, useCode, useCodes } from "../../CWSimulationBridge";
 import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
 import useDebounce from "../../hooks/useDebounce";
-import AccountsDropDown from "../AccountsDropDown";
+import Accounts from "../Accounts";
 
 export interface IContractsSubMenuProps {}
 
@@ -186,19 +186,23 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
+  const code = useCode(sim, codeId)!;
+  const accounts = useAccounts(sim);
+  const defaultAccount = Object.keys(accounts)[0] || '';
+
   const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
+
   const [funds, setFunds] = useState<Coin[]>([]);
   const [isFundsValid, setFundsValid] = useState(true);
   const [payload, setPayload] = useState("");
   const [instancelabel, setInstanceLabel] = useState<string>("");
+  const [account, setAccount] = useState(defaultAccount);
+
   const ref = useRef<HTMLInputElement | null>();
   const placeholder = {
     count: 0,
   };
 
-  const accounts = useAccounts(sim);
-  const code = useCode(sim, codeId)!;
-  const [account, setAccount] = useState(Object.keys(accounts)[0]);
   const handleLabelChange = useDebounce(
     () => {
       const val = ref.current?.value.trim();
@@ -207,21 +211,19 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     200,
     []
   );
+
   const handleInstantiate = useCallback(async () => {
     const instantiateMsg =
       payload.length === 0 ? placeholder : JSON.parse(payload);
 
     try {
-      const [sender] = Object.entries(accounts).find(
-        ([addr]) => addr === account
-      ) ?? [undefined, []];
-      if (!sender) {
+      if (!account) {
         setNotification("Please select an account", { severity: "error" });
         return;
       }
 
       const contract = await sim.instantiate(
-        sender,
+        account,
         code.codeId,
         instantiateMsg,
         funds,
@@ -242,7 +244,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Instantiate Contract</DialogTitle>
       <DialogContent sx={{ pt: "5px !important" }}>
-        <AccountsDropDown onChange={setAccount} accounts={accounts} />
+        <Accounts defaultAccount={defaultAccount} onChange={setAccount} />
         <Funds
           TextComponent={DialogContentText}
           onChange={setFunds}
