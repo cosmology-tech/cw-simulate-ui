@@ -1,5 +1,7 @@
 import useTheme from "@mui/material/styles/useTheme";
 import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
   Box,
   Button,
   Grid,
@@ -26,7 +28,6 @@ import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
 import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 import axios from "axios";
-import AutoComplete from "../AutoComplete";
 
 export interface ISampleContract {
   name: string;
@@ -284,10 +285,12 @@ export default function WelcomeScreen() {
                 <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
                   Load from sample contracts
                 </Typography>
-                <AutoComplete
-                  callback={(_, value) => setSampleContract(value)}
+                <Autocomplete
+                  onInputChange={(_, value) => setSampleContract(value)}
                   sx={{ width: "80%", mt: 2 }}
-                  label="Contract"
+                  renderInput={(params: AutocompleteRenderInputParams) => (
+                    <TextField {...params} label="Contract" />
+                  )}
                   options={getSampleContractsForChain(chain)}
                 />
                 <Button

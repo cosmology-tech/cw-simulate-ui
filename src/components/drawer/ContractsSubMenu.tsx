@@ -31,7 +31,7 @@ import { useAccounts, useCode, useCodes } from "../../CWSimulationBridge";
 import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
 import useDebounce from "../../hooks/useDebounce";
-import AutoComplete from "../AutoComplete";
+import AccountsDropDown from "../AccountsDropDown";
 
 export interface IContractsSubMenuProps {}
 
@@ -242,13 +242,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     <Dialog open={open} onClose={() => onClose()}>
       <DialogTitle>Instantiate Contract</DialogTitle>
       <DialogContent sx={{ pt: "5px !important" }}>
-        <AutoComplete
-          callback={(_, value) => setAccount(value)}
-          sx={{ width: "100%}" }}
-          defaultValue={Object.keys(accounts)[0]}
-          label="Sender"
-          options={Object.keys(accounts)}
-        />
+        <AccountsDropDown onChange={setAccount} accounts={accounts} />
         <Funds
           TextComponent={DialogContentText}
           onChange={setFunds}

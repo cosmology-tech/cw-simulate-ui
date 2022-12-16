@@ -16,7 +16,6 @@ import { useContractTrace } from "../../CWSimulationBridge";
 import { useParams } from "react-router-dom";
 import { useTheme } from "../../configs/theme";
 import { extractState } from "./StateStepper";
-import AutoComplete from "../AutoComplete";
 interface IProps {
   currentActiveStep: number;
 }
@@ -89,22 +88,29 @@ export const ComparePopup = ({ currentActiveStep }: IProps) => {
         }}
       >
         <Grid item sx={{ p: 1 }}>
-          <AutoComplete
-            callback={(_, value) => value.length > 0 && onChangeHandler(value)}
+          <Autocomplete
+            onInputChange={(_, value) =>
+              value.length > 0 && onChangeHandler(value)
+            }
             sx={{
               width: "10vw",
             }}
+            renderInput={(params: AutocompleteRenderInputParams) => (
+              <TextField
+                {...params}
+                label="Compare with other parent"
+                sx={{
+                  "&  .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "#6b5f5f !important",
+                  },
+                }}
+              />
+            )}
             options={[
               ...[...Array(traces.length + 1).keys()]
                 .filter((ele) => ele !== currentActiveStep + 1 && ele !== 0)
                 .map((ele) => `${ele}`),
             ]}
-            textFieldStyle={{
-              "&  .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#6b5f5f !important",
-              },
-            }}
-            label="Compare with other parent"
           />
         </Grid>
         {error && (

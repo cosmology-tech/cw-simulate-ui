@@ -4,7 +4,7 @@ import { Button, Popover } from "@mui/material";
 import { Coin } from "@terran-one/cw-simulate";
 import Funds from "../Funds";
 import { stringifyFunds } from "../../utils/typeUtils";
-import AutoComplete from "../AutoComplete";
+import AccountsDropDown from "../AccountsDropDown";
 
 interface IProps {
   accounts: { [key: string]: Coin[] };
@@ -58,14 +58,11 @@ const AccountPopover = ({
           },
         }}
       >
-        <AutoComplete
-          callback={(_, value) => changeAccount(value)}
-          value={account}
-          sx={{ width: "100%" }}
-          options={Object.keys(accounts)}
-          label="Sender"
+        <AccountsDropDown
+          onChange={changeAccount}
+          defaultValue={account}
+          accounts={accounts}
         />
-
         <Funds
           defaultValue={stringifyFunds(funds)}
           onChange={changeFunds}
