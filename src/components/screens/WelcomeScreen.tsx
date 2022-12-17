@@ -297,12 +297,12 @@ export default function WelcomeScreen() {
                   options={getSampleContractsForChain(chain)}
                 />
                 {loading ? (
-                  <LoadingButton loading variant="outlined">
+                  <LoadingButton loading variant="contained" sx={{ mt: 2 }}>
                     Submit
                   </LoadingButton>
                 ) : (
                   <Button
-                    variant={"contained"}
+                    variant="contained"
                     sx={{ mt: 2 }}
                     onClick={handleLoadSampleContract}
                   >
