@@ -28,6 +28,7 @@ import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
 import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 import axios from "axios";
+import { LoadingButton } from "@mui/lab";
 
 export interface ISampleContract {
   name: string;
@@ -130,6 +131,7 @@ export default function WelcomeScreen() {
   const theme = useTheme();
   const [chain, setChain] = useState<Chains>("terra");
   const [sampleContract, setSampleContract] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const handleLoadSampleContract = useCallback(async () => {
     const contract = SAMPLE_CONTRACTS.find(
       (c) => c.name === sampleContract && c.chain.includes(chain)
@@ -138,7 +140,7 @@ export default function WelcomeScreen() {
       setNotification("Contract not found", { severity: "error" });
       return;
     }
-
+    setLoading(true);
     let wasmFiles: SimulationFileType[] = [];
     for (const key of contract.keys) {
       try {
@@ -159,6 +161,7 @@ export default function WelcomeScreen() {
       }
     }
     setFiles(wasmFiles);
+    setLoading(false);
   }, [sampleContract]);
 
   const onCreateNewEnvironment = useCallback(async () => {
@@ -293,13 +296,19 @@ export default function WelcomeScreen() {
                   )}
                   options={getSampleContractsForChain(chain)}
                 />
-                <Button
-                  variant={"contained"}
-                  sx={{ mt: 2 }}
-                  onClick={handleLoadSampleContract}
-                >
-                  Load
-                </Button>
+                {loading ? (
+                  <LoadingButton loading variant="outlined">
+                    Submit
+                  </LoadingButton>
+                ) : (
+                  <Button
+                    variant={"contained"}
+                    sx={{ mt: 2 }}
+                    onClick={handleLoadSampleContract}
+                  >
+                    Load
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </FileUploadPaper>
