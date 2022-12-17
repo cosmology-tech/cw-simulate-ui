@@ -3,7 +3,6 @@ import {
   Autocomplete,
   AutocompleteRenderInputParams,
   Box,
-  Button,
   Grid,
   SvgIcon,
   TextField,
@@ -296,19 +295,15 @@ export default function WelcomeScreen() {
                   )}
                   options={getSampleContractsForChain(chain)}
                 />
-                {loading ? (
-                  <LoadingButton loading variant="contained" sx={{ mt: 2 }}>
-                    Submit
-                  </LoadingButton>
-                ) : (
-                  <Button
-                    variant="contained"
-                    sx={{ mt: 2 }}
-                    onClick={handleLoadSampleContract}
-                  >
-                    Load
-                  </Button>
-                )}
+
+                <LoadingButton
+                  loading={loading}
+                  variant="contained"
+                  sx={{ mt: 2 }}
+                  onClick={handleLoadSampleContract}
+                >
+                  Load
+                </LoadingButton>
               </Grid>
             </Grid>
           </FileUploadPaper>
