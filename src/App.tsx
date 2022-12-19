@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate, useNavigation } from "react-router-dom";
 import Accounts from "./components/chains/Accounts";
 import T1AppBar from "./components/drawer/T1AppBar";
 import VoidScreen from "./components/screens/VoidScreen";
@@ -8,8 +8,27 @@ import WelcomeScreen from "./components/screens/WelcomeScreen";
 import Simulation from "./components/simulation/Simulation";
 import T1Container from "./components/grid/T1Container";
 import "./index.css";
+import { useAtomValue } from "jotai";
+import { lastChainIdState } from "./atoms/simulationPageAtoms";
+import { useEffect, useRef } from "react";
 
 function App() {
+  const lastChainId = useAtomValue(lastChainIdState);
+  const refInitial = useRef(true);
+  const loc = useLocation();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (refInitial.current) {
+      refInitial.current = false;
+      if (lastChainId) {
+        if (loc.pathname === '/') navigate('/accounts');
+      } else {
+        if (loc.pathname !== '/') navigate('/');
+      }
+    }
+  }, []);
+  
   return (
     <Grid container direction="column" width="100vw" height="100vh" className="T1App-root">
       <T1AppBar/>

@@ -10,11 +10,12 @@ interface SnackbarNotificationState {
   message: string;
   vertical: Defined<SnackbarProps['anchorOrigin']>['vertical'];
   horizontal: Defined<SnackbarProps['anchorOrigin']>['horizontal'];
+  autoHideDuration?: number;
 }
 
 export type Severity = Defined<AlertProps['severity']>;
 
-export type SnackbarNotificationOptions = Partial<Pick<SnackbarNotificationState, "severity" | "vertical" | "horizontal">>;
+export type SnackbarNotificationOptions = Partial<Pick<SnackbarNotificationState, "severity" | "vertical" | "horizontal" | "autoHideDuration">>;
 
 export const snackbarNotificationState = atom<SnackbarNotificationState>({
   open: false,
@@ -31,6 +32,7 @@ export const useNotification = () => {
       horizontal: 'center',
       vertical: 'top',
       severity: 'success',
+      autoHideDuration: 2000,
       ...options,
       message,
       open: true,
