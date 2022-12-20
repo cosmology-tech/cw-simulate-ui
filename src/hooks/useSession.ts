@@ -40,26 +40,10 @@ export class Session {
   }
   
   save(sim: CWSimulationBridge) {
-    if (!this._idb) return Promise.reject(new ConnectionError());
-    return new Promise<this>(async (resolve, reject) => {
-      const tx = this._idb!.transaction('chains', 'readwrite');
-      tx.oncomplete = () => { resolve(this) }
-      tx.onerror = () => { reject(tx.error) }
-      tx.onabort = () => { reject(tx.error || new Error('Aborted'))}
-      
-      try {
-        await this._onSave(tx, sim);
-        tx.commit();
-      } catch (err) {
-        tx.abort();
-        throw err;
-      }
+    return this.tx('chains', 'readwrite', async tx => {
+      const chainsStore = tx.objectStore('chains');
+      await wrapRequest(chainsStore.put(sim.save(), sim.chainId));
     });
-  }
-  
-  private async _onSave(tx: IDBTransaction, sim: CWSimulationBridge) {
-    const chainsStore = tx.objectStore('chains');
-    await wrapRequest(chainsStore.put(sim.save(), sim.chainId));
   }
   
   async load(sim: CWSimulationBridge, chainId: string) {
@@ -81,6 +65,30 @@ export class Session {
     idb.createObjectStore('chains');
   }
   
+  clear(chainId: string) {
+    return this.tx('chains', 'readwrite', async tx => {
+      const chainsStore = tx.objectStore('chains');
+      await wrapRequest(chainsStore.delete(chainId));
+    });
+  }
+  
+  private tx(storeNames: string | Iterable<string>, mode: IDBTransactionMode, callback: (tx: IDBTransaction) => void | Promise<void>) {
+    if (!this._idb) return Promise.reject(new ConnectionError());
+    return new Promise<this>(async (resolve, reject) => {
+      const tx = this._idb!.transaction('chains', 'readwrite');
+      tx.oncomplete = () => { resolve(this) }
+      tx.onerror = () => { reject(tx.error) }
+      tx.onabort = () => { reject(tx.error || new AbortError())}
+      try {
+        await callback(tx);
+        tx.commit();
+      } catch (err) {
+        tx.abort();
+        reject(err);
+      }
+    });
+  }
+  
   static async instance() {
     return this._instance || (this._instance = await new Session().open());
   }
@@ -94,6 +102,7 @@ export const useSession = () => {
   return session;
 }
 
+export const AbortError = makeSimpleError('Aborted');
 export const BlockedError = makeSimpleError('IndexedDB connection blocked');
 export const ConnectionError = makeSimpleError('No IndexedDB connection');
 export const NoIndexedDBError = makeSimpleError('No IndexedDB support in browser');
