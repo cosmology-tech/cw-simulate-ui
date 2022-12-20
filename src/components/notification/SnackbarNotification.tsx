@@ -6,7 +6,7 @@ import { useAtom } from "jotai";
 const SnackbarNotification = () => {
   const [snackbarState, setSnackbarState] = useAtom(snackbarNotificationState);
   return (
-    <Snackbar autoHideDuration={2000}
+    <Snackbar autoHideDuration={snackbarState.autoHideDuration ?? 2000}
               onClose={() => setSnackbarState({...snackbarState, open: false})}
               open={snackbarState.open}
               anchorOrigin={{

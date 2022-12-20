@@ -15,7 +15,8 @@ import React, { ChangeEvent, ReactNode, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { defaults } from "../../configs/constants";
 import { useNavigate } from "react-router-dom";
-import { stepTraceState } from "../../atoms/simulationPageAtoms";
+import { lastChainIdState, stepTraceState } from "../../atoms/simulationPageAtoms";
+import { useSession } from "../../hooks/useSession";
 import useSimulation from "../../hooks/useSimulation";
 
 export interface ISettingsSubMenuProps {
@@ -30,15 +31,26 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
   const sim = useSimulation();
   const setNotification = useNotification();
   const navigate = useNavigate();
+  const session = useSession();
   
   const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({} as IChainConfigFormValues);
   const [openResetSimulationDialog, setOpenResetSimulationDialog] = useState(false);
   const setStepTrace = useSetAtom(stepTraceState);
+  const setLastChainId = useSetAtom(lastChainIdState);
   
-  const handleResetSimulation = (e: any) => {
+  const handleResetSimulation = async () => {
+    setNotification('Deleting session...', { severity: 'info' });
+    
+    // session & state cleanup
+    await session?.clear(sim.chainId);
     sim.recreate(defaults.chains.terra);
+    setLastChainId('');
+    
+    // UI cleanup
     setOpenResetSimulationDialog(false);
     navigate('/accounts');
+    
+    setNotification('Session successfully reset. You will need a new account.');
   };
   setStepTrace(undefined);
 
@@ -103,8 +115,8 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
 
 interface IResetSimulationDialogProps {
   open: boolean;
-  onClose: () => void;
-  onReset: (e: any) => void;
+  onClose(): void;
+  onReset(): void;
 }
 
 const ResetSimulationDialog = (props: IResetSimulationDialogProps) => {
@@ -119,7 +131,7 @@ const ResetSimulationDialog = (props: IResetSimulationDialogProps) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={props.onClose}>Cancel</Button>
-        <Button color={'error'} onClick={props.onReset}>Reset</Button>
+        <Button color="error" onClick={props.onReset}>Reset</Button>
       </DialogActions>
     </Dialog>
   );

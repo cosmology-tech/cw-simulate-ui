@@ -1,4 +1,6 @@
 import { CodeInfo, Coin, ContractInfo, CWSimulateApp, CWSimulateAppOptions, TraceLog } from "@terran-one/cw-simulate";
+import * as persist from "@terran-one/cw-simulate/dist/persist";
+import { TransactionalLens } from "@terran-one/cw-simulate/dist/store/transactional";
 import { DependencyList, Dispatch, useEffect, useReducer } from "react";
 import { Ok } from "ts-results";
 import { defaults } from "./configs/constants";
@@ -47,22 +49,31 @@ export default class CWSimulationBridge {
   private watchers = new Set<Watcher<any>>();
   private updatePending = false;
 
-  public codes = this.app.store.db.lens<Record<number, CodeInfoEx>>('wasm', 'codes');
-  public contracts = this.app.store.db.lens<Record<string, ContractInfoEx>>('wasm', 'contracts');
+  private _codes: TransactionalLens<Record<number, CodeInfoEx>> | undefined;
+  private _contracts: TransactionalLens<Record<string, ContractInfoEx>> | undefined;
+  
+  constructor() {
+    this._createLenses();
+  }
 
   /** Recreate the simulation instance, clearing all state. */
   recreate(options: CWSimulateAppOptions) {
     this.app = new CWSimulateApp(options);
-    this.codes = this.app.store.db.lens<Record<number, CodeInfoEx>>('wasm', 'codes');
-    this.contracts = this.app.store.db.lens<Record<string, ContractInfoEx>>('wasm', 'contracts');
+    this._createLenses();
     this.sync();
     return this;
+  }
+  
+  protected _createLenses() {
+    this._codes = this.app.store.db.lens<Record<number, CodeInfoEx>>('wasm', 'codes');
+    this._contracts = this.app.store.db.lens<Record<string, ContractInfoEx>>('wasm', 'contracts');
   }
 
   /** Update chain configuration & re-sync bridge. */
   updateChainConfig(chainId: string, bech32Prefix: string) {
     this.app.chainId = chainId;
     this.app.bech32Prefix = bech32Prefix;
+    localStorage['chainId'] = chainId;
     this.sync();
     return this;
   }
@@ -224,6 +235,17 @@ export default class CWSimulationBridge {
     if (!info) throw new Error(`No such contract with address ${contractAddress}`);
     return await this.app.wasm.queryTrace(getStepTrace(step, info.trace ?? []), msg);
   }
+  
+  save() {
+    return persist.save(this.app);
+  }
+  
+  async load(bytes: Uint8Array) {
+    this.app = await persist.load(bytes);
+    this._createLenses();
+    this.sync();
+    return this;
+  }
 
   /** Re-synchronize simulation bridge with its CWSimulateApp, calling
    * watchers as appropriate.
@@ -294,6 +316,9 @@ export default class CWSimulationBridge {
   get bech32Prefix() {
     return this.app.bech32Prefix;
   }
+  
+  get codes() { return this._codes! }
+  get contracts() { return this._contracts! }
 }
 
 function useBridgeReducer<T>(app: CWSimulateApp, params: Omit<WatcherState<T>['params'], 'value'>) {

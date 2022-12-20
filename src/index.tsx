@@ -6,8 +6,8 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { darkModeState } from "./atoms/uiState";
 import SnackbarNotification from "./components/notification/SnackbarNotification";
-import PageRefreshConfirmation from "./components/PageRefreshConfirmation";
 import { light as lightTheme, dark as darkTheme } from "./configs/theme";
+import { CWSimulationProvider } from "./hooks/useSimulation";
 import "./styles/styles.scss";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
@@ -19,9 +19,10 @@ function Root() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <PageRefreshConfirmation/>
       <SnackbarNotification/>
-      <App/>
+      <CWSimulationProvider persist="cw-simulate">
+        <App/>
+      </CWSimulationProvider>
     </ThemeProvider>
   )
 }

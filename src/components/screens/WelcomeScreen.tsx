@@ -1,3 +1,4 @@
+import LoadingButton from "@mui/lab/LoadingButton";
 import useTheme from "@mui/material/styles/useTheme";
 import {
   Autocomplete,
@@ -8,6 +9,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
+import { ReactComponent as TerraIcon } from "@public/luna.svg";
+import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
 import React, {
   ComponentType,
   MouseEvent,
@@ -16,18 +20,16 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import axios from "axios";
+import { useSetAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
+import { lastChainIdState } from "../../atoms/simulationPageAtoms";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { Chains, defaults } from "../../configs/constants";
 import useSimulation from "../../hooks/useSimulation";
 import FileUpload, { extractByteCode } from "../upload/FileUpload";
 import FileUploadPaper from "../upload/FileUploadPaper";
-import { ReactComponent as TerraIcon } from "@public/luna.svg";
-import { ReactComponent as InjectiveIcon } from "@public/injective.svg";
 import JunoSvgIcon from "./JunoIcon";
-import { ReactComponent as OsmosisIcon } from "@public/osmosis.svg";
-import axios from "axios";
-import { LoadingButton } from "@mui/lab";
 
 export interface ISampleContract {
   name: string;
@@ -124,6 +126,8 @@ const getSampleContractsForChain = (chain: string) => {
 
 export default function WelcomeScreen() {
   const sim = useSimulation();
+  const setLastChainId = useSetAtom(lastChainIdState);
+  
   const [files, setFiles] = useState<SimulationFileType[]>([]);
   const setNotification = useNotification();
   const navigate = useNavigate();
@@ -173,6 +177,7 @@ export default function WelcomeScreen() {
 
     if (files[0].filename.endsWith(".wasm")) {
       const chainConfig = getChainConfig(chain);
+      setLastChainId(chainConfig.chainId);
       sim.recreate(chainConfig);
       sim.setBalance(chainConfig.sender, chainConfig.funds);
       for (const file of files) {
@@ -184,9 +189,8 @@ export default function WelcomeScreen() {
         );
       }
     } else if (files[0].filename.endsWith(".json")) {
-      // TODO: rehydrate from JSON
-      // const json = files.fileContent as unknown;
-      sim.recreate(defaults.chains.terra);
+      setNotification('Feature coming soon', { severity: 'error' });
+      throw new Error('not yet implemented');
     }
   }, [sim, files, chain]);
 
