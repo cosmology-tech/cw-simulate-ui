@@ -15,7 +15,7 @@ const root = ReactDOM.createRoot(document.getElementById("root")!);
 function Root() {
   const isDark = useAtomValue(darkModeState);
   const theme = isDark ? darkTheme : lightTheme;
-  
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
