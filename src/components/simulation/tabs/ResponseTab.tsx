@@ -19,16 +19,16 @@ export default function ResponseTab({ traceLog }: IResponseTabProps) {
 
   let { response, contractAddress } = traceLog;
 
-  if ("error" in response) {
+  if (response.err) {
     return (
       <>
         <TabHeader>Execution Error</TabHeader>
-        <BlockQuote>{response.error}</BlockQuote>
+        <BlockQuote>{response.val}</BlockQuote>
       </>
     );
   }
 
-  let { messages, events, attributes, data } = response.ok;
+  let { messages, events, attributes, data } = response.val;
   if (!messages.length && !events.length && !attributes.length && !data) {
     return <EmptyTab />;
   }

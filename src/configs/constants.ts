@@ -29,7 +29,7 @@ export const defaults: Defaults = {
     juno: {
       chainId: 'juno-1',
       bech32Prefix: 'juno',
-      sender: 'juno1l6asmnfusqja55359zgl4hnredggxq3vmy474a',
+      sender: 'juno1mkrls242umevjcaz3w6q6kk0z0gxtpa2luh973',
       funds: [
         { denom: 'ujuno', amount: '1000' },
       ]
@@ -38,7 +38,7 @@ export const defaults: Defaults = {
     osmosis: {
       chainId: 'osmosis-1',
       bech32Prefix: 'osmo',
-      sender: 'osmo1l267dmlmprhu4p5aqslf50f495vjqlg340e5ya',
+      sender: 'osmo1mkrls242umevjcaz3w6q6kk0z0gxtpa2p48w0l',
       funds: [
         { denom: 'uosmo', amount: '1000' },
       ]
@@ -47,7 +47,7 @@ export const defaults: Defaults = {
     injective: {
       chainId: 'injective-1',
       bech32Prefix: 'inj',
-      sender: 'inj1akxycslq8cjt0uffw4rjmfm3echchptu52a2da',
+      sender: 'inj1mc3x97tqfmceuhwa0q83jdyjskcatqrlc45dp7',
       funds: [
         { denom: 'uinj', amount: '1000' },
       ]
