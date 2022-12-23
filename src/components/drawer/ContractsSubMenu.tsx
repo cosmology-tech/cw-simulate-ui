@@ -265,21 +265,19 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
       </DialogContent>
 
       <DialogContent>
-        <DialogContentText>
-          <Grid
-            container
-            sx={{ alignItems: "center", justifyContent: "space-between" }}
-          >
-            <Typography component="div"> InstantiateMsg</Typography>
-            <Grid item>
-              <BeautifyJSON
-                onChange={setPayload}
-                disabled={!payload.length}
-                sx={{ color: theme.palette.common.black }}
-              />
-            </Grid>
+        <Grid
+          container
+          sx={{ alignItems: "center", justifyContent: "space-between" }}
+        >
+          <DialogContentText>InstantiateMsg</DialogContentText>
+          <Grid item>
+            <BeautifyJSON
+              onChange={setPayload}
+              disabled={!payload.length}
+              sx={{ color: theme.palette.common.black }}
+            />
           </Grid>
-        </DialogContentText>
+        </Grid>
         <T1Container sx={{ width: 400, height: 220 }}>
           <JsonCodeMirrorEditor
             jsonValue={payload}
