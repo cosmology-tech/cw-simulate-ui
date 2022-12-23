@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { stringifyFunds } from "../../utils/typeUtils";
 import Accounts from "../Accounts";
 import Funds from "../Funds";
+import useMuiTheme from "@mui/material/styles/useTheme";
 
 interface IProps {
   account: string;
@@ -16,20 +17,16 @@ interface IProps {
   onValidate?(valid: boolean): void;
 }
 
-const AccountPopover = ({
-  account,
-  funds,
-  onChange,
-  onValidate,
-}: IProps) => {
+const AccountPopover = ({ account, funds, onChange, onValidate }: IProps) => {
+  const theme = useMuiTheme();
   const [anchorEl, setAnchorEl] =
     React.useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
-  
+
   const onChangeAccount = (account: string, balance: Coin[]) => {
     onChange?.(account, funds);
   };
-  
+
   const onChangeFunds = (funds: Coin[]) => {
     onChange?.(account, funds);
   };
@@ -37,7 +34,9 @@ const AccountPopover = ({
   return (
     <>
       <IconButton ref={setAnchorEl} onClick={() => setOpen(true)}>
-        <AccountBalanceWalletOutlinedIcon />
+        <AccountBalanceWalletOutlinedIcon
+          sx={{ color: theme.palette.common.white }}
+        />
       </IconButton>
       <Popover
         open={open}

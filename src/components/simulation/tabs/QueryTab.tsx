@@ -14,6 +14,7 @@ import { Result } from "ts-results/result";
 import { BeautifyJSON, EmptyTab, TabHeader } from "./Common";
 import BlockQuote from "../../BlockQuote";
 import CopyToClipBoard from "../CopyToClipBoard";
+import useMuiTheme from "@mui/material/styles/useTheme";
 
 interface IProps {
   contractAddress: string;
@@ -70,6 +71,7 @@ interface IQuery {
 }
 
 function Query({ contractAddress, onHandleQuery }: IQuery) {
+  const theme = useMuiTheme();
   const sim = useSimulation();
   const setNotification = useNotification();
   const activeStep = useAtomValue(activeStepState);
@@ -108,6 +110,7 @@ function Query({ contractAddress, onHandleQuery }: IQuery) {
         <BeautifyJSON
           onChange={setPayload}
           disabled={!payload.length || !isValid}
+          sx={{ color: theme.palette.common.white }}
         />
       }
     >
