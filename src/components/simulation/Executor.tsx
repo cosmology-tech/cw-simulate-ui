@@ -11,6 +11,7 @@ import { BeautifyJSON } from "./tabs/Common";
 import CollapsibleWidget from "../CollapsibleWidget";
 import AccountPopover from "./AccountPopover";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
+import useMuiTheme from "@mui/material/styles/useTheme";
 
 interface IProps {
   contractAddress: string;
@@ -26,14 +27,18 @@ export const getFormattedStep = (step: string) => {
 
 export default function Executor({ contractAddress }: IProps) {
   const sim = useSimulation();
+  const theme = useMuiTheme();
   const setNotification = useNotification();
   const accounts = useAccounts(sim);
-  const defaultAccount = Object.keys(accounts)[0] || '';
-  
+  const defaultAccount = Object.keys(accounts)[0] || "";
+
   const [payload, setPayload] = useState("");
   const [isJsonValid, setIsJsonValid] = useState(true);
   const [isAccountValid, setIsAccountValid] = useState(!!defaultAccount);
-  const [[account, funds], setAccount] = useState<[string, Coin[]]>([defaultAccount, []]);
+  const [[account, funds], setAccount] = useState<[string, Coin[]]>([
+    defaultAccount,
+    [],
+  ]);
   const sender = account;
 
   const activeStep = useAtomValue(activeStepState);
@@ -68,6 +73,7 @@ export default function Executor({ contractAddress }: IProps) {
           <BeautifyJSON
             onChange={setPayload}
             disabled={!payload.length || !isJsonValid}
+            sx={{ color: theme.palette.common.white }}
           />
           <AccountPopover
             account={account}

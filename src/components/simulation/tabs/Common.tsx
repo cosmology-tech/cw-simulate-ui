@@ -2,13 +2,12 @@ import BrushOutlinedIcon from "@mui/icons-material/BrushOutlined";
 import SegmentIcon from "@mui/icons-material/Segment";
 import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
-import Tooltip from "@mui/material/Tooltip";
 import Typography, { TypographyProps } from "@mui/material/Typography";
 import styled from "@mui/material/styles/styled";
 import { TraceLog } from "@terran-one/cw-simulate";
 import beautify from "json-beautify-fix";
 import React, { PropsWithChildren } from "react";
-import useMuiTheme from "@mui/material/styles/useTheme";
+import { SxProps } from "@mui/material";
 
 export interface IInspectorTabProps {
   traceLog: TraceLog | undefined;
@@ -47,11 +46,12 @@ export const EmptyTab = styled(
 export const BeautifyJSON = ({
   onChange,
   disabled,
+  sx,
 }: {
   onChange: any;
   disabled: boolean;
+  sx: SxProps;
 }) => {
-  const theme = useMuiTheme();
   return (
     <IconButton
       aria-label="beautify"
@@ -64,12 +64,8 @@ export const BeautifyJSON = ({
       disabled={disabled}
       sx={{ ml: 1 }}
     >
-      <SegmentIcon sx={{ color: theme.palette.common.white }} />
-      <Typography
-        variant="body2"
-        color={theme.palette.common.white}
-        sx={{ ml: 1 }}
-      >
+      <SegmentIcon sx={sx} />
+      <Typography variant="body2" sx={{ ml: 1, ...sx }}>
         Tidy
       </Typography>
     </IconButton>

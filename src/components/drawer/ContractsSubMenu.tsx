@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   ListItemIcon,
   ListItemText,
   MenuItem,
@@ -32,6 +33,8 @@ import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
 import useDebounce from "../../hooks/useDebounce";
 import Accounts from "../Accounts";
+import { BeautifyJSON } from "../simulation/tabs/Common";
+import useMuiTheme from "@mui/material/styles/useTheme";
 
 export interface IContractsSubMenuProps {}
 
@@ -182,13 +185,13 @@ interface IInstantiateDialogProps {
 
 function InstantiateDialog(props: IInstantiateDialogProps) {
   const { codeId, open, onClose } = props;
-
+  const theme = useMuiTheme();
   const sim = useSimulation();
   const navigate = useNavigate();
   const setNotification = useNotification();
   const code = useCode(sim, codeId)!;
   const accounts = useAccounts(sim);
-  const defaultAccount = Object.keys(accounts)[0] || '';
+  const defaultAccount = Object.keys(accounts)[0] || "";
 
   const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
 
@@ -262,10 +265,22 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
       </DialogContent>
 
       <DialogContent>
-        <DialogContentText>InstantiateMsg</DialogContentText>
+        <Grid
+          container
+          sx={{ alignItems: "center", justifyContent: "space-between" }}
+        >
+          <DialogContentText>InstantiateMsg</DialogContentText>
+          <Grid item>
+            <BeautifyJSON
+              onChange={setPayload}
+              disabled={!payload.length}
+              sx={{ color: theme.palette.common.black }}
+            />
+          </Grid>
+        </Grid>
         <T1Container sx={{ width: 400, height: 220 }}>
           <JsonCodeMirrorEditor
-            jsonValue={""}
+            jsonValue={payload}
             placeholder={placeholder}
             onChange={setPayload}
           />
