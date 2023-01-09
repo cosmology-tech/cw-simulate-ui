@@ -192,7 +192,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
   const code = useCode(sim, codeId)!;
   const accounts = useAccounts(sim);
   const defaultAccount = Object.keys(accounts)[0] || "";
-
+  const [isJsonValid, setIsJsonValid] = useState(true);
   const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
 
   const [funds, setFunds] = useState<Coin[]>([]);
@@ -273,7 +273,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
           <Grid item>
             <BeautifyJSON
               onChange={setPayload}
-              disabled={!payload.length}
+              disabled={!payload.length || !isJsonValid}
               sx={{ color: theme.palette.common.black }}
             />
           </Grid>
@@ -283,6 +283,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
             jsonValue={payload}
             placeholder={placeholder}
             onChange={setPayload}
+            onValidate={setIsJsonValid}
           />
         </T1Container>
       </DialogContent>
