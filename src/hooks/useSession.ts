@@ -39,7 +39,8 @@ export class Session {
     this._idb?.close();
   }
   
-  save(sim: CWSimulationBridge) {
+  save(sim: CWSimulationBridge, lastChainId: string) {
+    localStorage['lastChainId'] = lastChainId;
     return this.tx('chains', 'readwrite', async tx => {
       const chainsStore = tx.objectStore('chains');
       await wrapRequest(chainsStore.put(sim.save(), sim.chainId));

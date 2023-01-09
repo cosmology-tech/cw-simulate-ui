@@ -39,14 +39,14 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
     setNotification('Saving session to IndexedDB, this might take a while...', { severity: 'info' });
     setTimeout(async () => {
       try {
-        session?.save(sim);
+        session?.save(sim, lastChainId);
         setNotification('Session saved to IndexedDB.', { severity: 'success' });
       } catch (err: any) {
         console.error('Failed to save session:', err);
         setNotification(`Failed to save session to IndexedDB: ${err.message}`);
       }
     }, 500);
-  }, [sim, session]);
+  }, [lastChainId, sim, session]);
   
   return (
     <AppBar position="static">

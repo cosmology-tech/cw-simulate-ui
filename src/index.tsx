@@ -20,7 +20,7 @@ function Root() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <SnackbarNotification/>
-      <CWSimulationProvider persist="cw-simulate">
+      <CWSimulationProvider>
         <App/>
       </CWSimulationProvider>
     </ThemeProvider>
