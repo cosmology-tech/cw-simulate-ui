@@ -45,12 +45,13 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
     await session?.clear(sim.chainId);
     sim.recreate(defaults.chains.terra);
     setLastChainId('');
+    delete localStorage['lastChainId'];
     
     // UI cleanup
     setOpenResetSimulationDialog(false);
     navigate('/');
     
-    setNotification('Session successfully reset. You will need a new account.');
+    setNotification('Session has been reset.');
   };
   setStepTrace(undefined);
 

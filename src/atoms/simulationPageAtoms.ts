@@ -17,7 +17,7 @@ export interface IRequest {
   executeMsg: any;
 }
 
-export const lastChainIdState = atomWithStorage('lastChainId', '');
+export const lastChainIdState = atom('');
 export const blockState = atom<JSON | undefined>(undefined);
 export const compareStates = atom<{ state1: object | undefined; state2: object | undefined }>({
   state1: undefined,
