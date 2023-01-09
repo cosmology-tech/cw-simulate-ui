@@ -48,7 +48,7 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
     
     // UI cleanup
     setOpenResetSimulationDialog(false);
-    navigate('/accounts');
+    navigate('/');
     
     setNotification('Session successfully reset. You will need a new account.');
   };
