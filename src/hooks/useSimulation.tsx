@@ -1,9 +1,5 @@
-import { useAtomValue } from "jotai";
-import React, { ReactNode, useContext, useEffect, useRef } from "react";
-import { lastChainIdState } from "../atoms/simulationPageAtoms";
-import { useNotification } from "../atoms/snackbarNotificationState";
+import React, { ReactNode, useContext, useRef } from "react";
 import CWSimulationBridge from "../CWSimulationBridge";
-import { BlockedError, useSession } from "./useSession";
 
 const SimulationContext = React.createContext(new CWSimulationBridge());
 
