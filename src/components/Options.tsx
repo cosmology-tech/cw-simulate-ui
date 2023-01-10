@@ -45,11 +45,3 @@ export default function Options({
     </>
   );
 }
-
-export interface IOptionsItemProps {
-  children?: ReactNode;
-}
-
-export function OptionsItem({ children }: IOptionsProps) {
-  
-}

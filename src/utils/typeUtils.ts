@@ -28,6 +28,10 @@ type JSONifiable = {
 
 export type Theme = MuiTheme;
 export type SxProps = MuiSxProps<Theme>;
+export type StyleProps = {
+  sx?: SxProps;
+  className?: string;
+}
 
 type GridSizeName = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
