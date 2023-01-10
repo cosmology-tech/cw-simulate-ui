@@ -11,7 +11,7 @@ import { useAtomValue } from "jotai";
 import React, { useCallback } from "react";
 import { lastChainIdState } from "../../atoms/simulationPageAtoms";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { useSession } from "../../hooks/useSession";
+import { isValidSession, useSession } from "../../hooks/useSession";
 import useSimulation from "../../hooks/useSimulation";
 import Logo from "./Logo";
 import DarkModeSwitch from "./DarkModeSwitch";
@@ -36,10 +36,15 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
   const setNotification = useNotification();
   
   const saveSession = useCallback(() => {
+    if (!isValidSession(session)) {
+      setNotification('No IndexedDB session. Cannot persist state.', { severity: 'error' });
+      return;
+    }
+    
     setNotification('Saving session to IndexedDB, this might take a while...', { severity: 'info' });
     setTimeout(async () => {
       try {
-        session?.save(sim, lastChainId);
+        session.save(sim, lastChainId);
         setNotification('Session saved to IndexedDB.', { severity: 'success' });
       } catch (err: any) {
         console.error('Failed to save session:', err);
@@ -47,6 +52,8 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
       }
     }, 500);
   }, [lastChainId, sim, session]);
+  
+  const hasSession = session !== 'pending' && !('error' in session);
   
   return (
     <AppBar position="static">
@@ -58,7 +65,7 @@ const T1AppBar = React.memo((props: IT1AppBarProps) => {
           <Grid container alignItems="center">
             <DarkModeSwitch iconColors="white" />
             {lastChainId && (
-              <IconButton onClick={saveSession} disabled={!session || !lastChainId}>
+              <IconButton onClick={saveSession} disabled={!hasSession || !lastChainId}>
                 <SaveIcon sx={{color: '#fff'}} />
               </IconButton>
             )}

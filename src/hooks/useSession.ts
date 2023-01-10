@@ -4,6 +4,8 @@ import { makeSimpleError } from "../utils/typeUtils";
 
 const IDB_VERSION = 1;
 
+export type SessionState = 'pending' | { error: any } | Session;
+
 /** CWSimulateUI-specific IDB Session Helper */
 export class Session {
   private static _instance: Session | undefined;
@@ -96,9 +98,11 @@ export class Session {
 }
 
 export const useSession = () => {
-  const [session, setSession] = useState<Session | undefined>();
+  const [session, setSession] = useState<SessionState>('pending');
   useEffect(() => {
-    Session.instance().then(setSession);
+    Session.instance()
+      .then(setSession)
+      .catch(error => {setSession({error})});
   }, []);
   return session;
 }
@@ -123,3 +127,5 @@ function wrapRequest<T = any>(req: IDBRequest<T>): Promise<T> {
     }
   });
 }
+
+export const isValidSession = (session: SessionState): session is Session => !(session === 'pending' || 'error' in session);

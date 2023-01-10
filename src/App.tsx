@@ -27,16 +27,32 @@ function App() {
   const refInitial = useRef(true);
   const [isLoading, setLoading] = useState(true);
   
+  const finalize = () => {
+    refInitial.current = false;
+    setLoading(false);
+  }
+  
   useEffect(() => {
     // only attempt to restore an old session once
-    if (session && refInitial.current) {
+    if (session !== 'pending' && refInitial.current) {
+      if ('error' in session) {
+        setNotification(
+          'Failed to open IndexedDB. Session persistence will not be available.',
+          {
+            severity: 'warning',
+            autoHideDuration: 10000,
+          }
+        );
+        finalize();
+        return;
+      }
+      
       const lastChainId = localStorage['lastChainId'];
       
       // only attempt to restore an old session if we have a lastChainId stored upon loadup
       if (!lastChainId) {
         navigate('/');
-        refInitial.current = false;
-        setLoading(false);
+        finalize();
         return;
       }
       
@@ -51,8 +67,7 @@ function App() {
           loc.pathname !== '/' && navigate('/');
         })
         .finally(() => {
-          refInitial.current = false;
-          setLoading(false);
+          finalize();
         })
     }
   }, [session]);

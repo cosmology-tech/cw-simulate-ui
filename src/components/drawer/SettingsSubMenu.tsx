@@ -16,7 +16,7 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { defaults } from "../../configs/constants";
 import { useNavigate } from "react-router-dom";
 import { lastChainIdState, stepTraceState } from "../../atoms/simulationPageAtoms";
-import { useSession } from "../../hooks/useSession";
+import { isValidSession, useSession } from "../../hooks/useSession";
 import useSimulation from "../../hooks/useSimulation";
 
 export interface ISettingsSubMenuProps {
@@ -42,7 +42,7 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
     setNotification('Deleting session...', { severity: 'info' });
     
     // session & state cleanup
-    await session?.clear(sim.chainId);
+    isValidSession(session) && await session.clear(sim.chainId);
     sim.recreate(defaults.chains.terra);
     setLastChainId('');
     delete localStorage['lastChainId'];
