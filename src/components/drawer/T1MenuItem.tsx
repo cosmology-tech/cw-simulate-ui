@@ -62,6 +62,9 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
       setOptionsOpen(false);
     },
   }), []);
+  
+  const opts = useMemo(() => typeof options === 'function' ? options(api) : options, [options]);
+  const optsX = useMemo(() => typeof optionsExtras === 'function' ? optionsExtras(api) : optionsExtras, [optionsExtras]);
 
   return (
     <ListItem
@@ -90,9 +93,9 @@ export default function T1MenuItem(props: IT1MenuItemProps) {
               onOpen={() => setOptionsOpen(true)}
               onClose={() => setOptionsOpen(false)}
             >
-              {typeof options === 'function' ? options(api) : options}
+              {opts}
             </Options>
-            {typeof optionsExtras === 'function' ? optionsExtras(api) : optionsExtras}
+            {optsX}
           </Box>
         )
       }

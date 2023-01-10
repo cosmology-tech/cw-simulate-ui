@@ -18,7 +18,7 @@ import {
 } from "@mui/material";
 import type { CodeInfo, Coin } from "@terran-one/cw-simulate";
 import { useSetAtom } from "jotai";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { drawerSubMenuState } from "../../atoms/uiState";
@@ -35,6 +35,9 @@ import useDebounce from "../../hooks/useDebounce";
 import Accounts from "../Accounts";
 import { BeautifyJSON } from "../simulation/tabs/Common";
 import useMuiTheme from "@mui/material/styles/useTheme";
+import DialogButton from "../DialogButton";
+import ConfirmDialog, { ConfirmDeleteDialog, ConfirmDialogProps } from "../dialogs/ConfirmDialog";
+import T1Dialog, { T1DialogAPI } from "../dialogs/T1Dialog";
 
 export interface IContractsSubMenuProps {}
 
@@ -86,13 +89,16 @@ interface ICodeMenuItemProps {
 
 function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
   const sim = useSimulation();
+  const setNotification = useNotification();
   const code = useCode(sim, codeId)!;
-
-  const [openInstantiate, setOpenInstantiate] = useState(false);
-  const [openDelete, setOpenDelete] = useState(false);
 
   const download = useCallback(() => {
     downloadWasm(code.wasmCode, code.name ?? "<unnamed code>");
+  }, [code]);
+  
+  const handleDelete = useCallback(() => {
+    sim.hideCode(code.codeId);
+    setNotification('Successfully deleted contract');
   }, [code]);
 
   return (
@@ -100,91 +106,59 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
       label={`${code.codeId}: ${code.name}`}
       textEllipsis
       options={({ close }) => [
-        <MenuItem key="instantiate" onClick={() => setOpenInstantiate(true)}>
+        <DialogButton
+          key="instantiate"
+          Component={MenuItem}
+          DialogComponent={props => (
+            <InstantiateDialog {...props} codeId={codeId} />
+          )}
+          onClose={() => {close()}}
+        >
           <ListItemIcon>
             <RocketLaunchIcon />
           </ListItemIcon>
           <ListItemText>Instantiate</ListItemText>
-        </MenuItem>,
+        </DialogButton>,
         <MenuItem key="download" onClick={download}>
           <ListItemIcon>
             <DownloadIcon />
           </ListItemIcon>
           <ListItemText>Download Source</ListItemText>
         </MenuItem>,
-        <MenuItem key="delete" onClick={() => setOpenDelete(true)}>
+        <DialogButton
+          key="delete"
+          Component={MenuItem}
+          DialogComponent={props => (
+            <ConfirmDeleteDialog
+              {...props}
+              noun='contract'
+              onConfirm={handleDelete}
+            />)
+          }
+          onClose={() => {
+            close();
+          }}
+        >
           <ListItemIcon>
             <DeleteForeverIcon />
           </ListItemIcon>
           <ListItemText>Delete</ListItemText>
-        </MenuItem>,
+        </DialogButton>,
       ]}
-      optionsExtras={({ close }) => (
-        <>
-          <InstantiateDialog
-            codeId={codeId}
-            open={openInstantiate}
-            onClose={() => {
-              setOpenInstantiate(false);
-              close();
-            }}
-          />
-          <DeleteDialog
-            codeId={codeId}
-            open={openDelete}
-            onClose={() => {
-              setOpenDelete(false);
-              close();
-            }}
-          />
-        </>
-      )}
     />
-  );
-}
-
-interface IDeleteDialogProps {
-  codeId: number;
-  open: boolean;
-  onClose: () => void;
-}
-
-function DeleteDialog(props: IDeleteDialogProps) {
-  const { codeId, open, onClose } = props;
-  const sim = useSimulation();
-  const setNotification = useNotification();
-
-  const handleDeleteContract = () => {
-    sim.hideCode(codeId);
-    setNotification("Successfully deleted contract");
-    onClose?.();
-  };
-
-  return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Delete contract</DialogTitle>
-      <DialogContent>
-        <DialogContentText>
-          Are you sure you want to delete this contract?
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleDeleteContract}>Delete</Button>
-      </DialogActions>
-    </Dialog>
   );
 }
 
 interface IInstantiateDialogProps {
   codeId: number;
-  open: boolean;
-
+  open?: boolean;
   onClose(): void;
 }
 
-function InstantiateDialog(props: IInstantiateDialogProps) {
-  const { codeId, open, onClose } = props;
+function InstantiateDialog({
+  codeId,
+  ...props
+}: IInstantiateDialogProps) {
   const theme = useMuiTheme();
   const sim = useSimulation();
   const navigate = useNavigate();
@@ -215,7 +189,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
     []
   );
 
-  const handleInstantiate = useCallback(async () => {
+  const handleInstantiate = async ({ close }: T1DialogAPI) => {
     const instantiateMsg =
       payload.length === 0 ? placeholder : JSON.parse(payload);
 
@@ -233,20 +207,51 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
         instancelabel
       );
       navigate(`/instances/${contract.address}`);
-      onClose();
+      close(true);
       setDrawerSubMenu(undefined);
-    } catch (e: any) {
+    }
+    catch (e: any) {
       setNotification(`Unable to instantiate with error: ${e.message}`, {
         severity: "error",
       });
       console.error(e);
     }
-  }, [account, funds, payload, onClose]);
+  };
+  
+  const ConfirmCloseDialog = useCallback((props: ConfirmDialogProps) => (
+    <ConfirmDialog
+      {...props}
+      message='Are you sure you want to cancel contract instantiation?'
+    />
+  ), []);
 
   return (
-    <Dialog open={open} onClose={() => onClose()}>
-      <DialogTitle>Instantiate Contract</DialogTitle>
-      <DialogContent sx={{ pt: "5px !important" }}>
+    <T1Dialog
+      {...props}
+      confirmClose
+      title='Instantiate Contract'
+      actions={api => (
+        <>
+          <Button variant="outlined" onClick={() => api.close(false)}>
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            disabled={!payload || !isFundsValid}
+            onClick={() => handleInstantiate(api)}
+          >
+            Instantiate
+          </Button>
+        </>
+      )}
+      ConfirmCloseDialogComponent={ConfirmCloseDialog}
+      sx={{
+        '.MuiDialogTitle-root+.MuiDialogContent-root': {
+          pt: 1,
+        },
+      }}
+    >
+      <DialogContent>
         <Accounts defaultAccount={defaultAccount} onChange={setAccount} />
         <Funds
           TextComponent={DialogContentText}
@@ -263,7 +268,7 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
           sx={{ mt: 2 }}
         />
       </DialogContent>
-
+      
       <DialogContent>
         <Grid
           container
@@ -287,18 +292,6 @@ function InstantiateDialog(props: IInstantiateDialogProps) {
           />
         </T1Container>
       </DialogContent>
-      <DialogActions>
-        <Button variant="outlined" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button
-          variant="contained"
-          disabled={!payload || !isFundsValid}
-          onClick={handleInstantiate}
-        >
-          Instantiate
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </T1Dialog>
   );
 }
