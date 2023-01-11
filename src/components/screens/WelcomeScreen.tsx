@@ -100,12 +100,6 @@ const SAMPLE_CONTRACTS: ISampleContract[] = [
     keys: ["cw4_group.wasm"],
   },
   {
-    name: "cw20_ics20",
-    id: "cw20_ics20",
-    chain: ["terra", "juno"],
-    keys: ["cw20_ics20.wasm"],
-  },
-  {
     name: "cw20_base",
     id: "cw20_base",
     chain: ["terra", "juno"],
@@ -127,7 +121,7 @@ const getSampleContractsForChain = (chain: string) => {
 export default function WelcomeScreen() {
   const sim = useSimulation();
   const setLastChainId = useSetAtom(lastChainIdState);
-  
+
   const [files, setFiles] = useState<SimulationFileType[]>([]);
   const setNotification = useNotification();
   const navigate = useNavigate();
@@ -189,8 +183,8 @@ export default function WelcomeScreen() {
         );
       }
     } else if (files[0].filename.endsWith(".json")) {
-      setNotification('Feature coming soon', { severity: 'error' });
-      throw new Error('not yet implemented');
+      setNotification("Feature coming soon", { severity: "error" });
+      throw new Error("not yet implemented");
     }
   }, [sim, files, chain]);
 
