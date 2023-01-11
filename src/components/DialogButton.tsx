@@ -1,33 +1,38 @@
 import { cx } from '@emotion/css';
-import Button from '@mui/material/Button';
+import Button, { ButtonProps } from '@mui/material/Button';
 import Portal from '@mui/material/Portal';
 import { ComponentType, MouseEvent, ReactNode, useCallback, useState } from 'react';
 import { StyleProps } from 'src/utils/typeUtils';
 
-export type DialogButtonProps = StyleProps & {
+interface ComponentPropsMin {
   children?: ReactNode;
-  Component?: ComponentType<{
-    children?: ReactNode;
-    onClick?(e: MouseEvent): void;
-  }>;
+  onClick?(e: MouseEvent): void;
+}
+
+export type DialogButtonProps<P extends ComponentPropsMin> = StyleProps & {
+  children?: ReactNode;
+  Component?: ComponentType<P>;
   DialogComponent: ComponentType<{
     open?: boolean;
     onClose(): void;
   }>;
+  ComponentProps?: Partial<Omit<P, 'open' | 'onClose'>>;
   onClick?(e: MouseEvent): void;
   onClose?(): void;
 }
 
 /** A specialized button for showing dialogs upon click. */
-export default function DialogButton({
+export default function DialogButton<P extends ComponentPropsMin = ButtonProps>({
   children,
-  Component = Button,
   DialogComponent,
+  ComponentProps,
   onClick,
   onClose,
   sx,
   className,
-}: DialogButtonProps) {
+  ...remain
+}: DialogButtonProps<P>) {
+  const Component: any = remain.Component ?? Button;
   const [open, setOpen] = useState(false);
   
   const close = useCallback(() => {
@@ -43,11 +48,9 @@ export default function DialogButton({
   return (
     <>
       <Component
+        {...ComponentProps}
         onClick={handleClick}
-        // ignore these two props, they're optional
-        //@ts-ignore
         sx={sx}
-        //@ts-ignore
         className={cx('T1DialogButton', className)}
       >
         {children}

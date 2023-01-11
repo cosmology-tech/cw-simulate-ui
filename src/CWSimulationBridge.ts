@@ -30,9 +30,7 @@ type WatcherState<T> = {
 export type WatcherComparator<T = unknown> = (last: T, curr: T) => boolean;
 export type WatcherCommitter<T = unknown> = (raw: T) => T;
 
-export type AccountEx = {
-  label?: string;
-}
+export type AccountEx = ReturnType<CWSimulationBridge['getAccounts']>[string];
 
 export type CodeInfoEx = CodeInfo & {
   name?: string;
@@ -44,27 +42,40 @@ export type ContractInfoEx = ContractInfo & {
   hidden?: boolean;
 }
 
+type UIData = {
+  accounts: {
+    [address: string]: {
+      label?: string;
+    };
+  };
+}
+
 export default class CWSimulationBridge {
   private app = new CWSimulateApp(defaults.chains.terra);
   private watchers = new Set<Watcher<any>>();
   private updatePending = false;
 
+  private _store: TransactionalLens<UIData> | undefined;
   private _codes: TransactionalLens<Record<number, CodeInfoEx>> | undefined;
   private _contracts: TransactionalLens<Record<string, ContractInfoEx>> | undefined;
   
   constructor() {
-    this._createLenses();
+    this._createLenses(true);
   }
 
   /** Recreate the simulation instance, clearing all state. */
   recreate(options: CWSimulateAppOptions) {
     this.app = new CWSimulateApp(options);
-    this._createLenses();
+    this._createLenses(false);
     this.sync();
     return this;
   }
   
-  protected _createLenses() {
+  protected _createLenses(init: boolean) {
+    this._store = this.app.store.db.lens<UIData>('cwsimui');
+    init && this._store.initialize({
+      accounts: {},
+    });
     this._codes = this.app.store.db.lens<Record<number, CodeInfoEx>>('wasm', 'codes');
     this._contracts = this.app.store.db.lens<Record<string, ContractInfoEx>>('wasm', 'contracts');
   }
@@ -80,7 +91,20 @@ export default class CWSimulationBridge {
 
   /** Get all accounts from the simulation. */
   getAccounts() {
-    return this.app.bank.store.getObject('balances');
+    const balances = this.app.bank.getBalances();
+    return Object.fromEntries(
+      Object.entries(balances).map(([address, funds]) => {
+        const meta = this._store!.getObject('accounts', address) ?? {};
+        return [
+          address,
+          {
+            address,
+            ...meta,
+            funds,
+          }
+        ];
+      }),
+    )
   }
 
   /** Get a specific contract code from the simulation, augmented by given `codeId` for convenience. */
@@ -171,6 +195,20 @@ export default class CWSimulationBridge {
     this.sync();
     return this;
   }
+  
+  /** Set the new label of the named `account`. If `label?.trim()` is falsy, the label is deleted. */
+  setAccountLabel(account: string, label: string | undefined) {
+    this._store!.tx((setter, deleter) => {
+      if (!label?.trim()) {
+        deleter('accounts', account, 'label');
+      } else {
+        setter('accounts', account, 'label')(label);
+      }
+      return Ok(undefined);
+    });
+    this.sync();
+    return this;
+  }
 
   /** Set the new account balance of given address, overriding any previous balance, and re-sync bridge. */
   setBalance(account: string, balance: Coin[]) {
@@ -242,7 +280,7 @@ export default class CWSimulationBridge {
   
   async load(bytes: Uint8Array) {
     this.app = await persist.load(bytes);
-    this._createLenses();
+    this._createLenses(false);
     this.sync();
     return this;
   }
@@ -336,17 +374,22 @@ function useBridgeReducer<T>(app: CWSimulateApp, params: Omit<WatcherState<T>['p
   );
 }
 
-export function useAccounts(bridge: CWSimulationBridge) {
+/** Retrieve a list of accounts in the system, optionally filtered for
+ * EOA (Externally Owned Accounts, aka user wallets) only.
+ */
+export function useAccounts(bridge: CWSimulationBridge, onlyEOA = false) {
   return bridge.useWatcher(
     app => {
-      const balances = app.bank.store.getObject('balances');
+      const accounts = bridge.getAccounts();
       const contractAddresses = app.wasm.store.get('contracts').keys();
       for (const contractAddress of contractAddresses) {
-        delete balances[contractAddress];
+        delete accounts[contractAddress];
       }
-      return balances;
+      return accounts;
     },
-    compareShallowObject,
+    compareManyAccounts,
+    undefined,
+    [onlyEOA],
   );
 }
 
@@ -438,18 +481,32 @@ function compareCodes(lhs: CodeInfoEx | undefined, rhs: CodeInfoEx | undefined):
   return true;
 }
 
-function compareManyCodes(lhs: Record<number, CodeInfoEx>, rhs: Record<number, CodeInfoEx>): boolean {
-  const lkeys = new Set(Object.keys(lhs)) as any as Set<number>;
-  const rkeys = new Set(Object.keys(rhs)) as any as Set<number>;
+const compareManyCodes = (lhs: Record<number, CodeInfoEx>, rhs: Record<number, CodeInfoEx>) =>
+  compareMappings(lhs, rhs, compareCodes);
+
+const compareManyAccounts = (lhs: Record<string, AccountEx>, rhs: Record<string, AccountEx>) =>
+  compareMappings(lhs, rhs, compareShallowObject);
+
+/** Compare the properties of two objects, ensuring both objects have the same set of properties. Does not compare values. */
+export function compareProperties(lhs: object, rhs: object) {
+  if (lhs === rhs) return true;
+  if (!lhs || !rhs) return false;
+  
+  const lkeys = new Set(Object.keys(lhs));
+  const rkeys = new Set(Object.keys(rhs));
   if (lkeys.size !== rkeys.size) return false;
   
   for (const lkey of lkeys)
     if (!rkeys.has(lkey)) return false;
   for (const rkey of rkeys)
     if (!lkeys.has(rkey)) return false;
-  
-  for (const key of lkeys) {
-    if (!compareCodes(lhs[key], rhs[key]))
+  return true;
+}
+
+export function compareMappings<T>(lhs: Record<PropertyKey, T>, rhs: Record<PropertyKey, T>, predicate: (lhs: T, rhs: T) => boolean) {
+  if (!compareProperties(lhs, rhs)) return false;
+  for (const key in lhs) {
+    if (!predicate(lhs[key], rhs[key]))
       return false;
   }
   return true;

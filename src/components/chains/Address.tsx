@@ -16,13 +16,14 @@ type PickedProps = Pick<TypographyProps,
 
 export type AddressProps = PickedProps & {
   address: string;
+  label?: string;
   gutterBottom?: boolean;
   long?: boolean;
   className?: string;
   sx?: SxProps;
 }
 
-export default function Address({ address, gutterBottom, long, className, sx, ...props }: AddressProps) {
+export default function Address({ address, label, gutterBottom, long, className, sx, ...props }: AddressProps) {
   const sim = useSimulation();
   
   const title = (
@@ -49,7 +50,7 @@ export default function Address({ address, gutterBottom, long, className, sx, ..
           {...props}
           className="T1Address-address"
         >
-          {long ? address : sim.shortenAddress(address)}
+          {label ?? (long ? address : sim.shortenAddress(address))}
         </Typography>
         <CopyToClipBoard data={address} title="Copy address" />
       </Box>
