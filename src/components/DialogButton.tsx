@@ -56,10 +56,12 @@ export default function DialogButton<P extends ComponentPropsMin = ButtonProps>(
         {children}
       </Component>
       <Portal>
-        <DialogComponent
-          open={open}
-          onClose={close}
-        />
+        <div aria-hidden onKeyDown={e => {e.stopPropagation()}} onKeyUp={e => {e.stopPropagation()}}>
+          <DialogComponent
+            open={open}
+            onClose={close}
+          />
+        </div>
       </Portal>
     </>
   )
