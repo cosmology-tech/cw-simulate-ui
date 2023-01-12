@@ -1,5 +1,7 @@
+import { cx } from "@emotion/css";
 import { useSetAtom } from "jotai";
-import SubMenuHeader from "./SubMenuHeader";
+import React, { ChangeEvent, ReactNode, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -11,13 +13,14 @@ import {
   TextField,
   Typography
 } from "@mui/material";
-import React, { ChangeEvent, ReactNode, useState } from "react";
+import { lastChainIdState, stepTraceState } from "../../atoms/simulationPageAtoms";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { defaults } from "../../configs/constants";
-import { useNavigate } from "react-router-dom";
-import { lastChainIdState, stepTraceState } from "../../atoms/simulationPageAtoms";
 import { isValidSession, useSession } from "../../hooks/useSession";
 import useSimulation from "../../hooks/useSimulation";
+import type { StyleProps } from "../../utils/typeUtils";
+import { joinSx } from "../../utils/reactUtils";
+import SubMenuHeader from "./SubMenuHeader";
 
 export interface ISettingsSubMenuProps {
 }
@@ -33,7 +36,10 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
   const navigate = useNavigate();
   const session = useSession();
   
-  const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({} as IChainConfigFormValues);
+  const [chainConfigFormValues, setChainConfigFormValues] = useState<IChainConfigFormValues>({
+    chainId: sim.chainId,
+    bech32Prefix: sim.bech32Prefix,
+  });
   const [openResetSimulationDialog, setOpenResetSimulationDialog] = useState(false);
   const setStepTrace = useSetAtom(stepTraceState);
   const setLastChainId = useSetAtom(lastChainIdState);
@@ -57,6 +63,11 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
 
   const handleSaveConfig = () => {
     const { chainId, bech32Prefix } = chainConfigFormValues;
+    if (!chainId.trim() || !bech32Prefix.trim()) {
+      setNotification("Both Chain ID & Bech32 Prefix must be set", { severity: "error" });
+      return;
+    }
+    
     try {
       sim.updateChainConfig(chainId, bech32Prefix);
       setNotification("Chain config saved successfully");
@@ -77,7 +88,6 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
       <SubMenuHeader title="Settings"/>
       <SettingSubMenu title="Chain Configuration">
         <TextField
-          sx={{width: '90%'}}
           helperText="Chain ID"
           id="chainId"
           defaultValue={sim.chainId}
@@ -86,7 +96,6 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
           onChange={handleOnChangeChainConfig}
         />
         <TextField
-          sx={{width: '90%'}}
           helperText="Bech32 Prefix"
           id="bech32Prefix"
           variant="standard"
@@ -94,11 +103,16 @@ export default function SettingsSubMenu(props: ISettingsSubMenuProps) {
           defaultValue={sim.bech32Prefix}
           onChange={handleOnChangeChainConfig}
         />
-        <Button sx={{width: '90%'}} onClick={handleSaveConfig} variant="contained">Save</Button>
+        <Button
+          variant="contained"
+          disabled={!isConfigValid(chainConfigFormValues)}
+          onClick={handleSaveConfig}
+        >
+          Save
+        </Button>
       </SettingSubMenu>
       <SettingSubMenu title="Simulation">
         <Button
-          sx={{width: '90%'}}
           variant="contained"
           onClick={() => setOpenResetSimulationDialog(true)}
         >
@@ -138,16 +152,30 @@ const ResetSimulationDialog = (props: IResetSimulationDialogProps) => {
   );
 }
 
-export interface ISettingSubMenuProps {
+export type SettingSubMenuProps = StyleProps & {
   children?: ReactNode;
   title: string;
 }
 
-export const SettingSubMenu = ({children, title}: ISettingSubMenuProps) => {
+export const SettingSubMenu = ({ children, title, sx, className }: SettingSubMenuProps) => {
   return (
-    <Box sx={{left: 8, top: 5, position: 'relative', mb: 2}}>
-      <Typography sx={{mb: 2, fontWeight: 'bold'}}>{title}</Typography>
+    <Box
+      sx={joinSx({
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        p: 1,
+        mb: 2,
+      }, sx)}
+      className={cx('T1SettingSubMenu', className)}
+    >
+      <Typography fontWeight='bold' mb={2}>{title}</Typography>
       {children}
     </Box>
   )
+}
+
+function isConfigValid(values: IChainConfigFormValues): boolean {
+  const { chainId, bech32Prefix } = values;
+  return !!chainId.trim() && !!bech32Prefix.trim();
 }
