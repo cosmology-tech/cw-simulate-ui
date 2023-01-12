@@ -1,6 +1,5 @@
 import type { SxProps } from "@mui/system/styleFunctionSx";
-import { useCallback } from "react";
-import { useNotification } from "../atoms/snackbarNotificationState";
+import { ComponentType, DependencyList, useCallback } from "react";
 import type { Falsy } from "./typeUtils";
 
 export function joinSx<T extends {}>(...sxs: (SxProps<T> | Falsy)[]): SxProps<T> {
@@ -23,4 +22,9 @@ export function isChildOf(root: HTMLElement, child: HTMLElement | Falsy, log = f
     curr = curr.parentElement;
   }
   return curr === root;
+}
+
+export function useBind<P1, P2 extends Partial<P1> = Partial<P1>>(Component: ComponentType<P1>, boundProps: P2, deps: DependencyList = []) {
+  const Comp = Component as any;
+  return useCallback((props: Omit<P1, keyof P2> & Partial<P2>) => <Comp {...boundProps} {...props} />, [Component, ...deps]);
 }
