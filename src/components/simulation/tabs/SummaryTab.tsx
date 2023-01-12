@@ -113,7 +113,7 @@ function ReplySummary({ traceLog }: { traceLog: ReplyTraceLog }) {
 
 function SenderView({info}: { info: ExecuteTraceLog['info'] }) {
   const sim = useSimulation();
-  const sender = useAccounts(sim, false)[info.sender];
+  const sender = useAccounts(sim, false)[info.sender] ?? { address: info.sender, funds: [] };
   
   return (
     <TableLayout
