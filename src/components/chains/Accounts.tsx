@@ -1,30 +1,32 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
-  ListItemIcon,
-  ListItemText,
-  MenuItem,
-  TextField,
-  Typography,
-} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CachedIcon from "@mui/icons-material/Cached";
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Grid from "@mui/material/Grid";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
-import React, { useCallback, useReducer, useRef, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
-import { getDefaultAccount } from "../../utils/commonUtils";
 import { AccountEx, useAccounts } from "../../CWSimulationBridge";
 import useSimulation from "../../hooks/useSimulation";
+import { getDefaultAccount } from "../../utils/commonUtils";
+import { generateRandomAddress } from "../../utils/cryptoUtils";
 import { stringifyFunds } from "../../utils/typeUtils";
-import T1Container from "../grid/T1Container";
-import TableLayout from "./TableLayout";
 import Funds from "../Funds";
+import T1Container from "../grid/T1Container";
 import Address from "./Address";
 import DialogButton from "../DialogButton";
+import TableLayout from "./TableLayout";
 
 const Accounts = () => {
   const sim = useSimulation();
@@ -183,19 +185,36 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
     setNotification("Account added successfully");
     onClose();
   }, [accounts, account, isFundsValid]);
+  
+  const generateAddress = useCallback(() => {
+    generateRandomAddress(sim.bech32Prefix).then(addr => {
+      dispatch({ type: 'set/address', value: addr });
+    });
+  }, []);
 
   const valid = !!account.address.trim() && isFundsValid && !!account.funds.length;
+  
+  // Generate a random address on initial mount. As this is asynchronous, we have no other choice than to useEffect.
+  useEffect(() => {open && generateAddress()}, [open]);
 
   return (
     <Dialog open={!!open} onClose={onClose}>
       <DialogTitle>Add New Account</DialogTitle>
       <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 2, minWidth: 380, pt: '8px !important' }}>
-        {/* TODO: use "adornments" to add in-TextField icon button for generating new valid random address */}
         <TextField
           label="Address"
           required
-          defaultValue={defaultAccount.sender}
+          value={account.address}
           onChange={e => {dispatch({ type: 'set/address', value: e.target.value })}}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={generateAddress}>
+                  <CachedIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
           label="Label"

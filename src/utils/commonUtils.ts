@@ -1,6 +1,8 @@
 import { TraceLog } from "@terran-one/cw-simulate";
 import { defaults } from '../configs/constants';
 
+export const repeat = <T>(times: number, callback: (i: number) => T) => new Array(times).fill(0).map((_, i) => callback(i));
+
 export const getStepTrace = (activeStep: string, trace: TraceLog[]) => {
   const activeStepArr = activeStep.split("-").map((ele) => Number(ele));
   let activeTrace: TraceLog = {} as TraceLog;
