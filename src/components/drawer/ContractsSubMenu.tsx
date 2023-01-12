@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import type { Coin } from "@terran-one/cw-simulate";
 import { useSetAtom } from "jotai";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { drawerSubMenuState } from "../../atoms/uiState";
@@ -28,6 +28,7 @@ import { AccountEx, useAccounts, useCode, useCodes } from "../../CWSimulationBri
 import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
 import useDebounce from "../../hooks/useDebounce";
+import { useBind } from "../../utils/reactUtils";
 import Accounts from "../Accounts";
 import { BeautifyJSON } from "../simulation/tabs/Common";
 import useMuiTheme from "@mui/material/styles/useTheme";
@@ -91,11 +92,14 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
   const download = useCallback(() => {
     downloadWasm(code.wasmCode, code.name ?? "<unnamed code>");
   }, [code]);
-  
+
   const handleDelete = useCallback(() => {
     sim.hideCode(code.codeId);
     setNotification('Successfully deleted contract');
   }, [code]);
+
+  const MyInstantiateDialog = useBind(InstantiateDialog, { codeId });
+  const MyConfirmDeleteDialog = useBind(ConfirmDeleteDialog, { noun: 'contract', onConfirm: handleDelete });
 
   return (
     <T1MenuItem
@@ -105,9 +109,7 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
         <DialogButton
           key="instantiate"
           Component={MenuItem}
-          DialogComponent={props => (
-            <InstantiateDialog {...props} codeId={codeId} />
-          )}
+          DialogComponent={MyInstantiateDialog}
           onClose={() => {close()}}
         >
           <ListItemIcon>
@@ -124,13 +126,7 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
         <DialogButton
           key="delete"
           Component={MenuItem}
-          DialogComponent={props => (
-            <ConfirmDeleteDialog
-              {...props}
-              noun='contract'
-              onConfirm={handleDelete}
-            />)
-          }
+          DialogComponent={MyConfirmDeleteDialog}
           onClose={() => {
             close();
           }}
