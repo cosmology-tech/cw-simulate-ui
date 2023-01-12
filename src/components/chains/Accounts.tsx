@@ -14,29 +14,29 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Coin } from "@terran-one/cw-simulate/dist/types";
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useReducer, useRef, useState } from "react";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { getDefaultAccount } from "../../utils/commonUtils";
-import { useAccounts } from "../../CWSimulationBridge";
+import { AccountEx, useAccounts } from "../../CWSimulationBridge";
 import useSimulation from "../../hooks/useSimulation";
 import { stringifyFunds } from "../../utils/typeUtils";
 import T1Container from "../grid/T1Container";
 import TableLayout from "./TableLayout";
 import Funds from "../Funds";
 import Address from "./Address";
+import DialogButton from "../DialogButton";
 
 const Accounts = () => {
   const sim = useSimulation();
   const accounts = Object.entries(useAccounts(sim));
   const setNotification = useNotification();
 
-  const [openAddDialog, setOpenAddDialog] = useState(false);
-
-  const data = accounts.map(([address, balances]) => {
+  const data = accounts.map(([address, account]) => {
     return {
       id: address,
+      label: account.label ?? '',
       address: <Address address={address} long />,
-      balances: balances.map((c: Coin) => `${c.amount} ${c.denom}`).join(", "),
+      funds: stringifyFunds(account.funds)
     };
   });
 
@@ -52,9 +52,14 @@ const Accounts = () => {
           <Typography variant="h6">Accounts</Typography>
         </Grid>
         <Grid item>
-          <Button variant="contained" onClick={() => setOpenAddDialog(true)}>
+          <DialogButton
+            DialogComponent={AddAccountDialog}
+            ComponentProps={{
+              variant: 'contained',
+            }}
+          >
             New Account
-          </Button>
+          </DialogButton>
         </Grid>
       </Grid>
       <Grid item flex={1}>
@@ -62,8 +67,9 @@ const Accounts = () => {
           <TableLayout
             rows={data}
             columns={{
+              label: "Account Label",
               address: "Account Address",
-              balances: "Balances",
+              funds: "Funds",
             }}
             RowMenu={(props) => (
               <>
@@ -82,85 +88,126 @@ const Accounts = () => {
           />
         </T1Container>
       </Grid>
-      <AddAccountDialog
-        open={openAddDialog}
-        onClose={() => setOpenAddDialog(false)}
-      />
     </>
   );
 };
 
 export default Accounts;
 
-interface DialogProps {
-  open: boolean;
+type AccountDataAction = SetAccountLabelAction | SetAccountAddressAction | SetAccountFundsAction;
+type SetAccountLabelAction = {
+  type: 'set/label';
+  value: string;
+}
+type SetAccountAddressAction = {
+  type: 'set/address';
+  value: string;
+}
+type SetAccountFundsAction = {
+  type: 'set/funds';
+  value: Coin[];
+}
+
+interface AddAccountDialogProps {
+  open?: boolean;
   onClose(): void;
 }
 
-function AddAccountDialog({ open, onClose }: DialogProps) {
+function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
   const sim = useSimulation();
+  const setNotification = useNotification();
   const accounts = Object.entries(useAccounts(sim));
   const defaultAccount = getDefaultAccount(sim.chainId);
+  
+  const [account, dispatch] = useReducer(
+    (state: AccountEx, action: AccountDataAction) => {
+      switch (action.type) {
+        case 'set/label': {
+          return {
+            ...state,
+            label: action.value,
+          };
+        }
+        case 'set/address': {
+          return {
+            ...state,
+            address: action.value,
+          };
+        }
+        case 'set/funds': {
+          return {
+            ...state,
+            funds: action.value,
+          }
+        }
+      }
+    },
+    {
+      address: '',
+      funds: defaultAccount.funds ?? [],
+      label: '',
+    }
+  );
 
-  const refAddress = useRef<HTMLInputElement | null>(null);
-  const [address, setAddress] = useState(defaultAccount.sender);
-  const [funds, setFunds] = useState<Coin[]>(defaultAccount.funds);
   const [isFundsValid, setFundsValid] = useState(true);
 
-  const setNotification = useNotification();
-
-  const handleChangeAddress = useCallback(() => {
-    if (refAddress.current) setAddress(refAddress.current.value);
-  }, []);
-
   const addAccount = useCallback(() => {
-    if (!funds.length) {
-      setNotification("Please specify funds for the new account.", {
-        severity: "error",
-      });
+    if (!account.address.trim()) {
+      setNotification(
+        "Please specify an account address.",
+        { severity: "error" },
+      );
       return;
     }
-
+    
     if (!isFundsValid) {
+      // it should even be possible to call addAccount w/ invalid funds, but still
       setNotification(
         "Invalid funds. Please see the message underneath funds input.",
         { severity: "error" }
       );
       return;
     }
+    
+    // TODO: validate bech32
 
-    if (accounts.find(([addr]) => addr === address)) {
+    if (accounts.find(([addr]) => addr === account.address)) {
       setNotification("An account with this address already exists", {
         severity: "error",
       });
       return;
     }
 
-    sim.setBalance(address, funds);
+    sim.setAccountLabel(account.address, account.label);
+    sim.setBalance(account.address, account.funds);
     setNotification("Account added successfully");
     onClose();
-  }, [accounts, address, funds, isFundsValid]);
+  }, [accounts, account, isFundsValid]);
 
-  const valid = isFundsValid && !!funds.length;
+  const valid = !!account.address.trim() && isFundsValid && !!account.funds.length;
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={!!open} onClose={onClose}>
       <DialogTitle>Add New Account</DialogTitle>
-      <DialogContent sx={{ minWidth: 380 }}>
+      <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 2, minWidth: 380, pt: '8px !important' }}>
+        {/* TODO: use "adornments" to add in-TextField icon button for generating new valid random address */}
         <TextField
-          inputRef={refAddress}
           label="Address"
+          required
           defaultValue={defaultAccount.sender}
-          onChange={handleChangeAddress}
-          sx={{ width: "100%", my: 2 }}
+          onChange={e => {dispatch({ type: 'set/address', value: e.target.value })}}
+        />
+        <TextField
+          label="Label"
+          onChange={e => {dispatch({ type: 'set/label', value: e.target.value })}}
         />
         <Funds
-          onChange={setFunds}
+          onChange={funds => {dispatch({ type: 'set/funds', value: funds })}}
           onValidate={setFundsValid}
-          hideError={!funds.length}
+          hideError={!account.funds.length}
           defaultValue={stringifyFunds(defaultAccount.funds)}
         />
-        {!funds.length && (
+        {!account.funds.length && (
           <DialogContentText color="red" fontStyle="italic">
             Please enter funds.
           </DialogContentText>

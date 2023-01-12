@@ -5,18 +5,16 @@ import {
   TextField,
   Theme,
 } from "@mui/material";
-import { Coin } from "@terran-one/cw-simulate";
 import React from "react";
-import { useAccounts } from "../CWSimulationBridge";
+import { AccountEx, useAccounts } from "../CWSimulationBridge";
 import useSimulation from "../hooks/useSimulation";
 import { joinSx } from "../utils/reactUtils";
-import Address from "./chains/Address";
 
 interface IAccounts {
   defaultAccount?: string;
   label?: string;
   sx?: SxProps<Theme>;
-  onChange?(address: string, balance: Coin[]): void;
+  onChange?(account: AccountEx | null): void;
 }
 
 const Accounts = ({
@@ -29,14 +27,16 @@ const Accounts = ({
   const accounts = useAccounts(sim);
   
   return (
-    <Autocomplete
-      defaultValue={defaultAccount || Object.keys(accounts)[0]}
-      options={Object.keys(accounts)}
-      onInputChange={(_, value) => onChange?.(value, accounts[value])}
+    <Autocomplete<AccountEx>
+      defaultValue={defaultAccount ? accounts[defaultAccount] : Object.values(accounts)[0]}
+      options={Object.values(accounts)}
+      getOptionLabel={(option) => option.label?.trim() || option.address}
+      onChange={(_, value) => onChange?.(value)}
+      isOptionEqualToValue={(option, value) => option.address === value.address}
       renderInput={(params: AutocompleteRenderInputParams) => (
         <TextField {...params} label={label || "Sender"} />
       )}
-      sx={joinSx(sx, { width: "100%" })}
+      sx={joinSx({ width: "100%" }, sx)}
     />
   );
 };

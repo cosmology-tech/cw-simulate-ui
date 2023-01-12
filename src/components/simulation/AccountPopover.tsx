@@ -7,11 +7,12 @@ import { stringifyFunds } from "../../utils/typeUtils";
 import Accounts from "../Accounts";
 import Funds from "../Funds";
 import useMuiTheme from "@mui/material/styles/useTheme";
+import { AccountEx } from "src/CWSimulationBridge";
 
 interface IProps {
   account: string;
   funds: Coin[];
-  onChange?(account: string, funds: Coin[]): void;
+  onChange?(address: string, funds: Coin[]): void;
   // TODO: validate account + funds?
   // currently only validates funds
   onValidate?(valid: boolean): void;
@@ -23,8 +24,8 @@ const AccountPopover = ({ account, funds, onChange, onValidate }: IProps) => {
     React.useState<HTMLButtonElement | null>(null);
   const [open, setOpen] = useState(false);
 
-  const onChangeAccount = (account: string, balance: Coin[]) => {
-    onChange?.(account, funds);
+  const onChangeAddress = (account: AccountEx) => {
+    onChange?.(account.address, funds);
   };
 
   const onChangeFunds = (funds: Coin[]) => {
@@ -57,7 +58,7 @@ const AccountPopover = ({ account, funds, onChange, onValidate }: IProps) => {
           },
         }}
       >
-        <Accounts defaultAccount={account} onChange={onChangeAccount} />
+        <Accounts defaultAccount={account} onChange={onChangeAddress} />
         <Funds
           defaultValue={stringifyFunds(funds)}
           onChange={onChangeFunds}

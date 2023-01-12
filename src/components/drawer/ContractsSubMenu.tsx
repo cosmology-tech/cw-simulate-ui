@@ -4,21 +4,17 @@ import RocketLaunchIcon from "@mui/icons-material/RocketLaunch";
 import UploadIcon from "@mui/icons-material/Upload";
 import {
   Button,
-  Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
   Grid,
   ListItemIcon,
   ListItemText,
   MenuItem,
   TextField,
-  Typography,
 } from "@mui/material";
-import type { CodeInfo, Coin } from "@terran-one/cw-simulate";
+import type { Coin } from "@terran-one/cw-simulate";
 import { useSetAtom } from "jotai";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { drawerSubMenuState } from "../../atoms/uiState";
@@ -28,7 +24,7 @@ import UploadModal from "../upload/UploadModal";
 import SubMenuHeader from "./SubMenuHeader";
 import T1MenuItem from "./T1MenuItem";
 import useSimulation from "../../hooks/useSimulation";
-import { useAccounts, useCode, useCodes } from "../../CWSimulationBridge";
+import { AccountEx, useAccounts, useCode, useCodes } from "../../CWSimulationBridge";
 import { downloadWasm } from "../../utils/fileUtils";
 import Funds from "../Funds";
 import useDebounce from "../../hooks/useDebounce";
@@ -165,7 +161,7 @@ function InstantiateDialog({
   const setNotification = useNotification();
   const code = useCode(sim, codeId)!;
   const accounts = useAccounts(sim);
-  const defaultAccount = Object.keys(accounts)[0] || "";
+  const defaultAccount = Object.values(accounts)[0] || "";
   const [isJsonValid, setIsJsonValid] = useState(true);
   const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
 
@@ -173,7 +169,7 @@ function InstantiateDialog({
   const [isFundsValid, setFundsValid] = useState(true);
   const [payload, setPayload] = useState("");
   const [instancelabel, setInstanceLabel] = useState<string>("");
-  const [account, setAccount] = useState(defaultAccount);
+  const [account, setAccount] = useState<AccountEx | null>(defaultAccount);
 
   const ref = useRef<HTMLInputElement | null>();
   const placeholder = {
@@ -200,7 +196,7 @@ function InstantiateDialog({
       }
 
       const contract = await sim.instantiate(
-        account,
+        account.address,
         code.codeId,
         instantiateMsg,
         funds,
@@ -252,7 +248,7 @@ function InstantiateDialog({
       }}
     >
       <DialogContent>
-        <Accounts defaultAccount={defaultAccount} onChange={setAccount} />
+        <Accounts defaultAccount={defaultAccount.address} onChange={setAccount} />
         <Funds
           TextComponent={DialogContentText}
           onChange={setFunds}
