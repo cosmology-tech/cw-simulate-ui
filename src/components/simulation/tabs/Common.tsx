@@ -13,7 +13,38 @@ import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
 import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { DynamicForm } from "@mui/icons-material";
+import FieldTemplate from "@rjsf/mui";
+import { ObjectFieldTemplateProps } from "@rjsf/utils";
 
+function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
+  return (
+    <div>
+      {props.title}
+      {props.description}
+      {props.properties.map(
+        (element: {
+          content:
+            | string
+            | number
+            | boolean
+            | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+            | React.ReactFragment
+            | React.ReactPortal
+            | null
+            | undefined;
+        }) => (
+          <>
+            <div className="property-wrapper">
+              {" "}
+              <input type="checkbox" />
+              {element.content}
+            </div>
+          </>
+        )
+      )}
+    </div>
+  );
+}
 export interface IInspectorTabProps {
   traceLog: TraceLog | undefined;
 }
@@ -138,12 +169,15 @@ export const JSONSchemaFormDialog = ({
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>JSON Schema Form</DialogTitle>
       <DialogContent sx={{ minWidth: 380 }}>
-        <Form
-          schema={sanitizeSchema(schema)}
-          validator={validator}
-          onChange={() => console.log("changed")}
-          onSubmit={onSubmit}
-        />
+        {JSON.stringify(schema) === "{}" ? (
+          <Typography>Please upload schema first</Typography>
+        ) : (
+          <Form
+            schema={sanitizeSchema(schema)}
+            validator={validator}
+            onSubmit={onSubmit}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

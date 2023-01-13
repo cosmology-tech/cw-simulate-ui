@@ -4,6 +4,7 @@ import {
   Autocomplete,
   AutocompleteRenderInputParams,
   Box,
+  Divider,
   Grid,
   SvgIcon,
   TextField,
@@ -123,6 +124,7 @@ export default function WelcomeScreen() {
   const setLastChainId = useSetAtom(lastChainIdState);
 
   const [files, setFiles] = useState<FileUploadType[]>([]);
+  const [schemas, setSchemas] = useState<JSON[]>([]);
   const setNotification = useNotification();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -179,8 +181,17 @@ export default function WelcomeScreen() {
       setLastChainId(chainConfig.chainId);
       sim.recreate(chainConfig);
       sim.setBalance(chainConfig.sender, chainConfig.funds);
-      for (const file of files) {
-        sim.storeCode(chainConfig.sender, file, chainConfig.funds);
+      console.log(schemas);
+      for (let i = 0; i < files.length; i++) {
+        sim.storeCode(
+          chainConfig.sender,
+          {
+            name: files[i].name,
+            schema: files[i].schema,
+            content: files[i].content,
+          },
+          chainConfig.funds
+        );
       }
     } else if (files[0].name.endsWith(".json")) {
       setNotification("Feature coming soon", { severity: "error" });
@@ -199,13 +210,22 @@ export default function WelcomeScreen() {
     setFiles([]);
   }, []);
 
-  useEffect(() => {
-    if (files.length > 0) {
-      onCreateNewEnvironment().then((r) => {
-        navigate("/accounts");
-      });
-    }
-  }, [files]);
+  const onAcceptSchema = useCallback(
+    async (name: string, schema: JSON, content: JSON) => {
+      setSchemas((prevFiles) => [...prevFiles, schema]);
+    },
+    []
+  );
+
+  const onClearSchema = useCallback(() => {
+    setSchemas([]);
+  }, []);
+
+  const onSchemaLoadHandler = () => {
+    onCreateNewEnvironment().then((r) => {
+      navigate("/accounts");
+    });
+  };
 
   return (
     <Grid container item flex={1} alignItems="center" justifyContent="center">
@@ -268,13 +288,43 @@ export default function WelcomeScreen() {
         <Grid item xs={11} lg={7} md={8} sx={{ mb: 4, width: "60%" }}>
           <FileUploadPaper sx={{ minHeight: 200 }}>
             <Grid container direction="row" height="100%">
-              <Grid item sx={{ width: "50%" }}>
-                <FileUpload onAccept={onAcceptFile} onClear={onClearFile} />
+              <Grid item sx={{ width: "48%" }}>
+                {files.length > 0 ? (
+                  <Grid
+                    item
+                    sx={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <FileUpload
+                      dropzoneText={"Upload or drop your schema here"}
+                      variant={"schema"}
+                      onAccept={onAcceptSchema}
+                      onClear={onClearSchema}
+                    />
+                    <LoadingButton
+                      loading={loading}
+                      variant="contained"
+                      onClick={onSchemaLoadHandler}
+                    >
+                      {schemas.length === 0 ? "Load without Schema" : "Load"}
+                    </LoadingButton>
+                  </Grid>
+                ) : (
+                  <FileUpload onAccept={onAcceptFile} onClear={onClearFile} />
+                )}
               </Grid>
+              <Divider orientation="vertical" flexItem>
+                or
+              </Divider>
               <Grid
                 item
                 sx={{
-                  width: "50%",
+                  width: "47%",
                   justifyContent: "center",
                   alignItems: "center",
                   textAlign: "center",
@@ -293,7 +343,6 @@ export default function WelcomeScreen() {
                   )}
                   options={getSampleContractsForChain(chain)}
                 />
-
                 <LoadingButton
                   loading={loading}
                   variant="contained"

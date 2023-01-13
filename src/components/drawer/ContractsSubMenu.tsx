@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import type { Coin } from "@terran-one/cw-simulate";
 import { useSetAtom } from "jotai";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../atoms/snackbarNotificationState";
 import { drawerSubMenuState } from "../../atoms/uiState";
@@ -211,7 +211,7 @@ function InstantiateDialog({ codeId, ...props }: IInstantiateDialogProps) {
   const placeholder = {
     count: 0,
   };
-
+  useEffect(() => {}, []);
   const handleLabelChange = useDebounce(
     () => {
       const val = ref.current?.value.trim();
