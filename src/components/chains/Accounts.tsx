@@ -1,5 +1,6 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import CachedIcon from "@mui/icons-material/Cached";
+import TuneIcon from "@mui/icons-material/Tune";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -20,8 +21,10 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 import { AccountEx, useAccounts } from "../../CWSimulationBridge";
 import useSimulation from "../../hooks/useSimulation";
 import { getDefaultAccount } from "../../utils/commonUtils";
-import { generateRandomAddress } from "../../utils/cryptoUtils";
+import { generateRandomWallet } from "../../utils/cryptoUtils";
+import { useBind } from "../../utils/reactUtils";
 import { stringifyFunds } from "../../utils/typeUtils";
+import GenerateWalletDialog from "../dialogs/GenerateWalletDialog";
 import Funds from "../Funds";
 import T1Container from "../grid/T1Container";
 import Address from "./Address";
@@ -96,6 +99,11 @@ const Accounts = () => {
 
 export default Accounts;
 
+interface AccountDialogState extends AccountEx {
+  mnemonic?: string;
+  derivationPath: string;
+}
+
 type AccountDataAction = SetAccountLabelAction | SetAccountAddressAction | SetAccountFundsAction;
 type SetAccountLabelAction = {
   type: 'set/label';
@@ -103,7 +111,9 @@ type SetAccountLabelAction = {
 }
 type SetAccountAddressAction = {
   type: 'set/address';
-  value: string;
+  address: string;
+  mnemonic?: string;
+  derivationPath?: string;
 }
 type SetAccountFundsAction = {
   type: 'set/funds';
@@ -122,7 +132,7 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
   const defaultAccount = getDefaultAccount(sim.chainId);
   
   const [account, dispatch] = useReducer(
-    (state: AccountEx, action: AccountDataAction) => {
+    (state: AccountDialogState, action: AccountDataAction) => {
       switch (action.type) {
         case 'set/label': {
           return {
@@ -133,7 +143,9 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
         case 'set/address': {
           return {
             ...state,
-            address: action.value,
+            address: action.address,
+            mnemonic: action.mnemonic ?? state.mnemonic,
+            derivationPath: action.derivationPath ?? state.derivationPath,
           };
         }
         case 'set/funds': {
@@ -148,6 +160,7 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
       address: '',
       funds: defaultAccount.funds ?? [],
       label: '',
+      derivationPath: "m/44'/1'/0'/0",
     }
   );
 
@@ -187,12 +200,19 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
   }, [accounts, account, isFundsValid]);
   
   const generateAddress = useCallback(() => {
-    generateRandomAddress(sim.bech32Prefix).then(addr => {
-      dispatch({ type: 'set/address', value: addr });
-    });
+    generateRandomWallet(sim.bech32Prefix, account.derivationPath)
+      .then(({ address, mnemonic }) => {
+        dispatch({ type: 'set/address', address, mnemonic });
+      });
   }, []);
 
   const valid = !!account.address.trim() && isFundsValid && !!account.funds.length;
+  const MyGenerateWalletDialog = useBind(GenerateWalletDialog, {
+    onFinish(r) {
+      const { address, mnemonic, derivationPath } = r;
+      dispatch({ type: 'set/address', address, mnemonic, derivationPath });
+    },
+  });
   
   // Generate a random address on initial mount. As this is asynchronous, we have no other choice than to useEffect.
   useEffect(() => {open && generateAddress()}, [open]);
@@ -205,14 +225,24 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
           label="Address"
           required
           value={account.address}
-          onChange={e => {dispatch({ type: 'set/address', value: e.target.value })}}
+          onChange={e => {dispatch({ type: 'set/address', address: e.target.value })}}
           InputProps={{
             endAdornment: (
-              <InputAdornment position="end">
-                <IconButton onClick={generateAddress}>
-                  <CachedIcon />
-                </IconButton>
-              </InputAdornment>
+              <>
+                <InputAdornment position="end">
+                  <IconButton onClick={generateAddress}>
+                    <CachedIcon />
+                  </IconButton>
+                </InputAdornment>
+                <InputAdornment position="end">
+                  <DialogButton
+                    Component={IconButton}
+                    DialogComponent={MyGenerateWalletDialog}
+                  >
+                    <TuneIcon />
+                  </DialogButton>
+                </InputAdornment>
+              </>
             ),
           }}
         />
