@@ -7,7 +7,7 @@ import { useNotification } from "../../atoms/snackbarNotificationState";
 
 interface ICopyToClipBoardProps {
   data: string;
-  title: string;
+  title?: string;
 }
 
 export default function CopyToClipBoard({ data, title }: ICopyToClipBoardProps) {

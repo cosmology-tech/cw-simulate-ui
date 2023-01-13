@@ -7,6 +7,8 @@
     "@aws-sdk/client-s3": "^3.215.0",
     "@aws-sdk/s3-request-presigner": "^3.216.0",
     "@codemirror/lang-json": "^6.0.0",
+    "@cosmjs/crypto": "^0.29.5",
+    "@cosmjs/encoding": "^0.29.5",
     "@datadog/browser-rum": "^4.28.1",
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",

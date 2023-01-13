@@ -181,7 +181,7 @@ function InstantiateDialog({
     []
   );
 
-  const handleInstantiate = async ({ close }: T1DialogAPI) => {
+  const handleInstantiate = async ({ finish }: T1DialogAPI) => {
     const instantiateMsg =
       payload.length === 0 ? placeholder : JSON.parse(payload);
 
@@ -199,7 +199,7 @@ function InstantiateDialog({
         instancelabel
       );
       navigate(`/instances/${contract.address}`);
-      close(true);
+      finish();
       setDrawerSubMenu(undefined);
     }
     catch (e: any) {
@@ -224,7 +224,7 @@ function InstantiateDialog({
       title='Instantiate Contract'
       actions={api => (
         <>
-          <Button variant="outlined" onClick={() => api.close(false)}>
+          <Button variant="outlined" onClick={() => api.cancel()}>
             Cancel
           </Button>
           <Button
