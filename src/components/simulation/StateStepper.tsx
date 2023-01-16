@@ -71,7 +71,15 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 }));
 
 function StyledTreeItem(props: StyledTreeItemProps) {
-  const { bgColor, color, labelIcon, labelInfo, labelText, activeStep, ...other } = props;
+  const {
+    bgColor,
+    color,
+    labelIcon,
+    labelInfo,
+    labelText,
+    activeStep,
+    ...other
+  } = props;
   const currentActiveStep = activeStep
     ? Number(activeStep.split("-")[0])
     : undefined;
@@ -104,7 +112,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
 
 type NumberIconProps = SvgIconProps & {
   number: number;
-  error: string | undefined;
+  error: MaybeError;
 };
 
 function NumberIcon({ number, error }: NumberIconProps) {
@@ -118,7 +126,9 @@ function NumberIcon({ number, error }: NumberIconProps) {
         alignItems: "center",
         justifyContent: "center",
         borderRadius: "50%",
-        bgcolor: error ? theme.palette.error.light : theme.palette.grey[900],
+        bgcolor: error.err
+          ? theme.palette.error.light
+          : theme.palette.grey[900],
       }}
     >
       <Typography
@@ -183,10 +193,9 @@ export default function StateStepper({ contractAddress }: IProps) {
   }, [traces]);
 
   useEffect(() => {
-    const executionStep = getNestedTrace(
-      activeStep.split("-").map(Number),
-      traces
-    ) ?? traces[traces.length - 1];
+    const executionStep =
+      getNestedTrace(activeStep.split("-").map(Number), traces) ??
+      traces[traces.length - 1];
     setStepTrace(executionStep);
     if (!executionStep) {
       setNotification(
@@ -258,12 +267,12 @@ function renderTreeItems(
           labelIcon={
             <NumberIcon
               number={index + 1}
-              error={(trace.response as MaybeError).error}
+              error={trace.response as MaybeError}
             />
           }
           labelText={getTreeItemLabel(trace)}
           activeStep={
-            depth === 0 && !(trace.response as MaybeError).error
+            depth === 0 && !(trace.response as MaybeError)
               ? activeStep
               : undefined
           }
@@ -278,12 +287,12 @@ function renderTreeItems(
           labelIcon={
             <NumberIcon
               number={index + 1}
-              error={(trace.response as MaybeError).error}
+              error={trace.response as MaybeError}
             />
           }
           labelText={getTreeItemLabel(trace)}
           activeStep={
-            depth === 0 && !(trace.response as MaybeError).error
+            depth === 0 && !(trace.response as MaybeError)
               ? activeStep
               : undefined
           }
