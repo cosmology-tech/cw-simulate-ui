@@ -64,6 +64,7 @@ function App() {
         })
         .catch(() => {
           setNotification('Failed to restore previous session', { severity: 'error' });
+          session.reset();
           loc.pathname !== '/' && navigate('/');
         })
         .finally(() => {

@@ -75,6 +75,13 @@ export class Session {
     });
   }
   
+  reset() {
+    delete localStorage['lastChainId'];
+    if (window.indexedDB) {
+      indexedDB.deleteDatabase('simulation');
+    }
+  }
+  
   private tx(storeNames: string | Iterable<string>, mode: IDBTransactionMode, callback: (tx: IDBTransaction) => void | Promise<void>) {
     if (!this._idb) return Promise.reject(new ConnectionError());
     return new Promise<this>(async (resolve, reject) => {
