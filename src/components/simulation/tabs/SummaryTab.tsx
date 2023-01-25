@@ -2,9 +2,13 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
-import { ExecuteTraceLog, ReplyTraceLog, TraceLog } from "@terran-one/cw-simulate";
+import {
+  ExecuteTraceLog,
+  ReplyTraceLog,
+  TraceLog,
+} from "@terran-one/cw-simulate";
 import { useState } from "react";
-import YAML from 'yaml';
+import YAML from "yaml";
 import { useAccounts } from "../../../CWSimulationBridge";
 import useSimulation from "../../../hooks/useSimulation";
 import { stringifyFunds } from "../../../utils/typeUtils";
@@ -16,12 +20,13 @@ import { EmptyTab, IInspectorTabProps, TabHeader, TabPaper } from "./Common";
 
 export default function SummaryTab({ traceLog }: IInspectorTabProps) {
   const [checked, setChecked] = useState<boolean>(false);
+  const sim = useSimulation();
+
   if (!traceLog) return <EmptyTab />;
 
   return (
     <Grid>
       <SummaryHeader traceLog={traceLog} />
-
       {traceLog.type === "instantiate" ? (
         <InstantiateSummary traceLog={traceLog} />
       ) : traceLog.type === "execute" ? (
@@ -31,6 +36,12 @@ export default function SummaryTab({ traceLog }: IInspectorTabProps) {
       ) : null}
 
       <Box sx={{ my: 2 }}>
+        <Grid item container>
+          <Typography variant="h6" my={1}>
+            Balance
+          </Typography>
+          <BalanceView trace={traceLog} />
+        </Grid>
         <Grid item container flexShrink={0} justifyContent="space-between">
           <Grid item sx={{ display: "flex" }}>
             <Typography variant="h6" my={1}>
@@ -111,20 +122,67 @@ function ReplySummary({ traceLog }: { traceLog: ReplyTraceLog }) {
   return null;
 }
 
-function SenderView({info}: { info: ExecuteTraceLog['info'] }) {
+function SenderView({ info }: { info: ExecuteTraceLog["info"] }) {
   const sim = useSimulation();
-  const sender = useAccounts(sim, false)[info.sender] ?? { address: info.sender, funds: [] };
-  
+  const sender = useAccounts(sim, false)[info.sender] ?? {
+    address: info.sender,
+    funds: [],
+  };
+
   return (
     <TableLayout
-      rows={[{
-        id: info.sender,
-        sender: <Address address={sender.address} label={sender.label} fontSize="small" />,
-        funds: stringifyFunds(info.funds)}
+      rows={[
+        {
+          id: info.sender,
+          sender: (
+            <Address
+              address={sender.address}
+              label={sender.label}
+              fontSize="small"
+            />
+          ),
+          funds: stringifyFunds(info.funds),
+        },
       ]}
       columns={{
         sender: "Sender",
         funds: "Funds",
+      }}
+      inspectorTable
+      sx={{ mb: 2 }}
+    />
+  );
+}
+
+function BalanceView({ trace }: { trace: TraceLog }) {
+  const sim = useSimulation();
+  const contractBalance = sim.getBalance(
+    trace.contractAddress,
+    trace.storeSnapshot
+  );
+  const senderBalance = sim.getBalance(
+    (trace as ExecuteTraceLog).info.sender,
+    trace.storeSnapshot
+  );
+  console.log("*******", contractBalance);
+  const senderId = (trace as ExecuteTraceLog).info.sender;
+  return (
+    <TableLayout
+      rows={[
+        {
+          id: trace.contractAddress,
+          account: "Contract",
+          funds: stringifyFunds(contractBalance ?? []),
+        },
+        {
+          id: senderId,
+          account: "Sender",
+          funds: stringifyFunds(senderBalance ?? []),
+        },
+      ]}
+      columns={{
+        account: "Account",
+        funds: "Balance",
       }}
       inspectorTable
       sx={{ mb: 2 }}
