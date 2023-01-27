@@ -30,6 +30,7 @@ import T1Container from "../grid/T1Container";
 import Address from "./Address";
 import DialogButton from "../DialogButton";
 import TableLayout from "./TableLayout";
+import EditIcon from "@mui/icons-material/Edit";
 
 const Accounts = () => {
   const sim = useSimulation();
@@ -39,9 +40,9 @@ const Accounts = () => {
   const data = accounts.map(([address, account]) => {
     return {
       id: address,
-      label: account.label ?? '',
+      label: account.label ?? "",
       address: <Address address={address} long />,
-      funds: stringifyFunds(account.funds)
+      funds: stringifyFunds(account.funds),
     };
   });
 
@@ -60,7 +61,7 @@ const Accounts = () => {
           <DialogButton
             DialogComponent={AddAccountDialog}
             ComponentProps={{
-              variant: 'contained',
+              variant: "contained",
             }}
           >
             New Account
@@ -104,21 +105,24 @@ interface AccountDialogState extends AccountEx {
   derivationPath: string;
 }
 
-type AccountDataAction = SetAccountLabelAction | SetAccountAddressAction | SetAccountFundsAction;
+type AccountDataAction =
+  | SetAccountLabelAction
+  | SetAccountAddressAction
+  | SetAccountFundsAction;
 type SetAccountLabelAction = {
-  type: 'set/label';
+  type: "set/label";
   value: string;
-}
+};
 type SetAccountAddressAction = {
-  type: 'set/address';
+  type: "set/address";
   address: string;
   mnemonic?: string;
   derivationPath?: string;
-}
+};
 type SetAccountFundsAction = {
-  type: 'set/funds';
+  type: "set/funds";
   value: Coin[];
-}
+};
 
 interface AddAccountDialogProps {
   open?: boolean;
@@ -130,17 +134,17 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
   const setNotification = useNotification();
   const accounts = Object.entries(useAccounts(sim));
   const defaultAccount = getDefaultAccount(sim.chainId);
-  
+
   const [account, dispatch] = useReducer(
     (state: AccountDialogState, action: AccountDataAction) => {
       switch (action.type) {
-        case 'set/label': {
+        case "set/label": {
           return {
             ...state,
             label: action.value,
           };
         }
-        case 'set/address': {
+        case "set/address": {
           return {
             ...state,
             address: action.address,
@@ -148,18 +152,18 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
             derivationPath: action.derivationPath ?? state.derivationPath,
           };
         }
-        case 'set/funds': {
+        case "set/funds": {
           return {
             ...state,
             funds: action.value,
-          }
+          };
         }
       }
     },
     {
-      address: '',
+      address: "",
       funds: defaultAccount.funds ?? [],
-      label: '',
+      label: "",
       derivationPath: "m/44'/1'/0'/0",
     }
   );
@@ -168,13 +172,12 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
 
   const addAccount = useCallback(() => {
     if (!account.address.trim()) {
-      setNotification(
-        "Please specify an account address.",
-        { severity: "error" },
-      );
+      setNotification("Please specify an account address.", {
+        severity: "error",
+      });
       return;
     }
-    
+
     if (!isFundsValid) {
       // it should even be possible to call addAccount w/ invalid funds, but still
       setNotification(
@@ -183,7 +186,7 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
       );
       return;
     }
-    
+
     // TODO: validate bech32
 
     if (accounts.find(([addr]) => addr === account.address)) {
@@ -198,34 +201,49 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
     setNotification("Account added successfully");
     onClose();
   }, [accounts, account, isFundsValid]);
-  
+
   const generateAddress = useCallback(() => {
-    generateRandomWallet(sim.bech32Prefix, account.derivationPath)
-      .then(({ address, mnemonic }) => {
-        dispatch({ type: 'set/address', address, mnemonic });
-      });
+    generateRandomWallet(sim.bech32Prefix, account.derivationPath).then(
+      ({ address, mnemonic }) => {
+        dispatch({ type: "set/address", address, mnemonic });
+      }
+    );
   }, []);
 
-  const valid = !!account.address.trim() && isFundsValid && !!account.funds.length;
+  const valid =
+    !!account.address.trim() && isFundsValid && !!account.funds.length;
   const MyGenerateWalletDialog = useBind(GenerateWalletDialog, {
     onFinish(r) {
       const { address, mnemonic, derivationPath } = r;
-      dispatch({ type: 'set/address', address, mnemonic, derivationPath });
+      dispatch({ type: "set/address", address, mnemonic, derivationPath });
     },
   });
-  
+
   // Generate a random address on initial mount. As this is asynchronous, we have no other choice than to useEffect.
-  useEffect(() => {open && generateAddress()}, [open]);
+  useEffect(() => {
+    open && generateAddress();
+  }, [open]);
 
   return (
     <Dialog open={!!open} onClose={onClose}>
       <DialogTitle>Add New Account</DialogTitle>
-      <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: 2, minWidth: 380, pt: '8px !important' }}>
+      <DialogContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "stretch",
+          gap: 2,
+          minWidth: 380,
+          pt: "8px !important",
+        }}
+      >
         <TextField
           label="Address"
           required
           value={account.address}
-          onChange={e => {dispatch({ type: 'set/address', address: e.target.value })}}
+          onChange={(e) => {
+            dispatch({ type: "set/address", address: e.target.value });
+          }}
           InputProps={{
             endAdornment: (
               <>
@@ -248,10 +266,14 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
         />
         <TextField
           label="Label"
-          onChange={e => {dispatch({ type: 'set/label', value: e.target.value })}}
+          onChange={(e) => {
+            dispatch({ type: "set/label", value: e.target.value });
+          }}
         />
         <Funds
-          onChange={funds => {dispatch({ type: 'set/funds', value: funds })}}
+          onChange={(funds) => {
+            dispatch({ type: "set/funds", value: funds });
+          }}
           onValidate={setFundsValid}
           hideError={!account.funds.length}
           defaultValue={stringifyFunds(defaultAccount.funds)}
