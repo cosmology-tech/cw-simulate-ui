@@ -258,7 +258,7 @@ export default class CWSimulationBridge {
 
   /** Get the account balance of given address */
   getBalance(address: string, storeSnapShot:Snapshot) {
-    return this.app.bank.getBalance(address, storeSnapShot);
+    return this.app.bank.getBalance(address,storeSnapShot);
   }
   /** Set the new account balance of given address, overriding any previous balance, and re-sync bridge. */
   setBalance(account: string, balance: Coin[]) {

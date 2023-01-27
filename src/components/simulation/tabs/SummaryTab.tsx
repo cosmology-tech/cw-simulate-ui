@@ -164,7 +164,6 @@ function BalanceView({ trace }: { trace: TraceLog }) {
     (trace as ExecuteTraceLog).info.sender,
     trace.storeSnapshot
   );
-  console.log("*******", contractBalance);
   const senderId = (trace as ExecuteTraceLog).info.sender;
   return (
     <TableLayout
