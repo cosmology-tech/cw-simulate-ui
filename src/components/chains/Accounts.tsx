@@ -50,7 +50,7 @@ const Accounts = () => {
     sim.deleteBalance(address);
     setNotification("Account successfully removed");
   };
-  const handleEditBalance = () => {};
+
   return (
     <>
       <Grid item container sx={{ mb: 2 }}>
@@ -88,13 +88,6 @@ const Accounts = () => {
                     <DeleteIcon fontSize="small" />
                   </ListItemIcon>
                   <ListItemText>Delete</ListItemText>
-                </MenuItem>
-                ,
-                <MenuItem onClick={() => handleEditBalance()}>
-                  <ListItemIcon>
-                    <EditIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Edit</ListItemText>
                 </MenuItem>
               </>
             )}
