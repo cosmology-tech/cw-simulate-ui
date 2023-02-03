@@ -378,7 +378,7 @@ function EditFundsDialog({ open, onClose, dialogprops }: EditFundsDialogProps) {
           onClick={saveFunds}
           disabled={!isFundsValid || !newFunds.length}
         >
-          Add
+          Save
         </Button>
       </DialogActions>
     </Dialog>
