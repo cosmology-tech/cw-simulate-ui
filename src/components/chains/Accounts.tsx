@@ -353,6 +353,7 @@ function EditFundsDialog({ open, onClose, dialogprops }: EditFundsDialogProps) {
         <TextField
           label="Address"
           required
+          disabled
           aria-readonly
           value={dialogprops?.address}
           InputProps={{
