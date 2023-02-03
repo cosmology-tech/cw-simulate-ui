@@ -329,7 +329,6 @@ function EditFundsDialog({ open, onClose, dialogprops }: EditFundsDialogProps) {
   const saveFunds = useCallback(() => {
     if (dialogprops?.address) {
       try {
-        console.log(newFunds);
         sim.setBalance(dialogprops?.address, newFunds);
         setNotification("Funds updated successfully");
       } catch (err: any) {
