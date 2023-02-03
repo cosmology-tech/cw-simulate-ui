@@ -28,9 +28,10 @@ import GenerateWalletDialog from "../dialogs/GenerateWalletDialog";
 import Funds from "../Funds";
 import T1Container from "../grid/T1Container";
 import Address from "./Address";
-import DialogButton from "../DialogButton";
+import DialogButton, { IDialogProps } from "../DialogButton";
 import TableLayout from "./TableLayout";
 import EditIcon from "@mui/icons-material/Edit";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 
 const Accounts = () => {
   const sim = useSimulation();
@@ -50,7 +51,6 @@ const Accounts = () => {
     sim.deleteBalance(address);
     setNotification("Account successfully removed");
   };
-
   return (
     <>
       <Grid item container sx={{ mb: 2 }}>
@@ -88,6 +88,28 @@ const Accounts = () => {
                     <DeleteIcon fontSize="small" />
                   </ListItemIcon>
                   <ListItemText>Delete</ListItemText>
+                </MenuItem>
+
+                <MenuItem disableRipple>
+                  <DialogButton
+                    DialogComponent={EditFundsDialog}
+                    ComponentProps={{
+                      dialogprops: {
+                        address: props.row.address.props.address,
+                        funds: props.row.funds,
+                      },
+                    }}
+                    sx={{
+                      p: 0,
+                      textTransform: "initial",
+                      color: "unset",
+                    }}
+                  >
+                    <ListItemIcon>
+                      <EditIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText>Edit</ListItemText>
+                  </DialogButton>
                 </MenuItem>
               </>
             )}
@@ -288,6 +310,75 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
         <Button onClick={onClose}>Cancel</Button>
         <Button onClick={addAccount} disabled={!valid}>
           Add
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+interface EditFundsDialogProps {
+  open?: boolean;
+  onClose(): void;
+  dialogprops?: IDialogProps;
+}
+
+function EditFundsDialog({ open, onClose, dialogprops }: EditFundsDialogProps) {
+  const sim = useSimulation();
+  const setNotification = useNotification();
+  const [newFunds, setNewFunds] = useState<Coin[]>([]);
+  const [isFundsValid, setFundsValid] = useState(true);
+  const saveFunds = useCallback(() => {
+    if (dialogprops?.address) {
+      try {
+        sim.setBalance(dialogprops?.address, newFunds);
+        setNotification("Funds updated successfully");
+      } catch (err: any) {
+        setNotification(err.message, { severity: "error" });
+      }
+    }
+  }, [newFunds, isFundsValid]);
+  return (
+    <Dialog open={!!open} onClose={onClose}>
+      <DialogTitle>Update Funds</DialogTitle>
+      <DialogContent
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "stretch",
+          gap: 2,
+          minWidth: 380,
+          pt: "8px !important",
+        }}
+      >
+        <TextField
+          label="Address"
+          required
+          disabled
+          aria-readonly
+          value={dialogprops?.address}
+          InputProps={{
+            endAdornment: (
+              <>
+                <InputAdornment position="end">
+                  <AccountBalanceIcon />
+                </InputAdornment>
+              </>
+            ),
+          }}
+        />
+        <Funds
+          defaultValue={dialogprops?.funds}
+          onChange={setNewFunds}
+          onValidate={setFundsValid}
+          sx={{ mt: 2 }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button
+          onClick={saveFunds}
+          disabled={!isFundsValid || !newFunds.length}
+        >
+          Save
         </Button>
       </DialogActions>
     </Dialog>
