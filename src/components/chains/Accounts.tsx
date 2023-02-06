@@ -210,9 +210,13 @@ function AddAccountDialog({ open, onClose }: AddAccountDialogProps) {
     }
 
     // TODO: validate bech32
-
-    if (accounts.find(([addr]) => addr === account.address)) {
-      setNotification("An account with this address already exists", {
+    if (
+      accounts.find(
+        ([addr, { label }]) =>
+          addr === account.address || label === account.label
+      )
+    ) {
+      setNotification("An account with this address or label already exists", {
         severity: "error",
       });
       return;
