@@ -150,6 +150,7 @@ export default function WelcomeScreen() {
           `/r2/${contract.id}/${getJsonFileName(key)}`
         );
         const wasmFile = Buffer.from(extractByteCode(response.data));
+        //TODO: Remove this console.log.
         console.log(schema.data);
         const newFile = {
           name: key,
@@ -166,6 +167,7 @@ export default function WelcomeScreen() {
     }
     setFiles(wasmFiles);
     setLoading(false);
+    onLoadHandler();
   }, [sampleContract]);
 
   const onCreateNewEnvironment = useCallback(async () => {
@@ -221,7 +223,7 @@ export default function WelcomeScreen() {
     setSchemas([]);
   }, []);
 
-  const onSchemaLoadHandler = () => {
+  const onLoadHandler = () => {
     onCreateNewEnvironment().then((r) => {
       navigate("/accounts");
     });
@@ -309,7 +311,7 @@ export default function WelcomeScreen() {
                     <LoadingButton
                       loading={loading}
                       variant="contained"
-                      onClick={onSchemaLoadHandler}
+                      onClick={onLoadHandler}
                     >
                       {schemas.length === 0 ? "Load without Schema" : "Load"}
                     </LoadingButton>
