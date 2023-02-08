@@ -168,9 +168,7 @@ export default function WelcomeScreen() {
       }
     }
     setFiles(wasmFiles);
-    await onCreateNewEnvironment();
     setLoading(false);
-    navigate("/accounts");
   }, [sampleContract]);
 
   const onCreateNewEnvironment = useCallback(async () => {
@@ -232,7 +230,11 @@ export default function WelcomeScreen() {
       navigate("/accounts");
     });
   };
-
+  useEffect(() => {
+    if (files.length > 0 && choice === "") {
+      onLoadHandler();
+    }
+  }, [files]);
   return (
     <Grid container item flex={1} alignItems="center" justifyContent="center">
       <Grid
