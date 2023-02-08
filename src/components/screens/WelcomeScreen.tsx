@@ -122,7 +122,7 @@ const getJsonFileName = (filename: string) => {
 export default function WelcomeScreen() {
   const sim = useSimulation();
   const setLastChainId = useSetAtom(lastChainIdState);
-
+  const [choice, setChoice] = useState<"upload" | "">("");
   const [files, setFiles] = useState<FileUploadType[]>([]);
   const [schemas, setSchemas] = useState<JSON[]>([]);
   const setNotification = useNotification();
@@ -139,6 +139,7 @@ export default function WelcomeScreen() {
       setNotification("Contract not found", { severity: "error" });
       return;
     }
+
     setLoading(true);
     let wasmFiles: FileUploadType[] = [];
     for (const key of contract.keys) {
@@ -163,11 +164,13 @@ export default function WelcomeScreen() {
         setNotification("Failed to load sample contract", {
           severity: "error",
         });
+        setLoading(false);
       }
     }
     setFiles(wasmFiles);
+    await onCreateNewEnvironment();
     setLoading(false);
-    onLoadHandler();
+    navigate("/accounts");
   }, [sampleContract]);
 
   const onCreateNewEnvironment = useCallback(async () => {
@@ -203,6 +206,7 @@ export default function WelcomeScreen() {
 
   const onAcceptFile = useCallback(
     async (name: string, schema: JSON, content: Buffer | JSON) => {
+      setChoice("upload");
       setFiles((prevFiles) => [...prevFiles, { name, schema, content }]);
     },
     []
@@ -289,9 +293,14 @@ export default function WelcomeScreen() {
         </Grid>
         <Grid item xs={11} lg={7} md={8} sx={{ mb: 4, width: "60%" }}>
           <FileUploadPaper sx={{ minHeight: 200 }}>
-            <Grid container direction="row" height="100%">
-              <Grid item sx={{ width: "48%" }}>
-                {files.length > 0 ? (
+            <Grid
+              container
+              direction="row"
+              height="100%"
+              justifyContent="center"
+            >
+              <Grid item xs={6} flex={1}>
+                {files.length && choice === "upload" ? (
                   <Grid
                     item
                     sx={{
@@ -320,40 +329,47 @@ export default function WelcomeScreen() {
                   <FileUpload onAccept={onAcceptFile} onClear={onClearFile} />
                 )}
               </Grid>
-              <Divider orientation="vertical" flexItem>
-                or
-              </Divider>
-              <Grid
-                item
-                sx={{
-                  width: "47%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
-                  Load from sample contracts
-                </Typography>
-                <Autocomplete
-                  onInputChange={(_, value) => setSampleContract(value)}
-                  sx={{ width: "80%", mt: 2 }}
-                  renderInput={(params: AutocompleteRenderInputParams) => (
-                    <TextField {...params} label="Contract" />
-                  )}
-                  options={getSampleContractsForChain(chain)}
-                />
-                <LoadingButton
-                  loading={loading}
-                  variant="contained"
-                  sx={{ mt: 2 }}
-                  onClick={handleLoadSampleContract}
-                >
-                  Load
-                </LoadingButton>
-              </Grid>
+
+              {choice === "" ? (
+                <>
+                  <Divider orientation="vertical" flexItem>
+                    or
+                  </Divider>
+                  <Grid
+                    item
+                    xs={5}
+                    sx={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
+                      Load from sample contracts
+                    </Typography>
+                    <Autocomplete
+                      onInputChange={(_, value) => setSampleContract(value)}
+                      sx={{ width: "80%", mt: 2 }}
+                      renderInput={(params: AutocompleteRenderInputParams) => (
+                        <TextField {...params} label="Contract" />
+                      )}
+                      options={getSampleContractsForChain(chain)}
+                    />
+                    <LoadingButton
+                      loading={loading}
+                      variant="contained"
+                      sx={{ mt: 2 }}
+                      onClick={handleLoadSampleContract}
+                    >
+                      Load
+                    </LoadingButton>
+                  </Grid>
+                </>
+              ) : (
+                <></>
+              )}
             </Grid>
           </FileUploadPaper>
         </Grid>
