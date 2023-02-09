@@ -33,9 +33,6 @@ function replaceUint64WithInteger(schema: any) {
 const Simulation = () => {
   const contractAddress = useParams().instanceAddress!;
   const sim = useSimulation();
-  const schema = sim.getSchema(contractAddress);
-  // @ts-ignore
-  const executeSchema = schema?.schema.execute;
 
   return (
     <SplitView className="T1Simulation-root">
