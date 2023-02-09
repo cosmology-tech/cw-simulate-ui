@@ -120,7 +120,7 @@ const FileUpload = ({
         // }
 
         setFilename(file.name);
-        onAccept(file.name, json, json);
+        onAccept(file.name, { name: file.name, content: json }, json);
       };
 
       reader.onerror = () => {
