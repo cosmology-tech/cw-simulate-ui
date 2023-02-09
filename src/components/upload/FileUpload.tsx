@@ -6,27 +6,33 @@ import { useDropzone } from "react-dropzone";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { SchemaType } from "src/CWSimulationBridge";
 
 interface IProps {
+  fileName?: string;
   dropzoneText?: string;
   /** Variant of the FileUploader. Defaults to 'both'. */
   variant?: "simulation" | "contract" | "both" | "schema" | undefined;
 
   /** Callback which receives the uploaded file's name + contents buffer. */
-  onAccept(filename: string, schema: JSON, fileContent: Buffer | JSON): void;
+  onAccept(
+    filename: string,
+    schema: SchemaType,
+    fileContent: Buffer | JSON
+  ): void;
 
   /** Callback for when user removes uploaded file. */
   onClear(): void;
 }
 
 const FileUpload = ({
+  fileName,
   dropzoneText,
   variant = "both",
   onAccept,
   onClear,
 }: IProps) => {
-  const [filename, setFilename] = useState("");
-
+  const [filename, setFilename] = useState(fileName ? fileName : "");
   const text =
     dropzoneText ||
     "Upload or drop a .wasm contract binary here to get started";
@@ -83,7 +89,7 @@ const FileUpload = ({
         try {
           const buffer = Buffer.from(extractByteCode(contents));
           setFilename(file.name);
-          onAccept(file.name, {} as JSON, buffer);
+          onAccept(file.name, { name: "", content: {} as JSON }, buffer);
         } catch (ex: any) {
           setNotification(
             `Failed to extract & store WASM bytecode: ${ex.message ?? ex}`,

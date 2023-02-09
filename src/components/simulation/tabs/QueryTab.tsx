@@ -80,7 +80,7 @@ function Query({ contractAddress, onHandleQuery }: IQuery) {
   const [isValid, setIsValid] = useState(true);
   const schema = sim.getSchema(contractAddress);
   // @ts-ignore
-  const querySchema = schema ? schema.query : {};
+  const querySchema = schema ? schema.schema.content.query : {};
   const handleQuery = async () => {
     try {
       const res = await sim.query(

@@ -42,13 +42,18 @@ export type WatcherCommitter<T = unknown> = (raw: T) => T;
 export type AccountEx = ReturnType<CWSimulationBridge['getAccounts']>[string];
 export type FileUploadType = {
   name: string;
-  schema: JSON;
+  schema: SchemaType;
   content: Buffer | JSON;
 };
 
+export type SchemaType ={
+ name:string;
+ content:JSON;
+}
+
 export type CodeInfoEx = CodeInfo & {
   name?: string;
-  schema?: JSON;
+  schema?: SchemaType;
   hidden?: boolean;
 };
 

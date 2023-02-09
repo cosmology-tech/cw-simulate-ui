@@ -102,7 +102,7 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
   const [openInstantiate, setOpenInstantiate] = useState(false);
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-
+  const schema = code.schema;
   const download = useCallback(() => {
     downloadWasm(code.wasmCode, code.name ?? "<unnamed code>");
   }, [code]);
@@ -166,6 +166,7 @@ function CodeMenuItem({ codeId }: ICodeMenuItemProps) {
         <>
           <UploadModal
             variant="schema"
+            existingFileName={schema?.name}
             codeId={codeId}
             open={openUploadDialog}
             onClose={() => {
@@ -198,7 +199,7 @@ function InstantiateDialog({ codeId, ...props }: IInstantiateDialogProps) {
   const [isJsonValid, setIsJsonValid] = useState(true);
   const schema = code.schema;
   // @ts-ignore
-  const instantiateSchema = schema ? schema.instantiate : {};
+  const instantiateSchema = schema ? schema.content.instantiate : {};
   const setDrawerSubMenu = useSetAtom(drawerSubMenuState);
 
   const [funds, setFunds] = useState<Coin[]>([]);

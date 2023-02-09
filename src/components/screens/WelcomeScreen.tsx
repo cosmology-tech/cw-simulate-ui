@@ -31,7 +31,7 @@ import useSimulation from "../../hooks/useSimulation";
 import FileUpload, { extractByteCode } from "../upload/FileUpload";
 import FileUploadPaper from "../upload/FileUploadPaper";
 import JunoSvgIcon from "./JunoIcon";
-import { FileUploadType } from "../../CWSimulationBridge";
+import { FileUploadType, SchemaType } from "../../CWSimulationBridge";
 
 export interface ISampleContract {
   name: string;
@@ -124,7 +124,7 @@ export default function WelcomeScreen() {
   const setLastChainId = useSetAtom(lastChainIdState);
   const [choice, setChoice] = useState<"upload" | "">("");
   const [files, setFiles] = useState<FileUploadType[]>([]);
-  const [schemas, setSchemas] = useState<JSON[]>([]);
+  const [schemas, setSchemas] = useState<SchemaType[]>([]);
   const setNotification = useNotification();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -155,7 +155,10 @@ export default function WelcomeScreen() {
         console.log(schema.data);
         const newFile = {
           name: key,
-          schema: schema.data,
+          schema: {
+            name: schema.data.contract_name + ".json",
+            content: schema.data,
+          },
           content: wasmFile,
         };
         wasmFiles.push(newFile);
@@ -190,20 +193,21 @@ export default function WelcomeScreen() {
           chainConfig.sender,
           {
             name: files[i].name,
-            schema: files[i].schema,
+            schema: choice === "upload" ? schemas[i] : files[i].schema,
             content: files[i].content,
           },
           chainConfig.funds
         );
+        console.log(schemas[i]);
       }
     } else if (files[0].name.endsWith(".json")) {
       setNotification("Feature coming soon", { severity: "error" });
       throw new Error("not yet implemented");
     }
-  }, [sim, files, chain]);
+  }, [sim, files, chain, schemas]);
 
   const onAcceptFile = useCallback(
-    async (name: string, schema: JSON, content: Buffer | JSON) => {
+    async (name: string, schema: SchemaType, content: Buffer | JSON) => {
       setChoice("upload");
       setFiles((prevFiles) => [...prevFiles, { name, schema, content }]);
     },
@@ -215,8 +219,11 @@ export default function WelcomeScreen() {
   }, []);
 
   const onAcceptSchema = useCallback(
-    async (name: string, schema: JSON, content: JSON) => {
-      setSchemas((prevFiles) => [...prevFiles, schema]);
+    async (name: string, schema: SchemaType, content: JSON) => {
+      setSchemas((prevFiles) => [
+        ...prevFiles,
+        { name: name, content: content },
+      ]);
     },
     []
   );
@@ -235,6 +242,7 @@ export default function WelcomeScreen() {
       onLoadHandler();
     }
   }, [files]);
+
   return (
     <Grid container item flex={1} alignItems="center" justifyContent="center">
       <Grid

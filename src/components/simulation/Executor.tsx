@@ -40,7 +40,7 @@ export default function Executor({ contractAddress }: IProps) {
   const sender = account;
   const schema = sim.getSchema(contractAddress);
   // @ts-ignore
-  const executeSchema = schema ? schema.execute : {};
+  const executeSchema = schema ? schema.schema.content.execute : {};
 
   const activeStep = useAtomValue(activeStepState);
   const handleExecute = async () => {
