@@ -161,10 +161,10 @@ function BalanceView({ trace }: { trace: TraceLog }) {
     trace.storeSnapshot
   );
   const senderBalance = sim.getBalance(
-    (trace as ExecuteTraceLog).info.sender,
+    (trace as ExecuteTraceLog).info?.sender,
     trace.storeSnapshot
   );
-  const senderId = (trace as ExecuteTraceLog).info.sender;
+  const senderId = (trace as ExecuteTraceLog).info?.sender;
   return (
     <TableLayout
       rows={[
