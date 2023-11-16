@@ -39,10 +39,21 @@ type WatcherState<T> = {
 export type WatcherComparator<T = unknown> = (last: T, curr: T) => boolean;
 export type WatcherCommitter<T = unknown> = (raw: T) => T;
 
-export type AccountEx = ReturnType<CWSimulationBridge["getAccounts"]>[string];
+export type AccountEx = ReturnType<CWSimulationBridge['getAccounts']>[string];
+export type FileUploadType = {
+  name: string;
+  schema: SchemaType;
+  content: Buffer | JSON;
+};
+
+export type SchemaType ={
+ name:string;
+ content:JSON;
+}
 
 export type CodeInfoEx = CodeInfo & {
   name?: string;
+  schema?: SchemaType;
   hidden?: boolean;
 };
 
@@ -133,17 +144,28 @@ export default class CWSimulationBridge {
   }
 
   /** Store a new smart contract code in the simulation & re-sync bridge. */
-  storeCode(sender: string, name: string, content: Buffer, funds: Coin[] = []) {
-    const codeId = this.app.wasm.create(sender, content);
+  storeCode(sender: string, fileUpload: FileUploadType, funds: Coin[] = []) {
+    const codeId = this.app.wasm.create(sender, fileUpload.content as Buffer);
 
     // inject contract name for convenient lookup.
     this.codes.tx((setter) => {
-      setter(codeId, "name")(name);
+      setter(codeId, "name")(fileUpload.name);
+      setter(codeId, "schema")(fileUpload.schema);
       return Ok(undefined);
     });
 
     this.sync();
     return codeId;
+  }
+
+  storeSchema(codeId: number, fileUpload: FileUploadType) {
+    const code = this.getCode(codeId);
+    if (!code) return;
+    this.codes.tx((setter) => {
+      setter(codeId, "schema")(fileUpload.schema);
+      return Ok(undefined);
+    });
+    this.sync();
   }
 
   /** Hide a contract from the UI - it is not actually deleted - and re-sync bridge. */
@@ -154,6 +176,18 @@ export default class CWSimulationBridge {
     });
     this.sync();
     return this;
+  }
+
+  /**
+   * Get contract schema for a given contract address.
+   * @param address
+   */
+  getSchema(address: string) {
+    const contract = this.getContract(address);
+    if (!contract) return;
+    const code = this.getCode(contract.codeId);
+    if (!code) return;
+    return Object.assign({ schema: code.schema }, { name: code.name });
   }
 
   /** Get contract associated with given address, and augment contract info with same address for convenience. */

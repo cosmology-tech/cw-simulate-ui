@@ -4,6 +4,7 @@ import {
   Autocomplete,
   AutocompleteRenderInputParams,
   Box,
+  Divider,
   Grid,
   SvgIcon,
   TextField,
@@ -30,6 +31,7 @@ import useSimulation from "../../hooks/useSimulation";
 import FileUpload, { extractByteCode } from "../upload/FileUpload";
 import FileUploadPaper from "../upload/FileUploadPaper";
 import JunoSvgIcon from "./JunoIcon";
+import { FileUploadType, SchemaType } from "../../CWSimulationBridge";
 
 export interface ISampleContract {
   name: string;
@@ -107,22 +109,22 @@ const SAMPLE_CONTRACTS: ISampleContract[] = [
   },
 ];
 
-interface SimulationFileType {
-  filename: string;
-  fileContent: Buffer | JSON;
-}
-
 const getSampleContractsForChain = (chain: string) => {
   return SAMPLE_CONTRACTS.filter((c) => c.chain.includes(chain)).map(
     (c) => c.name
   );
 };
 
+const getJsonFileName = (filename: string) => {
+  return filename.replace(".wasm", ".json");
+};
+
 export default function WelcomeScreen() {
   const sim = useSimulation();
   const setLastChainId = useSetAtom(lastChainIdState);
-
-  const [files, setFiles] = useState<SimulationFileType[]>([]);
+  const [choice, setChoice] = useState<"upload" | "">("");
+  const [files, setFiles] = useState<FileUploadType[]>([]);
+  const [schemas, setSchemas] = useState<SchemaType[]>([]);
   const setNotification = useNotification();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -137,17 +139,27 @@ export default function WelcomeScreen() {
       setNotification("Contract not found", { severity: "error" });
       return;
     }
+
     setLoading(true);
-    let wasmFiles: SimulationFileType[] = [];
+    let wasmFiles: FileUploadType[] = [];
     for (const key of contract.keys) {
       try {
         const response = await axios.get(`/r2/${contract.id}/${key}`, {
           responseType: "arraybuffer",
         });
+        const schema = await axios.get(
+          `/r2/${contract.id}/${getJsonFileName(key)}`
+        );
         const wasmFile = Buffer.from(extractByteCode(response.data));
+        //TODO: Remove this console.log.
+        console.log(schema.data);
         const newFile = {
-          filename: key,
-          fileContent: wasmFile,
+          name: key,
+          schema: {
+            name: schema.data.contract_name + ".json",
+            content: schema.data,
+          },
+          content: wasmFile,
         };
         wasmFiles.push(newFile);
       } catch (e) {
@@ -155,6 +167,7 @@ export default function WelcomeScreen() {
         setNotification("Failed to load sample contract", {
           severity: "error",
         });
+        setLoading(false);
       }
     }
     setFiles(wasmFiles);
@@ -169,28 +182,34 @@ export default function WelcomeScreen() {
       return;
     }
 
-    if (files[0].filename.endsWith(".wasm")) {
+    if (files[0].name.endsWith(".wasm")) {
       const chainConfig = getChainConfig(chain);
       setLastChainId(chainConfig.chainId);
       sim.recreate(chainConfig);
       sim.setBalance(chainConfig.sender, chainConfig.funds);
-      for (const file of files) {
+      console.log(schemas);
+      for (let i = 0; i < files.length; i++) {
         sim.storeCode(
           chainConfig.sender,
-          file.filename,
-          file.fileContent as Buffer,
+          {
+            name: files[i].name,
+            schema: choice === "upload" ? schemas[i] : files[i].schema,
+            content: files[i].content,
+          },
           chainConfig.funds
         );
+        console.log(schemas[i]);
       }
-    } else if (files[0].filename.endsWith(".json")) {
+    } else if (files[0].name.endsWith(".json")) {
       setNotification("Feature coming soon", { severity: "error" });
       throw new Error("not yet implemented");
     }
-  }, [sim, files, chain]);
+  }, [sim, files, chain, schemas]);
 
   const onAcceptFile = useCallback(
-    async (filename: string, fileContent: Buffer | JSON) => {
-      setFiles((prevFiles) => [...prevFiles, { filename, fileContent }]);
+    async (name: string, schema: SchemaType, content: Buffer | JSON) => {
+      setChoice("upload");
+      setFiles((prevFiles) => [...prevFiles, { name, schema, content }]);
     },
     []
   );
@@ -199,11 +218,28 @@ export default function WelcomeScreen() {
     setFiles([]);
   }, []);
 
+  const onAcceptSchema = useCallback(
+    async (name: string, schema: SchemaType, content: JSON) => {
+      setSchemas((prevFiles) => [
+        ...prevFiles,
+        { name: name, content: content },
+      ]);
+    },
+    []
+  );
+
+  const onClearSchema = useCallback(() => {
+    setSchemas([]);
+  }, []);
+
+  const onLoadHandler = () => {
+    onCreateNewEnvironment().then((r) => {
+      navigate("/accounts");
+    });
+  };
   useEffect(() => {
-    if (files.length > 0) {
-      onCreateNewEnvironment().then((r) => {
-        navigate("/accounts");
-      });
+    if (files.length > 0 && choice === "") {
+      onLoadHandler();
     }
   }, [files]);
 
@@ -267,42 +303,83 @@ export default function WelcomeScreen() {
         </Grid>
         <Grid item xs={11} lg={7} md={8} sx={{ mb: 4, width: "60%" }}>
           <FileUploadPaper sx={{ minHeight: 200 }}>
-            <Grid container direction="row" height="100%">
-              <Grid item sx={{ width: "50%" }}>
-                <FileUpload onAccept={onAcceptFile} onClear={onClearFile} />
+            <Grid
+              container
+              direction="row"
+              height="100%"
+              justifyContent="center"
+            >
+              <Grid item xs={6} flex={1}>
+                {files.length && choice === "upload" ? (
+                  <Grid
+                    item
+                    sx={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <FileUpload
+                      dropzoneText={"Upload or drop your schema here"}
+                      variant={"schema"}
+                      onAccept={onAcceptSchema}
+                      onClear={onClearSchema}
+                    />
+                    <LoadingButton
+                      loading={loading}
+                      variant="contained"
+                      onClick={onLoadHandler}
+                    >
+                      {schemas.length === 0 ? "Load without Schema" : "Load"}
+                    </LoadingButton>
+                  </Grid>
+                ) : (
+                  <FileUpload onAccept={onAcceptFile} onClear={onClearFile} />
+                )}
               </Grid>
-              <Grid
-                item
-                sx={{
-                  width: "50%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  textAlign: "center",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
-                  Load from sample contracts
-                </Typography>
-                <Autocomplete
-                  onInputChange={(_, value) => setSampleContract(value)}
-                  sx={{ width: "80%", mt: 2 }}
-                  renderInput={(params: AutocompleteRenderInputParams) => (
-                    <TextField {...params} label="Contract" />
-                  )}
-                  options={getSampleContractsForChain(chain)}
-                />
 
-                <LoadingButton
-                  loading={loading}
-                  variant="contained"
-                  sx={{ mt: 2 }}
-                  onClick={handleLoadSampleContract}
-                >
-                  Load
-                </LoadingButton>
-              </Grid>
+              {choice === "" ? (
+                <>
+                  <Divider orientation="vertical" flexItem>
+                    or
+                  </Divider>
+                  <Grid
+                    item
+                    xs={5}
+                    sx={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      textAlign: "center",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Typography textAlign="center" sx={{ fontWeight: "bold" }}>
+                      Load from sample contracts
+                    </Typography>
+                    <Autocomplete
+                      onInputChange={(_, value) => setSampleContract(value)}
+                      sx={{ width: "80%", mt: 2 }}
+                      renderInput={(params: AutocompleteRenderInputParams) => (
+                        <TextField {...params} label="Contract" />
+                      )}
+                      options={getSampleContractsForChain(chain)}
+                    />
+                    <LoadingButton
+                      loading={loading}
+                      variant="contained"
+                      sx={{ mt: 2 }}
+                      onClick={handleLoadSampleContract}
+                    >
+                      Load
+                    </LoadingButton>
+                  </Grid>
+                </>
+              ) : (
+                <></>
+              )}
             </Grid>
           </FileUploadPaper>
         </Grid>
